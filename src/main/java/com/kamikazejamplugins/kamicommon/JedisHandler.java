@@ -20,7 +20,6 @@ public abstract class JedisHandler {
     @Getter final Plugin plugin;
     @Getter @Setter private boolean debug = false;
 
-
     //Constructor 1
     public JedisHandler(Plugin plugin) {
         this.plugin = plugin;
