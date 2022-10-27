@@ -1,7 +1,16 @@
 # KamiCommon
 
-#### A common library for my (KamikazeJAM_YT) plugins. (Plugins made primarily for 1.8.9, no guarantees or support for other versions)
-#### Contact Info (Discord): KamikazeJAM_YT#3713
+- A common library for my (KamikazeJAM_YT) plugins. (Plugins made primarily for 1.8.9, no guarantees or support for other versions)
+-  Contact Info (Discord): KamikazeJAM_YT#3713
+
+&nbsp;
+
+## Setting up the Common
+- Some features may require the plugin object, so I highly recommend calling the following method in OnEnable before using the library
+- Note: If a part of the library requires the plugin object as an argument, it will setup common with it, however, it's still recommended to provide it asap in OnEnable to prevent errors (other parts of the common may run before it's provided, and cause errors)
+```java
+KamiCommon.setupPlugin(plugin);
+```
 
 &nbsp;
 &nbsp;
