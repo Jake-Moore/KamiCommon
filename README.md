@@ -1,9 +1,12 @@
 # KamiCommon
 
-A common library for my (KamikazeJAM_YT) plugins. (Plugins made primarily for 1.8.9, no guarantees or support for other versions)
-Contact Info (Discord): KamikazeJAM_YT#3713
+#### A common library for my (KamikazeJAM_YT) plugins. (Plugins made primarily for 1.8.9, no guarantees or support for other versions)
+#### Contact Info (Discord): KamikazeJAM_YT#3713
 
-Noteable features include:
+&nbsp;
+&nbsp;
+
+## Noteable features include:
 - Easier inventory management for click events
 ```java
 String title = "test";
@@ -12,6 +15,7 @@ KamiMenu<Player> menu = new KamiMenu<>(title, rows);
 menu.addMenuClick(itemstack, clickInfo -> {
     //code on click
 }, slot);
+menu.openMenu(player);
 ```
 - ItemBuilder for easier item manipulation
 ```java
