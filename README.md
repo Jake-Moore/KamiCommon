@@ -1,6 +1,7 @@
 # KamiCommon
 
-A common library for my (KamikazeJAM_YT) plugins.
+A common library for my (KamikazeJAM_YT) plugins. (Plugins made primarily for 1.8.9, no guarantees or support for other versions)
+Contact Info (Discord): KamikazeJAM_YT#3713
 
 Noteable features include:
 - Easier inventory management for click events
@@ -29,7 +30,7 @@ builder.toItemStack();
 - Auto update for plugins (hard coded for my use only, but feel free to edit the repo and PAT to use it on your own)
    - This feature requires that each plugin repository using auto update have a configured github action to publish a release for each version
 - Commands library for easier subcommand management
-   - Contact me on discord KamikazeJAM_YT#3713 for more info on this
+   - Contact me on discord for more info on this
 - A few bulky methods simplified for Configuration management (ConfigManager.java)
    - Create empty configs, save configs, reload configs 
 - A few utilities
