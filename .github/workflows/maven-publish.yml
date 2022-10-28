@@ -49,6 +49,11 @@ jobs:
     - name: Swap to Snapshot Version
       run: mvn versions:set -DnewVersion=${{steps.project.outputs.version}}-SNAPSHOT
     
+    - name: Maven Settings
+      uses: s4u/maven-settings-action@v2.6.0
+      with:
+        servers: '[{"id": "jartexsys-snapshots", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }]'
+
     - name: Publish to Jartex Nexus
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
     
