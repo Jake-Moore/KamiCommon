@@ -29,6 +29,11 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <scm>
+        <connection>scm:git:git@github.com:Jake-Moore/KamiCommon.git</connection>
+        <developerConnection>scm:git:git@github.com:Jake-Moore/KamiCommon.git</developerConnection>
+    </scm>
+
     <build>
         <plugins>
             <plugin>
