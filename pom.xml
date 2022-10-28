@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.0.20</version>
+    <version>1.0.20-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -28,8 +28,8 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:https://github.com/Jake-Moore/KamiCommon.git</connection>
-        <developerConnection>scm:git:https://github.com/Jake-Moore/KamiCommon.git</developerConnection>
+        <connection>scm:git:git@github.com:Jake-Moore/KamiCommon.git</connection>
+        <developerConnection>scm:git:git@github.com:Jake-Moore/KamiCommon.git</developerConnection>
       <tag>kamicommon-1.0.20</tag>
   </scm>
 
