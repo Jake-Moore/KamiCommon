@@ -5,6 +5,31 @@
 
 &nbsp;
 
+## Using the Common
+- Github packages with Maven requires that all users have a PAT (personal access token) configured, in order to download packages
+- If you do not know how to create one up please refer to: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+- With your PAT, you must add it to maven, please refer to: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry ("Authenticating with a personal access token")
+- The first step towards using the maven dependency is configuring the repository
+```xml
+<repository>
+    <id>github</id>
+    <url>https://maven.pkg.github.com/jake-moore/kamicommon</url>
+</repository>
+```
+- From there you can use the maven dependency for it
+```xml
+<!-- KamiCommon -->
+<dependency>
+    <groupId>com.kamikazejamplugins</groupId>
+    <artifactId>kamicommon</artifactId>
+    <version>1.0.20</version>
+    <scope>compile</scope>
+</dependency>
+```
+- Ensure that the scope says compile, and that you have the maven shade plugin configured, otherwise these classes won't be included in the jar and it will error
+
+&nbsp;
+
 ## Setting up the Common
 - Some features may require the plugin object, so I highly recommend calling the following method in OnEnable before using the library
 - Note: If a part of the library requires the plugin object as an argument, it will setup common with it, however, it's still recommended to provide it asap in OnEnable to prevent errors (other parts of the common may run before it's provided, and cause errors)
