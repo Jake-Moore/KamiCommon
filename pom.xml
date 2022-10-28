@@ -28,10 +28,9 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:Jake-Moore/KamiCommon.git</connection>
-        <developerConnection>scm:git:git@github.com:Jake-Moore/KamiCommon.git</developerConnection>
-      <tag>kamicommon-1.0.20</tag>
-  </scm>
+        <url>https://github.com/Jake-Moore/KamiCommon</url>
+        <connection>scm:git:https://github.com/Jake-Moore/KamiCommon.git</connection>
+    </scm>
 
     <build>
         <plugins>
