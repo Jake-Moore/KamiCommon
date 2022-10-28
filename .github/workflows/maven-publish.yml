@@ -33,23 +33,5 @@ jobs:
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
-  
-    - name: Extract Maven project version
-      run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-      id: project
 
-    - name: Show extracted Maven project version
-      run: echo ${{ steps.project.outputs.version }}
-  
-    - name: Nexus Repository Publisher for GitHub Actions
-      uses: sonatype-nexus-community/nexus-repo-github-action@1.0.0
-      with:
-        serverUrl: https://nexus.jartexsys.net/
-        username: KamikazeJAM_YT
-        password: ${{ secrets.NEXUS_PASS }}
-        format: maven2
-        repository: jartexsys-snapshots
-        coordinates: groupId=com.kamikazejamplugins artifactId=kamicommon version=${{ steps.project.outputs.version }}
-        assets: extension=jar
-        filename: ./target/kamicommon-${{ steps.project.outputs.version }}.jar
 
