@@ -25,6 +25,11 @@ jobs:
         distribution: 'temurin'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
+  
+    - name: Maven Settings
+      uses: s4u/maven-settings-action@v2.6.0
+      with:
+        servers: '[{"id": "github", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}" }, {"id": "jartexsys-releases", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }, {"id": "jartexsys", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }, {"id": "jartexsys-snapshots", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }]'
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
@@ -32,6 +37,7 @@ jobs:
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.JARTEX_PASS }}
+
 
 
