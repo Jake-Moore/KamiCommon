@@ -98,7 +98,7 @@
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/lib/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/lib/spigot-1.8.8-R0.1.jar</systemPath>
         </dependency>
 
         <dependency>
