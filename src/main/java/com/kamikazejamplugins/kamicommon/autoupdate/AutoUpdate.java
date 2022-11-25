@@ -106,7 +106,7 @@ public class AutoUpdate implements Listener {
         //OkHttp doesn't authenticate properly with this specific api call, idk
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet request = new HttpGet(BASE_URL + projectName);
-            System.out.println(BASE_URL + projectName);
+            //System.out.println(BASE_URL + projectName);
             request.addHeader("Accept", "application/vnd.github+json");
             request.addHeader("Authorization", "Bearer " + getToken());
             HttpResponse result = httpClient.execute(request);
