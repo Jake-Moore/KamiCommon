@@ -29,14 +29,14 @@ jobs:
     - name: Maven Settings
       uses: s4u/maven-settings-action@v2.6.0
       with:
-        servers: '[{"id": "github", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}" }, {"id": "jartexsys-releases", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }, {"id": "jartexsys", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }, {"id": "jartexsys-snapshots", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }]'
+        servers: '[{"id": "github", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}" }]'
 
-    - name: Extract Maven project version
-      run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-      id: project
+    #- name: Extract Maven project version
+    #  run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+    #  id: project
 
-    - name: Show extracted Maven project version
-      run: echo ${{ steps.project.outputs.version }}
+    #- name: Show extracted Maven project version
+    #  run: echo ${{ steps.project.outputs.version }}
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
@@ -46,18 +46,18 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       
-    - name: Swap to Snapshot Version
-      run: mvn versions:set -DnewVersion=${{steps.project.outputs.version}}-SNAPSHOT
+    #- name: Swap to Snapshot Version
+    #  run: mvn versions:set -DnewVersion=${{steps.project.outputs.version}}-SNAPSHOT
     
-    - name: Maven Settings
-      uses: s4u/maven-settings-action@v2.6.0
-      with:
-        servers: '[{"id": "jartexsys-snapshots", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }]'
+    #- name: Maven Settings
+    #  uses: s4u/maven-settings-action@v2.6.0
+    #  with:
+    #    servers: '[{"id": "jartexsys-snapshots", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }]'
 
-    - name: Publish to Jartex Nexus
-      run: mvn deploy
+    #- name: Publish to Jartex Nexus
+    #  run: mvn deploy
     
-    - name: Revert Version
-      run: mvn versions:set -DnewVersion=${{steps.project.outputs.version}}
+    #- name: Revert Version
+    #  run: mvn versions:set -DnewVersion=${{steps.project.outputs.version}}
 
 
