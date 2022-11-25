@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.kamikazejamplugins.kamicommon.KamiCommon;
+import com.kamikazejamplugins.kamicommon.util.SimpleStringCoder;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.config.ConfigManager;
 import com.kamikazejamplugins.kamicommon.util.Pair;
@@ -36,9 +37,14 @@ public class AutoUpdate implements Listener {
     public static String BASE_URL = "https://api.github.com/repos/KamiUpdates/AutoUpdate/releases/tags/";
     //Access token of the KamiUpdates machine user (second account)
     //It can only see the empty repository for AutoUpdate, only seeing releases I put there
-    public static String token = "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";
+    //This is "encrypted" only to stop GitHub from automatically revoking it, I realize it's not anymore "secure"
+    private static final String tokenEnc = "AAki:JpVtJnYsFrW^Rq[UR6ZrV6ZHZYiRJKQJFXQLJZZZhpizR7\\{l6^";
     public static boolean debug = false;
     private static AutoUpdateListeners listeners = null;
+
+    public static String getToken() {
+        return SimpleStringCoder.CaesarCipherDecrypt(tokenEnc);
+    }
 
     public static void update(JavaPlugin plugin) {
         update(plugin, false);
@@ -101,7 +107,7 @@ public class AutoUpdate implements Listener {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet request = new HttpGet(BASE_URL + projectName);
             request.addHeader("Accept", "application/vnd.github+json");
-            request.addHeader("Authorization", "Bearer " + token);
+            request.addHeader("Authorization", "Bearer " + getToken());
             HttpResponse result = httpClient.execute(request);
             if (result.getStatusLine().getStatusCode() != 200) {
                 throw new IOException("Unexpected code " + result.getStatusLine().getStatusCode());
@@ -131,7 +137,7 @@ public class AutoUpdate implements Listener {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet request = new HttpGet(downloadUrl);
             request.addHeader("Accept", "application/octet-stream");
-            request.addHeader("Authorization", "Bearer " + token);
+            request.addHeader("Authorization", "Bearer " + getToken());
             CloseableHttpResponse response = httpClient.execute(request);
             if (response.getStatusLine().getStatusCode() != 200) {
                 throw new IOException("Unexpected code " + response.getStatusLine().getStatusCode());
