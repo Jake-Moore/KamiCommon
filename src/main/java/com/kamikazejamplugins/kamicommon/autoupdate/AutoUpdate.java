@@ -38,7 +38,7 @@ public class AutoUpdate implements Listener {
     //Access token of the KamiUpdates machine user (second account)
     //It can only see the empty repository for AutoUpdate, only seeing releases I put there
     //This is "encrypted" only to stop GitHub from automatically revoking it, I realize it's not anymore "secure"
-    private static final String tokenEnc = "AAki:JpVtJnYsFrW^Rq[UR6ZrV6ZHZYiRJKQJFXQLJZZZhpizR7\\{l6^";
+    private static final String tokenEnc = "AAEQ{{o]:NXY[pnhSN4hK^LZ5RYU]|Kh5h[fHxIQ:JJRptr]8J4\\{l6^";
     public static boolean debug = false;
     private static AutoUpdateListeners listeners = null;
 
@@ -106,6 +106,7 @@ public class AutoUpdate implements Listener {
         //OkHttp doesn't authenticate properly with this specific api call, idk
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet request = new HttpGet(BASE_URL + projectName);
+            System.out.println(BASE_URL + projectName);
             request.addHeader("Accept", "application/vnd.github+json");
             request.addHeader("Authorization", "Bearer " + getToken());
             HttpResponse result = httpClient.execute(request);
