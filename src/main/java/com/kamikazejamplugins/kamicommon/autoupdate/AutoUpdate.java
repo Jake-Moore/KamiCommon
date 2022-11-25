@@ -36,7 +36,7 @@ public class AutoUpdate implements Listener {
     public static String BASE_URL = "https://api.github.com/repos/KamiUpdates/AutoUpdate/releases/tags/";
     //Access token of the KamiUpdates machine user (second account)
     //It can only see the empty repository for AutoUpdate, only seeing releases I put there
-    public static String token = "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";
+    public static String token = "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";
     public static boolean debug = false;
     private static AutoUpdateListeners listeners = null;
 
