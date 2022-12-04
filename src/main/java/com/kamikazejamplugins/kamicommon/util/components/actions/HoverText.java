@@ -1,5 +1,6 @@
 package com.kamikazejamplugins.kamicommon.util.components.actions;
 
+import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -17,7 +18,7 @@ public class HoverText extends Hover {
      */
     public HoverText(String placeholder, String replacement, String text) {
         super(placeholder, replacement);
-        this.text = text;
+        this.text = StringUtil.t(text);
     }
 
     @Override
