@@ -7,9 +7,11 @@ import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("unused")
 public class HoverItem extends Hover {
-    public final ItemStack itemStack;
+    public final @Nullable ItemStack itemStack;
 
     /**
      * Creates a HoverItem object which will only have a hoverEvent for running the command
@@ -18,14 +20,18 @@ public class HoverItem extends Hover {
      * @param replacement The text to replace the placeholder with
      * @param itemStack The itemstack to show when hovering
      */
-    public HoverItem(String placeholder, String replacement, ItemStack itemStack) {
+    public HoverItem(String placeholder, String replacement, @Nullable ItemStack itemStack) {
         super(placeholder, replacement);
         this.itemStack = itemStack;
     }
 
     @Override
     public void addHoverEvent(TextComponent component) {
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{getItemText(itemStack)}));
+        if (itemStack == null) {
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent(" ")}));
+        }else {
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{getItemText(itemStack)}));
+        }
     }
 
     /**
