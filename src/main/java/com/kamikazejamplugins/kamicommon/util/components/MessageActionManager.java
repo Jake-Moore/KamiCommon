@@ -28,7 +28,7 @@ public class MessageActionManager {
         }
         Bukkit.getLogger().info("[MessageActionManager] Sending the following to " + player.getName() + ": " + s);
 
-        player.spigot().sendMessage(components);
+        player.sendMessage(components);
     }
 
     /**
