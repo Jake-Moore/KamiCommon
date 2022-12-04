@@ -10,6 +10,7 @@ import java.io.File;
 mvn install:install-file -Dfile="C:\Users\Jake\Desktop\Spigot Plugins\KamiCommon\target\KamiCommon-1.0.16.jar" -DgroupId=com.kamikazejamplugins -DartifactId=kamicommon -Dversion=1.0.16 -Dpackaging=jar
 */
 
+@SuppressWarnings("unused")
 public class KamiCommon {
     private static JavaPlugin plugin = null;
 
@@ -34,5 +35,29 @@ public class KamiCommon {
             }
         }
         return kamicommon;
+    }
+
+    public static void log(String s) {
+        if (plugin != null) {
+            plugin.getLogger().info(s);
+        }else {
+            System.out.println("[INFO] [KamiCommon] " + s);
+        }
+    }
+
+    public static void warn(String s) {
+        if (plugin != null) {
+            plugin.getLogger().warning(s);
+        }else {
+            System.out.println("[WARN] [KamiCommon] " + s);
+        }
+    }
+
+    public static void severe(String s) {
+        if (plugin != null) {
+            plugin.getLogger().severe(s);
+        }else {
+            System.err.println("[SEVERE] [KamiCommon] " + s);
+        }
     }
 }
