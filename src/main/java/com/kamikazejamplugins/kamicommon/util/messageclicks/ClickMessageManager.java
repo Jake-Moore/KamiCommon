@@ -1,6 +1,7 @@
 package com.kamikazejamplugins.kamicommon.util.messageclicks;
 
 import com.kamikazejamplugins.kamicommon.KamiCommon;
+import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.util.messageclicks.clicks.Click;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class ClickMessageManager {
     public static List<List<TextComponent>> processPlaceholders(String line, Click... clicks) {
+        line = StringUtil.t(line);
         return processPlaceholders(new TextComponent(line), clicks);
     }
 
