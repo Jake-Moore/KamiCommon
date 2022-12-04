@@ -4,6 +4,7 @@ import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.util.components.actions.Action;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -21,6 +22,12 @@ public class MessageActionManager {
      */
     public static void processAndSend(Player player, String line, Action... actions) {
         TextComponent[] components = processPlaceholders(line, actions);
+        StringBuilder s = new StringBuilder();
+        for (TextComponent component : components) {
+            s.append(component.toPlainText());
+        }
+        Bukkit.getLogger().info("[MessageActionManager] Sending the following to " + player.getName() + ": " + s);
+
         player.spigot().sendMessage(components);
     }
 
