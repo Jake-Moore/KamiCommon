@@ -22,6 +22,6 @@ public class HoverText extends Hover {
 
     @Override
     public void addHoverEvent(TextComponent component) {
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(text)}));
+        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent(text)}));
     }
 }
