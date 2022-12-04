@@ -130,6 +130,19 @@ public class AutoUpdate implements Listener {
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            Pair<JsonObject, JsonObject> a = grabUrl("FriendlyRaids");
+            if (a == null) {
+                System.out.println("null");
+                return;
+            }
+            System.out.println(a.getB().get("url").getAsString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static boolean updateFile(Pair<JsonObject, JsonObject> dataPair, JavaPlugin plugin) throws IOException {
         JsonObject jsonObject = dataPair.getA();
         JsonObject dataJson = dataPair.getB();
