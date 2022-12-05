@@ -12,26 +12,26 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class KamiConfigManager {
-    public static void parse(KamiConfig... kamiConfigs) {
-        for (KamiConfig kamiConfig : kamiConfigs) {
-            try {
-                parse(kamiConfig);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
-    private static void parse(KamiConfig kamiConfig) throws Exception {
-        YamlHandler yamlHandler = new YamlHandler(kamiConfig.getFile());
+    /**
+     * Loads a config .yml file into a KamiConfig
+     * @param kamiConfig The KamiConfig to load its file into
+     */
+    public static void loadKamiConfigFromFile(KamiConfig kamiConfig) {
+        File file = kamiConfig.getFile();
+        YamlHandler yamlHandler = new YamlHandler(file);
         YamlHandler.YamlConfiguration config = yamlHandler.loadConfig(false);
 
-        List<ConfigComment> comments = new ArrayList<>();
+        // Key, FieldName
+        Map<String, String> fieldMappings = new HashMap<>();
 
+        // Fill the Field mappings
         for (Field field : kamiConfig.getClass().getDeclaredFields()) {
             ConfigValue annotation;
 
@@ -39,11 +39,55 @@ public class KamiConfigManager {
             if (!field.isAnnotationPresent(ConfigValue.class)) { continue; }
             annotation = field.getAnnotation(ConfigValue.class);
 
-            // Set the config values
+            // Store it
+            fieldMappings.put(annotation.key(), field.getName());
+        }
+
+        // Loop through all the keys in the config, and update the KamiConfig variables
+        for (String key : config.getKeys(true)) {
+            try {
+                String fieldName = fieldMappings.getOrDefault(key, null);
+                if (fieldName == null) { continue; }
+                Field field = kamiConfig.getClass().getDeclaredField(fieldName);
+
+                field.setAccessible(true);
+                field.set(kamiConfig, config.get(key));
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    /**
+     * Saves KamiConfig(s) to their file(s)
+     * @param kamiConfig The KamiConfig to save
+     */
+    public static void saveKamiConfigToFile(KamiConfig kamiConfig) {
+        try {
+            saveInternal(kamiConfig);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void saveInternal(KamiConfig kamiConfig) throws Exception {
+        YamlHandler yamlHandler = new YamlHandler(kamiConfig.getFile());
+        YamlHandler.YamlConfiguration config = yamlHandler.loadConfig(false);
+
+        List<ConfigComment> comments = new ArrayList<>();
+
+        // Loop through all the fields in the KamiConfig
+        for (Field field : kamiConfig.getClass().getDeclaredFields()) {
+            ConfigValue annotation;
+
+            field.setAccessible(true);
+            if (!field.isAnnotationPresent(ConfigValue.class)) { continue; }
+            annotation = field.getAnnotation(ConfigValue.class);
+
+            // Set the config values to the current KamiConfig value
             if (!annotation.key().isEmpty()) {
-                if (!config.contains(annotation.key())) {
-                    config.set(annotation.key(), field.get(kamiConfig));
-                }
+                config.set(annotation.key(), field.get(kamiConfig));
             }
 
             // Add to the comments list for post processing
