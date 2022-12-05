@@ -217,8 +217,29 @@ public class YamlHandler {
             return (Double) get(key);
         }
 
-        public Set<String> getKeys() {
-            return data.keySet();
+        /**
+         * Returns the keys of the config
+         * If Deep is enabled, it will dig and find all valid keys that resolve to a value
+         * @param deep Whether to search for all sub-keys
+         * @return The list of keys found
+         */
+        public Set<String> getKeys(boolean deep) {
+            if (!deep) {
+                return data.keySet();
+            }else {
+                Set<String> keys = new HashSet<>();
+
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    if (entry.getValue() instanceof LinkedHashMap) {
+                        for (String k : getConfigurationSection(entry.getKey()).getKeys(true)) {
+                            keys.add(entry.getKey() + "." + k);
+                        }
+                    }else {
+                        keys.add(entry.getKey());
+                    }
+                }
+                return keys;
+            }
         }
 
         public boolean contains(String key) { return data.containsKey(key); }
@@ -285,8 +306,23 @@ public class YamlHandler {
             return (Double) data.get(key);
         }
 
-        public Set<String> getKeys() {
-            return data.keySet();
+        public Set<String> getKeys(boolean deep) {
+            if (!deep) {
+                return data.keySet();
+            }else {
+                Set<String> keys = new HashSet<>();
+
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    if (entry.getValue() instanceof LinkedHashMap) {
+                        for (String k : getConfigurationSection(entry.getKey()).getKeys(true)) {
+                            keys.add(entry.getKey() + "." + k);
+                        }
+                    }else {
+                        keys.add(entry.getKey());
+                    }
+                }
+                return keys;
+            }
         }
 
         public boolean contains(String key) { return data.containsKey(key); }
