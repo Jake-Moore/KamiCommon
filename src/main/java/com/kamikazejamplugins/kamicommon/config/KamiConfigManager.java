@@ -103,7 +103,7 @@ public class KamiConfigManager {
                     if (!c.isEmpty()) {
                         c = c.replace("\n", "\n# ");
 
-                        String subKey = StringUtil.combine(StringUtil.subList(parts, 0, i+1), ".");
+                        String subKey = StringUtil.combine(StringUtil.subList(parts, 0, parts.length-i), ".");
                         comments.add(new ConfigComment(subKey, c, true));
                     }
                     i++;
