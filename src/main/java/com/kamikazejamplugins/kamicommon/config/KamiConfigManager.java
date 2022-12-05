@@ -23,7 +23,7 @@ public class KamiConfigManager {
      * Loads a config .yml file into a KamiConfig
      * @param kamiConfig The KamiConfig to load its file into
      */
-    public static void loadKamiConfigFromFile(KamiConfig kamiConfig) {
+    public static YamlHandler.YamlConfiguration loadKamiConfigFromFile(KamiConfig kamiConfig) {
         File file = kamiConfig.getFile();
         YamlHandler yamlHandler = new YamlHandler(file);
         YamlHandler.YamlConfiguration config = yamlHandler.loadConfig(false);
@@ -62,7 +62,7 @@ public class KamiConfigManager {
                 e.printStackTrace();
             }
         }
-
+        return config;
     }
 
     /**
