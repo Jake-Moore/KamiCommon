@@ -190,6 +190,8 @@ public class YamlHandler {
             return (String) get(key);
         }
 
+        public int getInt(String key) { return getInteger(key); }
+
         public int getInteger(String key) {
             return Integer.parseInt(get(key).toString());
         }
@@ -278,6 +280,8 @@ public class YamlHandler {
         public String getString(String key) {
             return (String) data.get(key);
         }
+
+        public int getInt(String key) { return getInteger(key); }
 
         public int getInteger(String key) {
             return Integer.parseInt(data.get(key).toString());
