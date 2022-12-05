@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * A class that represents a configuration file <p>
- * Key methods are {@link KamiConfig#addCommentAbove(String, String)} and {@link KamiConfig#addCommentInline(String, String)} <p>
+ * Key methods are {@link KamiConfig#addCommentAbove(String, String...)} and {@link KamiConfig#addCommentInline(String, String)} <p>
  * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <p>
  * <p></p>
  * When extending this class, provide the File to the config in the super, and then add all desired comments <p>
@@ -47,10 +47,16 @@ public abstract class KamiConfig {
      * Adds a comment above the specified key
      * @param key The key to add the comment above
      * @param comment The comment to add (can be multiple lines separated by \n)
-     * Note: the code will split lines by "\n", empty lines will be generated as newlines without a #
+     * Note: Each string will split lines by "\n", empty lines will be generated as newlines without a #
+     * You can supply one string with \n or multiple strings.
      */
-    public void addCommentAbove(String key, String comment) {
-        comments.add(new ConfigComment(key, comment, true));
+    public void addCommentAbove(String key, String... comment) {
+        List<String> comments = new ArrayList<>();
+        for (String s : comment) {
+            comments.addAll(Arrays.asList(s.split("\n")));
+        }
+
+        this.comments.add(new ConfigComment(key, comments, true));
         checkAutoSave();
     }
 
@@ -60,7 +66,7 @@ public abstract class KamiConfig {
      * @param comment The comment to add (will be formatted like "# {comment}")
      */
     public void addCommentInline(String key, String comment) {
-        comments.add(new ConfigComment(key, comment, false));
+        comments.add(new ConfigComment(key, Collections.singletonList(comment), false));
         checkAutoSave();
     }
 
