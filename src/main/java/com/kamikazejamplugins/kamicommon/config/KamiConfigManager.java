@@ -39,8 +39,11 @@ public class KamiConfigManager {
             if (!field.isAnnotationPresent(ConfigValue.class)) { continue; }
             annotation = field.getAnnotation(ConfigValue.class);
 
+            // Define the fieldName (split by _ and take only the last argument)
+            String fieldName = field.getName().split("_")[field.getName().split("_").length-1];
+
             // Build the key from the path and the field Name
-            String key = (annotation.path().isEmpty()) ? field.getName() : annotation.path() + "." + field.getName();
+            String key = (annotation.path().isEmpty()) ? fieldName : annotation.path() + "." + fieldName;
 
             // Store it
             fieldMappings.put(key, field.getName());
@@ -88,8 +91,11 @@ public class KamiConfigManager {
             if (!field.isAnnotationPresent(ConfigValue.class)) { continue; }
             annotation = field.getAnnotation(ConfigValue.class);
 
+            // Define the fieldName (split by _ and take only the last argument)
+            String fieldName = field.getName().split("_")[field.getName().split("_").length-1];
+
             // Build the key from the path and the field Name
-            String key = (annotation.path().isEmpty()) ? field.getName() : annotation.path() + "." + field.getName();
+            String key = (annotation.path().isEmpty()) ? fieldName : annotation.path() + "." + fieldName;
 
             // Set the config values to the current KamiConfig value
             config.set(key, field.get(kamiConfig));
