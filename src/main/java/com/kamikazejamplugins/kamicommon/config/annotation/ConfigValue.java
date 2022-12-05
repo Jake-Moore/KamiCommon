@@ -9,9 +9,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ConfigValue {
     /**
-     * The key of the config value
+     * The path before the key (key = field name)
+     * Can be "" (default) to make the full key = field name
      */
-    String key() default "";
+    String path() default "";
 
     /**
      * The comment to be placed after (inline with) the config option

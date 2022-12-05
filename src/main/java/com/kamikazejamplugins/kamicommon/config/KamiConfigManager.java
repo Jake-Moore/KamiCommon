@@ -39,8 +39,11 @@ public class KamiConfigManager {
             if (!field.isAnnotationPresent(ConfigValue.class)) { continue; }
             annotation = field.getAnnotation(ConfigValue.class);
 
+            // Build the key from the path and the field Name
+            String key = (annotation.path().isEmpty()) ? field.getName() : annotation.path() + "." + field.getName();
+
             // Store it
-            fieldMappings.put(annotation.key(), field.getName());
+            fieldMappings.put(key, field.getName());
         }
 
         // Loop through all the keys in the config, and update the KamiConfig variables
@@ -85,22 +88,23 @@ public class KamiConfigManager {
             if (!field.isAnnotationPresent(ConfigValue.class)) { continue; }
             annotation = field.getAnnotation(ConfigValue.class);
 
+            // Build the key from the path and the field Name
+            String key = (annotation.path().isEmpty()) ? field.getName() : annotation.path() + "." + field.getName();
+
             // Set the config values to the current KamiConfig value
-            if (!annotation.key().isEmpty()) {
-                config.set(annotation.key(), field.get(kamiConfig));
-            }
+            config.set(key, field.get(kamiConfig));
 
             // Add to the comments list for post processing
             if (annotation.above().length != 0) {
                 int i = 0;
-                String[] parts = annotation.key().split("\\.");
+                String[] parts = key.split("\\.");
 
                 for (String c : annotation.above()) {
                     if (!c.isEmpty()) {
                         c = c.replace("\n", "\n# ");
 
-                        String key = StringUtil.combine(StringUtil.subList(parts, 0, i+1), ".");
-                        comments.add(new ConfigComment(key, c, true));
+                        String subKey = StringUtil.combine(StringUtil.subList(parts, 0, i+1), ".");
+                        comments.add(new ConfigComment(subKey, c, true));
                     }
                     i++;
                 }
@@ -108,7 +112,7 @@ public class KamiConfigManager {
             if (!annotation.inline().isEmpty()) {
                 String c = annotation.inline();
                 c = c.replace("\n", " ");
-                comments.add(new ConfigComment(annotation.key(), c, false));
+                comments.add(new ConfigComment(key, c, false));
             }
         }
         // Save the FileConfiguration (without comments)
