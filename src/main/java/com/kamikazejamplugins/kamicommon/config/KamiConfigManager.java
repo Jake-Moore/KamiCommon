@@ -45,7 +45,7 @@ public class KamiConfigManager {
                     // We've found the key we're looking for
                     if (comment.isAbove()) {
                         String spacing = StringUtil.repeat("  ", searchingFor);
-                        String[] commentLines = comment.getComment().split("\n");
+                        String[] commentLines = comment.getComment().toArray(new String[0]);
                         // We need to loop backwards since each line is added to the top of the key
                         for (int j = commentLines.length - 1; j >= 0; j--) {
                             String commentLine = commentLines[j];
