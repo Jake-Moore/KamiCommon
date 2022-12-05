@@ -97,6 +97,8 @@ public class KamiConfigManager {
 
                 for (String c : annotation.above()) {
                     if (!c.isEmpty()) {
+                        c = c.replace("\n", "\n# ");
+
                         String key = StringUtil.combine(StringUtil.subList(parts, 0, i+1), ".");
                         comments.add(new ConfigComment(key, c, true));
                     }
@@ -104,7 +106,9 @@ public class KamiConfigManager {
                 }
             }
             if (!annotation.inline().isEmpty()) {
-                comments.add(new ConfigComment(annotation.key(), annotation.inline(), false));
+                String c = annotation.inline();
+                c = c.replace("\n", " ");
+                comments.add(new ConfigComment(annotation.key(), c, false));
             }
         }
         // Save the FileConfiguration (without comments)
