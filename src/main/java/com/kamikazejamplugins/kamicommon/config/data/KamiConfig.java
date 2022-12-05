@@ -1,6 +1,7 @@
 package com.kamikazejamplugins.kamicommon.config.data;
 
 import com.kamikazejamplugins.kamicommon.config.KamiConfigManager;
+import com.kamikazejamplugins.kamicommon.yaml.YamlHandler;
 import lombok.Getter;
 
 import java.io.File;
@@ -12,6 +13,7 @@ import java.io.File;
 @SuppressWarnings("unused")
 public abstract class KamiConfig {
     @Getter private File file;
+    @Getter YamlHandler.YamlConfiguration cfg;
 
     public static <T extends KamiConfig> T create(Class<T> configClass, File file) throws Exception {
         KamiConfig config = configClass.newInstance();
@@ -51,6 +53,6 @@ public abstract class KamiConfig {
      * Reloads the config from the file.
      */
     public void reload() {
-        KamiConfigManager.loadKamiConfigFromFile(this);
+        this.cfg = KamiConfigManager.loadKamiConfigFromFile(this);
     }
 }
