@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class KamiConfigManager {
@@ -127,7 +125,7 @@ public class KamiConfigManager {
         List<String> lines = Files.readAllLines(kamiConfig.getFile().toPath(), StandardCharsets.UTF_8);
 
         // Add nice spacing
-        saveWithSpaces(lines, kamiConfig);
+        //saveWithSpaces(lines, kamiConfig);
 
         // Add the comments to the file
         for (ConfigComment comment : comments) {
@@ -137,30 +135,32 @@ public class KamiConfigManager {
         Files.write(kamiConfig.getFile().toPath(), lines, StandardCharsets.UTF_8);
     }
 
-    private static void saveWithSpaces(List<String> lines, KamiConfig kamiConfig) {
-        // For every line that doesn't start with a space, or a comment, add a newline before it
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            String starts = line.split(" ")[0];
-            Pattern pattern = Pattern.compile("([\\w']+):");
-
-            Matcher matcher = pattern.matcher(starts);
-            if (i > 0 && matcher.find()) {
-                String key = starts.replace(":", "");
-
-                // Add a newLine above the key if there is going to also be a comment
-                try {
-                    Field field = kamiConfig.getClass().getDeclaredField(key);
-                    field.setAccessible(true);
-                    ConfigValue annotation = field.getAnnotation(ConfigValue.class);
-                    if (annotation.above().length != 0) {
-                        lines.add(i, "");
-                        i++;
-                    }
-                } catch (Exception ignored) {}
-            }
-        }
-    }
+//    private static void saveWithSpaces(List<String> lines, KamiConfig kamiConfig) {
+//        // For every line that doesn't start with a space, or a comment, add a newline before it
+//        for (int i = 0; i < lines.size(); i++) {
+//            String line = lines.get(i);
+//            String starts = line.split(" ")[0];
+//            Pattern pattern = Pattern.compile("([\\w']+):");
+//
+//            Matcher matcher = pattern.matcher(starts);
+//            if (i > 0 && matcher.find()) {
+//                String key = starts.replace(":", "");
+//
+//                // Add a newLine above the key if there is going to also be a comment
+//                // Does not support depth of keys, ex "key1.key2.key3"
+//                //    (key3 has annotation, but key1 won't be spaced)
+//                try {
+//                    Field field = kamiConfig.getClass().getDeclaredField(key);
+//                    field.setAccessible(true);
+//                    ConfigValue annotation = field.getAnnotation(ConfigValue.class);
+//                    if (annotation.above().length != 0) {
+//                        lines.add(i, "");
+//                        i++;
+//                    }
+//                } catch (Exception ignored) {}
+//            }
+//        }
+//    }
 
     private static void addComment(List<String> lines, ConfigComment comment) {
         String[] parts = comment.getKey().split("\\.");
@@ -176,8 +176,19 @@ public class KamiConfigManager {
                     // We've found the key we're looking for
                     if (comment.isAbove()) {
                         String spacing = StringUtil.repeat("  ", searchingFor);
-                        String c = comment.getComment().replace("\n", "\n" + spacing + "# ");
-                        lines.add(i, spacing + "# " + c);
+                        String[] commentLines = comment.getComment().split("\n");
+                        // We need to loop backwards since each line is added to the top of the key
+                        for (int j = commentLines.length - 1; j >= 0; j--) {
+                            String commentLine = commentLines[j];
+                            if (commentLine.trim().isEmpty()) {
+                                lines.add(i, "");
+                            } else {
+                                lines.add(i, spacing + "# " + commentLine);
+                            }
+                        }
+
+                        //String c = comment.getComment().replace("\n", "\n" + spacing + "# ");
+                        //lines.add(i, spacing + "# " + c);
                     }else {
                         lines.set(i, line + " # " + comment.getComment());
                     }
