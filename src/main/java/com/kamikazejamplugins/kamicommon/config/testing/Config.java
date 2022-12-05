@@ -13,7 +13,7 @@ package com.kamikazejamplugins.kamicommon.config.testing;
 //    @ConfigValue(path = "settings", above = {"Test comment"})
 //    public String testString = "test";
 //
-//    @ConfigValue(path = "settings2.options")
+//    @ConfigValue(path = "settings2", above = {"Test comment1\nTest Comment2\nSettings Comment"})
 //    public int options_xi = 0;
 //
 //    @ConfigValue(path = "settings2.options")
