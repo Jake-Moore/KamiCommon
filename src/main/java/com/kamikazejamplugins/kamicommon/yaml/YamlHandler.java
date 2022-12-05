@@ -5,7 +5,10 @@ import lombok.Getter;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -65,10 +68,10 @@ public class YamlHandler {
     }
 
     private LinkedHashMap<String, Object> addDefaults(LinkedHashMap<String, Object> config) {
-        InputStream defConfigStream = getClass().getResourceAsStream(File.separator + fileName);
+        InputStream defConfigStream = getClass().getClassLoader().getResourceAsStream(File.separator + configFile.getName());
         if (defConfigStream == null) {
             System.out.println(ANSI.RED
-                    + "Warning: Could NOT find config resource (" + configFile.getPath() + "), could not add defaults!"
+                    + "Warning: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!"
                     + ANSI.RESET);
             save();
             return config;
