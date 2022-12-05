@@ -3,6 +3,7 @@ package com.kamikazejamplugins.kamicommon.util;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -70,5 +71,34 @@ public class StringUtil {
             }
         }
         return string.toString();
+    }
+
+    public static String repeat(String s, int times) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < times; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
+    public static String combine(List<String> parts, String between) {
+        return combine(parts.toArray(new String[0]), between);
+    }
+
+    public static String combine(String[] parts, String between) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            if (i < parts.length - 1) {
+                sb.append(parts[i]).append(between);
+            }else {
+                sb.append(parts[i]);
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String[] subList(String[] string, int start, int end) {
+        List<String> list = new ArrayList<>(Arrays.asList(string));
+        return list.subList(start, end).toArray(new String[0]);
     }
 }

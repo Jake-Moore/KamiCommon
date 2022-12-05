@@ -7,7 +7,7 @@ import com.google.gson.JsonParser;
 import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.util.SimpleStringCoder;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
-import com.kamikazejamplugins.kamicommon.config.ConfigManager;
+import com.kamikazejamplugins.kamicommon.yaml.ConfigManager;
 import com.kamikazejamplugins.kamicommon.util.Pair;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
