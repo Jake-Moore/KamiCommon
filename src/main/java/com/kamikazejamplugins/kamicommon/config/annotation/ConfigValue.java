@@ -21,13 +21,13 @@ public @interface ConfigValue {
 
     /**
      * The comment(s) to be placed above the config option(s) <p>
-     * In the form String[] where each element matches the keys of increasing depth <p>
-     * Example: <b>key = "A.B", above = {"CommentA", "CommentB"}</b> results in the following: <p>
+     * In the form String[] where each element matches the keys of reverse depth <p>
+     * Example: <b>key = "A.B", above = {"CommentB", "CommentA"}</b> results in the following: <p>
      * # CommentA                                 <p>
      * A:                                         <p>
      * &nbsp; # CommentB                          <p>
      * &nbsp; B: ...                              <p>
-     * If you were to remove CommentB, it would only write CommentA, but to only write CommentB you need {"", "CommentB"}
+     * If you were to remove CommentA, it would only write CommentB, and to only write CommentA you need to skip B {"", "CommentA"}
      */
     String[] above() default {};
 }

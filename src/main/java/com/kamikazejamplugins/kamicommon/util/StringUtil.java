@@ -97,6 +97,12 @@ public class StringUtil {
         return sb.toString();
     }
 
+    /**
+     * @param string The String[] to split
+     * @param start The index to start at (inclusive)
+     * @param end The index to end at (exclusive)
+     * @return The resulting String[]
+     */
     public static String[] subList(String[] string, int start, int end) {
         List<String> list = new ArrayList<>(Arrays.asList(string));
         return list.subList(start, end).toArray(new String[0]);
