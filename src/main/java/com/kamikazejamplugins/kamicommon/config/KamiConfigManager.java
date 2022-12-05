@@ -7,7 +7,6 @@ import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.yaml.YamlHandler;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class KamiConfigManager {
@@ -122,17 +123,48 @@ public class KamiConfigManager {
         // Save the FileConfiguration (without comments)
         config.save();
 
+        // Store the lines here so that we don't have to read the file multiple times
+        List<String> lines = Files.readAllLines(kamiConfig.getFile().toPath(), StandardCharsets.UTF_8);
+
+        // Add nice spacing
+        saveWithSpaces(lines, kamiConfig);
+
         // Add the comments to the file
         for (ConfigComment comment : comments) {
-            addComment(kamiConfig.getFile(), comment);
+            addComment(lines, comment);
+        }
+
+        Files.write(kamiConfig.getFile().toPath(), lines, StandardCharsets.UTF_8);
+    }
+
+    private static void saveWithSpaces(List<String> lines, KamiConfig kamiConfig) {
+        // For every line that doesn't start with a space, or a comment, add a newline before it
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String starts = line.split(" ")[0];
+            Pattern pattern = Pattern.compile("([\\w']+):");
+
+            Matcher matcher = pattern.matcher(starts);
+            if (i > 0 && matcher.find()) {
+                String key = starts.replace(":", "");
+
+                // Add a newLine above the key if there is going to also be a comment
+                try {
+                    Field field = kamiConfig.getClass().getDeclaredField(key);
+                    field.setAccessible(true);
+                    ConfigValue annotation = field.getAnnotation(ConfigValue.class);
+                    if (annotation.above().length != 0) {
+                        lines.add(i, "");
+                        i++;
+                    }
+                } catch (Exception ignored) {}
+            }
         }
     }
 
-    private static void addComment(File file, ConfigComment comment) throws IOException {
+    private static void addComment(List<String> lines, ConfigComment comment) {
         String[] parts = comment.getKey().split("\\.");
         int searchingFor = 0;
-
-        List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -155,7 +187,5 @@ public class KamiConfigManager {
                 }
             }
         }
-
-        Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
     }
 }

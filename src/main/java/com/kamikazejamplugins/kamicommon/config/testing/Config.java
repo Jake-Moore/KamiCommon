@@ -10,6 +10,9 @@ package com.kamikazejamplugins.kamicommon.config.testing;
 //@Getter @Setter
 //public class Config extends KamiConfig {
 //
+//    @ConfigValue(above = "This is a test config")
+//    public String cmdHelpPrefix = "Test";
+//
 //    @ConfigValue(path = "settings", above = {"Test comment"})
 //    public String testString = "test";
 //
@@ -23,7 +26,6 @@ package com.kamikazejamplugins.kamicommon.config.testing;
 //    public int options_z = 0;
 //
 //    public static void main(String[] args) throws Exception {
-//        Config config = KamiConfig.create(Config.class, new File("C:\\Users\\Jake\\Desktop\\test.yml"));
-//        config.getOptions_xi();
+//        KamiConfig.create(Config.class, new File("C:\\Users\\Jake\\Desktop\\test.yml"));
 //    }
 //}
