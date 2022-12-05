@@ -107,8 +107,6 @@ public class KamiConfigManager {
 
                 for (String c : annotation.above()) {
                     if (!c.isEmpty()) {
-                        c = c.replace("\n", "\n# ");
-
                         String subKey = StringUtil.combine(StringUtil.subList(parts, 0, parts.length-i), ".");
                         comments.add(new ConfigComment(subKey, c, true));
                     }
@@ -145,7 +143,9 @@ public class KamiConfigManager {
 
                     // We've found the key we're looking for
                     if (comment.isAbove()) {
-                        lines.add(i, StringUtil.repeat("  ", searchingFor) + "# " + comment.getComment());
+                        String spacing = StringUtil.repeat("  ", searchingFor);
+                        String c = comment.getComment().replace("\n", "\n" + spacing + "# ");
+                        lines.add(i, spacing + "# " + c);
                     }else {
                         lines.set(i, line + " # " + comment.getComment());
                     }
