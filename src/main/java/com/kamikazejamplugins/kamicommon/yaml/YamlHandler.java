@@ -14,6 +14,13 @@ public class YamlHandler {
     private final File configFile;
     private final String fileName;
     private final YamlConfiguration config;
+
+    public YamlHandler(File configFile) {
+        this.configFile = configFile;
+        this.fileName = configFile.getName();
+        this.config = null;
+    }
+
     public YamlHandler(File configFile, String fileName) {
         this.configFile = configFile;
         this.fileName = fileName;
@@ -86,6 +93,10 @@ public class YamlHandler {
         public YamlConfiguration(LinkedHashMap<String, Object> data, File configFile) {
             this.data = data;
             this.configFile = configFile;
+        }
+
+        public void set(String key, Object value) {
+            put(key, value);
         }
 
         public void put(String key, Object value) {
@@ -220,16 +231,7 @@ public class YamlHandler {
                 options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                 options.setAllowUnicode(true);
 
-                Yaml yaml = new Yaml(options);
-                InputStream is = Files.newInputStream(configFile.toPath());
-                Map<String, Object> data = yaml.load(is); is.close();
-
-                StringWriter writer = new StringWriter();
-                yaml.dump(data, writer);
-                BufferedWriter bw = Files.newBufferedWriter(configFile.toPath());
-                bw.write(writer.toString());
-                bw.close();
-                //new Yaml(options).dump(data, new FileWriter(configFile));
+                new Yaml(options).dump(data, new FileWriter(configFile));
             } catch(IOException e) {
                 e.printStackTrace();
             }
