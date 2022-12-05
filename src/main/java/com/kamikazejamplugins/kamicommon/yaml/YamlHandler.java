@@ -86,13 +86,41 @@ public class YamlHandler {
         return config;
     }
 
-    @SuppressWarnings({"unused", "unchecked"})
-    public static class YamlConfiguration {
-        @Getter private final LinkedHashMap<String, Object> data;
+    @SuppressWarnings({"unused"})
+    public static class YamlConfiguration extends MemorySection {
         private final File configFile;
         public YamlConfiguration(LinkedHashMap<String, Object> data, File configFile) {
-            this.data = data;
+            super(data);
             this.configFile = configFile;
+        }
+
+        public YamlConfiguration save() {
+            try {
+                DumperOptions options = new DumperOptions();
+                options.setIndent(2);
+                options.setPrettyFlow(true);
+                options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                options.setAllowUnicode(true);
+
+                new Yaml(options).dump(this.getData(), new FileWriter(configFile));
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+            return this;
+        }
+    }
+
+    public static class ConfigurationSection extends MemorySection {
+        public ConfigurationSection(LinkedHashMap<String, Object> data) {
+            super(data);
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "unused"})
+    public static abstract class MemorySection {
+        @Getter private final LinkedHashMap<String, Object> data;
+        public MemorySection(LinkedHashMap<String, Object> data) {
+            this.data = data;
         }
 
         public void set(String key, Object value) {
@@ -183,7 +211,7 @@ public class YamlHandler {
         }
 
         public ConfigurationSection getConfigurationSection(String key) {
-            return new ConfigurationSection((Map<String, Object>) data.get(key));
+            return new ConfigurationSection((LinkedHashMap<String, Object>)data.get(key));
         }
 
         public String getString(String key) {
@@ -201,14 +229,14 @@ public class YamlHandler {
         }
 
         public boolean getBoolean(String key) {
-            if (data.containsKey(key)) {
-                return (Boolean) get(key);
+            if (contains(key)) {
+                return Boolean.parseBoolean(get(key).toString());
             }
             return false;
         }
 
         public List<String> getStringList(String key) {
-            if (data.containsKey(key)) {
+            if (contains(key)) {
                 return (List<String>) get(key);
             }else {
                 return new ArrayList<>();
@@ -244,92 +272,19 @@ public class YamlHandler {
             }
         }
 
-        public boolean contains(String key) { return data.containsKey(key); }
+        public boolean contains(String key) {
+            String[] keys = key.split("\\.");
 
-        public YamlConfiguration save() {
-            try {
-                DumperOptions options = new DumperOptions();
-                options.setIndent(2);
-                options.setPrettyFlow(true);
-                options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                options.setAllowUnicode(true);
-
-                new Yaml(options).dump(data, new FileWriter(configFile));
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-            return this;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static class ConfigurationSection {
-        @Getter private final Map<String, Object> data;
-        public ConfigurationSection(Map<String, Object> data) {
-            this.data = data;
-        }
-
-        public Object get(String key) {
-            return data.get(key);
-        }
-
-        public ConfigurationSection getConfigurationSection(String key) {
-            return new ConfigurationSection((Map<String, Object>) data.get(key));
-        }
-
-        public String getString(String key) {
-            return (String) data.get(key);
-        }
-
-        public int getInt(String key) { return getInteger(key); }
-
-        public int getInteger(String key) {
-            return Integer.parseInt(data.get(key).toString());
-        }
-
-        public long getLong(String key) {
-            return Long.parseLong(data.get(key).toString());
-        }
-
-        public boolean getBoolean(String key) {
-            if (data.containsKey(key)) {
-                return (Boolean) data.get(key);
-            }
-            return false;
-        }
-
-        public List<String> getStringList(String key) {
-            if (data.containsKey(key)) {
-                return (List<String>) data.get(key);
-            }else {
-                return new ArrayList<>();
-            }
-        }
-
-        public double getDouble(String key) {
-            return (Double) data.get(key);
-        }
-
-        public Set<String> getKeys(boolean deep) {
-            if (!deep) {
-                return data.keySet();
-            }else {
-                Set<String> keys = new HashSet<>();
-
-                for (Map.Entry<String, Object> entry : data.entrySet()) {
-                    if (entry.getValue() instanceof LinkedHashMap) {
-                        for (String k : getConfigurationSection(entry.getKey()).getKeys(true)) {
-                            keys.add(entry.getKey() + "." + k);
-                        }
-                    }else {
-                        keys.add(entry.getKey());
-                    }
+            LinkedHashMap<String, Object> map = data;
+            for (int i = 0; i < keys.length-1; i++) {
+                if (map.containsKey(keys[i]) && map.get(keys[i]) instanceof LinkedHashMap) {
+                    map = (LinkedHashMap<String, Object>) map.get(keys[i]);
+                } else {
+                    return false;
                 }
-                return keys;
             }
+            return map.containsKey(keys[keys.length - 1]);
         }
-
-        public boolean contains(String key) { return data.containsKey(key); }
     }
 
     public static class ANSI {
