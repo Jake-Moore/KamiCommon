@@ -2,7 +2,6 @@ package com.kamikazejamplugins.kamicommon.config.data;
 
 import com.kamikazejamplugins.kamicommon.config.KamiConfigManager;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.File;
 
@@ -12,13 +11,24 @@ import java.io.File;
  */
 @SuppressWarnings("unused")
 public abstract class KamiConfig {
-    @Getter @Setter private File file;
+    @Getter private File file;
 
     public static <T extends KamiConfig> T create(Class<T> configClass, File file) throws Exception {
         KamiConfig config = configClass.newInstance();
         config.setFile(file);
         config.load();
         return configClass.cast(config);
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+        try {
+            if (!file.exists() && !file.createNewFile()) {
+                throw new Exception("Failed to create file");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
