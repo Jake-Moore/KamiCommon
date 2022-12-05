@@ -1,0 +1,105 @@
+# This file exists to test Config.java
+
+friendlyRaid:
+  blacklistedCommands:
+    - "startswith:/f tnt"
+    - "startswith:/f chest"
+    - "startswith:/f sethome"
+    - "startswith:/f home"
+    - "startswith:/f setwarp"
+    - "startswith:/f warp"
+    - "startswith:/spawn:&cYou cannot use that here, please use /f friendlyraid forfeit"
+  whitelistedCommands:
+    - "startswith:/f"
+    - "startswith:/shop"
+    - "startswith:/gen"
+    - "startswith:/gens"
+    - "startswith:/printer"
+  blacklistedShopItems:
+    - "MOB_SPAWNER"
+    - "CHEST"
+    - "TRAPPED_CHEST"
+  bufferCounterWallChunks: 6.0
+  preloadChunksPerTick: 3
+  options:
+    baseSize:
+      - "1:1x1 Chunks"
+      - "2:2x2 Chunks"
+      - "3:3x3 Chunks"
+      - "5:5x5 Chunks"
+    baseSizeDefaultIndex: 2
+    bufferSize:
+      - "10:10 Chunks"
+      - "15:15 Chunks"
+      - "20:20 Chunks"
+    sandFrequency:
+      - "0:Disabled"
+      - "2:Every Other Wall"
+      - "3:Every Third Wall"
+      - "4:Every Fourth Wall"
+    oceanChunks:
+      - "0:0 Chunks"
+      - "1:1 Chunk"
+    wallTypes:
+      - "COBBLESTONE:0"
+      - "OBSIDIAN:0:OBSIDIAN"
+    wallTypesDefaultIndex: 1
+    recorded:
+      recordYes: "&aYes"
+      recordNo: "&cNo"
+    mid-chunks: 8
+  maxDurationMinutes: 180
+  maxSimultaneousRaids: 5
+  wagerCurrencies:
+    money: true
+    exp: true
+    tokens: true
+
+frCommandAliases:
+  - "friendlyraid"
+  - "friendlyraids"
+  - "fraid"
+  - "fr"
+factionCommandAliases:
+  - "/f"
+  - "/faction"
+
+tpaCommandAliases:
+  - "call"
+  - "ecall"
+  - "tpa"
+  - "etpa"
+  - "tpask"
+  - "etpask"
+
+spawnRegion:
+  world: "world"
+  x1: -100
+  y1: 1
+  z1: -100
+  x2: 100
+  y2: 256
+  z2: 100
+
+spectate:
+  warmupSec: 0
+  maxY: 280
+  fallBackSpawn:
+    world: "world"
+    x: 0.5
+    y: 100.0
+    z: 0.5
+  blacklisted-commands:
+    - "startswith:/f chest"
+  whitelisted-commands:
+    - "startswith:/f top"
+
+freeItems:
+  enableFreeItemChests: true
+  enableFreeTnt: true
+
+
+tournament:
+  signUpSeconds: 60
+  maxDurationMins: 30
+  allowWagering: false
