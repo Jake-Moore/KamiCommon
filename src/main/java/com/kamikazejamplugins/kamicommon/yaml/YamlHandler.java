@@ -254,7 +254,7 @@ public class YamlHandler {
         }
 
         public ConfigurationSection getConfigurationSection(String key) {
-            return new ConfigurationSection((LinkedHashMap<String, Object>)data.get(key));
+            return new ConfigurationSection((LinkedHashMap<String, Object>) get(key));
         }
 
         public String getString(String key) {
@@ -396,7 +396,7 @@ public class YamlHandler {
         }
 
         public boolean isConfigurationSection(final String path) {
-            return data.get(path) instanceof LinkedHashMap;
+            return get(path) instanceof LinkedHashMap;
         }
 
         public boolean contains(String key) {
