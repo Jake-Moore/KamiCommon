@@ -20,7 +20,7 @@ import java.util.*;
  */
 
 @SuppressWarnings("unused")
-public abstract class KamiConfig {
+public class KamiConfig extends YamlHandler.ConfigurationSection {
     @Getter private final File file;
     private final YamlHandler yamlHandler;
     private YamlHandler.YamlConfiguration config;
@@ -93,57 +93,6 @@ public abstract class KamiConfig {
         thread.start();
     }
 
-
-    // Method to get YamlConfiguration
-    public YamlHandler.YamlConfiguration getYamlConfiguration() { return config; }
-
-
-    // Methods to set values
-    public void set(String key, Object value) { config.put(key, value); }
-    public void setItemStack(String key, ItemStack itemStack) { config.setItemStack(key, itemStack); }
-    public void put(String key, Object value) { config.put(key, value); }
-    public void putString(String key, String value) { config.put(key, value); }
-    public void putBoolean(String key, boolean value) { config.put(key, value); }
-    public void putInteger(String key, int value) { config.put(key, value); }
-    public void putLong(String key, long value) { config.put(key, value); }
-    public void putDouble(String key, double value) { config.putDouble(key, value); }
-
-    // Methods to get values
-    public Object get(String key) { return config.get(key); }
-    public Object get(String key, Object def) { return config.get(key, def); }
-    public YamlHandler.ConfigurationSection getConfigurationSection(String key) { return config.getConfigurationSection(key); }
-    public String getString(String key) { return config.getString(key); }
-    public String getString(String key, String def) { return config.getString(key, def); }
-    public int getInt(String key) { return config.getInteger(key); }
-    public int getInt(String key, int def) { return config.getInteger(key, def); }
-    public int getInteger(String key) { return config.getInteger(key); }
-    public int getInteger(String key, int def) { return config.getInteger(key, def); }
-    public long getLong(String key) { return config.getLong(key); }
-    public long getLong(String key, long def) { return config.getLong(key, def); }
-    public boolean getBoolean(String key) { return config.getBoolean(key); }
-    public boolean getBoolean(String key, boolean def) { return config.getBoolean(key, def); }
-    public List<String> getStringList(String key) { return config.getStringList(key); }
-    public List<String> getStringList(String key, List<String> def) { return config.getStringList(key, def); }
-    public List<Integer> getIntegerList(String key) { return config.getIntegerList(key); }
-    public List<Integer> getIntegerList(String key, List<Integer> def) { return config.getIntegerList(key, def); }
-    public double getDouble(String key) { return config.getDouble(key); }
-    public double getDouble(String key, double def) { return config.getDouble(key, def); }
-    public ItemStack getItemStack(String key) { return config.getItemStack(key); }
-    public ItemStack getItemStack(String key, ItemStack def) { return config.getItemStack(key, def); }
-    /**
-     * Returns the keys of the config
-     * If Deep is enabled, it will dig and find all valid keys that resolve to a value
-     * @param deep Whether to search for all sub-keys
-     * @return The list of keys found
-     */
-    public Set<String> getKeys(boolean deep) { return config.getKeys(deep); }
-    public boolean contains(String key) { return config.contains(key); }
-
-
-
-
-
-
     // Methods to save and reload
     public void save() {
         try {
@@ -159,4 +108,79 @@ public abstract class KamiConfig {
             e.printStackTrace();
         }
     }
+
+
+    // Method to get YamlConfiguration
+    public YamlHandler.YamlConfiguration getYamlConfiguration() { return config; }
+
+
+
+
+    // Below this point are overrides for the ConfigurationSection abstract class
+    // This allows this class to be used as a swap in replacement for a YamlConfiguration (same methods)
+
+
+    @Override public void set(String key, Object value) { config.put(key, value); }
+    @Override public void setItemStack(String key, ItemStack itemStack) { config.setItemStack(key, itemStack); }
+    @Override public void put(String key, Object value) { config.put(key, value); }
+    @Override public void putString(String key, String value) { config.put(key, value); }
+    @Override public void putBoolean(String key, boolean value) { config.put(key, value); }
+    @Override public void putInteger(String key, int value) { config.put(key, value); }
+    @Override public void putLong(String key, long value) { config.put(key, value); }
+    @Override public void putDouble(String key, double value) { config.putDouble(key, value); }
+
+    // Methods to get values
+    @Override public Object get(String key) { return config.get(key); }
+    @Override public Object get(String key, Object def) { return config.get(key, def); }
+    @Override public YamlHandler.MemoryConfiguration getConfigurationSection(String key) { return config.getConfigurationSection(key); }
+
+    @Override public String getString(String key) { return config.getString(key); }
+    @Override public String getString(String key, String def) { return config.getString(key, def); }
+    @Override public boolean isString(String key) { return config.isString(key); }
+
+    @Override public int getInt(String key) { return config.getInt(key); }
+    @Override public int getInt(String key, int def) { return config.getInt(key, def); }
+    @Override public boolean isInt(String key) { return config.isInt(key); }
+
+    @Override public long getLong(String key) { return config.getLong(key); }
+    @Override public long getLong(String key, long def) { return config.getLong(key, def); }
+    @Override public boolean isLong(String key) { return config.isLong(key); }
+
+    @Override public List<?> getList(String key) { return config.getList(key); }
+    @Override public List<?> getList(String path, List<?> def) { return config.getList(path, def); }
+    @Override public boolean isList(String key) { return config.isList(key); }
+
+    @Override public boolean getBoolean(String key) { return config.getBoolean(key); }
+    @Override public boolean getBoolean(String key, boolean def) { return config.getBoolean(key, def); }
+    @Override public boolean isBoolean(String key) { return config.isBoolean(key); }
+
+    @Override public List<String> getStringList(String key) { return config.getStringList(key); }
+    @Override public List<String> getStringList(String key, List<String> def) { return config.getStringList(key, def); }
+
+    @Override public List<Integer> getIntegerList(String key) { return config.getIntegerList(key); }
+    @Override public List<Integer> getIntegerList(String key, List<Integer> def) { return config.getIntegerList(key, def); }
+
+    @Override public double getDouble(String key) { return config.getDouble(key); }
+    @Override public double getDouble(String key, double def) { return config.getDouble(key, def); }
+    @Override public boolean isDouble(String key) { return config.isDouble(key); }
+
+    @Override public float getFloat(String key) { return config.getFloat(key); }
+    @Override public float getFloat(String key, float def) { return config.getFloat(key, def); }
+    @Override public boolean isFloat(String key) { return config.isFloat(key); }
+
+    @Override public ItemStack getItemStack(String key) { return config.getItemStack(key); }
+    @Override public ItemStack getItemStack(String key, ItemStack def) { return config.getItemStack(key, def); }
+
+    /**
+     * Returns the keys of the config
+     * If Deep is enabled, it will dig and find all valid keys that resolve to a value
+     * @param deep Whether to search for all sub-keys
+     * @return The list of keys found
+     */
+    @Override public Set<String> getKeys(boolean deep) { return config.getKeys(deep); }
+
+    @Override public boolean isConfigurationSection(String key) { return config.isConfigurationSection(key); }
+
+    @Override public boolean contains(String key) { return config.contains(key); }
+    @Override public boolean isSet(String key) { return config.isSet(key); }
 }

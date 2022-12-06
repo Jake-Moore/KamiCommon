@@ -156,6 +156,8 @@ public class Config extends KamiConfig {
     }
 
     public static void main(String[] args) {
-        new Config(null, new File("C:\\Users\\Jake\\Desktop\\config.yml"));
+        Config config = new Config(null, new File("C:\\Users\\Jake\\Desktop\\config.yml"));
+
+
     }
 }
