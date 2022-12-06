@@ -113,6 +113,7 @@ public abstract class KamiConfig {
     public long getLong(String key) { return config.getLong(key); }
     public boolean getBoolean(String key) { return config.getBoolean(key); }
     public List<String> getStringList(String key) { return config.getStringList(key); }
+    public List<Integer> getIntegerList(String key) { return config.getIntegerList(key); }
     public double getDouble(String key) { return config.getDouble(key); }
     /**
      * Returns the keys of the config
