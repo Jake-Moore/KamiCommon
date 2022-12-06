@@ -352,7 +352,7 @@ public class YamlHandler {
             // Load Enchants
             if (contains(key + ".enchantments")) {
                 for (String enchantName : getConfigurationSection(key + ".enchantments").getKeys(false)) {
-                    item.addEnchantment(Enchantment.getByName(enchantName), getInt(key + ".enchantments." + enchantName));
+                    meta.addEnchant(Enchantment.getByName(enchantName), getInt(key + ".enchantments." + enchantName), true);
                 }
             }
 
