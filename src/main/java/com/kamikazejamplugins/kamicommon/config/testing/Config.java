@@ -13,12 +13,15 @@ package com.kamikazejamplugins.kamicommon.config.testing;
 //        super(file);
 //
 //        addCommentAbove("friendlyRaid", "This is a comment above the key");
-//        addCommentAbove("friendlyRaid.blacklistedCommands", "Test comment above");
+//        addCommentAbove("friendlyRaid.blacklistedCommands",
+//                "Test comment above",
+//                "<br>"
+//        );
 //
 //        addCommentAbove("friendlyRaid.blacklistedCommands", "Test");
 //    }
 //
 //    public static void main(String[] args) {
-//        Config config = new Config(new File("C:\\Users\\Jake\\Desktop\\config.yml"));
+//        new Config(new File("C:\\Users\\Jake\\Desktop\\config.yml"));
 //    }
 //}
