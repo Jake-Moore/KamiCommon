@@ -8,9 +8,11 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,17 +22,20 @@ import java.util.*;
 
 @SuppressWarnings("unused")
 public class YamlHandler {
+    @Nullable private final JavaPlugin plugin;
     private final File configFile;
     private final String fileName;
     private final YamlConfiguration config;
 
-    public YamlHandler(File configFile) {
+    public YamlHandler(@Nullable JavaPlugin plugin, File configFile) {
+        this.plugin = plugin;
         this.configFile = configFile;
         this.fileName = configFile.getName();
         this.config = null;
     }
 
-    public YamlHandler(File configFile, String fileName) {
+    public YamlHandler(@Nullable JavaPlugin plugin, File configFile, String fileName) {
+        this.plugin = plugin;
         this.configFile = configFile;
         this.fileName = fileName;
         this.config = null;
@@ -74,7 +79,13 @@ public class YamlHandler {
     }
 
     private LinkedHashMap<String, Object> addDefaults(LinkedHashMap<String, Object> config) {
-        InputStream defConfigStream = getClass().getClassLoader().getResourceAsStream(File.separator + configFile.getName());
+        InputStream defConfigStream;
+        if (plugin != null) {
+            defConfigStream = plugin.getResource(configFile.getName());
+        }else {
+            defConfigStream = getClass().getClassLoader().getResourceAsStream(File.separator + configFile.getName());
+        }
+
         if (defConfigStream == null) {
             System.out.println(ANSI.RED
                     + "Warning: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!"

@@ -4,7 +4,9 @@ import com.kamikazejamplugins.kamicommon.config.KamiConfigManager;
 import com.kamikazejamplugins.kamicommon.yaml.YamlHandler;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.*;
 
@@ -27,7 +29,7 @@ public abstract class KamiConfig {
     @Getter private final List<ConfigComment> comments = new ArrayList<>();
     private Thread thread = null;
 
-    public KamiConfig(File file) {
+    public KamiConfig(@Nullable JavaPlugin plugin, File file) {
         this.file = file;
 
         // Ensure the file exists
@@ -39,7 +41,7 @@ public abstract class KamiConfig {
             e.printStackTrace();
         }
 
-        this.yamlHandler = new YamlHandler(file);
+        this.yamlHandler = new YamlHandler(plugin, file);
         this.config = yamlHandler.loadConfig(true);
         save();
     }
@@ -84,7 +86,7 @@ public abstract class KamiConfig {
 
             // If the size is the same or more, save it
             if (comments.size() >= size) {
-                System.out.println("Saving " + comments.size() + " comments");
+                //System.out.println("Saving " + comments.size() + " comments");
                 save();
             }
         });
