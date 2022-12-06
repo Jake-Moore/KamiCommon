@@ -3,6 +3,7 @@ package com.kamikazejamplugins.kamicommon.config.data;
 import com.kamikazejamplugins.kamicommon.config.KamiConfigManager;
 import com.kamikazejamplugins.kamicommon.yaml.YamlHandler;
 import lombok.Getter;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.*;
@@ -97,6 +98,7 @@ public abstract class KamiConfig {
 
     // Methods to set values
     public void set(String key, Object value) { config.put(key, value); }
+    public void setItemStack(String key, ItemStack itemStack) { config.setItemStack(key, itemStack); }
     public void put(String key, Object value) { config.put(key, value); }
     public void putString(String key, String value) { config.put(key, value); }
     public void putBoolean(String key, boolean value) { config.put(key, value); }
@@ -106,15 +108,26 @@ public abstract class KamiConfig {
 
     // Methods to get values
     public Object get(String key) { return config.get(key); }
+    public Object get(String key, Object def) { return config.get(key, def); }
     public YamlHandler.ConfigurationSection getConfigurationSection(String key) { return config.getConfigurationSection(key); }
     public String getString(String key) { return config.getString(key); }
+    public String getString(String key, String def) { return config.getString(key, def); }
     public int getInt(String key) { return config.getInteger(key); }
+    public int getInt(String key, int def) { return config.getInteger(key, def); }
     public int getInteger(String key) { return config.getInteger(key); }
+    public int getInteger(String key, int def) { return config.getInteger(key, def); }
     public long getLong(String key) { return config.getLong(key); }
+    public long getLong(String key, long def) { return config.getLong(key, def); }
     public boolean getBoolean(String key) { return config.getBoolean(key); }
+    public boolean getBoolean(String key, boolean def) { return config.getBoolean(key, def); }
     public List<String> getStringList(String key) { return config.getStringList(key); }
+    public List<String> getStringList(String key, List<String> def) { return config.getStringList(key, def); }
     public List<Integer> getIntegerList(String key) { return config.getIntegerList(key); }
+    public List<Integer> getIntegerList(String key, List<Integer> def) { return config.getIntegerList(key, def); }
     public double getDouble(String key) { return config.getDouble(key); }
+    public double getDouble(String key, double def) { return config.getDouble(key, def); }
+    public ItemStack getItemStack(String key) { return config.getItemStack(key); }
+    public ItemStack getItemStack(String key, ItemStack def) { return config.getItemStack(key, def); }
     /**
      * Returns the keys of the config
      * If Deep is enabled, it will dig and find all valid keys that resolve to a value
