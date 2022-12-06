@@ -107,4 +107,24 @@ public class StringUtil {
         List<String> list = new ArrayList<>(Arrays.asList(string));
         return list.subList(start, end).toArray(new String[0]);
     }
+
+    public static String reverseT(String s) {
+        return s.replace("§", "&");
+    }
+
+    public static List<String> reverseT(List<String> s) {
+        List<String> reversed = new ArrayList<>();
+        for (String str : s) {
+            reversed.add(reverseT(str));
+        }
+        return reversed;
+    }
+
+    public static String[] reverseT(String[] s) {
+        List<String> reversed = new ArrayList<>();
+        for (String str : s) {
+            reversed.add(reverseT(str));
+        }
+        return reversed.toArray(new String[0]);
+    }
 }
