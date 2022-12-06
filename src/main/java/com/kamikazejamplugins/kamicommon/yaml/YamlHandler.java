@@ -246,6 +246,14 @@ public class YamlHandler {
             }
         }
 
+        public List<Integer> getIntegerList(String key) {
+            if (contains(key)) {
+                return (List<Integer>) get(key);
+            }else {
+                return new ArrayList<>();
+            }
+        }
+
         public double getDouble(String key) {
             return (Double) get(key);
         }
