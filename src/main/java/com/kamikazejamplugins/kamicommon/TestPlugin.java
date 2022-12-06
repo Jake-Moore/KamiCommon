@@ -1,6 +1,7 @@
 package com.kamikazejamplugins.kamicommon;
 
 import com.kamikazejamplugins.kamicommon.config.testing.Config;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -11,11 +12,12 @@ public class TestPlugin extends JavaPlugin {
     public void onEnable() {
         Config config = new Config(this, new File(getDataFolder(), "config.yml"));
         config.save();
-        super.onEnable();
+
+        Bukkit.getLogger().info("KamiCommon enabled");
     }
 
     @Override
     public void onDisable() {
-        super.onDisable();
+        Bukkit.getLogger().info("KamiCommon disabled");
     }
 }

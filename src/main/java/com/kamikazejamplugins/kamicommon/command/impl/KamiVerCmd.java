@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class KamiVerCmd extends KamiSubCommand {
 
     @Override

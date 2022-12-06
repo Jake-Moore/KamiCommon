@@ -34,7 +34,7 @@ import java.nio.file.StandardCopyOption;
 @SuppressWarnings("unused")
 public class AutoUpdate implements Listener {
     private static boolean updated = false;
-    public static String BASE_URL = "https://api.github.com/repos/KamiUpdates/AutoUpdate/releases/tags/";
+    public static final String BASE_URL = "https://api.github.com/repos/KamiUpdates/AutoUpdate/releases/tags/";
     //Access token of the KamiUpdates machine user (second account)
     //It can only see the empty repository for AutoUpdate, only seeing releases I put there
     //This is "encrypted" only to stop GitHub from automatically revoking it, I realize it's not anymore "secure"
