@@ -1,7 +1,13 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
 
+import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import lombok.Getter;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -130,7 +136,31 @@ public class YamlHandler {
             put(key, value);
         }
 
+        public void setItemStack(String key, ItemStack item) {
+            set(key + ".type", item.getType().name());
+            set(key + ".amount", item.getAmount());
+            set(key + ".durability", item.getDurability());
+
+            // Save basic string meta
+            ItemMeta meta = item.getItemMeta();
+            if (meta.hasDisplayName()) { set(key + ".display-name", StringUtil.reverseT(meta.getDisplayName())); }
+            if (meta.hasLore()) { set(key + ".lore", StringUtil.reverseT(meta.getLore())); }
+
+            // Save ItemFlags
+            List<String> flagNames = new ArrayList<>();
+            for (ItemFlag flag : meta.getItemFlags()) { flagNames.add(flag.name()); }
+            if (!flagNames.isEmpty()) { set(key + ".flags", flagNames); }
+
+            // Save Enchants
+            for (Map.Entry<Enchantment, Integer> e : meta.getEnchants().entrySet()) {
+                set(key + ".enchantments." + e.getKey().getName(), e.getValue());
+            }
+        }
+
         public void put(String key, Object value) {
+            //ItemStacks are special
+            if (value instanceof ItemStack) { setItemStack(key, (ItemStack) value); return; }
+
             String[] keys = key.split("\\.");
             if (keys.length <= 1) { data.put(key, value); return; }
 
@@ -193,6 +223,11 @@ public class YamlHandler {
             return map.get(keys[keys.length-1]);
         }
 
+        public Object get(String key, Object def) {
+            if (contains(key)) { return get(key);
+            }else { return def; }
+        }
+
         public void putString(String key, String value) {
             put(key, value);
         }
@@ -221,14 +256,29 @@ public class YamlHandler {
             return (String) get(key);
         }
 
+        public String getString(String key, String def) {
+            if (contains(key)) { return getString(key);
+            }else { return def; }
+        }
+
         public int getInt(String key) { return getInteger(key); }
+
+        public int getInt(String key, int def) {
+            if (contains(key)) { return getInt(key);
+            }else { return def; }
+        }
 
         public int getInteger(String key) {
             return Integer.parseInt(get(key).toString());
         }
+        public int getInteger(String key, int def) { return getInt(key, def); }
 
         public long getLong(String key) {
             return Long.parseLong(get(key).toString());
+        }
+        public long getLong(String key, long def) {
+            if (contains(key)) { return getLong(key);
+            }else { return def; }
         }
 
         public boolean getBoolean(String key) {
@@ -236,6 +286,10 @@ public class YamlHandler {
                 return Boolean.parseBoolean(get(key).toString());
             }
             return false;
+        }
+        public boolean getBoolean(String key, boolean def) {
+            if (contains(key)) { return getBoolean(key);
+            }else { return def; }
         }
 
         public List<String> getStringList(String key) {
@@ -245,6 +299,10 @@ public class YamlHandler {
                 return new ArrayList<>();
             }
         }
+        public List<String> getStringList(String key, List<String> def) {
+            if (contains(key)) { return getStringList(key);
+            }else { return def; }
+        }
 
         public List<Integer> getIntegerList(String key) {
             if (contains(key)) {
@@ -253,9 +311,50 @@ public class YamlHandler {
                 return new ArrayList<>();
             }
         }
+        public List<Integer> getIntegerList(String key, List<Integer> def) {
+            if (contains(key)) { return getIntegerList(key);
+            }else { return def; }
+        }
 
         public double getDouble(String key) {
             return (Double) get(key);
+        }
+        public double getDouble(String key, double def) {
+            if (contains(key)) { return getDouble(key);
+            }else { return def; }
+        }
+
+        public ItemStack getItemStack(String key) {
+            if (!contains(key + ".type")) { return null; }
+            if (!contains(key + ".amount")) { return null; }
+            if (!contains(key + ".durability")) { return null; }
+            Material type = Material.getMaterial(getString(key + ".type"));
+            int amount = getInt(key + ".amount");
+            short durability = (short) getInt(key + ".durability");
+
+            ItemStack item = new ItemStack(type, amount, durability);
+            if (contains(key + ".display-name")) { item.getItemMeta().setDisplayName(StringUtil.t(getString(key + ".display-name"))); }
+            if (contains(key + ".lore")) { item.getItemMeta().setLore(StringUtil.t(getStringList(key + ".lore"))); }
+
+            // Load ItemFlags
+            if (contains(key + ".flags")) {
+                for (String flagName : getStringList(key + ".flags")) {
+                    item.getItemMeta().addItemFlags(ItemFlag.valueOf(flagName));
+                }
+            }
+
+            // Load Enchants
+            if (contains(key + ".enchantments")) {
+                for (String enchantName : getConfigurationSection(key + ".enchantments").getKeys(false)) {
+                    item.addEnchantment(Enchantment.getByName(enchantName), getInt(key + ".enchantments." + enchantName));
+                }
+            }
+            return item;
+        }
+
+        public ItemStack getItemStack(String key, ItemStack def) {
+            if (contains(key)) { return getItemStack(key);
+            }else { return def; }
         }
 
         /**
@@ -281,6 +380,10 @@ public class YamlHandler {
                 }
                 return keys;
             }
+        }
+
+        public boolean isConfigurationSection(final String path) {
+            return data.get(path) instanceof LinkedHashMap;
         }
 
         public boolean contains(String key) {
