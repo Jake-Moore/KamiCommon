@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.NumberConversions;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -130,23 +131,25 @@ public class YamlHandler {
         }
     }
 
-    public static class ConfigurationSection extends MemorySection {
-        public ConfigurationSection(LinkedHashMap<String, Object> data) {
+    public static class MemoryConfiguration extends MemorySection {
+        public MemoryConfiguration(LinkedHashMap<String, Object> data) {
             super(data);
         }
     }
 
     @SuppressWarnings({"unchecked", "unused"})
-    public static abstract class MemorySection {
+    public static abstract class MemorySection extends ConfigurationSection {
         @Getter private final LinkedHashMap<String, Object> data;
         public MemorySection(LinkedHashMap<String, Object> data) {
             this.data = data;
         }
 
+        @Override
         public void set(String key, Object value) {
             put(key, value);
         }
 
+        @Override
         public void setItemStack(String key, ItemStack item) {
             set(key + ".type", item.getType().name());
             set(key + ".amount", item.getAmount());
@@ -173,6 +176,7 @@ public class YamlHandler {
             }
         }
 
+        @Override
         public void put(String key, Object value) {
             //ItemStacks are special
             if (value instanceof ItemStack) { setItemStack(key, (ItemStack) value); return; }
@@ -226,6 +230,7 @@ public class YamlHandler {
             data.put(keys[0], newData);
         }
 
+        @Override
         public Object get(String key) {
             String[] keys = key.split("\\.");
             LinkedHashMap<String, Object> map = data;
@@ -239,107 +244,176 @@ public class YamlHandler {
             return map.get(keys[keys.length-1]);
         }
 
+        @Override
         public Object get(String key, Object def) {
             if (contains(key)) { return get(key);
             }else { return def; }
         }
 
+        @Override
         public void putString(String key, String value) {
             put(key, value);
         }
 
+        @Override
         public void putBoolean(String key, boolean value) {
             put(key, value);
         }
 
+        @Override
         public void putInteger(String key, int value) {
             put(key, value);
         }
 
+        @Override
         public void putLong(String key, long value) {
             put(key, value);
         }
 
+        @Override
         public void putDouble(String key, double value) {
             put(key, value);
         }
 
-        public ConfigurationSection getConfigurationSection(String key) {
-            return new ConfigurationSection((LinkedHashMap<String, Object>) get(key));
+        @Override
+        public MemoryConfiguration getConfigurationSection(String key) {
+            return new MemoryConfiguration((LinkedHashMap<String, Object>) get(key));
         }
 
-        public String getString(String key) {
-            return (String) get(key);
-        }
 
+        @Override
+        public String getString(String key) { return (String) get(key, null); }
+        @Override
         public String getString(String key, String def) {
-            if (contains(key)) { return getString(key);
-            }else { return def; }
+            Object val = get(key, def);
+            return (val != null) ? val.toString() : def;
         }
+        @Override
+        public boolean isString(String key) { return get(key) instanceof String; }
 
-        public int getInt(String key) { return getInteger(key); }
 
+
+        @Override
+        public int getInt(String key) { return getInt(key, 0); }
+        @Override
         public int getInt(String key, int def) {
-            if (contains(key)) { return getInt(key);
-            }else { return def; }
+            Object val = get(key);
+            return (val instanceof Number) ? NumberConversions.toInt(val) : def;
         }
+        @Override
+        public boolean isInt(String key) { return get(key) instanceof Integer; }
 
-        public int getInteger(String key) {
-            return Integer.parseInt(get(key).toString());
-        }
-        public int getInteger(String key, int def) { return getInt(key, def); }
 
-        public long getLong(String key) {
-            return Long.parseLong(get(key).toString());
-        }
-        public long getLong(String key, long def) {
-            if (contains(key)) { return getLong(key);
-            }else { return def; }
-        }
 
-        public boolean getBoolean(String key) {
-            if (contains(key)) {
-                return Boolean.parseBoolean(get(key).toString());
-            }
-            return false;
-        }
+        @Override
+        public boolean getBoolean(String key) { return getBoolean(key, false); }
+        @Override
         public boolean getBoolean(String key, boolean def) {
-            if (contains(key)) { return getBoolean(key);
-            }else { return def; }
+            Object val = get(key, def);
+            return (boolean)((val instanceof Boolean) ? val : def);
         }
+        @Override
+        public boolean isBoolean(String key) { return get(key) instanceof Boolean; }
 
-        public List<String> getStringList(String key) {
-            if (contains(key)) {
-                return (List<String>) get(key);
-            }else {
-                return new ArrayList<>();
-            }
-        }
-        public List<String> getStringList(String key, List<String> def) {
-            if (contains(key)) { return getStringList(key);
-            }else { return def; }
-        }
 
-        public List<Integer> getIntegerList(String key) {
-            if (contains(key)) {
-                return (List<Integer>) get(key);
-            }else {
-                return new ArrayList<>();
-            }
-        }
-        public List<Integer> getIntegerList(String key, List<Integer> def) {
-            if (contains(key)) { return getIntegerList(key);
-            }else { return def; }
-        }
 
-        public double getDouble(String key) {
-            return (Double) get(key);
-        }
+        @Override
+        public double getDouble(String key) { return getDouble(key, 0.0); }
+        @Override
         public double getDouble(String key, double def) {
-            if (contains(key)) { return getDouble(key);
-            }else { return def; }
+            Object val = get(key, def);
+            return (val instanceof Number) ? NumberConversions.toDouble(val) : def;
+        }
+        @Override
+        public boolean isDouble(String key) { return get(key) instanceof Double; }
+
+
+        @Override
+        public float getFloat(String key) { return getFloat(key, 0f); }
+
+        @Override
+        public float getFloat(String key, final float def) {
+            Object val = get(key, def);
+            return (val instanceof Float) ? NumberConversions.toFloat(val) : def;
+        }
+        @Override
+        public boolean isFloat(String key) { return get(key) instanceof Float; }
+
+
+
+        @Override
+        public long getLong(String key) { return getLong(key, 0L); }
+        @Override
+        public long getLong(String key, long def) {
+            Object val = get(key, def);
+            return (val instanceof Number) ? NumberConversions.toLong(val) : def;
+        }
+        @Override
+        public boolean isLong(String key) { return get(key) instanceof Long; }
+
+
+        @Override
+        public List<?> getList(String key) { return getList(key, null); }
+        @Override
+        public List<?> getList(String key, final List<?> def) {
+            Object val = get(key, def);
+            return (List<?>)((val instanceof List) ? val : def);
+        }
+        @Override
+        public boolean isList(String key) { return get(key) instanceof List; }
+
+        @Override
+        public List<String> getStringList(String key) { return getStringList(key, new ArrayList<>()); }
+        @Override
+        public List<String> getStringList(String key, List<String> def) {
+            final List<?> list = getList(key);
+            if (list == null) { return def; }
+
+            final List<String> result = new ArrayList<>();
+            for (final Object object : list) {
+                if (object instanceof String || this.isPrimitiveWrapper(object)) {
+                    result.add(String.valueOf(object));
+                }
+            }
+            return result;
         }
 
+
+
+
+        @Override
+        public List<Integer> getIntegerList(String key) {
+            return getIntegerList(key, new ArrayList<>());
+        }
+        @Override
+        public List<Integer> getIntegerList(String key, List<Integer> def) {
+            List<?> list = getList(key);
+            if (list == null) { return def; }
+
+            final List<Integer> result = new ArrayList<>();
+            for (final Object object : list) {
+                if (object instanceof Integer) {
+                    result.add((Integer)object);
+                }
+                else if (object instanceof String) {
+                    try {
+                        result.add(Integer.valueOf((String)object));
+                    } catch (Exception ignored) {}
+                }
+                else if (object instanceof Character) {
+                    result.add((int)(char)object);
+                }
+                else {
+                    if (!(object instanceof Number)) { continue; }
+                    result.add(((Number)object).intValue());
+                }
+            }
+            return result;
+        }
+
+
+
+        @Override
         public ItemStack getItemStack(String key) {
             if (!contains(key + ".type")) { return null; }
             if (!contains(key + ".amount")) { return null; }
@@ -376,6 +450,7 @@ public class YamlHandler {
             return item;
         }
 
+        @Override
         public ItemStack getItemStack(String key, ItemStack def) {
             if (contains(key)) { return getItemStack(key);
             }else { return def; }
@@ -387,6 +462,7 @@ public class YamlHandler {
          * @param deep Whether to search for all sub-keys
          * @return The list of keys found
          */
+        @Override
         public Set<String> getKeys(boolean deep) {
             if (!deep) {
                 return data.keySet();
@@ -406,10 +482,12 @@ public class YamlHandler {
             }
         }
 
-        public boolean isConfigurationSection(final String path) {
-            return get(path) instanceof LinkedHashMap;
+        @Override
+        public boolean isConfigurationSection(final String key) {
+            return get(key) instanceof LinkedHashMap;
         }
 
+        @Override
         public boolean contains(String key) {
             String[] keys = key.split("\\.");
 
@@ -423,6 +501,58 @@ public class YamlHandler {
             }
             return map.containsKey(keys[keys.length - 1]);
         }
+
+        @Override
+        public boolean isSet(String key) { return contains(key); }
+
+        protected boolean isPrimitiveWrapper(final Object input) {
+            return input instanceof Integer || input instanceof Boolean || input instanceof Character || input instanceof Byte || input instanceof Short || input instanceof Double || input instanceof Long || input instanceof Float;
+        }
+    }
+
+    public static abstract class ConfigurationSection {
+        public abstract void set(String key, Object value);
+        public abstract void setItemStack(String key, ItemStack item);
+        public abstract void put(String key, Object value);
+        public abstract Object get(String key);
+        public abstract Object get(String key, Object def);
+        public abstract void putString(String key, String value);
+        public abstract void putBoolean(String key, boolean value);
+        public abstract void putInteger(String key, int value);
+        public abstract void putLong(String key, long value);
+        public abstract void putDouble(String key, double value);
+        public abstract MemoryConfiguration getConfigurationSection(String key);
+        public abstract String getString(String key);
+        public abstract String getString(String key, String def);
+        public abstract boolean isString(String key);
+        public abstract int getInt(String key);
+        public abstract int getInt(String key, int def);
+        public abstract boolean isInt(String key);
+        public abstract boolean getBoolean(String key);
+        public abstract boolean getBoolean(String key, boolean def);
+        public abstract boolean isBoolean(String key);
+        public abstract double getDouble(String key);
+        public abstract double getDouble(String key, double def);
+        public abstract boolean isDouble(String key);
+        public abstract float getFloat(String key);
+        public abstract float getFloat(String key, final float def);
+        public abstract boolean isFloat(String key);
+        public abstract long getLong(String key);
+        public abstract long getLong(String key, long def);
+        public abstract boolean isLong(String key);
+        public abstract List<?> getList(String key);
+        public abstract List<?> getList(String key, final List<?> def);
+        public abstract boolean isList(String key);
+        public abstract List<String> getStringList(String key);
+        public abstract List<String> getStringList(String key, List<String> def);
+        public abstract List<Integer> getIntegerList(String key);
+        public abstract List<Integer> getIntegerList(String key, List<Integer> def);
+        public abstract ItemStack getItemStack(String key);
+        public abstract ItemStack getItemStack(String key, ItemStack def);
+        public abstract Set<String> getKeys(boolean deep);
+        public abstract boolean isConfigurationSection(String key);
+        public abstract boolean contains(String key);
+        public abstract boolean isSet(String key);
     }
 
     public static class ANSI {
