@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
+@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "SameReturnValue"})
 public abstract class PageBuilder<T extends Player> {
 
     private final int[] middleSlots = new int[]{0, 0, 0, 13, 13, 22, 22, 22};
@@ -92,15 +92,6 @@ public abstract class PageBuilder<T extends Player> {
         return false;
     }
 
-    @Deprecated
-    public void afterOpening() {
-    }
-
-    // Use this one now.
-    public void afterOpening(int page) {
-    }
-
-
     public int getFixedSize() {
         return -1;
     }
@@ -179,7 +170,6 @@ public abstract class PageBuilder<T extends Player> {
             }
         }
 
-        afterOpening(page);
         menu.openMenu(p);
     }
 

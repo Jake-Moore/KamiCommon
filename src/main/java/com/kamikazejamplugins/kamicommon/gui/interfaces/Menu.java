@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "SameReturnValue"})
 public interface Menu<T extends Player> extends InventoryHolder {
 
     Inventory getInventory();

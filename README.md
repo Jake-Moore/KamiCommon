@@ -6,7 +6,7 @@
 &nbsp;
 
 ## Using the Common
-- Github packages with Maven requires that all users have a PAT (personal access token) configured, in order to download packages
+- GitHub packages with Maven requires that all users have a PAT (personal access token) configured, in order to download packages
 - If you do not know how to create one up please refer to: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 - With your PAT, you must add it to maven, please refer to: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry ("Authenticating with a personal access token")
 - The first step towards using the maven dependency is configuring the repository
@@ -32,17 +32,17 @@
 
 ## Setting up the Common
 - Some features may require the plugin object, so I highly recommend calling the following method in OnEnable before using the library
-- Note: If a part of the library requires the plugin object as an argument, it will setup common with it, however, it's still recommended to provide it asap in OnEnable to prevent errors (other parts of the common may run before it's provided, and cause errors)
-```java
+- Note: If a part of the library requires the plugin object as an argument, it will set up common with it, however, it's still recommended to provide it asap in OnEnable to prevent errors (other parts of the common may run before it's provided, and cause errors)
+``` java
 KamiCommon.setupPlugin(plugin);
 ```
 
 &nbsp;
 &nbsp;
 
-## Noteable features include:
+## Notable features include:
 - Easier inventory management for click events
-```java
+``` java
 String title = "test";
 int rows = 3, slot = 8;
 KamiMenu<Player> menu = new KamiMenu<>(title, rows);
@@ -52,7 +52,7 @@ menu.addMenuClick(itemstack, clickInfo -> {
 menu.openMenu(player);
 ```
 - ItemBuilder for easier item manipulation
-```java
+``` java
 Material material = Material.CHEST;
 short damage = (short) 0;
 int amount = 64;
@@ -66,7 +66,7 @@ builder = new ItemBuilder(material, amount, (short) damage);
 builder.toItemStack();
 ```
 - Auto update for plugins (hard coded for my use only, but feel free to edit the repo and PAT to use it on your own)
-   - This feature requires that each plugin repository using auto update have a configured github action to publish a release for each version
+   - This feature requires that each plugin repository using auto update have a configured GitHub action to publish a release for each version
 - Commands library for easier subcommand management
    - Contact me on discord for more info on this
 - A few bulky methods simplified for Configuration management (ConfigManager.java)
@@ -74,7 +74,7 @@ builder.toItemStack();
 - A few utilities
    - ActionBar utility, DiscordWebhook utility, StringUtil.t() as an alias of ChatColor...
 - A YamlHandler (for using .yml files outside of spigot, standalone compatible)
-```java
+``` java
 YamlHandler yaml = new YamlHandler(File configFile, String fileName);
 config = yaml.loadConfig(boolean addDefaults)
 yaml.save()
@@ -82,7 +82,7 @@ config.save()
 config.get(key)
 config.put(key, value)
 ```
-- Version commad
+- Version command
    - If using KamiCommand implementation, you can specify if you'd like an additional version subcommand
    - Requires a version.json inside your resources folder with the following
 ```json

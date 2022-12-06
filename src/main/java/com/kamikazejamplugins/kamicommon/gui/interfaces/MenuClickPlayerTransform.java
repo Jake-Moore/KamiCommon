@@ -3,6 +3,7 @@ package com.kamikazejamplugins.kamicommon.gui.interfaces;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+@SuppressWarnings("unused")
 public class MenuClickPlayerTransform<T extends Player> implements MenuClickInfo<T> {
 
     private final MenuClickPlayer<T> click;

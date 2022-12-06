@@ -77,6 +77,7 @@ public class ItemBuilder {
         return this;
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public ItemBuilder clone() {
         return new ItemBuilder(is);
     }

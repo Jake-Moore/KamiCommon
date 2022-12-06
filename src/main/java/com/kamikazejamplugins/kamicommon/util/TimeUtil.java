@@ -12,7 +12,7 @@ public class TimeUtil {
 
     public static String getSecondsToTimeString(long seconds) {
         //Anything past 1 day gets weird because days in a month varies
-        if (seconds >= 86400) { //1 days
+        if (seconds >= 86400) { //1 day
             int days = (int) Math.floor(seconds / 86400D);
             long left = (seconds - (days * 86400L));
 

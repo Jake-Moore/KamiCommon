@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class KamiUpdateCmd extends KamiSubCommand {
 
     @Override
