@@ -52,7 +52,7 @@ public class KamiConfigManager {
                             if (commentLine.trim().isEmpty()) {
                                 lines.add(i, "");
                             } else {
-                                lines.add(i, spacing + "# " + commentLine);
+                                lines.add(i, spacing + "# " + commentLine.replaceAll("<br>", " "));
                             }
                         }
                     }else {
