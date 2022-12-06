@@ -155,6 +155,11 @@ public class YamlHandler {
             for (Map.Entry<Enchantment, Integer> e : meta.getEnchants().entrySet()) {
                 set(key + ".enchantments." + e.getKey().getName(), e.getValue());
             }
+
+            //Save unbreakable
+            if (meta.spigot().isUnbreakable()) {
+                set(key + ".unbreakable", true);
+            }
         }
 
         public void put(String key, Object value) {
@@ -333,13 +338,14 @@ public class YamlHandler {
             short durability = (short) getInt(key + ".durability");
 
             ItemStack item = new ItemStack(type, amount, durability);
-            if (contains(key + ".display-name")) { item.getItemMeta().setDisplayName(StringUtil.t(getString(key + ".display-name"))); }
-            if (contains(key + ".lore")) { item.getItemMeta().setLore(StringUtil.t(getStringList(key + ".lore"))); }
+            ItemMeta meta = item.getItemMeta();
+            if (contains(key + ".display-name")) { meta.setDisplayName(StringUtil.t(getString(key + ".display-name"))); }
+            if (contains(key + ".lore")) { meta.setLore(StringUtil.t(getStringList(key + ".lore"))); }
 
             // Load ItemFlags
             if (contains(key + ".flags")) {
                 for (String flagName : getStringList(key + ".flags")) {
-                    item.getItemMeta().addItemFlags(ItemFlag.valueOf(flagName));
+                    meta.addItemFlags(ItemFlag.valueOf(flagName));
                 }
             }
 
@@ -349,6 +355,13 @@ public class YamlHandler {
                     item.addEnchantment(Enchantment.getByName(enchantName), getInt(key + ".enchantments." + enchantName));
                 }
             }
+
+            // Load unbreakable
+            if (contains(key + ".unbreakable")) {
+                meta.spigot().setUnbreakable(getBoolean(key + ".unbreakable"));
+            }
+
+            item.setItemMeta(meta);
             return item;
         }
 
