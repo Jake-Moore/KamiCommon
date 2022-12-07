@@ -12,7 +12,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.util.NumberConversions;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -371,21 +370,8 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public byte getByte(String key, byte def) {
         BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
-        if (isShort(key) && bd.shortValue() <= Byte.MAX_VALUE && bd.shortValue() >= Byte.MIN_VALUE) { return (byte) getShort(key); }
-        if (isInt(key) && bd.intValue() <= Byte.MAX_VALUE && bd.intValue() >= Byte.MIN_VALUE) { return (byte) getInt(key); }
-        if (isLong(key) && bd.longValue() <= Byte.MAX_VALUE && bd.longValue() >= Byte.MIN_VALUE) { return (byte) getLong(key); }
-        if (isFloat(key) && bd.floatValue() <= Byte.MAX_VALUE && bd.floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
-        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
-
-        Object val = get(key, def);
-        if (val instanceof String) {
-            String s = (String) val;
-            if (s.endsWith("b")) {
-                try { return Byte.parseByte(s.substring(0, s.length() - 1));
-                }catch (Exception ignored) {}
-            }
-        }
-        return def;
+        if (!isByte(key)) { return def; }
+        return bd.byteValue();
     }
     @Override
     public boolean isByte(String key) {
@@ -400,23 +386,8 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public short getShort(String key, short def) {
         BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
-
-        if (isByte(key)) { return getByte(key); }
-        if (isInt(key) && bd.intValue() <= Byte.MAX_VALUE && bd.intValue() >= Byte.MIN_VALUE) { return (byte) getInt(key); }
-        if (isLong(key) && bd.longValue() <= Byte.MAX_VALUE && bd.longValue() >= Byte.MIN_VALUE) { return (byte) getLong(key); }
-        if (isFloat(key) && bd.floatValue() <= Byte.MAX_VALUE && bd.floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
-        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
-
-
-        Object val = get(key, def);
-        if (val instanceof String) {
-            String s = (String) val;
-            if (s.endsWith("s")) {
-                try { return Short.parseShort(s.substring(0, s.length() - 1));
-                }catch (Exception ignored) {}
-            }
-        }
-        return def;
+        if (!isShort(key)) { return def; }
+        return bd.shortValue();
     }
     @Override
     public boolean isShort(String key) {
@@ -431,17 +402,8 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public int getInt(String key, int def) {
         BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
-
-        if (isShort(key)) { return getShort(key); }
-        if (isLong(key) && bd.longValue() <= Byte.MAX_VALUE && bd.longValue() >= Byte.MIN_VALUE) { return (byte) getLong(key); }
-        if (isFloat(key) && bd.floatValue() <= Byte.MAX_VALUE && bd.floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
-        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
-
-        Object val = get(key, def);
-        if (val instanceof Number) {
-            return NumberConversions.toInt(val);
-        }
-        return def;
+        if (!isInt(key)) { return def; }
+        return bd.intValue();
     }
     @Override
     public boolean isInt(String key) {
@@ -456,16 +418,8 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public long getLong(String key, long def) {
         BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
-
-        if (isInt(key)) { return getInt(key); }
-        if (isFloat(key) && bd.floatValue() <= Byte.MAX_VALUE && bd.floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
-        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
-
-        Object val = get(key, def);
-        if (val instanceof Number) {
-            return NumberConversions.toLong(val);
-        }
-        return def;
+        if (!isLong(key)) { return def; }
+        return bd.longValue();
     }
     @Override
     public boolean isLong(String key) {
@@ -480,19 +434,8 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public float getFloat(String key, float def) {
         BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
-
-        if (isLong(key)) { return bd.longValue(); }
-        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
-
-        Object val = get(key, def);
-        if (val instanceof String) {
-            String s = (String) val;
-            if (s.endsWith("f")) {
-                try { return Float.parseFloat(s.substring(0, s.length() - 1));
-                }catch (Exception ignored) {}
-            }
-        }
-        return def;
+        if (!isFloat(key)) { return def; }
+        return bd.floatValue();
     }
     @Override
     public boolean isFloat(String key) {
@@ -507,18 +450,8 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public double getDouble(String key, double def) {
         BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
-
-        if (isFloat(key)) { return bd.floatValue(); }
-
-        Object val = get(key, def);
-        if (val instanceof String) {
-            String s = (String) val;
-            if (s.endsWith("D")) {
-                try { return Double.parseDouble(s.substring(0, s.length() - 1));
-                }catch (Exception ignored) {}
-            }
-        }
-        return def;
+        if (!isDouble(key)) { return def; }
+        return bd.doubleValue();
     }
     @Override
     public boolean isDouble(String key) {
