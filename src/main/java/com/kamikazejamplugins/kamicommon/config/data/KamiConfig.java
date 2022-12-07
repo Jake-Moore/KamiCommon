@@ -107,6 +107,7 @@ public class KamiConfig extends ConfigurationSection {
     public void reload() {
         try {
             config = yamlHandler.loadConfig(true);
+            save();
         }catch (Exception e) {
             e.printStackTrace();
         }
