@@ -89,13 +89,14 @@ public class YamlHandler {
             return config;
         }
 
+        // Make a new config so we can force the order of the keys when creating it
+        YamlConfiguration newConfig = new YamlConfiguration(new LinkedHashMap<>(), configFile);
         for (String key : keys) {
-            if (!config.contains(key)) {
-                config.set(key, defConfig.get(key));
-            }
+            Object o = (config.contains(key)) ? config.get(key) : defConfig.get(key);
+            newConfig.set(key, o);
         }
         save();
-        return config;
+        return newConfig;
     }
 
     private List<String> getOrderedKeys(InputStream defConfigStream, Set<String> deepKeys) {
