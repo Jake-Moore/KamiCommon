@@ -1,15 +1,16 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
 
+import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class YamlHandler {
@@ -77,9 +78,8 @@ public class YamlHandler {
             return config;
         }
 
-        List<String> keys = getInputStreamKeys(getIS(plugin));
-        LinkedHashMap<String, Object> data = (new Yaml()).load(defConfigStream);
-        MemoryConfiguration defConfig = new MemoryConfiguration(data);
+        MemoryConfiguration defConfig = new MemoryConfiguration((new Yaml()).load(defConfigStream));
+        List<String> keys = getOrderedKeys(getIS(plugin), defConfig.getKeys(true));
 
         if (!equalLists(keys, defConfig.getKeys(true))) {
             System.out.println(ANSI.RED
@@ -97,6 +97,52 @@ public class YamlHandler {
         save();
         return config;
     }
+
+    private List<String> getOrderedKeys(InputStream defConfigStream, Set<String> deepKeys) {
+        List<String> keys = new ArrayList<>();
+        Map<Integer, String> keyMappings = new HashMap<>();
+
+        // Store the lines here so that we don't have to read the file multiple times
+        List<String> lines = new BufferedReader(new InputStreamReader(defConfigStream, StandardCharsets.UTF_8)).lines().collect(Collectors.toList());
+
+        for (String key : deepKeys) {
+            int lineNum = findLineOfKey(lines, key);
+            if (lineNum < 0) {
+                System.out.println(ANSI.RED + "Could not find key: '" + key + "' in config file: " + configFile.getName() + ANSI.RESET);
+                continue;
+            }
+            keyMappings.put(lineNum, key);
+        }
+
+        List<Integer> keyLines = keyMappings.keySet().stream().sorted().collect(Collectors.toList());
+
+        for (int keyLine : keyLines) {
+            keys.add(keyMappings.get(keyLine));
+        }
+        return keys;
+    }
+
+    private int findLineOfKey(List<String> lines, String key) {
+        String[] parts = key.split("\\.");
+        int searchingFor = 0;
+
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String start = StringUtil.repeat("  ", searchingFor) + parts[searchingFor] + ":";
+
+            if (line.startsWith(start)) {
+                if (searchingFor == parts.length - 1) {
+                    // We've found the key we're looking for
+                    return i+1;
+                } else {
+                    searchingFor++;
+                }
+            }
+        }
+        return -1;
+    }
+
+
 
     private InputStream getIS(@Nullable JavaPlugin plugin) {
         if (plugin != null) {
@@ -117,84 +163,6 @@ public class YamlHandler {
             }
         }
         return true;
-    }
-
-    private List<String> getInputStreamKeys(InputStream defConfigStream) {
-        List<String> keys = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(defConfigStream));
-        try {
-            // WhiteSpace, Keys
-            Map<String, List<String>> map = new HashMap<>();
-
-            Pattern pattern = Pattern.compile("^( *)([A-z0-9-_]+):");
-
-            List<String> building = new ArrayList<>();
-            int lastWhitespace = -1;
-            while(reader.ready()) {
-                String line = reader.readLine();
-                Matcher m = pattern.matcher(line);
-                if (m.find()) {
-                    String whiteSpace = m.group(1);
-                    String key = m.group(2);
-
-                    if (whiteSpace.length() > lastWhitespace) {
-                        building.add(key);
-                        lastWhitespace = whiteSpace.length();
-                    }else if (whiteSpace.length() == lastWhitespace) {
-                        //Form a key from the previous additions
-                        StringBuilder sb = new StringBuilder();
-                        for (String s : building) {
-                            sb.append(s).append(".");
-                        }
-                        keys.add(sb.substring(0, sb.length() - 1));
-
-                        //Set the last one to this key so we may continue
-                        building.set(building.size() - 1, key);
-                    }else {
-                        StringBuilder sb = new StringBuilder();
-                        if (whiteSpace.length() == 0) {
-                            //Form a key from the previous additions
-                            for (String s : building) {
-                                sb.append(s).append(".");
-                            }
-                            keys.add(sb.substring(0, sb.length() - 1));
-
-                            building.clear();
-                            building.add(key);
-                            lastWhitespace = 0;
-                        }else {
-                            //Form a key from the previous additions
-                            for (String s : building) {
-                                sb.append(s).append(".");
-                            }
-                            keys.add(sb.substring(0, sb.length() - 1));
-
-                            int diff = lastWhitespace - whiteSpace.length();
-                            int times = diff / 2;
-
-                            // Remove the amount of keys equals to number of tabs +1 (to make space for new key)
-                            for (int i = 0; i <= times; i++) {
-                                if (building.size() > 0) {
-                                    building.remove(building.size() - 1);
-                                }
-                            }
-
-                            //Set the last one to this key so we may continue
-                            building.add(key);
-                            lastWhitespace = whiteSpace.length();
-                        }
-                    }
-                }
-            }
-
-            //Form a key from whatever is left
-            StringBuilder sb = new StringBuilder();
-            for (String s : building) {
-                sb.append(s).append(".");
-            }
-            keys.add(sb.substring(0, sb.length() - 1));
-        }catch (Exception e) { e.printStackTrace(); }
-        return keys;
     }
 
     public static class ANSI {
