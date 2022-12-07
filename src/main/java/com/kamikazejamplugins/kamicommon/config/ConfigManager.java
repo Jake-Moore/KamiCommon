@@ -1,4 +1,4 @@
-package com.kamikazejamplugins.kamicommon.yaml;
+package com.kamikazejamplugins.kamicommon.config;
 
 import com.kamikazejamplugins.kamicommon.FileManager;
 import org.bukkit.ChatColor;

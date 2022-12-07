@@ -1,8 +1,10 @@
 package com.kamikazejamplugins.kamicommon.item;
 
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +18,7 @@ import java.util.Map;
 @SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal", "deprecation"})
 public class ItemBuilder {
 
-    private final ItemStack is;
+    private ItemStack is;
     private String skullOwner;
     private int slot;
 
@@ -66,7 +68,7 @@ public class ItemBuilder {
         }
     }
 
-    private ItemBuilder setUnbreakable(boolean b) {
+    public ItemBuilder setUnbreakable(boolean b) {
         is.getItemMeta().spigot().setUnbreakable(b);
         is.getItemMeta().addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         return this;
@@ -102,6 +104,10 @@ public class ItemBuilder {
         im.setDisplayName(StringUtil.t(name));
         is.setItemMeta(im);
         return this;
+    }
+
+    public ItemBuilder setDisplayName(String name) {
+        return setName(name);
     }
 
     public ItemBuilder replaceName(String find, String replacement) {
@@ -219,7 +225,39 @@ public class ItemBuilder {
     public ItemBuilder addLoreLines(String... line) {
         return addLoreLines(Arrays.asList(line));
     }
+
+    public void setNbt(String key, NBTBase base) {
+        net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(is);
+        NBTTagCompound tag = (nmsStack.hasTag()) ? nmsStack.getTag() : new NBTTagCompound();
+        tag.set(key, base);
+        nmsStack.setTag(tag);
+        is = CraftItemStack.asBukkitCopy(nmsStack);
+    }
+
+    public ItemBuilder setNbt(String key, String value) { setNbt(key, new NBTTagString(value)); return this; }
+    public ItemBuilder setNbt(String key, byte value) { setNbt(key, new NBTTagByte(value)); return this; }
+    public ItemBuilder setNbt(String key, boolean value) { setNbt(key, new NBTTagByte((byte)(value ? 1 : 0))); return this; }
+    public ItemBuilder setNbt(String key, int value) { setNbt(key, new NBTTagInt(value)); return this; }
+    public ItemBuilder setNbt(String key, double value) { setNbt(key, new NBTTagDouble(value)); return this; }
+    public ItemBuilder setNbt(String key, float value) { setNbt(key, new NBTTagFloat(value)); return this; }
+    public ItemBuilder setNbt(String key, short value) { setNbt(key, new NBTTagShort(value)); return this; }
+    public ItemBuilder setNbt(String key, long value) { setNbt(key, new NBTTagLong(value)); return this; }
+    public ItemBuilder setNbt(String key, int[] value) { setNbt(key, new NBTTagIntArray(value)); return this; }
+    public ItemBuilder setNbt(String key, byte[] value) { setNbt(key, new NBTTagByteArray(value)); return this; }
+    public ItemBuilder setNbt(String key, NBTTagCompound value) { setNbt(key, (NBTBase)value); return this; }
+
+    public ItemBuilder addFlag(ItemFlag flag) {
+        ItemMeta im = is.getItemMeta();
+        im.addItemFlags(flag);
+        is.setItemMeta(im);
+        return this;
+    }
+
     public ItemStack toItemStack() {
+        return is;
+    }
+
+    public ItemStack build() {
         return is;
     }
 }

@@ -3,7 +3,7 @@ package com.kamikazejamplugins.kamicommon.config;
 import com.kamikazejamplugins.kamicommon.config.data.ConfigComment;
 import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
-import com.kamikazejamplugins.kamicommon.yaml.YamlHandler;
+import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ import java.util.List;
 public class KamiConfigManager {
 
     public static void saveKamiConfig(KamiConfig kamiConfig) throws Exception {
-        YamlHandler.YamlConfiguration config = kamiConfig.getYamlConfiguration();
+        YamlConfiguration config = kamiConfig.getYamlConfiguration();
         List<ConfigComment> comments = kamiConfig.getComments();
 
         // Save the FileConfiguration (without comments)

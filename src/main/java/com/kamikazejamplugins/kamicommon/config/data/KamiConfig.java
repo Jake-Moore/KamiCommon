@@ -1,6 +1,9 @@
 package com.kamikazejamplugins.kamicommon.config.data;
 
 import com.kamikazejamplugins.kamicommon.config.KamiConfigManager;
+import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
+import com.kamikazejamplugins.kamicommon.yaml.MemoryConfiguration;
+import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.YamlHandler;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
@@ -20,10 +23,10 @@ import java.util.*;
  */
 
 @SuppressWarnings("unused")
-public class KamiConfig extends YamlHandler.ConfigurationSection {
+public class KamiConfig extends ConfigurationSection {
     @Getter private final File file;
     private final YamlHandler yamlHandler;
-    private YamlHandler.YamlConfiguration config;
+    private YamlConfiguration config;
 
     // Key, Comment
     @Getter private final List<ConfigComment> comments = new ArrayList<>();
@@ -111,7 +114,7 @@ public class KamiConfig extends YamlHandler.ConfigurationSection {
 
 
     // Method to get YamlConfiguration
-    public YamlHandler.YamlConfiguration getYamlConfiguration() { return config; }
+    public YamlConfiguration getYamlConfiguration() { return config; }
 
 
 
@@ -125,14 +128,36 @@ public class KamiConfig extends YamlHandler.ConfigurationSection {
     @Override public void put(String key, Object value) { config.put(key, value); }
     @Override public void putString(String key, String value) { config.put(key, value); }
     @Override public void putBoolean(String key, boolean value) { config.put(key, value); }
+
+    @Override public void putByte(String key, byte value) { config.putByte(key, value); }
+
+    @Override public void putShort(String key, short value) { config.putShort(key, value); }
+
     @Override public void putInteger(String key, int value) { config.put(key, value); }
+    @Override public void putInt(String key, int value) { config.put(key, value); }
     @Override public void putLong(String key, long value) { config.put(key, value); }
     @Override public void putDouble(String key, double value) { config.putDouble(key, value); }
+
+    @Override public void putFloat(String key, float value) { config.put(key, value); }
+
+    @Override public void setString(String key, String value) { config.setString(key, value); }
+    @Override public void setBoolean(String key, boolean value) { config.setBoolean(key, value); }
+
+    @Override public void setByte(String key, byte value) { config.setByte(key, value); }
+
+    @Override public void setShort(String key, short value) { config.setShort(key, value); }
+
+    @Override public void setInteger(String key, int value) { config.setInteger(key, value);}
+    @Override public void setInt(String key, int value) { config.setInteger(key, value);}
+    @Override public void setLong(String key, long value) { config.setLong(key, value); }
+    @Override public void setDouble(String key, double value) { config.setDouble(key, value); }
+
+    @Override public void setFloat(String key, float value) { config.setFloat(key, value); }
 
     // Methods to get values
     @Override public Object get(String key) { return config.get(key); }
     @Override public Object get(String key, Object def) { return config.get(key, def); }
-    @Override public YamlHandler.MemoryConfiguration getConfigurationSection(String key) { return config.getConfigurationSection(key); }
+    @Override public MemoryConfiguration getConfigurationSection(String key) { return config.getConfigurationSection(key); }
 
     @Override public String getString(String key) { return config.getString(key); }
     @Override public String getString(String key, String def) { return config.getString(key, def); }
@@ -160,9 +185,20 @@ public class KamiConfig extends YamlHandler.ConfigurationSection {
     @Override public List<Integer> getIntegerList(String key) { return config.getIntegerList(key); }
     @Override public List<Integer> getIntegerList(String key, List<Integer> def) { return config.getIntegerList(key, def); }
 
+    @Override public List<Byte> getByteList(String key) { return config.getByteList(key); }
+    @Override public List<Byte> getByteList(String key, List<Byte> def) { return config.getByteList(key, def); }
+
     @Override public double getDouble(String key) { return config.getDouble(key); }
     @Override public double getDouble(String key, double def) { return config.getDouble(key, def); }
     @Override public boolean isDouble(String key) { return config.isDouble(key); }
+
+    @Override public byte getByte(String key) { return config.getByte(key); }
+    @Override public byte getByte(String key, byte def) { return config.getByte(key, def); }
+    @Override public boolean isByte(String key) { return config.isByte(key); }
+
+    @Override public short getShort(String key) { return config.getShort(key); }
+    @Override public short getShort(String key, short def) { return config.getShort(key, def); }
+    @Override public boolean isShort(String key) { return config.isShort(key); }
 
     @Override public float getFloat(String key) { return config.getFloat(key); }
     @Override public float getFloat(String key, float def) { return config.getFloat(key, def); }
