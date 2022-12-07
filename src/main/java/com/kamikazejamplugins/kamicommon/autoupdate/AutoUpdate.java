@@ -180,7 +180,17 @@ public class AutoUpdate implements Listener {
             String updatedTimestamp = (dataJson.has("updated_at") ? dataJson.get("updated_at").getAsString() : dataJson.get("created_at").getAsString());
 
             File kamicommon = KamiCommon.getDataFolder(plugin);
-            FileConfiguration data = ConfigManager.createConfig(plugin, kamicommon, "data.yml");
+            if (kamicommon == null) { return false; }
+
+            // Check for a "data" folder inside the plugin folder
+            File dataSubFolder = new File(kamicommon.getPath() + File.separator + "data");
+            FileConfiguration data;
+
+            if (dataSubFolder.exists() && dataSubFolder.isDirectory()) {
+                data = ConfigManager.createConfig(plugin, dataSubFolder, "updater.yml");
+            }else {
+                data = ConfigManager.createConfig(plugin, kamicommon, "updater.yml");
+            }
 
             if (data.contains(plugin.getName())) {
                 //Check that the current download is of the same asset from the release
@@ -198,7 +208,12 @@ public class AutoUpdate implements Listener {
             //If we are sure the version is not the same, then save the data about this new version
             data.set(plugin.getName(), latestAssetId);
             data.set(plugin.getName()+"Updated", updatedTimestamp);
-            ConfigManager.saveConfig(plugin, kamicommon, data, "data.yml");
+
+            if (dataSubFolder.exists() && dataSubFolder.isDirectory()) {
+                ConfigManager.saveConfig(plugin, dataSubFolder, data, "updater.yml");
+            }else {
+                ConfigManager.saveConfig(plugin, kamicommon, data, "updater.yml");
+            }
 
             //If the newName isn't the same as the old name, it won't update via the update folder, cancel
             String newJarName = dataJson.get("name").getAsString();
