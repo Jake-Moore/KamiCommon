@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 public class YamlHandler {
@@ -53,11 +52,8 @@ public class YamlHandler {
                 data = new LinkedHashMap<>();
             }
 
-            if (addDefaults) {
-                return (new YamlConfiguration(addDefaults(data), configFile)).save();
-            }else {
-                return (new YamlConfiguration(data, configFile)).save();
-            }
+            YamlConfiguration configuration = new YamlConfiguration(data, configFile);
+            return (addDefaults) ? addDefaults(configuration).save() : configuration.save();
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +66,7 @@ public class YamlHandler {
         }
     }
 
-    private LinkedHashMap<String, Object> addDefaults(LinkedHashMap<String, Object> config) {
+    private YamlConfiguration addDefaults(YamlConfiguration config) {
         InputStream defConfigStream;
         if (plugin != null) {
             defConfigStream = plugin.getResource(configFile.getName());
@@ -85,13 +81,10 @@ public class YamlHandler {
             save();
             return config;
         }
-        Map<String, Object> defConfig = (new Yaml()).load(defConfigStream);
-
-        if (!defConfig.isEmpty()) {
-            for (String key : defConfig.keySet()) {
-                if (!config.containsKey(key)) {
-                    config.put(key, defConfig.get(key));
-                }
+        MemoryConfiguration defConfig = new MemoryConfiguration((new Yaml()).load(defConfigStream));
+        for (String key : defConfig.getKeys(true)) {
+            if (!config.contains(key)) {
+                config.set(key, defConfig.get(key));
             }
         }
         save();
