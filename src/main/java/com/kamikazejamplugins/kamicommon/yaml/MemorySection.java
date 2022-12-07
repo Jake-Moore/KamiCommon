@@ -341,7 +341,7 @@ public abstract class MemorySection extends ConfigurationSection {
     }
 
     @Override
-    public String getString(String key) { return get(key, null).toString(); }
+    public String getString(String key) { return getString(key, null); }
     @Override
     public String getString(String key, String def) {
         Object val = get(key, def);
