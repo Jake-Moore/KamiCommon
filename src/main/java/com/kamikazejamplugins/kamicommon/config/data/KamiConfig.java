@@ -49,6 +49,23 @@ public class KamiConfig extends ConfigurationSection {
         save();
     }
 
+    public KamiConfig(@Nullable JavaPlugin plugin, File file, boolean addDefaults) {
+        this.file = file;
+
+        // Ensure the file exists
+        try {
+            if (!file.exists() && !file.createNewFile()) {
+                throw new Exception("Failed to create file");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        this.yamlHandler = new YamlHandler(plugin, file);
+        this.config = yamlHandler.loadConfig(addDefaults);
+        save();
+    }
+
     /**
      * Adds a comment above the specified key
      * @param key The key to add the comment above
