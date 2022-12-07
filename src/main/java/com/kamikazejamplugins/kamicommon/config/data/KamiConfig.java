@@ -27,6 +27,7 @@ public class KamiConfig extends ConfigurationSection {
     @Getter private final File file;
     private final YamlHandler yamlHandler;
     private YamlConfiguration config;
+    private final boolean addDefaults;
 
     // Key, Comment
     @Getter private final List<ConfigComment> comments = new ArrayList<>();
@@ -34,6 +35,7 @@ public class KamiConfig extends ConfigurationSection {
 
     public KamiConfig(@Nullable JavaPlugin plugin, File file) {
         this.file = file;
+        this.addDefaults = true;
 
         // Ensure the file exists
         try {
@@ -51,6 +53,7 @@ public class KamiConfig extends ConfigurationSection {
 
     public KamiConfig(@Nullable JavaPlugin plugin, File file, boolean addDefaults) {
         this.file = file;
+        this.addDefaults = addDefaults;
 
         // Ensure the file exists
         try {
@@ -123,7 +126,7 @@ public class KamiConfig extends ConfigurationSection {
     }
     public void reload() {
         try {
-            config = yamlHandler.loadConfig(true);
+            config = yamlHandler.loadConfig(addDefaults);
             save();
         }catch (Exception e) {
             e.printStackTrace();
