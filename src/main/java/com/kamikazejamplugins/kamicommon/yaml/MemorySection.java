@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.NumberConversions;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
@@ -369,11 +370,12 @@ public abstract class MemorySection extends ConfigurationSection {
     public byte getByte(String key) { return getByte(key, (byte) 0); }
     @Override
     public byte getByte(String key, byte def) {
-        if (isShort(key) && getNumberAt(key).shortValue() <= Byte.MAX_VALUE && getNumberAt(key).shortValue() >= Byte.MIN_VALUE) { return (byte) getShort(key); }
-        if (isInt(key) && getNumberAt(key).intValue() <= Byte.MAX_VALUE && getNumberAt(key).intValue() >= Byte.MIN_VALUE) { return (byte) getInt(key); }
-        if (isLong(key) && getNumberAt(key).longValue() <= Byte.MAX_VALUE && getNumberAt(key).longValue() >= Byte.MIN_VALUE) { return (byte) getLong(key); }
-        if (isFloat(key) && getNumberAt(key).floatValue() <= Byte.MAX_VALUE && getNumberAt(key).floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
-        if (isDouble(key) && getNumberAt(key).doubleValue() <= Byte.MAX_VALUE && getNumberAt(key).doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
+        if (isShort(key) && bd.shortValue() <= Byte.MAX_VALUE && bd.shortValue() >= Byte.MIN_VALUE) { return (byte) getShort(key); }
+        if (isInt(key) && bd.intValue() <= Byte.MAX_VALUE && bd.intValue() >= Byte.MIN_VALUE) { return (byte) getInt(key); }
+        if (isLong(key) && bd.longValue() <= Byte.MAX_VALUE && bd.longValue() >= Byte.MIN_VALUE) { return (byte) getLong(key); }
+        if (isFloat(key) && bd.floatValue() <= Byte.MAX_VALUE && bd.floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
+        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
 
         Object val = get(key, def);
         if (val instanceof String) {
@@ -387,7 +389,8 @@ public abstract class MemorySection extends ConfigurationSection {
     }
     @Override
     public boolean isByte(String key) {
-        return (getNumberAt(key).doubleValue() <= Byte.MAX_VALUE && getNumberAt(key).doubleValue() >= Byte.MIN_VALUE);
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return false; }
+        return (bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE);
     }
 
 
@@ -396,11 +399,13 @@ public abstract class MemorySection extends ConfigurationSection {
     public short getShort(String key) { return getShort(key, (short) 0); }
     @Override
     public short getShort(String key, short def) {
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
+
         if (isByte(key)) { return getByte(key); }
-        if (isInt(key) && getNumberAt(key).intValue() <= Byte.MAX_VALUE && getNumberAt(key).intValue() >= Byte.MIN_VALUE) { return (byte) getInt(key); }
-        if (isLong(key) && getNumberAt(key).longValue() <= Byte.MAX_VALUE && getNumberAt(key).longValue() >= Byte.MIN_VALUE) { return (byte) getLong(key); }
-        if (isFloat(key) && getNumberAt(key).floatValue() <= Byte.MAX_VALUE && getNumberAt(key).floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
-        if (isDouble(key) && getNumberAt(key).doubleValue() <= Byte.MAX_VALUE && getNumberAt(key).doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
+        if (isInt(key) && bd.intValue() <= Byte.MAX_VALUE && bd.intValue() >= Byte.MIN_VALUE) { return (byte) getInt(key); }
+        if (isLong(key) && bd.longValue() <= Byte.MAX_VALUE && bd.longValue() >= Byte.MIN_VALUE) { return (byte) getLong(key); }
+        if (isFloat(key) && bd.floatValue() <= Byte.MAX_VALUE && bd.floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
+        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
 
 
         Object val = get(key, def);
@@ -415,7 +420,8 @@ public abstract class MemorySection extends ConfigurationSection {
     }
     @Override
     public boolean isShort(String key) {
-        return (getNumberAt(key).doubleValue() <= Short.MAX_VALUE && getNumberAt(key).doubleValue() >= Short.MIN_VALUE);
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return false; }
+        return (bd.doubleValue() <= Short.MAX_VALUE && bd.doubleValue() >= Short.MIN_VALUE);
     }
 
 
@@ -424,10 +430,12 @@ public abstract class MemorySection extends ConfigurationSection {
     public int getInt(String key) { return getInt(key, 0); }
     @Override
     public int getInt(String key, int def) {
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
+
         if (isShort(key)) { return getShort(key); }
-        if (isLong(key) && getNumberAt(key).longValue() <= Byte.MAX_VALUE && getNumberAt(key).longValue() >= Byte.MIN_VALUE) { return (byte) getLong(key); }
-        if (isFloat(key) && getNumberAt(key).floatValue() <= Byte.MAX_VALUE && getNumberAt(key).floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
-        if (isDouble(key) && getNumberAt(key).doubleValue() <= Byte.MAX_VALUE && getNumberAt(key).doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
+        if (isLong(key) && bd.longValue() <= Byte.MAX_VALUE && bd.longValue() >= Byte.MIN_VALUE) { return (byte) getLong(key); }
+        if (isFloat(key) && bd.floatValue() <= Byte.MAX_VALUE && bd.floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
+        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
 
         Object val = get(key, def);
         if (val instanceof Number) {
@@ -437,7 +445,8 @@ public abstract class MemorySection extends ConfigurationSection {
     }
     @Override
     public boolean isInt(String key) {
-        return (getNumberAt(key).doubleValue() <= Integer.MAX_VALUE && getNumberAt(key).doubleValue() >= Integer.MIN_VALUE);
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return false; }
+        return (bd.doubleValue() <= Integer.MAX_VALUE && bd.doubleValue() >= Integer.MIN_VALUE);
     }
 
 
@@ -446,9 +455,11 @@ public abstract class MemorySection extends ConfigurationSection {
     public long getLong(String key) { return getLong(key, 0L); }
     @Override
     public long getLong(String key, long def) {
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
+
         if (isInt(key)) { return getInt(key); }
-        if (isFloat(key) && getNumberAt(key).floatValue() <= Byte.MAX_VALUE && getNumberAt(key).floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
-        if (isDouble(key) && getNumberAt(key).doubleValue() <= Byte.MAX_VALUE && getNumberAt(key).doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
+        if (isFloat(key) && bd.floatValue() <= Byte.MAX_VALUE && bd.floatValue() >= Byte.MIN_VALUE) { return (byte) getFloat(key); }
+        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
 
         Object val = get(key, def);
         if (val instanceof Number) {
@@ -458,7 +469,8 @@ public abstract class MemorySection extends ConfigurationSection {
     }
     @Override
     public boolean isLong(String key) {
-        return (getNumberAt(key).doubleValue() <= Long.MAX_VALUE && getNumberAt(key).doubleValue() >= Long.MIN_VALUE);
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return false; }
+        return (bd.doubleValue() <= Long.MAX_VALUE && bd.doubleValue() >= Long.MIN_VALUE);
     }
 
 
@@ -467,8 +479,10 @@ public abstract class MemorySection extends ConfigurationSection {
     public float getFloat(String key) { return getFloat(key, 0f); }
     @Override
     public float getFloat(String key, float def) {
-        if (isLong(key)) { return getNumberAt(key).longValue(); }
-        if (isDouble(key) && getNumberAt(key).doubleValue() <= Byte.MAX_VALUE && getNumberAt(key).doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
+
+        if (isLong(key)) { return bd.longValue(); }
+        if (isDouble(key) && bd.doubleValue() <= Byte.MAX_VALUE && bd.doubleValue() >= Byte.MIN_VALUE) { return (byte) getDouble(key); }
 
         Object val = get(key, def);
         if (val instanceof String) {
@@ -482,7 +496,8 @@ public abstract class MemorySection extends ConfigurationSection {
     }
     @Override
     public boolean isFloat(String key) {
-        return (getNumberAt(key).doubleValue() <= Float.MAX_VALUE && getNumberAt(key).doubleValue() >= Float.MIN_VALUE);
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return false; }
+        return (bd.doubleValue() <= Float.MAX_VALUE && bd.doubleValue() >= Float.MIN_VALUE);
     }
 
 
@@ -491,7 +506,9 @@ public abstract class MemorySection extends ConfigurationSection {
     public double getDouble(String key) { return getDouble(key, 0.0); }
     @Override
     public double getDouble(String key, double def) {
-        if (isFloat(key)) { return getNumberAt(key).floatValue(); }
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return def; }
+
+        if (isFloat(key)) { return bd.floatValue(); }
 
         Object val = get(key, def);
         if (val instanceof String) {
@@ -505,14 +522,15 @@ public abstract class MemorySection extends ConfigurationSection {
     }
     @Override
     public boolean isDouble(String key) {
-        return (getNumberAt(key).doubleValue() <= Double.MAX_VALUE && getNumberAt(key).doubleValue() >= Double.MIN_VALUE);
+        BigDecimal bd = getNumberAt(key); if (bd == null) { return false; }
+        return (bd.doubleValue() <= Double.MAX_VALUE && bd.doubleValue() >= Double.MIN_VALUE);
     }
 
 
 
-    private BigDecimal getNumberAt(String key) {
+    private @Nullable BigDecimal getNumberAt(String key) {
         String s = getString(key);
-        if (s == null) { return new BigDecimal(0); }
+        if (s == null) { return null; }
 
         // If it's any of the following, remove the last character
         if (s.endsWith("D") || s.endsWith("f") || s.endsWith("s") || s.endsWith("b")) {
@@ -522,7 +540,7 @@ public abstract class MemorySection extends ConfigurationSection {
             try { return new BigDecimal(s);
             }catch (Exception ignored) {}
         }
-        return new BigDecimal(0);
+        return null;
     }
 
 
