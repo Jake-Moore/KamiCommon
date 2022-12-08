@@ -82,6 +82,9 @@ public class YamlHandler {
         List<String> keys = getOrderedKeys(getIS(plugin), defConfig.getKeys(true));
 
         if (!equalLists(keys, defConfig.getKeys(true))) {
+            System.out.println(Arrays.toString(keys.toArray()));
+            System.out.println(Arrays.toString(defConfig.getKeys(true).toArray()));
+
             System.out.println(ANSI.RED
                     + "Warning: Error grabbing ordered defaults from (" + configFile.getName() + ")!"
                     + ANSI.RESET);
@@ -109,7 +112,10 @@ public class YamlHandler {
         for (String key : deepKeys) {
             int lineNum = findLineOfKey(lines, key);
             if (lineNum < 0) {
-                System.out.println(ANSI.RED + "Could not find key: '" + key + "' in config file: " + configFile.getName() + ANSI.RESET);
+                System.out.println(ANSI.RED + "Could not find key: '" + key + "' in def config stream: " + configFile.getName() + ANSI.RESET);
+                int i = getHighest(keyMappings.keySet());
+                if (i < lines.size()) { i = lines.size() + 1; }else { i++; }
+                keyMappings.put(i, key);
                 continue;
             }
             keyMappings.put(lineNum, key);
@@ -123,14 +129,23 @@ public class YamlHandler {
         return keys;
     }
 
+    private int getHighest(Set<Integer> set) {
+        int highest = 0;
+        for (int i : set) { if (i > highest) { highest = i; } }
+        return highest;
+    }
+
     private int findLineOfKey(List<String> lines, String key) {
         String[] parts = key.split("\\.");
         int searchingFor = 0;
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            String start = StringUtil.repeat("  ", searchingFor) + parts[searchingFor] + ":";
+            String part = parts[searchingFor];
+            //Integer keys are wrapped in ''
+            if (isInteger(part)) { part = "'" + part + "'"; }
 
+            String start = StringUtil.repeat("  ", searchingFor) + part + ":";
             if (line.startsWith(start)) {
                 if (searchingFor == parts.length - 1) {
                     // We've found the key we're looking for
@@ -141,6 +156,11 @@ public class YamlHandler {
             }
         }
         return -1;
+    }
+
+    private boolean isInteger(String s) {
+        try { Integer.parseInt(s); return true;
+        } catch (NumberFormatException e) { return false; }
     }
 
 
