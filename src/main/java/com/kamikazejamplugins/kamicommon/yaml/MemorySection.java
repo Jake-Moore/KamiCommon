@@ -337,7 +337,11 @@ public abstract class MemorySection extends ConfigurationSection {
 
     @Override
     public MemoryConfiguration getConfigurationSection(String key) {
-        return new MemoryConfiguration((LinkedHashMap<String, Object>) get(key));
+        Object o = get(key);
+        if (!(o instanceof LinkedHashMap)) {
+            return new MemoryConfiguration(new LinkedHashMap<>());
+        }
+        return new MemoryConfiguration((LinkedHashMap<String, Object>) o);
     }
 
     @Override
