@@ -87,7 +87,7 @@ public class AutoUpdate implements Listener {
             try {
                 Pair<JsonObject, JsonObject> urlData = grabUrl(projectName);
                 if (urlData == null) {
-                    plugin.getLogger().severe("[AutoUpdate] Error finding latest java jar from release (was null)");
+                    plugin.getLogger().severe("[AutoUpdate] Error finding latest -obf java jar from release (was null)");
                     return;
                 }
                 if (debug) { plugin.getLogger().info("[AutoUpdate] Grabbed " + projectName + "'s Download Url: " + urlData.getB().get("url").getAsString()); }
@@ -122,6 +122,8 @@ public class AutoUpdate implements Listener {
                 JsonObject file = e.getAsJsonObject();
                 if (file.get("content_type").getAsString().equals("application/java-archive")) {
                     if (file.get("name").getAsString().startsWith("original-")) { continue; }
+                    if (!file.get("name").getAsString().endsWith("-obf.jar")) { continue; }
+
                     return Pair.of(jsonObject, file);
                 }
             }
@@ -138,8 +140,30 @@ public class AutoUpdate implements Listener {
                 return;
             }
             System.out.println(a.getB().get("url").getAsString());
+
+            testCopyJar(a, new File("C:\\Users\\Jake\\Desktop\\test.jar"));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void testCopyJar(Pair<JsonObject, JsonObject> dataPair, File file) throws IOException {
+        JsonObject jsonObject = dataPair.getA();
+        JsonObject dataJson = dataPair.getB();
+        String downloadUrl = dataJson.get("url").getAsString();
+        System.out.println(downloadUrl);
+
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpGet request = new HttpGet(downloadUrl);
+            request.addHeader("Accept", "application/octet-stream");
+            request.addHeader("Authorization", "Bearer " + getToken());
+            CloseableHttpResponse response = httpClient.execute(request);
+            if (response.getStatusLine().getStatusCode() != 200) {
+                throw new IOException("Unexpected code " + response.getStatusLine().getStatusCode());
+            }
+
+            InputStream in = response.getEntity().getContent();
+            copyToFile(in, new File("C:\\Users\\Jake\\Desktop\\test.jar"));
         }
     }
 
@@ -220,8 +244,6 @@ public class AutoUpdate implements Listener {
                 //Upload the new file which will work after next restart
                 File updateJar = new File(file.getParent() + File.separator + newJarName);
                 copyToFile(in, updateJar);
-
-                //TODO join event to alert admins the plugin was updated
                 return true;
             }
 
