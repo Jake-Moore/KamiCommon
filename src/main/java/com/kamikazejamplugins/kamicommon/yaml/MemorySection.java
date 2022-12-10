@@ -224,7 +224,12 @@ public abstract class MemorySection extends ConfigurationSection {
             }else if (isString(key)) {
                 tag.setString(k, getString(key));
             }else {
-                Bukkit.getLogger().info("Unknown Value: " + key + ": " + get(key).getClass().getName());
+                Object o = get(key);
+                if (o != null) {
+                    Bukkit.getLogger().info("Unknown Value: " + key + ": " + o.getClass().getName());
+                }else {
+                    Bukkit.getLogger().info("Unknown Value: " + key);
+                }
             }
         }
     }
@@ -288,16 +293,19 @@ public abstract class MemorySection extends ConfigurationSection {
     }
 
     @Override
-    public Object get(String key) {
+    public @Nullable Object get(String key) {
         String[] keys = key.split("\\.");
         LinkedHashMap<String, Object> map = data;
         for (int i = 0; i < keys.length-1; i++) {
+            if (map == null) { return null; }
+
             if (map.containsKey(keys[i])) {
                 map = (LinkedHashMap<String, Object>) map.get(keys[i]);
             } else {
                 return null;
             }
         }
+        if (map == null) { return null; }
         return map.get(keys[keys.length-1]);
     }
 
