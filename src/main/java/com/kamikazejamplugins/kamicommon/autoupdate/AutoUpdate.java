@@ -227,6 +227,8 @@ public class AutoUpdate implements Listener {
 
             //If the newName isn't the same as the old name, it won't update via the update folder, cancel
             String newJarName = dataJson.get("name").getAsString();
+            newJarName = newJarName.replace("-obf.jar", ".jar");
+
             if (!newJarName.equals(currJarName)) {
                 plugin.getLogger().info("[AutoUpdate] New and current version mismatch detected. New: " + newJarName + " Current: " + currJarName);
 
