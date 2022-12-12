@@ -1,5 +1,6 @@
 package com.kamikazejamplugins.kamicommon.util.components.actions;
 
+import com.kamikazejamplugins.kamicommon.util.components.actions.hoveritem.HoverItem;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.inventory.ItemStack;
 

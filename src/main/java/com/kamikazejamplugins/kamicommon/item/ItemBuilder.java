@@ -1,7 +1,9 @@
 package com.kamikazejamplugins.kamicommon.item;
 
+import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import de.tr7zw.nbtapi.NBT;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -9,6 +11,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal", "deprecation"})
@@ -65,8 +68,23 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setUnbreakable(boolean b) {
-        is.getItemMeta().spigot().setUnbreakable(b);
-        is.getItemMeta().addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        if (NmsManager.getFormattedNmsDouble() >= 1.10) {
+            try {
+                ItemMeta meta = is.getItemMeta();
+                Method setUnbreakable = meta.getClass().getDeclaredMethod("setUnbreakable", boolean.class);
+                setUnbreakable.setAccessible(true);
+                setUnbreakable.invoke(meta, b);
+                is.setItemMeta(meta);
+            }catch (Exception e) {
+                e.printStackTrace();
+                Bukkit.getLogger().severe("[KamiCommon ItemBuilder] Error setting unbreakable tag.");
+            }
+
+            is.getItemMeta().addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        }else {
+            is.getItemMeta().spigot().setUnbreakable(b);
+            is.getItemMeta().addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        }
         return this;
     }
 
