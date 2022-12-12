@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.3.5.4</version>
+    <version>1.3.5.5</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -77,40 +77,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- TODO remapping
-            <plugin>
-                <groupId>net.md-5</groupId>
-                <artifactId>specialsource-maven-plugin</artifactId>
-                <version>1.2.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>remap</goal>
-                        </goals>
-                        <id>remap-obf</id>
-                        <configuration>
-                            <srgIn>org.spigotmc:minecraft-server:1.18-R0.1-SNAPSHOT:txt:maps-mojang</srgIn>
-                            <reverse>true</reverse>
-                            <remappedDependencies>org.spigotmc:spigot:1.18-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>
-                            <remappedArtifactAttached>true</remappedArtifactAttached>
-                            <remappedClassifierName>remapped-obf</remappedClassifierName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>remap</goal>
-                        </goals>
-                        <id>remap-spigot</id>
-                        <configuration>
-                            <inputFile>${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar</inputFile>
-                            <srgIn>org.spigotmc:minecraft-server:1.18-R0.1-SNAPSHOT:csrg:maps-spigot</srgIn>
-                            <remappedDependencies>org.spigotmc:spigot:1.18-R0.1-SNAPSHOT:jar:remapped-obf</remappedDependencies>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin> -->
         </plugins>
         <resources>
             <resource>
@@ -150,27 +116,26 @@
 
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.18-R0.2-SNAPSHOT</version>
-            <classifier>remapped-mojang</classifier>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/lib/spigot-1.18.2-R0.1-SNAPSHOT-remapped-mojang.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/lib/spigot-1.8.8-R0.1.jar</systemPath>
         </dependency>
 
+        <!-- Nms classes for these since all nms doesn't include them idk why -->
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api-1.18</artifactId>
+            <artifactId>spigot-api-1.18.1</artifactId>
             <version>1.18.1-R1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/lib/spigot-server-1.18.1-R1-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api-1.18.2</artifactId>
+            <version>1.18.2-R2-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/lib/spigot-server-1.18.2-R2-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

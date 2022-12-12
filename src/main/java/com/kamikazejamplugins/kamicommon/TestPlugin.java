@@ -2,13 +2,18 @@ package com.kamikazejamplugins.kamicommon;
 
 import com.kamikazejamplugins.kamicommon.config.testing.Config;
 import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
+import com.kamikazejamplugins.kamicommon.util.actionbar.ActionBar;
+import com.kamikazejamplugins.kamicommon.util.components.MessageActionManager;
+import com.kamikazejamplugins.kamicommon.util.components.actions.hoveritem.HoverItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 
@@ -38,6 +43,18 @@ public class TestPlugin extends JavaPlugin implements Listener {
 
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getLogger().info("KamiCommon enabled");
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    HoverItem hover = new HoverItem("{item}", "ItemStack", itemStack1);
+                    MessageActionManager.processAndSend(player, "Test {item}", hover);
+
+                    ActionBar.getInstance().sendToPlayer(player, "Test Action Bar");
+                }
+            }
+        }.runTaskTimer(this, 0, 20);
     }
 
     @Override
