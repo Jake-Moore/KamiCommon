@@ -23,7 +23,7 @@ import java.util.*;
  */
 
 @SuppressWarnings("unused")
-public class KamiConfig extends ConfigurationSection {
+public abstract class KamiConfig extends ConfigurationSection {
     @Getter private final File file;
     private final YamlHandler yamlHandler;
     private YamlConfiguration config;
@@ -240,4 +240,7 @@ public class KamiConfig extends ConfigurationSection {
 
     @Override public boolean contains(String key) { return config.contains(key); }
     @Override public boolean isSet(String key) { return config.isSet(key); }
+
+    @Override
+    public void addDefault(String key, Object o) { config.addDefault(key, o); }
 }
