@@ -74,4 +74,6 @@ public abstract class ConfigurationSection {
     public abstract boolean isConfigurationSection(String key);
     public abstract boolean contains(String key);
     public abstract boolean isSet(String key);
+
+    public abstract void addDefault(String key, Object o);
 }

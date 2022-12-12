@@ -449,6 +449,12 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public boolean isSet(String key) { return contains(key); }
 
+    @Override
+    public void addDefault(String key, Object o) {
+        if (contains(key)) { return; }
+        set(key, o);
+    }
+
     protected boolean isPrimitiveWrapper(final Object input) {
         return input instanceof Integer || input instanceof Boolean || input instanceof Character || input instanceof Byte || input instanceof Short || input instanceof Double || input instanceof Long || input instanceof Float;
     }
