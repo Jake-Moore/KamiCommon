@@ -1,20 +1,10 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import lombok.Getter;
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -31,207 +21,23 @@ public abstract class MemorySection extends ConfigurationSection {
 
     @Override
     public void setItemStack(String key, ItemStack item) {
-        set(key + ".type", item.getType().name());
-        set(key + ".amount", item.getAmount());
-        set(key + ".durability", item.getDurability());
-
-        // Save basic string meta
-        ItemMeta meta = item.getItemMeta();
-        if (meta.hasDisplayName()) { set(key + ".display-name", StringUtil.reverseT(meta.getDisplayName())); }
-        if (meta.hasLore()) { set(key + ".lore", StringUtil.reverseT(meta.getLore())); }
-
-        // Save ItemFlags
-        List<String> flagNames = new ArrayList<>();
-        for (ItemFlag flag : meta.getItemFlags()) { flagNames.add(flag.name()); }
-        if (!flagNames.isEmpty()) { set(key + ".flags", flagNames); }
-
-        // Save Enchants
-        for (Map.Entry<Enchantment, Integer> e : meta.getEnchants().entrySet()) {
-            set(key + ".enchantments." + e.getKey().getName(), e.getValue());
-        }
-
-        //Save unbreakable
-        if (meta.spigot().isUnbreakable()) {
-            set(key + ".unbreakable", true);
-        }
-
-        //Save NBT Tags
-        net.minecraft.server.v1_8_R3.ItemStack nms = CraftItemStack.asNMSCopy(item);
-        if (nms.hasTag()) {
-            NBTTagCompound tag = nms.getTag();
-            try {
-                saveNBTTagCompound(tag, key, 0);
-            }catch (Exception ignored) {}
-        }
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("item", item);
+        String stringData = config.saveToString();
+        setString(key, stringData);
     }
 
     @Override
     public ItemStack getItemStack(String key) {
-        if (!contains(key + ".type")) { return null; }
-        if (!contains(key + ".amount")) { return null; }
-        if (!contains(key + ".durability")) { return null; }
-        Material type = Material.getMaterial(getString(key + ".type"));
-        int amount = getInt(key + ".amount");
-        short durability = (short) getInt(key + ".durability");
-
-        ItemStack item = new ItemStack(type, amount, durability);
-        ItemMeta meta = item.getItemMeta();
-        if (contains(key + ".display-name")) { meta.setDisplayName(StringUtil.t(getString(key + ".display-name"))); }
-        if (contains(key + ".lore")) { meta.setLore(StringUtil.t(getStringList(key + ".lore"))); }
-
-        // Load ItemFlags
-        if (contains(key + ".flags")) {
-            for (String flagName : getStringList(key + ".flags")) {
-                meta.addItemFlags(ItemFlag.valueOf(flagName));
-            }
+        try {
+            String stringData = getString(key);
+            YamlConfiguration config = new YamlConfiguration();
+            config.loadFromString(stringData);
+            return config.getItemStack("item");
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-
-        // Load Enchants
-        if (contains(key + ".enchantments")) {
-            for (String enchantName : getConfigurationSection(key + ".enchantments").getKeys(false)) {
-                meta.addEnchant(Enchantment.getByName(enchantName), getInt(key + ".enchantments." + enchantName), true);
-            }
-        }
-
-        // Load unbreakable
-        if (contains(key + ".unbreakable")) {
-            meta.spigot().setUnbreakable(getBoolean(key + ".unbreakable"));
-        }
-
-        // Set ItemMeta
-        item.setItemMeta(meta);
-
-        // Build the display NBTTag (basically what contains the name and lore)
-        NBTTagCompound display = new NBTTagCompound();
-        display.setString("Name", meta.getDisplayName());
-        NBTTagList list = new NBTTagList();
-        for (String line : meta.getLore()) {
-            list.add(new NBTTagString(line));
-        }
-        display.set("Lore", list);
-
-        // Load NBTTagCompound data
-        net.minecraft.server.v1_8_R3.ItemStack nms = CraftItemStack.asNMSCopy(item);
-        NBTTagCompound tag = (nms.hasTag()) ? nms.getTag() : new NBTTagCompound();
-        if (contains(key + ".nbt")) {
-            loadNBTTagCompound(tag, key + ".nbt");
-        }
-        tag.set("display", display);
-        nms.setTag(tag);
-
-        // Return bukkit once we set the meta
-        return CraftItemStack.asBukkitCopy(nms);
-    }
-
-    private void saveNBTTagCompound(NBTTagCompound tag, String key, int i) throws Exception {
-        Field privateField = NBTTagList.class.getDeclaredField("list");
-        privateField.setAccessible(true);
-
-        for (String tagKey : tag.c()) {
-            if (i == 0 && tagKey.equals("ench")) { continue; }
-            if (i == 0 && tagKey.equals("display")) { continue; }
-            if (i == 0 && tagKey.equals("Unbreakable")) { continue; }
-            if (i == 0 && tagKey.equals("HideFlags")) { continue; }
-
-            //Bukkit.getLogger().info("Saving NBT Tag: " + tagKey);
-
-            NBTBase value = tag.get(tagKey);
-            if (value instanceof NBTTagByte) {
-                set(key + ".nbt." + tagKey, tag.getByte(tagKey));
-            }else if (value instanceof NBTTagByteArray) {
-                set(key + ".nbt." + tagKey, tag.getByteArray(tagKey));
-            }else if (value instanceof NBTTagDouble) {
-                set(key + ".nbt." + tagKey, tag.getDouble(tagKey));
-            }else if (value instanceof NBTTagFloat) {
-                set(key + ".nbt." + tagKey, tag.getFloat(tagKey));
-            }else if (value instanceof NBTTagInt) {
-                set(key + ".nbt." + tagKey, tag.getInt(tagKey));
-            }else if (value instanceof NBTTagIntArray) {
-                set(key + ".nbt." + tagKey, tag.getIntArray(tagKey));
-            }else if (value instanceof NBTTagLong) {
-                set(key + ".nbt." + tagKey, tag.getLong(tagKey));
-            }else if (value instanceof NBTTagShort) {
-                set(key + ".nbt." + tagKey, tag.getShort(tagKey));
-            }else if (value instanceof NBTTagString) {
-                set(key + ".nbt." + tagKey, tag.getString(tagKey));
-            }else if (value instanceof NBTTagCompound) {
-                //Only store it if there are keys to store
-                if (((NBTTagCompound) value).c().size() > 0) {
-                    saveNBTTagCompound((NBTTagCompound) value, key + ".nbt." + tagKey, i + 1);
-                }
-            }else if (value instanceof NBTTagList) {
-                NBTTagList list = (NBTTagList) value;
-                List<NBTBase> listValues = (List<NBTBase>) privateField.get(list);
-
-                int a = 0;
-                for (NBTBase base : listValues) {
-                    if (base instanceof NBTTagCompound) {
-                        saveNBTTagCompound(list.get(a), key + ".nbt." + tagKey + ".list." + a, i + 1);
-                    }else if (base instanceof NBTTagString) {
-                        set(key + ".nbt." + tagKey + ".list." + a, list.getString(a));
-                    }
-                    a++;
-                }
-            }else {
-                Bukkit.getLogger().info("Unknown Value: " + value.getClass());
-            }
-        }
-    }
-
-    private void loadNBTTagCompound(NBTTagCompound tag, String sectionKey) {
-        for (String k : getConfigurationSection(sectionKey).getKeys(false)) {
-            String key = sectionKey + "." + k;
-            //Bukkit.getLogger().info("Loading NBT Tag: " + key);
-
-            if (isConfigurationSection(key)) {
-                //NBTTagList
-                if (contains(key + ".list")) {
-
-                    for (String listKey : getConfigurationSection(key + ".list").getKeys(false)) {
-                        Bukkit.getLogger().info("List Key for '" + key + ".list': " + listKey);
-                        if (isConfigurationSection(listKey)) {
-                            NBTTagCompound listTag = new NBTTagCompound();
-                            loadNBTTagCompound(listTag, key + ".list." + listKey);
-                            tag.getList(k, 0).add(listTag);
-                        }else {
-                            tag.getList(k, 0).add(new NBTTagString(getString(key + ".list." + listKey)));
-                        }
-                    }
-                }else { //NBTTagCompound
-                    NBTTagCompound subTag = new NBTTagCompound();
-                    loadNBTTagCompound(subTag, key + ".nbt");
-                    tag.set(k, subTag);
-                }
-            }else if (isByte(key)) {
-                tag.setByte(k, getByte(key));
-            }else if (isShort(key)) {
-                tag.setShort(k, getShort(key));
-            }else if (isInt(key)) {
-                tag.setInt(k, getInt(key));
-            }else if (isLong(key)) {
-                tag.setLong(k, getLong(key));
-            }else if (isFloat(key)) {
-                tag.setFloat(k, getFloat(key));
-            }else if (isDouble(key)) {
-                tag.setDouble(k, getDouble(key));
-            }else if (isList(key)) {
-                List<?> list = getList(key);
-                if (list.get(0) instanceof Byte) {
-                    tag.setByteArray(k, Bytes.toArray(getByteList(key)));
-                }else if (list.get(0) instanceof Integer) {
-                    tag.setIntArray(k, Ints.toArray(getIntegerList(key)));
-                }
-            }else if (isString(key)) {
-                tag.setString(k, getString(key));
-            }else {
-                Object o = get(key);
-                if (o != null) {
-                    Bukkit.getLogger().info("Unknown Value: " + key + ": " + o.getClass().getName());
-                }else {
-                    Bukkit.getLogger().info("Unknown Value: " + key);
-                }
-            }
-        }
+        return null;
     }
 
     @Override

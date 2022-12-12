@@ -1,24 +1,20 @@
 package com.kamikazejamplugins.kamicommon.item;
 
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
-import net.minecraft.server.v1_8_R3.*;
+import de.tr7zw.nbtapi.NBT;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal", "deprecation"})
 public class ItemBuilder {
 
-    private ItemStack is;
+    private final ItemStack is;
     private String skullOwner;
     private int slot;
 
@@ -226,25 +222,20 @@ public class ItemBuilder {
         return addLoreLines(Arrays.asList(line));
     }
 
-    public void setNbt(String key, NBTBase base) {
-        net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(is);
-        NBTTagCompound tag = (nmsStack.hasTag()) ? nmsStack.getTag() : new NBTTagCompound();
-        tag.set(key, base);
-        nmsStack.setTag(tag);
-        is = CraftItemStack.asBukkitCopy(nmsStack);
-    }
+    public ItemBuilder setNbtString(String key, String s) { NBT.modify(is, nbt -> { nbt.setString(key, s); }); return this; }
+    public ItemBuilder setNbtBoolean(String key, boolean b) { NBT.modify(is, nbt -> { nbt.setBoolean(key, b); }); return this; }
+    public ItemBuilder setNbtInt(String key, int i) { NBT.modify(is, nbt -> { nbt.setInteger(key, i); }); return this; }
+    public ItemBuilder setNbtDouble(String key, double d) { NBT.modify(is, nbt -> { nbt.setDouble(key, d); }); return this; }
+    public ItemBuilder setNbtLong(String key, long l) { NBT.modify(is, nbt -> { nbt.setLong(key, l); }); return this; }
+    public ItemBuilder setNbtFloat(String key, float f) { NBT.modify(is, nbt -> { nbt.setFloat(key, f); }); return this; }
+    public ItemBuilder setNbtShort(String key, short s) { NBT.modify(is, nbt -> { nbt.setShort(key, s); }); return this; }
+    public ItemBuilder setNbtByte(String key, byte b) { NBT.modify(is, nbt -> { nbt.setByte(key, b); }); return this; }
+    public ItemBuilder setNbtByteArray(String key, byte[] b) { NBT.modify(is, nbt -> { nbt.setByteArray(key, b); }); return this; }
+    public ItemBuilder setNbtIntArray(String key, int[] i) { NBT.modify(is, nbt -> { nbt.setIntArray(key, i); }); return this; }
+    public ItemBuilder setNbtItemStack(String key, ItemStack i) { NBT.modify(is, nbt -> { nbt.setItemStack(key, i); }); return this; }
+    public ItemBuilder setNbtItemStackArray(String key, ItemStack[] i) { NBT.modify(is, nbt -> { nbt.setItemStackArray(key, i); }); return this; }
+    public ItemBuilder setNbtUUID(String key, UUID uuid) { NBT.modify(is, nbt -> { nbt.setUUID(key, uuid); }); return this; }
 
-    public ItemBuilder setNbt(String key, String value) { setNbt(key, new NBTTagString(value)); return this; }
-    public ItemBuilder setNbt(String key, byte value) { setNbt(key, new NBTTagByte(value)); return this; }
-    public ItemBuilder setNbt(String key, boolean value) { setNbt(key, new NBTTagByte((byte)(value ? 1 : 0))); return this; }
-    public ItemBuilder setNbt(String key, int value) { setNbt(key, new NBTTagInt(value)); return this; }
-    public ItemBuilder setNbt(String key, double value) { setNbt(key, new NBTTagDouble(value)); return this; }
-    public ItemBuilder setNbt(String key, float value) { setNbt(key, new NBTTagFloat(value)); return this; }
-    public ItemBuilder setNbt(String key, short value) { setNbt(key, new NBTTagShort(value)); return this; }
-    public ItemBuilder setNbt(String key, long value) { setNbt(key, new NBTTagLong(value)); return this; }
-    public ItemBuilder setNbt(String key, int[] value) { setNbt(key, new NBTTagIntArray(value)); return this; }
-    public ItemBuilder setNbt(String key, byte[] value) { setNbt(key, new NBTTagByteArray(value)); return this; }
-    public ItemBuilder setNbt(String key, NBTTagCompound value) { setNbt(key, (NBTBase)value); return this; }
 
     public ItemBuilder addFlag(ItemFlag flag) {
         ItemMeta im = is.getItemMeta();

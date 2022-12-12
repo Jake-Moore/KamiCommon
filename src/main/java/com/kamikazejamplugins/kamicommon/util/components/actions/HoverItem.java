@@ -1,10 +1,10 @@
 package com.kamikazejamplugins.kamicommon.util.components.actions;
 
+import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -41,11 +41,88 @@ public class HoverItem extends Hover {
      */
     public static TextComponent getItemText(org.bukkit.inventory.ItemStack item) {
         if (item == null) { return new TextComponent(""); }
-        return getItemText(CraftItemStack.asNMSCopy(item));
-    }
 
-    private static TextComponent getItemText(net.minecraft.server.v1_8_R3.ItemStack item) {
-        if (item == null) { return new TextComponent(""); }
-        return new TextComponent(item.save(new NBTTagCompound()).toString());
+        String version = NmsManager.getNMSVersion();
+        switch (version) {
+            case "v1_8_R1":
+                net.minecraft.server.v1_8_R1.ItemStack v1_8_R1Stack = org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_8_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_8_R1Stack.save(new net.minecraft.server.v1_8_R1.NBTTagCompound()).toString());
+            case "v1_8_R2":
+                net.minecraft.server.v1_8_R2.ItemStack v1_8_R2Stack = org.bukkit.craftbukkit.v1_8_R2.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_8_R2Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_8_R2Stack.save(new net.minecraft.server.v1_8_R2.NBTTagCompound()).toString());
+            case "v1_8_R3":
+                net.minecraft.server.v1_8_R3.ItemStack v1_8_R3Stack = org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_8_R3Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_8_R3Stack.save(new net.minecraft.server.v1_8_R3.NBTTagCompound()).toString());
+            case "v1_9_R1":
+                net.minecraft.server.v1_9_R1.ItemStack v1_9_R1Stack = org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_9_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_9_R1Stack.save(new net.minecraft.server.v1_9_R1.NBTTagCompound()).toString());
+            case "v1_9_R2":
+                net.minecraft.server.v1_9_R2.ItemStack v1_9_R2Stack = org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_9_R2Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_9_R2Stack.save(new net.minecraft.server.v1_9_R2.NBTTagCompound()).toString());
+            case "v1_10_R1":
+                net.minecraft.server.v1_10_R1.ItemStack v1_10_R1Stack = org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_10_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_10_R1Stack.save(new net.minecraft.server.v1_10_R1.NBTTagCompound()).toString());
+            case "v1_11_R1":
+                net.minecraft.server.v1_11_R1.ItemStack v1_11_R1Stack = org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_11_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_11_R1Stack.save(new net.minecraft.server.v1_11_R1.NBTTagCompound()).toString());
+            case "v1_12_R1":
+                net.minecraft.server.v1_12_R1.ItemStack v1_12_R1Stack = org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_12_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_12_R1Stack.save(new net.minecraft.server.v1_12_R1.NBTTagCompound()).toString());
+            case "v1_13_R1":
+                net.minecraft.server.v1_13_R1.ItemStack v1_13_R1Stack = org.bukkit.craftbukkit.v1_13_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_13_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_13_R1Stack.save(new net.minecraft.server.v1_13_R1.NBTTagCompound()).toString());
+            case "v1_13_R2":
+                net.minecraft.server.v1_13_R2.ItemStack v1_13_R2Stack = org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_13_R2Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_13_R2Stack.save(new net.minecraft.server.v1_13_R2.NBTTagCompound()).toString());
+            case "v1_14_R1":
+                net.minecraft.server.v1_14_R1.ItemStack v1_14_R1Stack = org.bukkit.craftbukkit.v1_14_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_14_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_14_R1Stack.save(new net.minecraft.server.v1_14_R1.NBTTagCompound()).toString());
+            case "v1_15_R1":
+                net.minecraft.server.v1_15_R1.ItemStack v1_15_R1Stack = org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_15_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_15_R1Stack.save(new net.minecraft.server.v1_15_R1.NBTTagCompound()).toString());
+            case "v1_16_R1":
+                net.minecraft.server.v1_16_R1.ItemStack v1_16_R1Stack = org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_16_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_16_R1Stack.save(new net.minecraft.server.v1_16_R1.NBTTagCompound()).toString());
+            case "v1_16_R2":
+                net.minecraft.server.v1_16_R2.ItemStack v1_16_R2Stack = org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_16_R2Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_16_R2Stack.save(new net.minecraft.server.v1_16_R2.NBTTagCompound()).toString());
+            case "v1_16_R3":
+                net.minecraft.server.v1_16_R3.ItemStack v1_16_R3Stack = org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_16_R3Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_16_R3Stack.save(new net.minecraft.server.v1_16_R3.NBTTagCompound()).toString());
+            case "v1_17_R1":
+                net.minecraft.world.item.ItemStack v1_17_R1Stack = org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_17_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_17_R1Stack.save(new net.minecraft.nbt.CompoundTag()).toString());
+            case "v1_18_R1":
+                net.minecraft.world.item.ItemStack v1_18_R1Stack = org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_18_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_18_R1Stack.save(new net.minecraft.nbt.CompoundTag()).toString());
+            case "v1_18_R2":
+                net.minecraft.world.item.ItemStack v1_18_R2Stack = org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_18_R2Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_18_R2Stack.save(new net.minecraft.nbt.CompoundTag()).toString());
+            case "v1_19_R1":
+                net.minecraft.world.item.ItemStack v1_19_R1Stack = org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack.asNMSCopy(item);
+                if (v1_19_R1Stack == null) { return new TextComponent(""); }
+                return new TextComponent(v1_19_R1Stack.save(new net.minecraft.nbt.CompoundTag()).toString());
+            default:
+                Bukkit.getLogger().severe("[KamiCommon NBTManager] Unsupported version: " + version);
+                return new TextComponent("");
+        }
     }
 }

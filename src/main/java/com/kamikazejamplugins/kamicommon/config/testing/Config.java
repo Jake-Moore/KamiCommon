@@ -1,12 +1,13 @@
 package com.kamikazejamplugins.kamicommon.config.testing;
 
 import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
 public class Config extends KamiConfig {
-    public Config(File file) {
-        super(null, file);
+    public Config(JavaPlugin plugin, File file) {
+        super(plugin, file);
 
         addCommentAbove("friendlyRaid",
                 "-----------------------------------------------------------------",
@@ -150,6 +151,6 @@ public class Config extends KamiConfig {
     }
 
     public static void main(String[] args) {
-        new Config(new File("C:\\Users\\Jake\\Desktop\\config.yml"));
+        new Config(null, new File("C:\\Users\\Jake\\Desktop\\config.yml"));
     }
 }
