@@ -38,7 +38,7 @@ public class YamlHandler {
             if (!configFile.exists()) {
                 if (!configFile.getParentFile().exists()) {
                     if (!configFile.getParentFile().mkdirs()) {
-                        System.out.println("Could not create config file dirs, stopping");
+                        System.out.println("[KamiCommon] Could not create config file dirs for (" + configFile.getAbsolutePath() + "), stopping");
                     }
                 }
                 if (!configFile.createNewFile()) {
@@ -71,9 +71,7 @@ public class YamlHandler {
         InputStream defConfigStream = getIS(plugin);
 
         if (defConfigStream == null) {
-            System.out.println(ANSI.RED
-                    + "Warning: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!"
-                    + ANSI.RESET);
+            System.out.println("[KamiCommon] Error: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!");
             save();
             return config;
         }
@@ -82,12 +80,10 @@ public class YamlHandler {
         List<String> keys = getOrderedKeys(getIS(plugin), defConfig.getKeys(true));
 
         if (!equalLists(keys, defConfig.getKeys(true))) {
-            System.out.println(Arrays.toString(keys.toArray()));
-            System.out.println(Arrays.toString(defConfig.getKeys(true).toArray()));
+//            System.out.println(Arrays.toString(keys.toArray()));
+//            System.out.println(Arrays.toString(defConfig.getKeys(true).toArray()));
 
-            System.out.println(ANSI.RED
-                    + "Warning: Error grabbing ordered defaults from (" + configFile.getName() + ")!"
-                    + ANSI.RESET);
+            System.out.println("[KamiCommon] Error: Error grabbing ordered defaults from (" + configFile.getName() + ")!");
             save();
             return config;
         }
