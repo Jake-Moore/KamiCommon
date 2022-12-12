@@ -6,6 +6,7 @@ import com.kamikazejamplugins.kamicommon.yaml.MemoryConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.YamlHandler;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -58,10 +59,11 @@ public abstract class KamiConfig extends ConfigurationSection {
         // Ensure the file exists
         try {
             if (!file.exists() && !file.createNewFile()) {
-                throw new Exception("Failed to create file");
+                throw new Exception("Failed to create file: " + file.getAbsolutePath());
             }
         }catch (Exception e) {
             e.printStackTrace();
+            Bukkit.getLogger().severe("Failed to create file: " + file.getAbsolutePath());
         }
 
         this.yamlHandler = new YamlHandler(plugin, file);
