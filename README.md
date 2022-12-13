@@ -53,7 +53,7 @@ menu.openMenu(player);
 ```
 - ItemBuilder for easier item manipulation
 ``` java
-Material material = Material.CHEST;
+XMaterial material = XMaterial.CHEST;
 short damage = (short) 0;
 int amount = 64;
 
@@ -72,7 +72,7 @@ builder.toItemStack();
 - A few bulky methods simplified for Configuration management (ConfigManager.java)
    - Create empty configs, save configs, reload configs 
 - A few utilities
-   - ActionBar utility, DiscordWebhook utility, StringUtil.t() as an alias of ChatColor...
+   - All of XSeries, DiscordWebhook utility, StringUtil.t() as an alias of ChatColor...
 - A YamlHandler (for using .yml files outside of spigot, standalone compatible)
 ``` java
 YamlHandler yaml = new YamlHandler(File configFile, String fileName);

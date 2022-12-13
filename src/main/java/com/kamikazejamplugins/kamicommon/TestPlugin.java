@@ -1,13 +1,13 @@
 package com.kamikazejamplugins.kamicommon;
 
+import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.messages.ActionBar;
 import com.kamikazejamplugins.kamicommon.config.testing.Config;
 import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
-import com.kamikazejamplugins.kamicommon.util.actionbar.ActionBar;
 import com.kamikazejamplugins.kamicommon.util.components.MessageActionManager;
 import com.kamikazejamplugins.kamicommon.util.components.actions.hoveritem.HoverItem;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
@@ -24,10 +24,10 @@ public class TestPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         Config config = new Config(this, new File(getDataFolder(), "config.yml"));
 
-        ItemStack itemStack = new ItemBuilder(Material.DIAMOND_SWORD)
+        ItemStack itemStack = new ItemBuilder(XMaterial.DIAMOND_SWORD)
                 .setDisplayName("TestItem")
                 .setLore("Test1", "Test2")
-                .addEnchant(Enchantment.DAMAGE_ALL, 1)
+                .addEnchant(XEnchantment.DAMAGE_ALL.getEnchant(), 1)
                 .addFlag(ItemFlag.HIDE_ENCHANTS)
                 .addFlag(ItemFlag.HIDE_ATTRIBUTES)
                 .setNbtBoolean("FR-FREE-ITEM", true)
@@ -51,7 +51,7 @@ public class TestPlugin extends JavaPlugin implements Listener {
                     HoverItem hover = new HoverItem("{item}", "ItemStack", itemStack1);
                     MessageActionManager.processAndSend(player, "Test {item}", hover);
 
-                    ActionBar.getInstance().sendToPlayer(player, "Test Action Bar");
+                    ActionBar.sendActionBar(player, "Test Action Bar");
                 }
             }
         }.runTaskTimer(this, 0, 20);

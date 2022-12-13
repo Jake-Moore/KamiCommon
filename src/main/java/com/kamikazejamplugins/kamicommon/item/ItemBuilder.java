@@ -1,11 +1,11 @@
 package com.kamikazejamplugins.kamicommon.item;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import de.tr7zw.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +21,7 @@ public class ItemBuilder {
     private String skullOwner;
     private int slot;
 
-    public ItemBuilder(Material m) {
+    public ItemBuilder(XMaterial m) {
         this(m, 1);
     }
 
@@ -33,7 +33,7 @@ public class ItemBuilder {
         this(id, 1, damage);
     }
 
-    public ItemBuilder(Material m, short damage) {
+    public ItemBuilder(XMaterial m, short damage) {
         this(m.getId(), 1, damage);
     }
 
@@ -41,7 +41,7 @@ public class ItemBuilder {
         this(id, amount, (short) 0);
     }
 
-    public ItemBuilder(Material m, int amount) {
+    public ItemBuilder(XMaterial m, int amount) {
         this(m, amount, (short) 0);
     }
 
@@ -50,9 +50,10 @@ public class ItemBuilder {
         is = new ItemStack(id, amount, damage);
     }
 
-    public ItemBuilder(Material material, int amount, short damage) {
+    public ItemBuilder(XMaterial material, int amount, short damage) {
         if (amount > 64) { amount = 64; }
-        is = new ItemStack(material, amount, damage);
+        assert material.parseMaterial() != null;
+        is = new ItemStack(material.parseMaterial(), amount, damage);
     }
 
     public ItemBuilder(ItemStack is) {
@@ -108,8 +109,8 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setType(Material m) {
-        is.setType(m);
+    public ItemBuilder setType(XMaterial m) {
+        is.setType(m.parseMaterial());
         return this;
     }
 

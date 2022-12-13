@@ -1,6 +1,6 @@
 package com.kamikazejamplugins.kamicommon.util;
 
-import org.bukkit.Material;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,7 +24,7 @@ public class PlayerUtil {
     public static boolean emptyInventory(Player player, boolean checkArmor) {
         //Check their 36 slots for items
         for (int i = 0; i < 36; i++) {
-            if (player.getInventory().getItem(i) != null && player.getInventory().getItem(i).getType() != Material.AIR) {
+            if (player.getInventory().getItem(i) != null && XMaterial.matchXMaterial(player.getInventory().getItem(i)) != XMaterial.AIR) {
                 return false;
             }
         }
@@ -32,7 +32,7 @@ public class PlayerUtil {
         //Check their amor slots for items
         if (checkArmor) {
             for (ItemStack i : player.getInventory().getArmorContents()) {
-                if (i != null && i.getType() != Material.AIR) {
+                if (i != null && XMaterial.matchXMaterial(i) != XMaterial.AIR) {
                     return false;
                 }
             }

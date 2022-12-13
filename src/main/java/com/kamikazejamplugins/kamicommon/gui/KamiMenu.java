@@ -1,9 +1,9 @@
 package com.kamikazejamplugins.kamicommon.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.*;
 import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -76,7 +76,8 @@ public class KamiMenu<T extends Player> extends AbstractKamiMenu<T> {
     }
 
     public ItemStack getDefaultFiller() {
-        return new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 8).setName(" ").toItemStack();
+        XMaterial mat = XMaterial.GRAY_STAINED_GLASS_PANE;
+        return new ItemBuilder(mat, 1, mat.getData()).setName(" ").toItemStack();
     }
 
     public KamiMenu<T> fill() {

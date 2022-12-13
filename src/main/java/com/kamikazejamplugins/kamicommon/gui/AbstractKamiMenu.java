@@ -1,5 +1,6 @@
 package com.kamikazejamplugins.kamicommon.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.Menu;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickInfo;
@@ -7,7 +8,6 @@ import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuUpdate;
 import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -65,7 +65,7 @@ public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder impl
                 if (s > getSize()) {
                     throw new IllegalStateException("Slot could fit in this inventory size.");
                 }
-                if (getInventory().getItem(s) == null || getInventory().getItem(s).getType() == Material.AIR) {
+                if (getInventory().getItem(s) == null || XMaterial.matchXMaterial(getInventory().getItem(s)) == XMaterial.AIR) {
                     return s;
                 }
             } catch (IllegalStateException e) {
@@ -87,7 +87,7 @@ public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder impl
                 if (s > getSize()) {
                     throw new IllegalStateException("Slot could fit in this inventory size.");
                 }
-                if (getInventory().getItem(s) == null || getInventory().getItem(s).getType() == Material.AIR) {
+                if (getInventory().getItem(s) == null || XMaterial.matchXMaterial(getInventory().getItem(s)) == XMaterial.AIR) {
                     return s;
                 }
             } catch (IllegalStateException e) {

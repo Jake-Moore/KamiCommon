@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.3.5.10</version>
+    <version>1.3.5.11</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -31,7 +31,7 @@
         <url>https://github.com/Jake-Moore/KamiCommon</url>
         <connection>scm:git:https://github.com/Jake-Moore/KamiCommon.git</connection>
       <tag>kamicommon-1.0.20</tag>
-  </scm>
+    </scm>
 
     <build>
         <plugins>
@@ -59,6 +59,11 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.apache.commons</pattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <!-- Be sure to change the package below -->
+                                    <shadedPattern>com.kamikazejamplugins.kamicommon.util</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -186,6 +191,12 @@
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api-plugin</artifactId>
             <version>2.11.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>9.1.0</version>
         </dependency>
     </dependencies>
 </project>
