@@ -65,7 +65,7 @@ public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder impl
                 if (s > getSize()) {
                     throw new IllegalStateException("Slot could fit in this inventory size.");
                 }
-                if (getInventory().getItem(s) == null || XMaterial.matchXMaterial(getInventory().getItem(s)) == XMaterial.AIR) {
+                if (getInventory().getItem(s) == null || XMaterial.matchXMaterial(getInventory().getItem(s)).equals(XMaterial.AIR)) {
                     return s;
                 }
             } catch (IllegalStateException e) {
@@ -87,7 +87,7 @@ public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder impl
                 if (s > getSize()) {
                     throw new IllegalStateException("Slot could fit in this inventory size.");
                 }
-                if (getInventory().getItem(s) == null || XMaterial.matchXMaterial(getInventory().getItem(s)) == XMaterial.AIR) {
+                if (getInventory().getItem(s) == null || XMaterial.matchXMaterial(getInventory().getItem(s)).equals(XMaterial.AIR)) {
                     return s;
                 }
             } catch (IllegalStateException e) {
