@@ -3,3 +3,4 @@ version: ${project.version}
 main: com.kamikazejamplugins.kamicommon.TestPlugin
 authors: [ KamikazeJAM_YT ]
 description: Testing
+api-version: 1.13

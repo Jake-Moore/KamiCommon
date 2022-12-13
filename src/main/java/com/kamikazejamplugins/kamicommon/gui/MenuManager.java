@@ -1,10 +1,10 @@
 package com.kamikazejamplugins.kamicommon.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.Menu;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickInfo;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -114,7 +114,7 @@ public class MenuManager implements Listener {
         if (item1.getType() != item2.getType()) { return false; }
         if (item1.getAmount() != item2.getAmount()) { return false; }
 
-        if (item1.getType().equals(Material.POTION) && item2.getType().equals(Material.POTION) || item1.getDurability() == item2.getDurability()) {
+        if (XMaterial.matchXMaterial(item1).equals(XMaterial.POTION) && XMaterial.matchXMaterial(item2).equals(XMaterial.POTION) || item1.getDurability() == item2.getDurability()) {
             ItemMeta meta1 = item1.getItemMeta();
             ItemMeta meta2 = item2.getItemMeta();
 

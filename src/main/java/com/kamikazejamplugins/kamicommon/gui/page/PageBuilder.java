@@ -1,10 +1,10 @@
 package com.kamikazejamplugins.kamicommon.gui.page;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.gui.KamiMenu;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickPlayer;
 import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
 import lombok.Getter;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -68,7 +68,7 @@ public abstract class PageBuilder<T extends Player> {
     }
 
     public ItemBuilder getNextPage() {
-        return new ItemBuilder(Material.ARROW).setName("&a&lNext Page &a▶");
+        return new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶");
     }
 
     public boolean overridePageItems() {
@@ -76,7 +76,7 @@ public abstract class PageBuilder<T extends Player> {
     }
 
     public ItemBuilder getPreviousPage() {
-        return new ItemBuilder(Material.ARROW).setName("&a◀ &a&lPrevious Page");
+        return new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page");
     }
 
     public PageItem<T> getBackItem() {
