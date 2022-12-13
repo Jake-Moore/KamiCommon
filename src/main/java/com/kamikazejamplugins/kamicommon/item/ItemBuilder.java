@@ -3,14 +3,19 @@ package com.kamikazejamplugins.kamicommon.item;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
+import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import de.tr7zw.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -20,6 +25,66 @@ public class ItemBuilder {
     private final ItemStack is;
     private String skullOwner;
     private int slot;
+
+    public ItemBuilder(ConfigurationSection section, String key) {
+        is = getConfigItem(section, key);
+    }
+
+    public ItemBuilder(ConfigurationSection section, String key, OfflinePlayer offlinePlayer) {
+        is = getConfigItem(section, key, offlinePlayer);
+    }
+
+    private static ItemStack getConfigItem(ConfigurationSection config, String key) {
+        return getConfigItem(config, key, null);
+    }
+
+    private static ItemStack getConfigItem(ConfigurationSection config, String key, @Nullable OfflinePlayer offlinePlayer) {
+        Optional<XMaterial> optional = XMaterial.matchXMaterial(config.getString(key + ".material"));
+        if (optional.isPresent() && optional.get().equals(XMaterial.PLAYER_HEAD)) {
+            return getPlayerHead(config, key, offlinePlayer);
+        }
+        return getBasicItem(config, key);
+    }
+
+    private static ItemStack getBasicItem(ConfigurationSection config, String key) {
+        short damage = (short) config.getInt(key + ".damage", 0);
+        int amount = config.getInt(key + ".amount", 1);
+
+        ItemStack item = new ItemStack(Material.valueOf(config.getString(key + ".material")), amount, damage);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', config.getString(key + ".name")));
+        meta.setLore(StringUtil.t(config.getStringList(key + ".lore")));
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private static ItemStack getPlayerHead(ConfigurationSection config, String key, @Nullable OfflinePlayer offlinePlayer) {
+        ItemStack item = getBasicItem(config, key);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        SkullMeta skullMeta = (SkullMeta) meta;
+
+        // Set the skull owner if it's not null
+        if (offlinePlayer != null) {
+            if (NmsManager.getFormattedNmsDouble() < 1.18) {
+                skullMeta.setOwner(offlinePlayer.getName());
+            } else {
+                try {
+                    Method method = skullMeta.getClass().getDeclaredMethod("setOwningPlayer", OfflinePlayer.class);
+                    method.invoke(skullMeta, offlinePlayer);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        skullMeta.setDisplayName(meta.getDisplayName());
+        skullMeta.setLore(meta.getLore());
+        item.setItemMeta(skullMeta);
+        return item;
+    }
 
     public ItemBuilder(XMaterial m) {
         this(m, 1);
