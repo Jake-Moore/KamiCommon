@@ -72,7 +72,7 @@ public class ItemBuilder {
                 skullMeta.setOwner(offlinePlayer.getName());
             } else {
                 try {
-                    Method method = skullMeta.getClass().getDeclaredMethod("setOwningPlayer", OfflinePlayer.class);
+                    Method method = skullMeta.getClass().getMethod("setOwningPlayer", OfflinePlayer.class);
                     method.invoke(skullMeta, offlinePlayer);
                 } catch (Exception e) {
                     e.printStackTrace();
