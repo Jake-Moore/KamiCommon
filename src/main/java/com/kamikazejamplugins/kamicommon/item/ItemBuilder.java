@@ -68,16 +68,7 @@ public class ItemBuilder {
 
         // Set the skull owner if it's not null
         if (offlinePlayer != null) {
-            if (NmsManager.getFormattedNmsDouble() < 1.18) {
-                skullMeta.setOwner(offlinePlayer.getName());
-            } else {
-                try {
-                    Method method = skullMeta.getClass().getMethod("setOwningPlayer", OfflinePlayer.class);
-                    method.invoke(skullMeta, offlinePlayer);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            skullMeta.setOwner(offlinePlayer.getName());
         }
 
         skullMeta.setDisplayName(meta.getDisplayName());
