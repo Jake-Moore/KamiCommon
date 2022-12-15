@@ -24,7 +24,6 @@ public class StringUtil {
             while (matcher.find()) {
                 StringBuilder s2 = new StringBuilder(COLOR_CHAR + "x");
                 for (char c : matcher.group().substring(1).toCharArray()) {
-                    System.out.println(c);
                     s2.append(COLOR_CHAR).append(c);
                 }
 
