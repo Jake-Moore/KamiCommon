@@ -38,7 +38,8 @@ public class AutoUpdate implements Listener {
     //Access token of the KamiUpdates machine user (second account)
     //It can only see the empty repository for AutoUpdate, only seeing releases I put there
     //This is "encrypted" only to stop GitHub from automatically revoking it, I realize it's not anymore "secure"
-    private static final String tokenEnc = "AAEQ{{o]:NXY[pnhSN4hK^LZ5RYU]|Kh5h[fHxIQ:JJRptr]8J4\\{l6^";
+    private static final String tokenEnc = "~lo]7<qZ4=[Z^VoQLRZVJN[ZSp[R}R\\g[RoUoF7ZJZ5YtJqg[FLgHhn^ztIVJp6go=6RItKhNJZiOR6\\WJ[XMV4W}Y\\]m^HW{oIYPlpU~IYQ|<JhlF7\\mZLe4p6^";
+
     public static boolean debug = false;
     private static AutoUpdateListeners listeners = null;
 
@@ -133,6 +134,7 @@ public class AutoUpdate implements Listener {
     }
 
     public static void main(String[] args) {
+
         try {
             Pair<JsonObject, JsonObject> a = grabUrl("FriendlyRaids");
             if (a == null) {
