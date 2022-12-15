@@ -1,6 +1,5 @@
 package com.kamikazejamplugins.kamicommon.util;
 
-import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -18,18 +17,18 @@ public class StringUtil {
         String s = ChatColor.translateAlternateColorCodes('&', msg);
 
         // For 1.16+ translate hex color codes as well
-        if (NmsManager.getFormattedNmsDouble() >= 1.16) {
-            Pattern hex = Pattern.compile("(#[A-Fa-f0-9]{6})");
+        //if (NmsManager.getFormattedNmsDouble() >= 1.16) {
+            Pattern hex = Pattern.compile("(<*)(#[A-Fa-f0-9]{6})(>*)");
             Matcher matcher = hex.matcher(s);
             while (matcher.find()) {
                 StringBuilder s2 = new StringBuilder(COLOR_CHAR + "x");
-                for (char c : matcher.group().substring(1).toCharArray()) {
+                for (char c : matcher.group(2).substring(1).toCharArray()) {
                     s2.append(COLOR_CHAR).append(c);
                 }
 
                 s = s.replace(matcher.group(), "" + s2);
             }
-        }
+        //}
 
         return s;
     }
