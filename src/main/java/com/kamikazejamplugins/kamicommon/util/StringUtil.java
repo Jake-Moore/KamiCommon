@@ -1,16 +1,38 @@
 package com.kamikazejamplugins.kamicommon.util;
 
+import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class StringUtil {
+    @SuppressWarnings("all")
+    public static final char COLOR_CHAR = '\u00A7';
+
     public static String t(String msg) {
-        return ChatColor.translateAlternateColorCodes('&', msg);
+        String s = ChatColor.translateAlternateColorCodes('&', msg);
+
+        // For 1.16+ translate hex color codes as well
+        if (NmsManager.getFormattedNmsDouble() >= 1.16) {
+            Pattern hex = Pattern.compile("(#[A-Fa-f0-9]{6})");
+            Matcher matcher = hex.matcher(s);
+            while (matcher.find()) {
+                StringBuilder s2 = new StringBuilder(COLOR_CHAR + "x");
+                for (char c : matcher.group().substring(1).toCharArray()) {
+                    System.out.println(c);
+                    s2.append(COLOR_CHAR).append(c);
+                }
+
+                s = s.replace(matcher.group(), "" + s2);
+            }
+        }
+
+        return s;
     }
 
     public static List<String> t(List<String> msgs) {
