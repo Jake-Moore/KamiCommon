@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.3.5.17</version>
+    <version>1.3.5.18</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -58,12 +58,19 @@
                             <minimizeJar>true</minimizeJar>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.apache.commons</pattern>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <shadedPattern>com.kamikazejamplugins.kamicommon.util</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.cryptomorin.xseries</pattern>
-                                    <!-- Be sure to change the package below -->
-                                    <shadedPattern>com.kamikazejamplugins.kamicommon.util</shadedPattern>
+                                    <pattern>org.apache.commons.pool2</pattern>
+                                    <shadedPattern>com.kamikazejamplugins.kamicommon.pool</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>redis.clients</pattern>
+                                    <shadedPattern>com.kamikazejamplugins.kamicommon.redis</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons</pattern>
                                 </relocation>
                             </relocations>
                         </configuration>
