@@ -34,6 +34,9 @@ public class KamiConfigManager {
             addComment(lines, comment);
         }
 
+        // Empty file verses an empty json {} weird stuff
+        if (kamiConfig.isEmpty()) { lines.clear(); }
+
         // Save the modified lines to the file
         Files.write(kamiConfig.getFile().toPath(), convert(lines), StandardCharsets.ISO_8859_1);
     }
