@@ -49,7 +49,8 @@ public class ConfigManager {
         FileConfiguration config = YamlConfiguration.loadConfiguration(f);
         //Load defaults into the rewards config
         if (defaultsFromResource) {
-            Reader defConfigStream2 = new InputStreamReader(plugin.getResource(fileName), StandardCharsets.US_ASCII);
+            // Load input stream as ISO_8859_1 in case there are special characters
+            Reader defConfigStream2 = new InputStreamReader(plugin.getResource(fileName), StandardCharsets.ISO_8859_1);
             YamlConfiguration defConfig2 = YamlConfiguration.loadConfiguration(defConfigStream2);
             config.addDefaults(defConfig2);
             config.options().copyDefaults(true);

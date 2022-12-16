@@ -103,7 +103,7 @@ public class YamlHandler {
         Map<Integer, String> keyMappings = new HashMap<>();
 
         // Store the lines here so that we don't have to read the file multiple times
-        List<String> lines = new BufferedReader(new InputStreamReader(defConfigStream, StandardCharsets.US_ASCII)).lines().collect(Collectors.toList());
+        List<String> lines = new BufferedReader(new InputStreamReader(defConfigStream, StandardCharsets.ISO_8859_1)).lines().collect(Collectors.toList());
 
         for (String key : deepKeys) {
             int lineNum = findLineOfKey(lines, key);
