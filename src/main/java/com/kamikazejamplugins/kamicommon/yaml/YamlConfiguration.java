@@ -3,9 +3,9 @@ package com.kamikazejamplugins.kamicommon.yaml;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 
 @SuppressWarnings({"unused"})
@@ -24,7 +24,8 @@ public class YamlConfiguration extends MemorySection {
             options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             options.setAllowUnicode(true);
 
-            new Yaml(options).dump(this.getData(), new FileWriter(configFile));
+            OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(configFile.toPath()), StandardCharsets.UTF_8);
+            new Yaml(options).dump(this.getData(), writer);
         } catch(IOException e) {
             e.printStackTrace();
         }

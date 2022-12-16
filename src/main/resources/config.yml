@@ -1,105 +1,34 @@
-# This file exists to test Config.java
-
-friendlyRaid:
-  blacklistedCommands:
-    - "startswith:/f tnt"
-    - "startswith:/f chest"
-    - "startswith:/f sethome"
-    - "startswith:/f home"
-    - "startswith:/f setwarp"
-    - "startswith:/f warp"
-    - "startswith:/spawn:&cYou cannot use that here, please use /f friendlyraid forfeit"
-  whitelistedCommands:
-    - "startswith:/f"
-    - "startswith:/shop"
-    - "startswith:/gen"
-    - "startswith:/gens"
-    - "startswith:/printer"
-  blacklistedShopItems:
-    - "MOB_SPAWNER"
-    - "CHEST"
-    - "TRAPPED_CHEST"
-  bufferCounterWallChunks: 6.0
-  preloadChunksPerTick: 3
-  options:
-    baseSize:
-      - "1:1x1 Chunks"
-      - "2:2x2 Chunks"
-      - "3:3x3 Chunks"
-      - "5:5x5 Chunks"
-    baseSizeDefaultIndex: 2
-    bufferSize:
-      - "10:10 Chunks"
-      - "15:15 Chunks"
-      - "20:20 Chunks"
-    sandFrequency:
-      - "0:Disabled"
-      - "2:Every Other Wall"
-      - "3:Every Third Wall"
-      - "4:Every Fourth Wall"
-    oceanChunks:
-      - "0:0 Chunks"
-      - "1:1 Chunk"
-    wallTypes:
-      - "COBBLESTONE:0"
-      - "OBSIDIAN:0:OBSIDIAN"
-    wallTypesDefaultIndex: 1
-    recorded:
-      recordYes: "&aYes"
-      recordNo: "&cNo"
-    mid-chunks: 8
-  maxDurationMinutes: 180
-  maxSimultaneousRaids: 5
-  wagerCurrencies:
-    money: true
-    exp: true
-    tokens: true
-
-frCommandAliases:
-  - "friendlyraid"
-  - "friendlyraids"
-  - "fraid"
-  - "fr"
-factionCommandAliases:
-  - "/f"
-  - "/faction"
-
-tpaCommandAliases:
-  - "call"
-  - "ecall"
-  - "tpa"
-  - "etpa"
-  - "tpask"
-  - "etpask"
-
-spawnRegion:
-  world: "world"
-  x1: -100
-  y1: 1
-  z1: -100
-  x2: 100
-  y2: 256
-  z2: 100
-
-spectate:
-  warmupSec: 0
-  maxY: 280
-  fallBackSpawn:
-    world: "world"
-    x: 0.5
-    y: 100.0
-    z: 0.5
-  blacklisted-commands:
-    - "startswith:/f chest"
-  whitelisted-commands:
-    - "startswith:/f top"
-
-freeItems:
-  enableFreeItemChests: true
-  enableFreeTnt: true
-
-
-tournament:
-  signUpSeconds: 60
-  maxDurationMins: 30
-  allowWagering: false
+pickaxes:
+  DIAMOND_PICKAXE:
+    minLevel: 130
+    secondsToMine: 1.0D
+    pickaxe-item:
+      material: DIAMOND_PICKAXE
+      name: <#00FFFF>&lDiamond Pickaxe
+      lore:
+        - '&7&oThe pickaxe of a professional'
+        - '&7&oIt''s only made out of <#00FFFF>Diamond&7!'
+        - ' '
+        - <#00FFFF>&lInformation &8»
+        - ' &f* <#00FFFF>Energy: &f{energy}&8/&f{maxEnergy} &7({decimalPercent}%)'
+        - ' &f* <#00FFFF>Blocks Mined: &f{blocks_broken}'
+        - ' '
+        - <#00FFFF>&lEnchantments &8»
+        - '{enchantments}'
+  ruby_pickaxe:
+    minLevel: 150
+    secondsToMine: 0.5D
+    pickaxe-item:
+      material: ruby_pickaxe
+      name: <#FF0000>&lRuby Pickaxe
+      lore:
+        - '&7&oThe best pickaxe in the game!'
+        - '&7&oIt''s only made out of <#FF0000>Ruby&7!'
+        - ' '
+        - <#FF0000>&lInformation &8»
+        - ' &f* <#FF0000>Energy: &f{energy}&8/&f{maxEnergy} &7({decimalPercent}%)'
+        - ' &f* <#FF0000>Blocks Mined: &f{blocks_broken}'
+        - ' '
+        - <#FF0000>&lEnchantments &8»
+        - '{enchantments}'
+test: "<#FF0000>&lEnchantments &8»"
