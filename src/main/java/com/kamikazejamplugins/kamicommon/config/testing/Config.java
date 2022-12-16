@@ -7,12 +7,12 @@ import java.io.File;
 
 public class Config extends KamiConfig {
     public Config(JavaPlugin plugin, File file) {
-        super(plugin, file, false);
+        super(plugin, file, true);
     }
 
     public static void main(String[] args) {
-        Config config = new Config(null, new File("C:\\Users\\Jake\\Desktop\\config2.yml"));
-        //config.addDefault("test", "test» yay");
+        Config config = new Config(null, new File("C:\\Users\\Jake\\Desktop\\config.yml"));
+        config.addDefault("test", "test» yay");
         config.save();
         config.reload();
     }
