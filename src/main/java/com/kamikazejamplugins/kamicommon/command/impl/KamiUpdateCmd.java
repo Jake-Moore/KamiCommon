@@ -1,7 +1,7 @@
 package com.kamikazejamplugins.kamicommon.command.impl;
 
-import com.kamikazejamplugins.kamicommon.autoupdate.AutoUpdate;
 import com.kamikazejamplugins.kamicommon.KamiCommon;
+import com.kamikazejamplugins.kamicommon.autoupdate.AutoUpdate;
 import com.kamikazejamplugins.kamicommon.command.KamiSubCommand;
 import org.bukkit.command.CommandSender;
 

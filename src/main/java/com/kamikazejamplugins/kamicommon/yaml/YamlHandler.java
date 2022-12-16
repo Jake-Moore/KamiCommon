@@ -7,7 +7,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,7 +102,7 @@ public class YamlHandler {
         Map<Integer, String> keyMappings = new HashMap<>();
 
         // Store the lines here so that we don't have to read the file multiple times
-        List<String> lines = new BufferedReader(new InputStreamReader(defConfigStream, StandardCharsets.UTF_8)).lines().collect(Collectors.toList());
+        List<String> lines = new BufferedReader(new InputStreamReader(defConfigStream)).lines().collect(Collectors.toList());
 
         for (String key : deepKeys) {
             int lineNum = findLineOfKey(lines, key);

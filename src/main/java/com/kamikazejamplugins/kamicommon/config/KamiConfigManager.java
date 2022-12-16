@@ -5,7 +5,6 @@ import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class KamiConfigManager {
         config.save();
 
         // Store the lines here so that we don't have to read the file multiple times
-        List<String> lines = Files.readAllLines(kamiConfig.getFile().toPath(), StandardCharsets.UTF_8);
+        List<String> lines = Files.readAllLines(kamiConfig.getFile().toPath());
 
         // Add the comments to the file
         for (ConfigComment comment : comments) {
@@ -28,7 +27,7 @@ public class KamiConfigManager {
         }
 
         // Save the modified lines to the file
-        Files.write(kamiConfig.getFile().toPath(), lines, StandardCharsets.UTF_8);
+        Files.write(kamiConfig.getFile().toPath(), lines);
     }
 
     private static void addComment(List<String> lines, ConfigComment comment) {

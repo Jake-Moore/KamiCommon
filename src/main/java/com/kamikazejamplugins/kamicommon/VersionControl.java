@@ -13,7 +13,6 @@ import org.bukkit.command.CommandSender;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -50,7 +49,7 @@ public class VersionControl {
 
         try (InputStream in = inputStream) {
             Preconditions.checkNotNull(in);
-            JsonElement e = (new JsonParser()).parse(new InputStreamReader(in, StandardCharsets.UTF_8));
+            JsonElement e = (new JsonParser()).parse(new InputStreamReader(in));
             JsonObject object = (JsonObject) e;
 
             if (object.has("name")) {
