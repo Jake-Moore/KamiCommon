@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class ConfigManager {
@@ -48,7 +49,7 @@ public class ConfigManager {
         FileConfiguration config = YamlConfiguration.loadConfiguration(f);
         //Load defaults into the rewards config
         if (defaultsFromResource) {
-            Reader defConfigStream2 = new InputStreamReader(plugin.getResource(fileName));
+            Reader defConfigStream2 = new InputStreamReader(plugin.getResource(fileName), StandardCharsets.US_ASCII);
             YamlConfiguration defConfig2 = YamlConfiguration.loadConfiguration(defConfigStream2);
             config.addDefaults(defConfig2);
             config.options().copyDefaults(true);
