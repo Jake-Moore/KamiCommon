@@ -458,4 +458,9 @@ public abstract class MemorySection extends ConfigurationSection {
     protected boolean isPrimitiveWrapper(final Object input) {
         return input instanceof Integer || input instanceof Boolean || input instanceof Character || input instanceof Byte || input instanceof Short || input instanceof Double || input instanceof Long || input instanceof Float;
     }
+
+    @Override
+    public boolean isEmpty() {
+        return data.isEmpty();
+    }
 }

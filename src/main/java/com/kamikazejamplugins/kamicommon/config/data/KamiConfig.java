@@ -244,4 +244,9 @@ public abstract class KamiConfig extends ConfigurationSection {
 
     @Override
     public void addDefault(String key, Object o) { config.addDefault(key, o); }
+
+    @Override
+    public boolean isEmpty() {
+        return config.isEmpty();
+    }
 }
