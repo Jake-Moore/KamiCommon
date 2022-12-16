@@ -5,8 +5,11 @@ import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -20,7 +23,11 @@ public class KamiConfigManager {
         config.save();
 
         // Store the lines here so that we don't have to read the file multiple times
-        List<String> lines = Files.readAllLines(kamiConfig.getFile().toPath(), StandardCharsets.US_ASCII);
+        InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(kamiConfig.getFile().toPath()), StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(inputStreamReader);
+
+        List<String> lines = new ArrayList<>();
+        while (reader.ready()) { lines.add(reader.readLine()); }
 
         // Add the comments to the file
         for (ConfigComment comment : comments) {
@@ -28,7 +35,16 @@ public class KamiConfigManager {
         }
 
         // Save the modified lines to the file
-        Files.write(kamiConfig.getFile().toPath(), lines, StandardCharsets.US_ASCII);
+        Files.write(kamiConfig.getFile().toPath(), convert(lines), StandardCharsets.ISO_8859_1);
+    }
+
+    // Convert our UTF-8 lines to ISO-8859-1, because we can write ISO-8859-1 to a file with special chars
+    public static List<String> convert(List<String> lines) {
+        List<String> newLines = new ArrayList<>();
+        for (String line : lines) {
+            newLines.add(new String(line.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+        }
+        return newLines;
     }
 
     private static void addComment(List<String> lines, ConfigComment comment) {
