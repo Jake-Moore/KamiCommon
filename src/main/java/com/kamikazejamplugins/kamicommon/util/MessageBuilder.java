@@ -1,7 +1,8 @@
 package com.kamikazejamplugins.kamicommon.util;
 
 import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
-import com.kamikazejamplugins.kamicommon.yaml.MemorySection;
+import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
+import lombok.Getter;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -9,7 +10,15 @@ import java.util.List;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class MessageBuilder {
-    private final List<String> lines = new ArrayList<>();
+    @Getter private final List<String> lines = new ArrayList<>();
+
+    public static MessageBuilder of(KamiConfig config, String key) {
+        return new MessageBuilder(config, key);
+    }
+
+    public static MessageBuilder of(ConfigurationSection section, String key) {
+        return new MessageBuilder(section, key);
+    }
 
     /**
      * Creates a new MessageBuilder from a configuration key
@@ -18,7 +27,7 @@ public class MessageBuilder {
      * This class will detect if the key points to a string or a list of strings,
      *   and then handle things accordingly.
      */
-    public MessageBuilder(MemorySection section, String key) {
+    public MessageBuilder(ConfigurationSection section, String key) {
         if (section.isString(key)) {
             this.lines.add(section.getString(key));
         } else {
