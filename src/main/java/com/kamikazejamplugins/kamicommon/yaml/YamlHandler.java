@@ -88,6 +88,13 @@ public class YamlHandler {
             return config;
         }
 
+        // Add any existing keys that aren't in the defaults list
+        // this will make any keys set by the plugin, that aren't in the defaults, stay
+        List<String> existingKeys = new ArrayList<>(config.getKeys(true));
+        for (String key : existingKeys) {
+            if (!keys.contains(key)) { keys.add(key); }
+        }
+
         // Make a new config so we can force the order of the keys when creating it
         YamlConfiguration newConfig = new YamlConfiguration(new LinkedHashMap<>(), configFile);
         for (String key : keys) {

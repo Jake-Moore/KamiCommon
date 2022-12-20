@@ -12,8 +12,9 @@ public class Config extends KamiConfig {
 
     public static void main(String[] args) {
         Config config = new Config(null, new File("C:\\Users\\Jake\\Desktop\\config.yml"));
-        config.addDefault("test", "test» yay");
+        config.set("testDouble", -3D);
         config.save();
         config.reload();
+        System.out.println(config.getDouble("testDouble"));
     }
 }

@@ -258,7 +258,7 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public boolean isFloat(String key) {
         BigDecimal bd = getNumberAt(key); if (bd == null) { return false; }
-        return (bd.doubleValue() <= Float.MAX_VALUE && bd.doubleValue() >= Float.MIN_VALUE);
+        return (Math.abs(bd.doubleValue()) <= Float.MAX_VALUE && Math.abs(bd.doubleValue()) >= Float.MIN_VALUE);
     }
 
 
@@ -274,7 +274,7 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public boolean isDouble(String key) {
         BigDecimal bd = getNumberAt(key); if (bd == null) { return false; }
-        return (bd.doubleValue() <= Double.MAX_VALUE && bd.doubleValue() >= Double.MIN_VALUE);
+        return (Math.abs(bd.doubleValue()) <= Double.MAX_VALUE && Math.abs(bd.doubleValue()) >= Double.MIN_VALUE);
     }
 
 
@@ -285,7 +285,8 @@ public abstract class MemorySection extends ConfigurationSection {
 
         // If it's any of the following, remove the last character
         if (s.endsWith("D") || s.endsWith("f") || s.endsWith("s") || s.endsWith("b")) {
-            try { return new BigDecimal(s.substring(0, s.length() - 1));
+            String sub = s.substring(0, s.length() - 1);
+            try { return new BigDecimal(sub);
             }catch (Exception ignored) {}
         }else {
             try { return new BigDecimal(s);
