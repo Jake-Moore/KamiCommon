@@ -4,12 +4,12 @@ import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
 import com.kamikazejamplugins.kamicommon.yaml.MemorySection;
 import org.bukkit.command.CommandSender;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class MessageBuilder {
-    private final List<String> lines;
+    private final List<String> lines = new ArrayList<>();
 
     /**
      * Creates a new MessageBuilder from a configuration key
@@ -20,9 +20,9 @@ public class MessageBuilder {
      */
     public MessageBuilder(MemorySection section, String key) {
         if (section.isString(key)) {
-            this.lines = Collections.singletonList(section.getString(key));
+            this.lines.add(section.getString(key));
         } else {
-            this.lines = section.getStringList(key);
+            this.lines.addAll(section.getStringList(key));
         }
     }
 
@@ -35,9 +35,9 @@ public class MessageBuilder {
      */
     public MessageBuilder(KamiConfig config, String key) {
         if (config.isString(key)) {
-            this.lines = Collections.singletonList(config.getString(key));
+            this.lines.add(config.getString(key));
         } else {
-            this.lines = config.getStringList(key);
+            this.lines.addAll(config.getStringList(key));
         }
     }
 
@@ -48,7 +48,12 @@ public class MessageBuilder {
      * @return The MessageBuilder instance (for chaining)
      */
     public MessageBuilder replace(String key, String value) {
-        lines.replaceAll(s -> s.replace(key, value));
+        List<String> newLines = new ArrayList<>();
+        for (String line : this.lines) {
+            newLines.add(line.replace(key, value));
+        }
+        this.lines.clear();
+        this.lines.addAll(newLines);
         return this;
     }
 
