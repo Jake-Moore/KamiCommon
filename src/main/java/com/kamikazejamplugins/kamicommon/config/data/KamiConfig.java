@@ -6,8 +6,6 @@ import com.kamikazejamplugins.kamicommon.yaml.MemoryConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.YamlHandler;
 import lombok.Getter;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -33,7 +31,7 @@ public abstract class KamiConfig extends ConfigurationSection {
     @Getter private final List<ConfigComment> comments = new ArrayList<>();
     private Thread thread = null;
 
-    public KamiConfig(@Nullable JavaPlugin plugin, File file) {
+    public KamiConfig(@Nullable Object plugin, File file) {
         this.file = file;
         this.addDefaults = true;
 
@@ -51,7 +49,7 @@ public abstract class KamiConfig extends ConfigurationSection {
         save();
     }
 
-    public KamiConfig(@Nullable JavaPlugin plugin, File file, boolean addDefaults) {
+    public KamiConfig(@Nullable Object plugin, File file, boolean addDefaults) {
         this.file = file;
         this.addDefaults = addDefaults;
 
@@ -146,7 +144,7 @@ public abstract class KamiConfig extends ConfigurationSection {
 
 
     @Override public void set(String key, Object value) { config.put(key, value); }
-    @Override public void setItemStack(String key, ItemStack itemStack) { config.setItemStack(key, itemStack); }
+    @Override public void setItemStack(String key, Object itemStack) { config.setItemStack(key, itemStack); }
     @Override public void put(String key, Object value) { config.put(key, value); }
     @Override public void putString(String key, String value) { config.put(key, value); }
     @Override public void putBoolean(String key, boolean value) { config.put(key, value); }
@@ -226,8 +224,8 @@ public abstract class KamiConfig extends ConfigurationSection {
     @Override public float getFloat(String key, float def) { return config.getFloat(key, def); }
     @Override public boolean isFloat(String key) { return config.isFloat(key); }
 
-    @Override public ItemStack getItemStack(String key) { return config.getItemStack(key); }
-    @Override public ItemStack getItemStack(String key, ItemStack def) { return config.getItemStack(key, def); }
+    @Override public Object getItemStack(String key) { return config.getItemStack(key); }
+    @Override public Object getItemStack(String key, Object def) { return config.getItemStack(key, def); }
 
     /**
      * Returns the keys of the config
