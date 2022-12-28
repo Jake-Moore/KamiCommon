@@ -1,6 +1,5 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
-import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.yaml.bukkit.PluginIS;
 import org.yaml.snakeyaml.Yaml;
@@ -106,7 +105,7 @@ public class YamlHandler {
     }
 
     public InputStream getIS(@Nullable Object plugin) {
-        if (plugin == null || KamiCommon.getPlugin() == null) {
+        if (plugin == null) {
             return PluginIS.class.getClassLoader().getResourceAsStream(File.separator + configFile.getName());
         }else {
             return PluginIS.getIS(plugin, configFile);

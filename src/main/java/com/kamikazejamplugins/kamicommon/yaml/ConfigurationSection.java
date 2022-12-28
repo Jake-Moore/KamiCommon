@@ -1,6 +1,5 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
-import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.yaml.bukkit.ItemStackHelper;
 import lombok.Getter;
 
@@ -12,11 +11,14 @@ import java.util.Set;
 public abstract class ConfigurationSection {
     @Getter @Nullable private final ItemStackHelper itemStackHelper;
     public ConfigurationSection() {
-        if (KamiCommon.getPlugin() != null) {
-            itemStackHelper = new ItemStackHelper(this);
-        }else {
-            itemStackHelper = null;
+        ItemStackHelper temp; //IDK why intelliJ got mad lol
+        try {
+            Class.forName("org.bukkit.inventory.ItemStack");
+            temp = new ItemStackHelper(this);
+        } catch (ClassNotFoundException e) {
+            temp = null;
         }
+        itemStackHelper = temp;
     }
 
     public abstract void set(String key, Object value);
