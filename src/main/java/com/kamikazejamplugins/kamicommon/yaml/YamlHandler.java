@@ -1,8 +1,8 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
-
+import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
-import org.bukkit.plugin.java.JavaPlugin;
+import com.kamikazejamplugins.kamicommon.yaml.bukkit.PluginIS;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nullable;
@@ -14,19 +14,19 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class YamlHandler {
-    @Nullable private final JavaPlugin plugin;
+    @Nullable private final Object plugin;
     private final File configFile;
     private final String fileName;
     private final YamlConfiguration config;
 
-    public YamlHandler(@Nullable JavaPlugin plugin, File configFile) {
+    public YamlHandler(@Nullable Object plugin, File configFile) {
         this.plugin = plugin;
         this.configFile = configFile;
         this.fileName = configFile.getName();
         this.config = null;
     }
 
-    public YamlHandler(@Nullable JavaPlugin plugin, File configFile, String fileName) {
+    public YamlHandler(@Nullable Object plugin, File configFile, String fileName) {
         this.plugin = plugin;
         this.configFile = configFile;
         this.fileName = fileName;
@@ -105,6 +105,14 @@ public class YamlHandler {
         return newConfig;
     }
 
+    public InputStream getIS(@Nullable Object plugin) {
+        if (plugin == null || KamiCommon.getPlugin() == null) {
+            return PluginIS.class.getClassLoader().getResourceAsStream(File.separator + configFile.getName());
+        }else {
+            return PluginIS.getIS(plugin, configFile);
+        }
+    }
+
     private List<String> getOrderedKeys(InputStream defConfigStream, Set<String> deepKeys) {
         List<String> keys = new ArrayList<>();
         Map<Integer, String> keyMappings = new HashMap<>();
@@ -164,16 +172,6 @@ public class YamlHandler {
     private boolean isInteger(String s) {
         try { Integer.parseInt(s); return true;
         } catch (NumberFormatException e) { return false; }
-    }
-
-
-
-    private InputStream getIS(@Nullable JavaPlugin plugin) {
-        if (plugin != null) {
-            return plugin.getResource(configFile.getName());
-        }else {
-            return getClass().getClassLoader().getResourceAsStream(File.separator + configFile.getName());
-        }
     }
 
     private boolean equalLists(List<String> l1, Set<String> l2) {

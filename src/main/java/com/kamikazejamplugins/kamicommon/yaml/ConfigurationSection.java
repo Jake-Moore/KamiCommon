@@ -1,14 +1,25 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
-import org.bukkit.inventory.ItemStack;
+import com.kamikazejamplugins.kamicommon.KamiCommon;
+import com.kamikazejamplugins.kamicommon.yaml.bukkit.ItemStackHelper;
+import lombok.Getter;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings("unused")
 public abstract class ConfigurationSection {
+    @Getter @Nullable private final ItemStackHelper itemStackHelper;
+    public ConfigurationSection() {
+        if (KamiCommon.getPlugin() != null) {
+            itemStackHelper = new ItemStackHelper(this);
+        }else {
+            itemStackHelper = null;
+        }
+    }
+
     public abstract void set(String key, Object value);
-    public abstract void setItemStack(String key, ItemStack item);
     public abstract void put(String key, Object value);
     public abstract Object get(String key);
     public abstract Object get(String key, Object def);
@@ -68,8 +79,6 @@ public abstract class ConfigurationSection {
     public abstract List<Integer> getIntegerList(String key, List<Integer> def);
     public abstract List<Byte> getByteList(String key);
     public abstract List<Byte> getByteList(String key, List<Byte> def);
-    public abstract ItemStack getItemStack(String key);
-    public abstract ItemStack getItemStack(String key, ItemStack def);
     public abstract Set<String> getKeys(boolean deep);
     public abstract boolean isConfigurationSection(String key);
     public abstract boolean contains(String key);
@@ -78,4 +87,8 @@ public abstract class ConfigurationSection {
     public abstract void addDefault(String key, Object o);
 
     public abstract boolean isEmpty();
+
+    public abstract Object getItemStack(String key);
+    public abstract Object getItemStack(String key, Object def);
+    public abstract void setItemStack(String key, Object item);
 }

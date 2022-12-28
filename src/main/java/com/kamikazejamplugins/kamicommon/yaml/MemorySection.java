@@ -1,8 +1,6 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
 import lombok.Getter;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -20,30 +18,12 @@ public abstract class MemorySection extends ConfigurationSection {
     public void set(String key, Object value) { put(key, value); }
 
     @Override
-    public void setItemStack(String key, ItemStack item) {
-        YamlConfiguration config = new YamlConfiguration();
-        config.set("item", item);
-        String stringData = config.saveToString();
-        setString(key, stringData);
-    }
-
-    @Override
-    public ItemStack getItemStack(String key) {
-        try {
-            String stringData = getString(key);
-            YamlConfiguration config = new YamlConfiguration();
-            config.loadFromString(stringData);
-            return config.getItemStack("item");
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
     public void put(String key, Object value) {
         //ItemStacks are special
-        if (value instanceof ItemStack) { setItemStack(key, (ItemStack) value); return; }
+        if (getItemStackHelper() != null && getItemStackHelper().isStack(value)) {
+            getItemStackHelper().setItemStack(key, value); return;
+        }
+
         if (value instanceof Byte) { value = value + "b"; }
         if (value instanceof Short) { value = value + "s"; }
         if (value instanceof Float) { value = value + "f"; }
@@ -395,12 +375,6 @@ public abstract class MemorySection extends ConfigurationSection {
         return result;
     }
 
-    @Override
-    public ItemStack getItemStack(String key, ItemStack def) {
-        if (contains(key)) { return getItemStack(key);
-        }else { return def; }
-    }
-
     /**
      * Returns the keys of the config
      * If Deep is enabled, it will dig and find all valid keys that resolve to a value
@@ -463,5 +437,24 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public boolean isEmpty() {
         return data.isEmpty();
+    }
+
+
+    @Override
+    public Object getItemStack(String key) {
+        if (getItemStackHelper() == null) { return null; }
+        return getItemStackHelper().getItemStack(key);
+    }
+
+    @Override
+    public Object getItemStack(String key, Object def) {
+        if (getItemStackHelper() == null) { return def; }
+        return getItemStackHelper().getItemStack(key, def);
+    }
+
+    @Override
+    public void setItemStack(String key, Object item) {
+        if (getItemStackHelper() == null) { return; }
+        getItemStackHelper().setItemStack(key, item);
     }
 }

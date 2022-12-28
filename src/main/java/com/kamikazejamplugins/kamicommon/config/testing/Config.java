@@ -1,14 +1,13 @@
 package com.kamikazejamplugins.kamicommon.config.testing;
 
 import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
-import org.bukkit.plugin.java.JavaPlugin;
 import com.kamikazejamplugins.kamicommon.util.MessageBuilder;
 
 import java.io.File;
 import java.util.Arrays;
 
 public class Config extends KamiConfig {
-    public Config(JavaPlugin plugin, File file) {
+    public Config(Object plugin, File file) {
         super(plugin, file, true);
     }
 
