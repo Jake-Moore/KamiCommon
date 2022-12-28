@@ -68,11 +68,16 @@ public class YamlHandler {
 
     private YamlConfiguration addDefaults(YamlConfiguration config) {
         InputStream defConfigStream = getIS(plugin);
-
         if (defConfigStream == null) {
             System.out.println("[KamiCommon] Error: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!");
             save();
             return config;
+        }
+
+        try {
+            System.out.println("defConfigStream = " + defConfigStream.available());
+        }catch (IOException e) {
+            e.printStackTrace();
         }
 
         MemoryConfiguration defConfig = new MemoryConfiguration((new Yaml()).load(defConfigStream));
@@ -106,7 +111,7 @@ public class YamlHandler {
 
     public InputStream getIS(@Nullable Object plugin) {
         if (plugin == null) {
-            return PluginIS.class.getClassLoader().getResourceAsStream(File.separator + configFile.getName());
+            return getClass().getResourceAsStream("/" + fileName);
         }else {
             return PluginIS.getIS(plugin, configFile);
         }
