@@ -55,7 +55,7 @@ public abstract class KamiConfig extends ConfigurationSection {
 
         // Ensure the file exists
         try {
-            if (!file.exists() && !file.createNewFile()) {
+            if (!file.exists() && !file.mkdirs() && !file.createNewFile()) {
                 throw new Exception("Failed to create file: " + file.getAbsolutePath());
             }
         }catch (Exception e) {
