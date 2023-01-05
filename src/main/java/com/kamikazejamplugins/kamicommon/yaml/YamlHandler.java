@@ -74,12 +74,6 @@ public class YamlHandler {
             return config;
         }
 
-        try {
-            System.out.println("defConfigStream = " + defConfigStream.available());
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-
         MemoryConfiguration defConfig = new MemoryConfiguration((new Yaml()).load(defConfigStream));
         List<String> keys = getOrderedKeys(getIS(plugin), defConfig.getKeys(true));
 
