@@ -1,7 +1,11 @@
 package com.kamikazejamplugins.kamicommon.util;
 
+import com.kamikazejamplugins.kamicommon.nms.NmsManager;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,11 +17,30 @@ public class StringUtil {
     @SuppressWarnings("all")
     public static final char COLOR_CHAR = '\u00A7';
 
+    public static String p(@Nonnull Player player, String msg) {
+        String s = t(msg);
+        s = PlaceholderAPI.setPlaceholders(null, s);
+        s = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, s);
+        return s;
+    }
+
+    public static List<String> p(@Nonnull Player player, List<String> msg) {
+        return p(player, msg.toArray(new String[0]));
+    }
+
+    public static List<String> p(@Nonnull Player player, String... msg) {
+        List<String> strings = new ArrayList<>();
+        for (String s : msg) {
+            strings.add(p(player, s));
+        }
+        return strings;
+    }
+
     public static String t(String msg) {
         String s = ChatColor.translateAlternateColorCodes('&', msg);
 
         // For 1.16+ translate hex color codes as well
-        //if (NmsManager.getFormattedNmsDouble() >= 1.16) {
+        if (NmsManager.getFormattedNmsDouble() >= 1.16) {
             Pattern hex = Pattern.compile("(<*)(#[A-Fa-f0-9]{6})(>*)");
             Matcher matcher = hex.matcher(s);
             while (matcher.find()) {
@@ -28,7 +51,7 @@ public class StringUtil {
 
                 s = s.replace(matcher.group(), "" + s2);
             }
-        //}
+        }
 
         return s;
     }
@@ -41,7 +64,7 @@ public class StringUtil {
         return translated;
     }
 
-    public static List<String> t(String[] msgs) {
+    public static List<String> t(String... msgs) {
         List<String> translated = new ArrayList<>();
         for (String msg : msgs) {
             translated.add(t(msg));
