@@ -4,7 +4,9 @@ import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +73,9 @@ public class MessageBuilder {
      * @param sender The CommandSender to send the message to
      * @return The MessageBuilder instance (for chaining)
      */
-    public MessageBuilder send(CommandSender sender) {
+    public MessageBuilder send(@Nonnull CommandSender sender) {
+        if (sender instanceof Player) { send((Player) sender); return this; }
+
         for (String s : lines) {
             sender.sendMessage(StringUtil.t(s));
         }
@@ -80,11 +84,43 @@ public class MessageBuilder {
 
     /**
      * Sends the message to a CommandSender
-     * @param senders The CommandSender(s) to send the message to
+     * @param senders The CommandSender to send the message to
      * @return The MessageBuilder instance (for chaining)
      */
-    public MessageBuilder send(CommandSender... senders) {
-        for (CommandSender c : senders) { send(c); }
+    public MessageBuilder send(@Nonnull CommandSender... senders) {
+        for (CommandSender s : senders) { send(s); }
+        return this;
+    }
+
+    /**
+     * Sends the message to a CommandSender
+     * @param senders The CommandSender to send the message to
+     * @return The MessageBuilder instance (for chaining)
+     */
+    public MessageBuilder send(@Nonnull List<CommandSender> senders) {
+        for (CommandSender s : senders) { send(s); }
+        return this;
+    }
+
+    /**
+     * Sends the message to a CommandSender
+     * @param player The Player to send the message to
+     * @return The MessageBuilder instance (for chaining)
+     */
+    public MessageBuilder send(@Nonnull Player player) {
+        for (String s : lines) {
+            player.sendMessage(StringUtil.p(player, s));
+        }
+        return this;
+    }
+
+    /**
+     * Sends the message to a CommandSender
+     * @param players The Player(s) to send the message to
+     * @return The MessageBuilder instance (for chaining)
+     */
+    public MessageBuilder send(@Nonnull Player... players) {
+        for (Player p : players) { send(p); }
         return this;
     }
 }
