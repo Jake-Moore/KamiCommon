@@ -19,7 +19,6 @@ public class StringUtil {
 
     public static String p(@Nonnull Player player, String s) {
         s = PlaceholderAPI.setPlaceholders(null, s);
-        s = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, s);
         return t(s);
     }
 
