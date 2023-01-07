@@ -17,11 +17,10 @@ public class StringUtil {
     @SuppressWarnings("all")
     public static final char COLOR_CHAR = '\u00A7';
 
-    public static String p(@Nonnull Player player, String msg) {
-        String s = t(msg);
+    public static String p(@Nonnull Player player, String s) {
         s = PlaceholderAPI.setPlaceholders(null, s);
         s = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, s);
-        return s;
+        return t(s);
     }
 
     public static List<String> p(@Nonnull Player player, List<String> msg) {
