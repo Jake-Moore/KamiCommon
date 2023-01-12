@@ -5,10 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.kamikazejamplugins.kamicommon.KamiCommon;
-import com.kamikazejamplugins.kamicommon.config.ConfigManager;
-import com.kamikazejamplugins.kamicommon.util.Pair;
-import com.kamikazejamplugins.kamicommon.util.SimpleStringCoder;
+import com.kamikazejamplugins.kamicommon.configuration.ConfigHelper;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
+import com.kamikazejamplugins.kamicommon.util.data.Pair;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -30,21 +29,30 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 
+//TODO remove any old .off files when it starts up
+/**
+ * A utility class, primarily for KamikazeJAM_YT's plugins, allowing them to be automatically updated
+ * (By streaming update files into the Bukkit "update-folder", normally the `/plugins/update` folder)
+ * When a file is added here, it will replace the file with the same name in /plugins automatically next boot.
+ * This utility also renames the current jar to .off and places the new jar into /plugins if the names do not match.
+ *   This allows linux machines to update jars that have different versions seamlessly
+ */
 @SuppressWarnings("unused")
 public class AutoUpdate implements Listener {
     private static boolean updated = false;
-    public static final String BASE_URL = "https://api.github.com/repos/KamiUpdates/AutoUpdate/releases/tags/";
+    private static final String BASE_URL = "https://api.github.com/repos/KamiUpdates/AutoUpdate/releases/tags/";
     //Access token of the KamiUpdates machine user (second account)
     //It can only see the empty repository for AutoUpdate, only seeing releases I put there
     //This is "encrypted" only to stop GitHub from automatically revoking it, I realize it's not anymore "secure"
     private static final String tokenEnc = "~lo]7<qZ4=[Z^VoQLRZVJN[ZSp[R}R\\g[RoUoF7ZJZ5YtJqg[FLgHhn^ztIVJp6go=6RItKhNJZiOR6\\WJ[XMV4W}Y\\]m^HW{oIYPlpU~IYQ|<JhlF7\\mZLe4p6^";
 
-    public static boolean debug = false;
+    private static boolean debug = false;
     private static AutoUpdateListeners listeners = null;
 
-    public static String getToken() {
-        return SimpleStringCoder.CaesarCipherDecrypt(tokenEnc);
+    private static String getToken() {
+        return new SimpleStringCoder().CaesarCipherDecrypt(tokenEnc);
     }
 
     public static void update(JavaPlugin plugin) {
@@ -131,22 +139,6 @@ public class AutoUpdate implements Listener {
         }
     }
 
-    public static void main(String[] args) {
-
-        try {
-            Pair<JsonObject, JsonObject> a = grabUrl("FriendlyRaids");
-            if (a == null) {
-                System.out.println("null");
-                return;
-            }
-            System.out.println(a.getB().get("url").getAsString());
-
-            testCopyJar(a, new File("C:\\Users\\Jake\\Desktop\\test.jar"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private static void testCopyJar(Pair<JsonObject, JsonObject> dataPair, File file) throws IOException {
         JsonObject jsonObject = dataPair.getA();
         JsonObject dataJson = dataPair.getB();
@@ -205,7 +197,7 @@ public class AutoUpdate implements Listener {
 
             File kamicommon = KamiCommon.get().getDataFolder();
             if (kamicommon == null) { return false; }
-            FileConfiguration data = ConfigManager.createConfig(plugin, kamicommon, "updater.yml");
+            FileConfiguration data = ConfigHelper.createConfig(plugin, kamicommon, "updater.yml");
 
             if (data.contains(plugin.getName())) {
                 //Check that the current download is of the same asset from the release
@@ -223,7 +215,7 @@ public class AutoUpdate implements Listener {
             //If we are sure the version is not the same, then save the data about this new version
             data.set(plugin.getName(), latestAssetId);
             data.set(plugin.getName()+"Updated", updatedTimestamp);
-            ConfigManager.saveConfig(plugin, kamicommon, data, "updater.yml");
+            ConfigHelper.saveConfig(plugin, kamicommon, data, "updater.yml");
 
             //If the newName isn't the same as the old name, it won't update via the update folder, cancel
             String newJarName = dataJson.get("name").getAsString();
@@ -267,4 +259,50 @@ public class AutoUpdate implements Listener {
             player.sendMessage(StringUtil.t("&c&lThere is a new update for '" + KamiCommon.get().getName() + "'! This update will automatically load on the next restart."));
         }
     }
+
+
+
+    static class SimpleStringCoder {
+        public String caesarCipherEncrypt(String plain) {
+            String b64encoded = Base64.getEncoder().encodeToString(plain.getBytes());
+
+            // Reverse the string
+            String reverse = new StringBuffer(b64encoded).reverse().toString();
+
+            StringBuilder tmp = new StringBuilder();
+            final int OFFSET = 4;
+            for (int i = 0; i < reverse.length(); i++) {
+                tmp.append((char)(reverse.charAt(i) + OFFSET));
+            }
+            return tmp.toString();
+        }
+
+        public String CaesarCipherDecrypt(String secret) {
+            StringBuilder tmp = new StringBuilder();
+            final int OFFSET = 4;
+            for (int i = 0; i < secret.length(); i++) {
+                tmp.append((char)(secret.charAt(i) - OFFSET));
+            }
+
+            String reversed = new StringBuffer(tmp.toString()).reverse().toString();
+            return new String(Base64.getDecoder().decode(reversed));
+        }
+    }
+
+
+
+//    public static void main(String[] args) {
+//        try {
+//            Pair<JsonObject, JsonObject> a = grabUrl("FriendlyRaids");
+//            if (a == null) {
+//                System.out.println("null");
+//                return;
+//            }
+//            System.out.println(a.getB().get("url").getAsString());
+//
+//            testCopyJar(a, new File("C:\\Users\\Jake\\Desktop\\test.jar"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

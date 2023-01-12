@@ -1,4 +1,4 @@
-package com.kamikazejamplugins.kamicommon.yaml.bukkit;
+package com.kamikazejamplugins.kamicommon.yaml.spigot;
 
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

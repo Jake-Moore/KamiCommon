@@ -1,13 +1,15 @@
 package com.kamikazejamplugins.kamicommon.util.components.actions;
 
-import net.md_5.bungee.api.chat.TextComponent;
+import lombok.Getter;
+import net.md_5.bungee.api.chat.BaseComponent;
 
 // HoverEvent.Action.SHOW_TEXT;
 // HoverEvent.Action.SHOW_ITEM;
 
 @SuppressWarnings("unused")
 public abstract class Hover extends Action {
-    public Click clickAction = null;
+    @Getter
+    private Click clickAction = null;
     public Hover(String placeholder, String replacement) {
         super(placeholder, replacement);
     }
@@ -28,10 +30,10 @@ public abstract class Hover extends Action {
     }
 
     @Override
-    public void addClickEvent(TextComponent component) {
+    public void addClickEvent(BaseComponent component) {
         if (clickAction == null) { return; }
         clickAction.addClickEvent(component);
     }
 
-    public abstract void addHoverEvent(TextComponent component);
+    public abstract void addHoverEvent(BaseComponent component);
 }

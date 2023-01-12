@@ -1,10 +1,10 @@
-package com.kamikazejamplugins.kamicommon.yaml;
+package com.kamikazejamplugins.kamicommon.yaml.handler;
 
-import com.kamikazejamplugins.kamicommon.util.StringUtil;
-import com.kamikazejamplugins.kamicommon.yaml.bukkit.PluginIS;
+import com.kamikazejamplugins.kamicommon.util.data.ANSI;
+import com.kamikazejamplugins.kamicommon.yaml.MemoryConfiguration;
+import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,21 +12,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class YamlHandler {
-    @Nullable private final Object plugin;
-    private final File configFile;
-    private final String fileName;
-    private final YamlConfiguration config;
+public abstract class AbstractYamlHandler {
+    protected final File configFile;
+    protected final String fileName;
+    protected YamlConfiguration config;
 
-    public YamlHandler(@Nullable Object plugin, File configFile) {
-        this.plugin = plugin;
+    public AbstractYamlHandler(File configFile) {
         this.configFile = configFile;
         this.fileName = configFile.getName();
         this.config = null;
     }
 
-    public YamlHandler(@Nullable Object plugin, File configFile, String fileName) {
-        this.plugin = plugin;
+    public AbstractYamlHandler(File configFile, String fileName) {
         this.configFile = configFile;
         this.fileName = fileName;
         this.config = null;
@@ -37,11 +34,11 @@ public class YamlHandler {
             if (!configFile.exists()) {
                 if (!configFile.getParentFile().exists()) {
                     if (!configFile.getParentFile().mkdirs()) {
-                        System.out.println("[KamiCommon] Could not create config file dirs for (" + configFile.getAbsolutePath() + "), stopping");
+                        error("Could not create config file dirs for (" + configFile.getAbsolutePath() + "), stopping");
                     }
                 }
                 if (!configFile.createNewFile()) {
-                    System.out.println("Could not create config file, stopping");
+                    error("Could not create config file, stopping");
                     System.exit(0);
                 }
             }
@@ -52,8 +49,8 @@ public class YamlHandler {
                 data = new LinkedHashMap<>();
             }
 
-            YamlConfiguration configuration = new YamlConfiguration(data, configFile);
-            return (addDefaults) ? addDefaults(configuration).save() : configuration.save();
+            config = new YamlConfiguration(data, configFile);
+            return (addDefaults) ? addDefaults(config).save() : config.save();
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,21 +64,18 @@ public class YamlHandler {
     }
 
     private YamlConfiguration addDefaults(YamlConfiguration config) {
-        InputStream defConfigStream = getIS(plugin);
+        InputStream defConfigStream = getIS();
         if (defConfigStream == null) {
-            System.out.println("[KamiCommon] Error: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!");
+            error("Error: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!");
             save();
             return config;
         }
 
         MemoryConfiguration defConfig = new MemoryConfiguration((new Yaml()).load(defConfigStream));
-        List<String> keys = getOrderedKeys(getIS(plugin), defConfig.getKeys(true));
+        List<String> keys = getOrderedKeys(getIS(), defConfig.getKeys(true));
 
         if (!equalLists(keys, defConfig.getKeys(true))) {
-//            System.out.println(Arrays.toString(keys.toArray()));
-//            System.out.println(Arrays.toString(defConfig.getKeys(true).toArray()));
-
-            System.out.println("[KamiCommon] Error: Error grabbing ordered defaults from (" + configFile.getName() + ")!");
+            error("Error: Error grabbing ordered defaults from (" + configFile.getName() + ")!");
             save();
             return config;
         }
@@ -103,13 +97,9 @@ public class YamlHandler {
         return newConfig;
     }
 
-    public InputStream getIS(@Nullable Object plugin) {
-        if (plugin == null) {
-            return getClass().getResourceAsStream("/" + fileName);
-        }else {
-            return PluginIS.getIS(plugin, configFile);
-        }
-    }
+    public abstract InputStream getIS();
+
+    public abstract void error(String s);
 
     private List<String> getOrderedKeys(InputStream defConfigStream, Set<String> deepKeys) {
         List<String> keys = new ArrayList<>();
@@ -121,7 +111,7 @@ public class YamlHandler {
         for (String key : deepKeys) {
             int lineNum = findLineOfKey(lines, key);
             if (lineNum < 0) {
-                System.out.println(ANSI.RED + "Could not find key: '" + key + "' in def config stream: " + configFile.getName() + ANSI.RESET);
+                error("Could not find key: '" + key + "' in def config stream: " + configFile.getName() + ANSI.RESET);
                 int i = getHighest(keyMappings.keySet());
                 if (i < lines.size()) { i = lines.size() + 1; }else { i++; }
                 keyMappings.put(i, key);
@@ -154,7 +144,7 @@ public class YamlHandler {
             //Integer keys are wrapped in ''
             if (isInteger(part)) { part = "'" + part + "'"; }
 
-            String start = StringUtil.repeat("  ", searchingFor) + part + ":";
+            String start = repeat("  ", searchingFor) + part + ":";
             if (line.startsWith(start)) {
                 if (searchingFor == parts.length - 1) {
                     // We've found the key we're looking for
@@ -165,6 +155,15 @@ public class YamlHandler {
             }
         }
         return -1;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private String repeat(String s, int times) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < times; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
     }
 
     private boolean isInteger(String s) {
@@ -183,17 +182,5 @@ public class YamlHandler {
             }
         }
         return true;
-    }
-
-    public static class ANSI {
-        public static final String RESET = "\u001B[0m";
-        public static final String BLACK = "\u001B[30m";
-        public static final String RED = "\u001B[31m";
-        public static final String GREEN = "\u001B[32m";
-        public static final String YELLOW = "\u001B[33m";
-        public static final String BLUE = "\u001B[34m";
-        public static final String PURPLE = "\u001B[35m";
-        public static final String CYAN = "\u001B[36m";
-        public static final String WHITE = "\u001B[37m";
     }
 }

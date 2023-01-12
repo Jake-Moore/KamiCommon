@@ -1,6 +1,6 @@
-package com.kamikazejamplugins.kamicommon.config;
+package com.kamikazejamplugins.kamicommon.configuration;
 
-import com.kamikazejamplugins.kamicommon.FileManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,8 +12,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * This is a utility class for creating and saving configurations in a JavaPlugin
+ */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public class ConfigManager {
+public class ConfigHelper {
 
     /**
      * Returns a new configuration after creating and saving the file (does not load defaults)
@@ -45,7 +48,7 @@ public class ConfigManager {
      */
     public static FileConfiguration createConfig(JavaPlugin plugin, File dataFolder, String fileName, boolean defaultsFromResource) {
         //Initialize the rewards config
-        File f = FileManager.createPluginFile(plugin, dataFolder.getPath(), fileName);
+        File f = createPluginFile(plugin, dataFolder.getPath(), fileName);
         FileConfiguration config = YamlConfiguration.loadConfiguration(f);
         //Load defaults into the rewards config
         if (defaultsFromResource) {
@@ -104,4 +107,26 @@ public class ConfigManager {
         File f = new File(plugin.getDataFolder(), fileName);
         return YamlConfiguration.loadConfiguration(f);
     }
+
+    /**
+     * Creates an empty plugin file at a specified path with a specified name
+     */
+    public static File createPluginFile(JavaPlugin plugin, String folder, String fileName) {
+        File file = new File(folder, fileName);
+        if (!file.exists()) {
+            try {
+                if (file.createNewFile()) {
+                    plugin.getLogger().info("&aCreated plugin file: " + fileName);
+                }else {
+                    plugin.getLogger().warning("Could not create plugin file: " + fileName);
+                    Bukkit.getPluginManager().disablePlugin(plugin);
+                }
+            } catch (IOException e) {
+                plugin.getLogger().info("&cCould not create plugin file: " + fileName);
+            }
+        }
+
+        return file;
+    }
+
 }

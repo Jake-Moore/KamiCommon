@@ -1,18 +1,33 @@
 package com.kamikazejamplugins.kamicommon.util;
 
-import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
+import com.kamikazejamplugins.kamicommon.configuration.config.KamiConfig;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A utility class for sending building messages built from a config. <p>
+ * The primary function of this class is to grab either a string or string list from the config. <p>
+ * It will detect which one to use and the server owner can configure it as either. <p>
+ * The secondary function of this class is to send messages translated, and with PAPI placeholders replaced
+ */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class MessageBuilder {
     @Getter private final List<String> lines = new ArrayList<>();
+
+    public static MessageBuilder of(org.bukkit.configuration.ConfigurationSection config, String key) {
+        return new MessageBuilder(config, key);
+    }
+
+    public static MessageBuilder of(FileConfiguration config, String key) {
+        return new MessageBuilder(config, key);
+    }
 
     public static MessageBuilder of(KamiConfig config, String key) {
         return new MessageBuilder(config, key);
@@ -45,6 +60,36 @@ public class MessageBuilder {
      *   and then handle things accordingly.
      */
     public MessageBuilder(KamiConfig config, String key) {
+        if (config.isString(key)) {
+            this.lines.add(config.getString(key));
+        } else {
+            this.lines.addAll(config.getStringList(key));
+        }
+    }
+
+    /**
+     * Creates a new MessageBuilder from a configuration key
+     * @param config The ConfigurationSection to search the key in
+     * @param key The key pointing to the message.
+     * This class will detect if the key points to a string or a list of strings,
+     *   and then handle things accordingly.
+     */
+    public MessageBuilder(org.bukkit.configuration.ConfigurationSection config, String key) {
+        if (config.isString(key)) {
+            this.lines.add(config.getString(key));
+        } else {
+            this.lines.addAll(config.getStringList(key));
+        }
+    }
+
+    /**
+     * Creates a new MessageBuilder from a configuration key
+     * @param config The FileConfiguration to search the key in
+     * @param key The key pointing to the message.
+     * This class will detect if the key points to a string or a list of strings,
+     *   and then handle things accordingly.
+     */
+    public MessageBuilder(FileConfiguration config, String key) {
         if (config.isString(key)) {
             this.lines.add(config.getString(key));
         } else {
@@ -109,7 +154,7 @@ public class MessageBuilder {
      */
     public MessageBuilder send(@Nonnull Player player) {
         for (String s : lines) {
-            player.sendMessage(StringUtil.p(player, s));
+            player.sendMessage(StringUtilP.p(player, s));
         }
         return this;
     }

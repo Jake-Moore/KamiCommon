@@ -1,8 +1,8 @@
 package com.kamikazejamplugins.kamicommon.util.components.actions.hoveritem;
 
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.inventory.ItemStack;
 
 interface ItemText {
-    TextComponent getItemText(ItemStack item);
+    BaseComponent[] getItemText(ItemStack item);
 }

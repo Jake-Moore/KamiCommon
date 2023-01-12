@@ -1,7 +1,6 @@
-package com.kamikazejamplugins.kamicommon.config;
+package com.kamikazejamplugins.kamicommon.configuration.config;
 
-import com.kamikazejamplugins.kamicommon.config.data.ConfigComment;
-import com.kamikazejamplugins.kamicommon.config.data.KamiConfig;
+import com.kamikazejamplugins.kamicommon.configuration.config.data.ConfigComment;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 
@@ -12,18 +11,21 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used by AbstractConfig when saving. It should not be used
+ */
 @SuppressWarnings("unused")
-public class KamiConfigManager {
+class KamiConfigManager {
 
-    public static void saveKamiConfig(KamiConfig kamiConfig) throws Exception {
-        YamlConfiguration config = kamiConfig.getYamlConfiguration();
-        List<ConfigComment> comments = kamiConfig.getComments();
+    protected static void saveKamiConfig(AbstractConfig abstractConfig) throws Exception {
+        YamlConfiguration config = abstractConfig.getYamlConfiguration();
+        List<ConfigComment> comments = abstractConfig.getComments();
 
         // Save the FileConfiguration (without comments)
         config.save();
 
         // Store the lines here so that we don't have to read the file multiple times
-        InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(kamiConfig.getFile().toPath()), StandardCharsets.UTF_8);
+        InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(abstractConfig.getFile().toPath()), StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(inputStreamReader);
 
         List<String> lines = new ArrayList<>();
@@ -35,14 +37,14 @@ public class KamiConfigManager {
         }
 
         // Empty file verses an empty json {} weird stuff
-        if (kamiConfig.isEmpty()) { lines.clear(); }
+        if (abstractConfig.isEmpty()) { lines.clear(); }
 
         // Save the modified lines to the file
-        Files.write(kamiConfig.getFile().toPath(), convert(lines), StandardCharsets.ISO_8859_1);
+        Files.write(abstractConfig.getFile().toPath(), convert(lines), StandardCharsets.ISO_8859_1);
     }
 
     // Convert our UTF-8 lines to ISO-8859-1, because we can write ISO-8859-1 to a file with special chars
-    public static List<String> convert(List<String> lines) {
+    protected static List<String> convert(List<String> lines) {
         List<String> newLines = new ArrayList<>();
         for (String line : lines) {
             newLines.add(new String(line.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));

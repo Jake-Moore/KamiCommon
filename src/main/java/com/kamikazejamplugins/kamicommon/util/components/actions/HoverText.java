@@ -1,13 +1,15 @@
 package com.kamikazejamplugins.kamicommon.util.components.actions;
 
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
+import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 @SuppressWarnings("unused")
 public class HoverText extends Hover {
-    public final String text;
+    @Getter
+    private final String text;
 
     /**
      * Creates a HoverText object which will only have a hoverEvent for running the command
@@ -22,7 +24,7 @@ public class HoverText extends Hover {
     }
 
     @Override
-    public void addHoverEvent(TextComponent component) {
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent(text)}));
+    public void addHoverEvent(BaseComponent component) {
+        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(text)));
     }
 }

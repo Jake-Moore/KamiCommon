@@ -1,5 +1,6 @@
 package com.kamikazejamplugins.kamicommon.util.components.actions.hoveritem;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
@@ -7,9 +8,9 @@ import org.bukkit.inventory.ItemStack;
 
 class ItemText_1_13_R2 implements ItemText {
     @Override
-    public TextComponent getItemText(ItemStack item) {
+    public BaseComponent[] getItemText(ItemStack item) {
         net.minecraft.server.v1_13_R2.ItemStack v1_13_R2Stack = CraftItemStack.asNMSCopy(item);
-        if (v1_13_R2Stack == null) { return new TextComponent(""); }
-        return new TextComponent(v1_13_R2Stack.save(new NBTTagCompound()).toString());
+        if (v1_13_R2Stack == null) { return TextComponent.fromLegacyText(""); }
+        return new BaseComponent[]{ new TextComponent(v1_13_R2Stack.save(new NBTTagCompound()).toString()) };
     }
 }

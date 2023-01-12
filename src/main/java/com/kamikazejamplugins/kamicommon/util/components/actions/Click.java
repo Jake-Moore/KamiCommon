@@ -1,7 +1,8 @@
 package com.kamikazejamplugins.kamicommon.util.components.actions;
 
 import com.kamikazejamplugins.kamicommon.util.components.actions.hoveritem.HoverItem;
-import net.md_5.bungee.api.chat.TextComponent;
+import lombok.Getter;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.inventory.ItemStack;
 
 // ClickEvent.Action.RUN_COMMAND;
@@ -10,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class Click extends Action {
-    public Hover hoverAction = null;
+    @Getter private Hover hoverAction = null;
     public Click(String placeholder, String replacement) {
         super(placeholder, replacement);
     }
@@ -26,10 +27,10 @@ public abstract class Click extends Action {
     }
 
     @Override
-    public void addHoverEvent(TextComponent component) {
+    public void addHoverEvent(BaseComponent component) {
         if (hoverAction == null) { return; }
         hoverAction.addHoverEvent(component);
     }
 
-    public abstract void addClickEvent(TextComponent component);
+    public abstract void addClickEvent(BaseComponent component);
 }

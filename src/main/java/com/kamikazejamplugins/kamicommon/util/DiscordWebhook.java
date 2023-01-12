@@ -11,6 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 
+/**
+ * A simple class for sending discord webhooks, supports basic embeds and such
+ */
 @SuppressWarnings("unused")
 public class DiscordWebhook {
 

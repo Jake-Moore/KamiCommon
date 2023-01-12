@@ -1,5 +1,6 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
+import com.kamikazejamplugins.kamicommon.util.data.ANSI;
 import lombok.Getter;
 
 import javax.annotation.Nullable;
@@ -45,7 +46,7 @@ public abstract class MemorySection extends ConfigurationSection {
                     }
                     String newKey = builder.toString().trim().replaceAll(" ", ".");
                     if (key.equalsIgnoreCase(newKey)) {
-                        System.out.println(YamlHandler.ANSI.RED + "Equal Keys: " + key);
+                        System.out.println(ANSI.RED + "Equal Keys: " + key);
                     }
                     put(newKey, new LinkedHashMap<>());
 

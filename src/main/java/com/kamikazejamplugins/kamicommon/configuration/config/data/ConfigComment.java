@@ -1,9 +1,12 @@
-package com.kamikazejamplugins.kamicommon.config.data;
+package com.kamikazejamplugins.kamicommon.configuration.config.data;
 
 import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * This object contains the data for an AbstractConfig yaml comment.
+ */
 public class ConfigComment {
     @Getter private final String key;
     @Getter private final List<String> comment;

@@ -1,7 +1,10 @@
-package com.kamikazejamplugins.kamicommon.util;
+package com.kamikazejamplugins.kamicommon.util.data;
 
 import java.util.Objects;
 
+/**
+ * This is just a helpful class to store an object of two objects. Called a Pair.
+ */
 @SuppressWarnings("unused")
 public class Pair<A, B> {
     private final A a;

@@ -1,7 +1,10 @@
-package com.kamikazejamplugins.kamicommon.util;
+package com.kamikazejamplugins.kamicommon.util.data;
 
 import java.util.Objects;
 
+/**
+ * This is just a helpful class to store an object of three objects. Called a Tuple.
+ */
 @SuppressWarnings("unused")
 public class Tuple<A, B, C> {
     private final A a;

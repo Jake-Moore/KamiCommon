@@ -31,10 +31,24 @@ public abstract class KamiSubCommand {
 	 */
 	public abstract boolean requiresAdmin();
 
+	/**
+	 * Utility method for parsing args against known valid options (helpful for Tab completion)
+	 * @param args The arguments from the command
+	 * @param index The index of the argument to check
+	 * @param options The list of valid tab completions to check
+	 * @return Every option that matches or begins to match the argument at the specified index
+	 */
 	public List<String> getArgsAtIndex(String[] args, int index, List<String> options) {
 		return getArgsAtIndex(args, index, options.toArray(new String[0]));
 	}
 
+	/**
+	 * Utility method for parsing args against known valid options (helpful for Tab completion)
+	 * @param args The arguments from the command
+	 * @param index The index of the argument to check
+	 * @param options The list of valid tab completions to check
+	 * @return Every option that matches or begins to match the argument at the specified index
+	 */
 	public List<String> getArgsAtIndex(String[] args, int index, String... options) {
 		if (args.length > index) {
 			if (!args[index].trim().isEmpty()) {
@@ -44,7 +58,13 @@ public abstract class KamiSubCommand {
 		return Arrays.asList(options);
 	}
 
-	private List<String> getValidArgsFromStem(String stem, String... options) {
+	/**
+	 * Utility method checking if a string (stem) matches or begins to match a set of options
+	 * @param stem The stem to check against the options
+	 * @param options The list of valid options to check
+	 * @return Every option that matches or begins to match the stem
+	 */
+	public List<String> getValidArgsFromStem(String stem, String... options) {
 		List<String> stemOptions = new ArrayList<>();
 		for (String option : options) {
 			if (option.toLowerCase().startsWith(stem.toLowerCase())) {

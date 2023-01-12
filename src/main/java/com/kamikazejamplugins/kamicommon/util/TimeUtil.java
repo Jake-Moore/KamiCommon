@@ -6,10 +6,11 @@ import java.util.TimeZone;
 
 @SuppressWarnings("unused")
 public class TimeUtil {
-    public static String getSecondsToTimeString(int seconds) {
-        return getSecondsToTimeString((long) seconds);
-    }
-
+    /**
+     * Returns the current time in the format like 10h, 5m, 3s <p>
+     * If there are no hours it returns 5m, 3s <p>
+     * If there are no hours or minutes it returns 3s
+     */
     public static String getSecondsToTimeString(long seconds) {
         //Anything past 1 day gets weird because days in a month varies
         if (seconds >= 86400) { //1 day
