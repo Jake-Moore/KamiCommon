@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 
@@ -17,6 +19,7 @@ public class DiscordWebhook {
     private String username;
     private String avatarUrl;
     private boolean tts;
+
     private final List<EmbedObject> embeds = new ArrayList<>();
 
     /**
@@ -69,6 +72,14 @@ public class DiscordWebhook {
                 jsonEmbed.put("title", embed.getTitle());
                 jsonEmbed.put("description", embed.getDescription());
                 jsonEmbed.put("url", embed.getUrl());
+                if (embed.timeStamp) {
+                    TimeZone tz = TimeZone.getTimeZone("UTC");
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+                    df.setTimeZone(tz);
+                    String nowAsISO = df.format(new Date());
+
+                    jsonEmbed.put("timestamp", nowAsISO);
+                }
 
                 if (embed.getColor() != null) {
                     Color color = embed.getColor();
@@ -141,6 +152,8 @@ public class DiscordWebhook {
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
 
+        System.out.println(json.toString());
+
         OutputStream stream = connection.getOutputStream();
         stream.write(json.toString().getBytes());
         stream.flush();
@@ -160,6 +173,7 @@ public class DiscordWebhook {
         private Thumbnail thumbnail;
         private Image image;
         private Author author;
+        private boolean timeStamp;
         private final List<Field> fields = new ArrayList<>();
 
         public String getTitle() {
@@ -196,6 +210,11 @@ public class DiscordWebhook {
 
         public List<Field> getFields() {
             return fields;
+        }
+
+        public EmbedObject setTimeStamp() {
+            this.timeStamp = true;
+            return this;
         }
 
         public EmbedObject setTitle(String title) {
@@ -382,4 +401,34 @@ public class DiscordWebhook {
             return "\"" + string + "\"";
         }
     }
+
+
+
+
+
+
+    public static void main(String[] args) throws IOException {
+        DateFormat df = new SimpleDateFormat("MMM dd, yyyy @ hh:mm aa 'PST'");
+        df.setTimeZone(TimeZone.getTimeZone("PST"));
+        String nowAsISO = df.format(new Date());
+
+        DiscordWebhook webhook = new DiscordWebhook("https://discord.com/api/webhooks/1062889527875747993/Wo-f9MR25PvdcCUeJneYIrIoNMtuUpPujBcFwQcl7ALmy2x0QDROdioDTRdmTAP8JyBW");
+        webhook.addEmbed(
+                new DiscordWebhook.EmbedObject()
+                        .setThumbnail("https://i.imgur.com/kDhrprY.png")
+                        .setTitle("Dupe Detector | {player}")
+                        .addField("{player} tried to use a duped item!",
+                                " \\n"
+                                        + "Item: {item}\\n"
+                                        + "Worth: {amount}!\\n"
+                                        + "Time: " + nowAsISO + "\\n"
+                                        + "Result: Duped item removed.", true
+                        )
+                        .setFooter("JunoMC | Dupe Detector", "https://i.imgur.com/kDhrprY.png")
+                        .setTimeStamp()
+        );
+
+        webhook.execute();
+    }
+
 }
