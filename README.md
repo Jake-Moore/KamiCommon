@@ -1,11 +1,12 @@
 # KamiCommon
 
-- A common library for my (KamikazeJAM_YT) plugins. (Plugins made primarily for 1.8.9, no guarantees or support for other versions)
+- A common library for my (KamikazeJAM_YT) plugins. (This library should support all spigot versions, let me know if anything does not.)
 -  Contact Info (Discord): KamikazeJAM_YT#3713
 
 &nbsp;
 
 ## Using the Common
+- Either download it from spigot, or you can use the maven repository with your own PAT.
 - GitHub packages with Maven requires that all users have a PAT (personal access token) configured, in order to download packages
 - If you do not know how to create one up please refer to: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 - With your PAT, you must add it to maven, please refer to: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry ("Authenticating with a personal access token")
@@ -22,11 +23,10 @@
 <dependency>
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.0.20</version>
-    <scope>compile</scope>
+    <version>1.4.0.0</version>
+    <scope>provided</scope>
 </dependency>
 ```
-- Ensure that the scope says compile, and that you have the maven shade plugin configured, otherwise these classes won't be included in the jar and it will error
 
 &nbsp;
 &nbsp;
@@ -58,6 +58,7 @@ builder.toItemStack();
 ```
 - Auto update for plugins (hard coded for my use only, but feel free to edit the repo and PAT to use it on your own)
    - This feature requires that each plugin repository using auto update have a configured GitHub action to publish a release for each version
+   - Probably best to contact me if you're interested in using this feature with your own plugin
 - Commands library for easier subcommand management
    - Contact me on discord for more info on this
 - A few bulky methods simplified for Configuration management (ConfigManager.java)
