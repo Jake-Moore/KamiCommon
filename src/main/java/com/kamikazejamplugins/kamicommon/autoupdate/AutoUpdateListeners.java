@@ -10,7 +10,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class AutoUpdateListeners implements Listener {
+class AutoUpdateListeners implements Listener {
     @Getter private final JavaPlugin plugin;
     public AutoUpdateListeners(JavaPlugin plugin) {
         this.plugin = plugin;

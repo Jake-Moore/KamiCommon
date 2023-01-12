@@ -1,38 +1,22 @@
 package com.kamikazejamplugins.kamicommon.util;
 
 import com.kamikazejamplugins.kamicommon.nms.NmsManager;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A standalone compatible class for translating strings with color codes
+ * Use {@link StringUtilP} for methods with players (translating PAPI placeholders)
+ */
 @SuppressWarnings("unused")
 public class StringUtil {
     @SuppressWarnings("all")
     public static final char COLOR_CHAR = '\u00A7';
-
-    public static String p(@Nonnull Player player, String s) {
-        s = PlaceholderAPI.setPlaceholders(null, s);
-        return t(s);
-    }
-
-    public static List<String> p(@Nonnull Player player, List<String> msg) {
-        return p(player, msg.toArray(new String[0]));
-    }
-
-    public static List<String> p(@Nonnull Player player, String... msg) {
-        List<String> strings = new ArrayList<>();
-        for (String s : msg) {
-            strings.add(p(player, s));
-        }
-        return strings;
-    }
 
     public static String t(String msg) {
         String s = ChatColor.translateAlternateColorCodes('&', msg);

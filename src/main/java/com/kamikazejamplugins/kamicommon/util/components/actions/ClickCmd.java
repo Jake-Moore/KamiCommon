@@ -1,11 +1,13 @@
 package com.kamikazejamplugins.kamicommon.util.components.actions;
 
+import lombok.Getter;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 @SuppressWarnings("unused")
 public class ClickCmd extends Click {
-    public final String cmd;
+    @Getter
+    private final String cmd;
 
     /**
      * Creates a ClickCmd object which will only have a clickEvent for running the command
@@ -20,7 +22,7 @@ public class ClickCmd extends Click {
     }
 
     @Override
-    public void addClickEvent(TextComponent component) {
+    public void addClickEvent(BaseComponent component) {
         component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd));
     }
 }

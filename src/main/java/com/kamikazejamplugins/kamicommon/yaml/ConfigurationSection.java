@@ -1,6 +1,6 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
-import com.kamikazejamplugins.kamicommon.yaml.bukkit.ItemStackHelper;
+import com.kamikazejamplugins.kamicommon.yaml.spigot.ItemStackHelper;
 import lombok.Getter;
 
 import javax.annotation.Nullable;

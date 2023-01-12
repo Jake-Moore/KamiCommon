@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 @SuppressWarnings("unused")
 public abstract class KamiCommand implements TabExecutor {
-	@Getter public final KamiSubCommands kamiSubCommands;
+	@Getter private final KamiSubCommands kamiSubCommands;
 
 	public KamiCommand(KamiSubCommands kamiSubCommands) {
 		this.kamiSubCommands = kamiSubCommands;

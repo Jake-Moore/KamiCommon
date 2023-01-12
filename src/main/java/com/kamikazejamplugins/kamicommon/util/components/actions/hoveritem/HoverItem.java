@@ -2,6 +2,7 @@ package com.kamikazejamplugins.kamicommon.util.components.actions.hoveritem;
 
 import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import com.kamikazejamplugins.kamicommon.util.components.actions.Hover;
+import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,7 +13,7 @@ import javax.annotation.Nullable;
 
 @SuppressWarnings("unused")
 public class HoverItem extends Hover {
-    public final @Nullable ItemStack itemStack;
+    @Getter private final @Nullable ItemStack itemStack;
 
     /**
      * Creates a HoverItem object which will only have a hoverEvent for running the command
@@ -27,11 +28,11 @@ public class HoverItem extends Hover {
     }
 
     @Override
-    public void addHoverEvent(TextComponent component) {
+    public void addHoverEvent(BaseComponent component) {
         if (itemStack == null) {
-            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent(" ")}));
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(" ")));
         }else {
-            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{getItemText(itemStack)}));
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, getItemText(itemStack)));
         }
     }
 
@@ -40,8 +41,8 @@ public class HoverItem extends Hover {
      *
      * @param item the ItemStack to be converted to text
      */
-    public static TextComponent getItemText(ItemStack item) {
-        if (item == null) { return new TextComponent(""); }
+    public static BaseComponent[] getItemText(ItemStack item) {
+        if (item == null) { return TextComponent.fromLegacyText(""); }
         return getInstance(item).getItemText(item);
     }
 
@@ -86,6 +87,8 @@ public class HoverItem extends Hover {
                 return new ItemText_1_18_R2();
             case "v1_19_R1":
                 return new ItemText_1_19_R1();
+            case "v1_19_R2":
+                return new ItemText_1_19_R2();
             default:
                 Bukkit.getLogger().severe("[KamiCommon NBTManager] Unsupported version: " + version);
                 return new ItemText_1_8_R1();
