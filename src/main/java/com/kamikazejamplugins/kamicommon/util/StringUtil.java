@@ -1,7 +1,6 @@
 package com.kamikazejamplugins.kamicommon.util;
 
 import com.kamikazejamplugins.kamicommon.nms.NmsManager;
-import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +18,7 @@ public class StringUtil {
     public static final char COLOR_CHAR = '\u00A7';
 
     public static String t(String msg) {
-        String s = ChatColor.translateAlternateColorCodes('&', msg);
+        String s = translateAlternateColorCodes(msg);
 
         // For 1.16+ translate hex color codes as well
         if (NmsManager.getFormattedNmsDouble() >= 1.16) {
@@ -200,7 +199,7 @@ public class StringUtil {
             s.append("X");
             input -= 10;
         }
-        while (input >= 9) {
+        while (input == 9) {
             s.append("IX");
             input -= 9;
         }
@@ -208,7 +207,7 @@ public class StringUtil {
             s.append("V");
             input -= 5;
         }
-        while (input >= 4) {
+        while (input == 4) {
             s.append("IV");
             input -= 4;
         }
@@ -217,5 +216,18 @@ public class StringUtil {
             input -= 1;
         }
         return s.toString();
+    }
+
+    protected static String translateAlternateColorCodes(String textToTranslate) {
+        char[] b = textToTranslate.toCharArray();
+
+        for(int i = 0; i < b.length - 1; ++i) {
+            if (b[i] == '&' && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
+                b[i] = 167;
+                b[i + 1] = Character.toLowerCase(b[i + 1]);
+            }
+        }
+
+        return new String(b);
     }
 }
