@@ -29,15 +29,6 @@
 - Ensure that the scope says compile, and that you have the maven shade plugin configured, otherwise these classes won't be included in the jar and it will error
 
 &nbsp;
-
-## Setting up the Common
-- Some features may require the plugin object, so I highly recommend calling the following method in OnEnable before using the library
-- Note: If a part of the library requires the plugin object as an argument, it will set up common with it, however, it's still recommended to provide it asap in OnEnable to prevent errors (other parts of the common may run before it's provided, and cause errors)
-``` java
-KamiCommon.setupPlugin(plugin);
-```
-
-&nbsp;
 &nbsp;
 
 ## Notable features include:

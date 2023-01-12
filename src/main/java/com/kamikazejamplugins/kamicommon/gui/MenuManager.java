@@ -84,7 +84,7 @@ public class MenuManager implements Listener {
             if (menu.getIgnoredClose().contains(p.getName())) {
                 menu.getIgnoredClose().remove(p.getName());
             } else {
-                Bukkit.getScheduler().runTaskLater(KamiCommon.getPlugin(), () -> close.accept(e), 1);
+                Bukkit.getScheduler().runTaskLater(KamiCommon.get(), () -> close.accept(e), 1);
             }
         }
 

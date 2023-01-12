@@ -1,10 +1,8 @@
 package com.kamikazejamplugins.kamicommon.command;
 
 import com.avaje.ebean.validation.NotNull;
-import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.command.impl.KamiUpdateCmd;
 import com.kamikazejamplugins.kamicommon.command.impl.KamiVerCmd;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +11,8 @@ import java.util.List;
 public abstract class KamiSubCommands {
     private final boolean versionCmd, updateCmd;
     private final List<KamiSubCommand> subCommands = new ArrayList<>();
-    public KamiSubCommands(JavaPlugin plugin, boolean versionCmd, boolean updateCmd) {
-        KamiCommon.setupPlugin(plugin);
+
+    public KamiSubCommands(boolean versionCmd, boolean updateCmd) {
         this.versionCmd = versionCmd;
         this.updateCmd = updateCmd;
     }

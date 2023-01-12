@@ -25,7 +25,7 @@ public class KamiUpdateCmd extends KamiSubCommand {
 
     @Override
     public boolean performCommand(CommandSender sender, String label, String[] args) {
-        AutoUpdate.updateNow(KamiCommon.getPlugin());
+        AutoUpdate.updateNow(KamiCommon.get());
         return true;
     }
 }
