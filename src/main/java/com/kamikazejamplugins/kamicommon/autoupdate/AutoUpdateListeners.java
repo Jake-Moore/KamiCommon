@@ -26,14 +26,14 @@ public class AutoUpdateListeners implements Listener {
                 public void run() {
                     AutoUpdate.notify(player);
                 }
-            }.runTaskLater(KamiCommon.getPlugin(), 40L);
+            }.runTaskLater(KamiCommon.get(), 40L);
         }
     }
 
     @EventHandler
     public void onDisable(PluginDisableEvent event) {
-        if (event.getPlugin().getName().equals(KamiCommon.getPlugin().getName())) {
-            AutoUpdate.updateNow(KamiCommon.getPlugin());
+        if (event.getPlugin().getName().equals(KamiCommon.get().getName())) {
+            AutoUpdate.updateNow(KamiCommon.get());
         }
     }
 }

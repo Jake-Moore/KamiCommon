@@ -75,8 +75,6 @@ public class AutoUpdate implements Listener {
 
     private static void grabLatest(JavaPlugin plugin, boolean debugMessages) {
         //This just helps ensure it's been configured properly
-        KamiCommon.setupPlugin(plugin);
-
         if (listeners == null) {
             listeners = new AutoUpdateListeners(plugin);
         }
@@ -205,7 +203,7 @@ public class AutoUpdate implements Listener {
             int latestAssetId = jsonObject.get("id").getAsInt();
             String updatedTimestamp = (dataJson.has("updated_at") ? dataJson.get("updated_at").getAsString() : dataJson.get("created_at").getAsString());
 
-            File kamicommon = KamiCommon.getDataFolder(plugin);
+            File kamicommon = KamiCommon.get().getDataFolder();
             if (kamicommon == null) { return false; }
             FileConfiguration data = ConfigManager.createConfig(plugin, kamicommon, "updater.yml");
 
@@ -266,7 +264,7 @@ public class AutoUpdate implements Listener {
 
     public static void notify(Player player) {
         if (hasBeenUpdated()) {
-            player.sendMessage(StringUtil.t("&c&lThere is a new update for '" + KamiCommon.getPlugin().getName() + "'! This update will automatically load on the next restart."));
+            player.sendMessage(StringUtil.t("&c&lThere is a new update for '" + KamiCommon.get().getName() + "'! This update will automatically load on the next restart."));
         }
     }
 }

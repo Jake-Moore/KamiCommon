@@ -104,7 +104,7 @@ public class MessageActionManager {
             components.add(clickComponent);
             components.add(new TextComponent(parts[parts.length-1]));
         }else {
-            KamiCommon.warn(action.placeholder + " in raidPlan.request.message of lang.yml is formatted in a way this plugin could not understand. There should only be 1 instance of it, and it can either be in the front, at the end, or in the middle. Splitting with that placeholder should produce 1-2 parts");
+            KamiCommon.get().getLogger().warning(action.placeholder + " in raidPlan.request.message of lang.yml is formatted in a way this plugin could not understand. There should only be 1 instance of it, and it can either be in the front, at the end, or in the middle. Splitting with that placeholder should produce 1-2 parts");
         }
 
         return components;

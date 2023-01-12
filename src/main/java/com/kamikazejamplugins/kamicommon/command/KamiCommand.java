@@ -1,20 +1,16 @@
 package com.kamikazejamplugins.kamicommon.command;
 
-import com.kamikazejamplugins.kamicommon.KamiCommon;
 import lombok.Getter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 @SuppressWarnings("unused")
 public abstract class KamiCommand implements TabExecutor {
-	@Getter public final JavaPlugin plugin;
 	@Getter public final KamiSubCommands kamiSubCommands;
-	public KamiCommand(JavaPlugin plugin, KamiSubCommands kamiSubCommands) {
-		KamiCommon.setupPlugin(plugin);
-		this.plugin = plugin;
+
+	public KamiCommand(KamiSubCommands kamiSubCommands) {
 		this.kamiSubCommands = kamiSubCommands;
 	}
 
