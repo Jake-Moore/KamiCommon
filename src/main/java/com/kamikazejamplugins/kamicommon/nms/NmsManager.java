@@ -61,6 +61,8 @@ public class NmsManager {
 
             case "v1_19_R1":
                 return "1.19.2";
+            case "v1_19_R2":
+                return "1.19.3";
         }
         throw new IllegalArgumentException(nms + " isn't a know version");
     }
