@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.5.2</version>
+    <version>1.5.3</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -153,6 +153,14 @@
 
         <dependency>
             <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api-1.19R2</artifactId>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/lib/spigot-1.19.3-R0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>system</scope>
@@ -182,13 +190,6 @@
             <systemPath>${project.basedir}/src/main/lib/spigot-server-1.19.2-R1-SNAPSHOT.jar</systemPath>
         </dependency>
 
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api-1.19R2</artifactId>
-            <version>1.19.3-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/lib/spigot-1.19.3-R0.1-SNAPSHOT.jar</systemPath>
-        </dependency>
 
         <dependency>
             <groupId>me.jackscode</groupId>
