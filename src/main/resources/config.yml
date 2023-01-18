@@ -1,0 +1,41 @@
+levels:
+  example:
+    defaults:
+      highestOre: coal
+      capacity: 250
+      sellMulti: 1.0D
+      refinedOres: false
+    upgrades:
+      CAPACITY:
+        '1':
+          requirements:
+            MineMoreBlocks: 25
+          boost: 50
+      REFINED:
+        requirements:
+          KillPlayers: 3
+      SELL_MULTI:
+        '1':
+          requirements:
+            Level: 3.0D
+          boost: 0.025D
+  test1:
+    defaults:
+      highestOre: coal
+      capacity: 250
+      sellMulti: 1.0D
+      refinedOres: false
+    upgrades:
+      CAPACITY:
+        '1':
+          requirements:
+            MineMoreBlocks: 25
+          boost: 50
+      REFINED:
+        requirements:
+          KillPlayers: 3
+      SELL_MULTI:
+        '1':
+          requirements:
+            Level: 3.0D
+          boost: 0.025D

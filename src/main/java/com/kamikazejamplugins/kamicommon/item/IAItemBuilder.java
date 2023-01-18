@@ -3,6 +3,7 @@ package com.kamikazejamplugins.kamicommon.item;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
+import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -12,42 +13,42 @@ import org.bukkit.inventory.meta.SkullMeta;
 import javax.annotation.Nullable;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal"})
-public class ItemBuilder extends IBuilder {
+public class IAItemBuilder extends IBuilder {
 
-    public ItemBuilder(ConfigurationSection section) {
+    public IAItemBuilder(ConfigurationSection section) {
         super(section);
     }
-    public ItemBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
+    public IAItemBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
         super(section, offlinePlayer);
     }
-    public ItemBuilder(XMaterial m) {
+    public IAItemBuilder(XMaterial m) {
         super(m);
     }
-    public ItemBuilder(int id) {
+    public IAItemBuilder(int id) {
         super(id);
     }
-    public ItemBuilder(int id, short damage) {
+    public IAItemBuilder(int id, short damage) {
         super(id, damage);
     }
-    public ItemBuilder(XMaterial m, short damage) {
+    public IAItemBuilder(XMaterial m, short damage) {
         super(m, damage);
     }
-    public ItemBuilder(int id, int amount) {
+    public IAItemBuilder(int id, int amount) {
         super(id, amount);
     }
-    public ItemBuilder(XMaterial m, int amount) {
+    public IAItemBuilder(XMaterial m, int amount) {
         super(m, amount);
     }
-    public ItemBuilder(int id, int amount, short damage) {
+    public IAItemBuilder(int id, int amount, short damage) {
         super(id, amount, damage);
     }
-    public ItemBuilder(XMaterial material, int amount, short damage) {
+    public IAItemBuilder(XMaterial material, int amount, short damage) {
         super(material, amount, damage);
     }
-    public ItemBuilder(ItemStack is) {
+    public IAItemBuilder(ItemStack is) {
         super(is);
     }
-    public ItemBuilder(ItemStack is, boolean clone) {
+    public IAItemBuilder(ItemStack is, boolean clone) {
         super(is, clone);
     }
 
@@ -56,7 +57,16 @@ public class ItemBuilder extends IBuilder {
         short damage = (short) config.getInt("damage", 0);
         int amount = config.getInt("amount", 1);
 
-        ItemStack item = new ItemStack(Material.valueOf(config.getString("material")), amount, damage);
+        String mat = config.getString("material");
+        CustomStack customStack = CustomStack.getInstance(mat);
+
+        ItemStack item;
+        if (customStack != null) {
+            item = customStack.getItemStack();
+        }else {
+            item = new ItemStack(Material.valueOf(config.getString("material")), amount, damage);
+        }
+
         ItemMeta meta = item.getItemMeta();
         if (meta == null) { return item; }
 
@@ -86,6 +96,6 @@ public class ItemBuilder extends IBuilder {
 
     @Override
     public IBuilder clone() {
-        return new ItemBuilder(this.is);
+        return new IAItemBuilder(this.is);
     }
 }

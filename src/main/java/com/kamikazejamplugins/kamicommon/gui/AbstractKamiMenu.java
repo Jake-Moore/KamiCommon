@@ -5,7 +5,7 @@ import com.kamikazejamplugins.kamicommon.gui.interfaces.Menu;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickInfo;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuUpdate;
-import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
+import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -128,7 +128,7 @@ public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder impl
     }
 
     @Override
-    public void addMenuClick(ItemBuilder builder, MenuClick click, int slot) {
+    public void addMenuClick(IBuilder builder, MenuClick click, int slot) {
         addMenuClick(builder.toItemStack(), click, slot);
     }
 

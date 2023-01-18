@@ -1,7 +1,7 @@
 package com.kamikazejamplugins.kamicommon.gui.interfaces;
 
 import com.kamikazejamplugins.kamicommon.gui.MenuItem;
-import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
+import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -27,17 +27,17 @@ public interface Menu<T extends Player> extends InventoryHolder {
 
     void addMenuClick(ItemStack stack, MenuClick click, int slot);
 
-    default void addMenuClick(ItemBuilder builder, MenuClick click, int slot) {
+    default void addMenuClick(IBuilder builder, MenuClick click, int slot) {
         addMenuClick(builder.toItemStack(), click, slot);
     }
 
     void addMenuClick(ItemStack stack, MenuClickPlayer<T> click, int slot);
 
-    default void addMenuClick(ItemBuilder builder, MenuClickPlayer<T> click, int slot) {
+    default void addMenuClick(IBuilder builder, MenuClickPlayer<T> click, int slot) {
         addMenuClick(builder.toItemStack(), click, slot);
     }
 
-    default void addSpecialMenuClick(ItemBuilder builder, MenuClickInfo<T> click, int slot) {
+    default void addSpecialMenuClick(IBuilder builder, MenuClickInfo<T> click, int slot) {
         addSpecialMenuClick(builder.toItemStack(), click, slot);
     }
 
@@ -45,7 +45,7 @@ public interface Menu<T extends Player> extends InventoryHolder {
 
     void setItem(int slot, ItemStack stack);
 
-    default void setItem(int slot, ItemBuilder stack) {
+    default void setItem(int slot, IBuilder stack) {
         setItem(slot, stack.toItemStack());
     }
 
@@ -53,7 +53,7 @@ public interface Menu<T extends Player> extends InventoryHolder {
         setItem(slot, stack);
     }
 
-    default void setItem(ItemBuilder stack, int slot) {
+    default void setItem(IBuilder stack, int slot) {
         setItem(slot, stack.toItemStack());
     }
 

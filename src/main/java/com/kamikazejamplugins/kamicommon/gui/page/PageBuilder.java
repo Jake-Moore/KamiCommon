@@ -3,6 +3,7 @@ package com.kamikazejamplugins.kamicommon.gui.page;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.gui.KamiMenu;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickPlayer;
+import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -67,7 +68,7 @@ public abstract class PageBuilder<T extends Player> {
         return null;
     }
 
-    public ItemBuilder getNextPage() {
+    public IBuilder getNextPage() {
         return new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶");
     }
 
@@ -75,7 +76,7 @@ public abstract class PageBuilder<T extends Player> {
         return false;
     }
 
-    public ItemBuilder getPreviousPage() {
+    public IBuilder getPreviousPage() {
         return new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page");
     }
 
@@ -126,7 +127,7 @@ public abstract class PageBuilder<T extends Player> {
         this.menu = new KamiMenu<>(title, getFixedSize() == -1 ? getLinesFilled(page) : getFixedSize());
 
         if (page > 0) {
-            ItemBuilder builder = getPreviousPage();
+            IBuilder builder = getPreviousPage();
             menu.addMenuClick(builder, (member, type) -> {
                 menu.getIgnoredClose().add(member.getName());
                 openMenu(member, (page - 1));
@@ -135,7 +136,7 @@ public abstract class PageBuilder<T extends Player> {
         }
 
         if (items.pageExist(page + 1)) {
-            ItemBuilder builder = getNextPage();
+            IBuilder builder = getNextPage();
             menu.addMenuClick(builder, (member, type) -> {
                 menu.getIgnoredClose().add(member.getName());
                 openMenu(member, (page + 1));
