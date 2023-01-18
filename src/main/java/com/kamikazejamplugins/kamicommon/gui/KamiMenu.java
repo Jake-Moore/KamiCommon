@@ -2,6 +2,7 @@ package com.kamikazejamplugins.kamicommon.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.*;
+import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,7 +41,7 @@ public class KamiMenu<T extends Player> extends AbstractKamiMenu<T> {
     }
 
     @Override
-    public void setItem(int slot, ItemBuilder stack) {
+    public void setItem(int slot, IBuilder stack) {
         setItem(slot, stack.toItemStack());
     }
 
