@@ -55,6 +55,10 @@ public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder impl
         player.openInventory(getInventory());
     }
 
+    public int firstEmpty() {
+        return getInventory().firstEmpty();
+    }
+
     public int firstEmpty(List<Integer> slots) {
         if (getInventory() == null) {
             return -1;

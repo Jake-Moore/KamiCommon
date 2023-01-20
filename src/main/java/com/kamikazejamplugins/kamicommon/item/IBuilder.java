@@ -191,6 +191,12 @@ public abstract class IBuilder {
         return this;
     }
 
+    public IBuilder replaceBoth(String find, String replacement) {
+        replaceName(find, replacement);
+        replaceLore(find, replacement);
+        return this;
+    }
+
     public IBuilder setAmount(int amount) {
         is.setAmount(amount);
         return this;
