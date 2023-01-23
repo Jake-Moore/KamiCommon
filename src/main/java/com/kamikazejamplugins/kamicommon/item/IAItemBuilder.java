@@ -1,14 +1,11 @@
 package com.kamikazejamplugins.kamicommon.item;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.annotation.Nullable;
 
@@ -53,49 +50,43 @@ public class IAItemBuilder extends IBuilder {
     }
 
     @Override
-    public ItemStack getBasicItem(ConfigurationSection config) {
-        short damage = (short) config.getInt("damage", 0);
-        int amount = config.getInt("amount", 1);
+    public void loadBasicItem(ConfigurationSection config) {
+        this.damage = (short) config.getInt("damage", 0);
+        this.amount = config.getInt("amount", 1);
 
         String mat = config.getString("material");
         CustomStack customStack = CustomStack.getInstance(mat);
 
         ItemStack item;
         if (customStack != null) {
-            item = customStack.getItemStack();
+            this.base = customStack.getItemStack();
         }else {
-            item = new ItemStack(Material.valueOf(config.getString("material")), amount, damage);
+            this.material = XMaterial.matchXMaterial(Material.valueOf(config.getString("material")));
         }
-
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) { return item; }
-
-        meta.setDisplayName(StringUtil.t(config.getString("name")));
-        meta.setLore(StringUtil.t(config.getStringList("lore")));
-        item.setItemMeta(meta);
-        return item;
     }
 
     @Override
-    public ItemStack getPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
-        ItemStack item = getBasicItem(config);
-        ItemMeta meta = item.getItemMeta();
-        assert meta != null;
-        SkullMeta skullMeta = (SkullMeta) meta;
-
+    public void loadPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
+        loadBasicItem(config);
         // Set the skull owner if it's not null
         if (offlinePlayer != null) {
-            skullMeta.setOwner(offlinePlayer.getName());
+            this.skullOwner = offlinePlayer.getName();
         }
-
-        skullMeta.setDisplayName(meta.getDisplayName());
-        skullMeta.setLore(meta.getLore());
-        item.setItemMeta(skullMeta);
-        return item;
     }
 
     @Override
     public IBuilder clone() {
-        return new IAItemBuilder(this.is);
+
+        IAItemBuilder itemBuilder = new IAItemBuilder(this.material, this.amount, this.damage);
+        itemBuilder.name = name;
+        itemBuilder.lore = lore;
+        itemBuilder.unbreakable = unbreakable;
+        itemBuilder.itemFlags = itemFlags;
+        itemBuilder.enchantments = enchantments;
+        itemBuilder.addGlow = addGlow;
+        itemBuilder.skullOwner = skullOwner;
+        itemBuilder.slot = slot;
+
+        return itemBuilder;
     }
 }

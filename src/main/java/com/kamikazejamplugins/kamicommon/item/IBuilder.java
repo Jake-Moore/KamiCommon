@@ -3,52 +3,131 @@ package com.kamikazejamplugins.kamicommon.item;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
+import com.kamikazejamplugins.kamicommon.util.TriState;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
-import de.tr7zw.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal", "deprecation"})
 public abstract class IBuilder {
 
-    final ItemStack is;
-    private String skullOwner;
-    private int slot;
+    ItemStack base = null;
+    XMaterial material = XMaterial.AIR;
+    int amount = 1;
+    short damage = 0;
+    String name = " ";
+    List<String> lore = new ArrayList<>();
+    TriState unbreakable = TriState.NOT_SET;
+    List<ItemFlag> itemFlags = new ArrayList<>();
+    Map<Enchantment, Integer> enchantments = new HashMap<>();
+    boolean addGlow = false;
+
+    String skullOwner = null;
+    int slot;
 
     public IBuilder(ConfigurationSection section) {
-        is = getConfigItem(section, null);
+        loadConfigItem(section, null);
     }
     
     public IBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
-        is = getConfigItem(section, offlinePlayer);
+        loadConfigItem(section, offlinePlayer);
     }
 
     /**
      * @return The item the builder has been building
      */
     public ItemStack build() {
-        return is;
+        if (material == XMaterial.AIR && base == null) { return new ItemStack(Material.AIR); }
+
+        final ItemStack itemStack;
+        if (base != null) {
+            itemStack = base;
+        }else {
+            assert material.parseMaterial() != null;
+            if (damage != 0) {
+                itemStack = new ItemStack(material.parseMaterial(), amount, damage);
+            } else {
+                itemStack = new ItemStack(material.parseMaterial(), amount);
+            }
+        }
+
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null) { return itemStack; }
+
+        // Skull Meta
+        if (skullOwner != null && meta instanceof SkullMeta) {
+            SkullMeta skullMeta = (SkullMeta) meta;
+            skullMeta.setOwner(skullOwner);
+        }
+
+        // Name and lore
+        if (name != null) { meta.setDisplayName(StringUtil.t(name)); }
+        if (lore != null) { meta.setLore(StringUtil.t(lore)); }
+
+        // Unbreakable
+        if (unbreakable != TriState.NOT_SET) {
+            if (NmsManager.getFormattedNmsDouble() >= 1.10) {
+                try {
+                    Method setUnbreakable = meta.getClass().getDeclaredMethod("setUnbreakable", boolean.class);
+                    setUnbreakable.setAccessible(true);
+                    setUnbreakable.invoke(meta, unbreakable.toBoolean());
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    Bukkit.getLogger().severe("[KamiCommon IBuilder] Error setting unbreakable tag.");
+                }
+
+            }else {
+                meta.spigot().setUnbreakable(unbreakable.toBoolean());
+            }
+            meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        }
+
+        // Flags
+        if (!itemFlags.isEmpty()) {
+            for (ItemFlag itemFlag : itemFlags) {
+                if (!meta.getItemFlags().contains(itemFlag)) { meta.addItemFlags(itemFlag); }
+            }
+        }
+
+        // Glow
+        if (addGlow) {
+            meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+            if (!meta.getItemFlags().contains(ItemFlag.HIDE_ENCHANTS)) { meta.addItemFlags(ItemFlag.HIDE_ENCHANTS); }
+        }
+
+        // Enchantments
+        if (!enchantments.isEmpty()) {
+            for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                meta.addEnchant(entry.getKey(), entry.getValue(), true);
+            }
+        }
+
+        itemStack.setItemMeta(meta);
+        return itemStack;
     }
     
-    public ItemStack getConfigItem(ConfigurationSection config) {
-        return getConfigItem(config, null);
+    public void loadConfigItem(ConfigurationSection config) {
+        loadConfigItem(config, null);
     }
 
-    public ItemStack getConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
+    public void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
         Optional<XMaterial> optional = XMaterial.matchXMaterial(config.getString("material"));
         if (optional.isPresent() && optional.get().equals(XMaterial.PLAYER_HEAD)) {
-            return getPlayerHead(config, offlinePlayer);
+            loadPlayerHead(config, offlinePlayer);
         }
-        return getBasicItem(config);
+        loadBasicItem(config);
     }
 
 
@@ -78,13 +157,17 @@ public abstract class IBuilder {
 
     public IBuilder(int id, int amount, short damage) {
         if (amount > 64) { amount = 64; }
-        is = new ItemStack(id, amount, damage);
+        material = XMaterial.matchXMaterial(Material.getMaterial(id));
+        this.amount = amount;
+        this.damage = damage;
     }
 
     public IBuilder(XMaterial material, int amount, short damage) {
         if (amount > 64) { amount = 64; }
         assert material.parseMaterial() != null;
-        is = new ItemStack(material.parseMaterial(), amount, damage);
+        this.material = material;
+        this.amount = amount;
+        this.damage = damage;
     }
 
     public IBuilder(ItemStack is) {
@@ -92,31 +175,20 @@ public abstract class IBuilder {
     }
 
     public IBuilder(ItemStack is, boolean clone) {
-        if (clone) {
-            this.is = is.clone();
-        } else {
-            this.is = is;
+        is = (clone) ? is.clone() : is;
+
+        this.material = XMaterial.matchXMaterial(is.getType());
+        this.amount = is.getAmount();
+        this.damage = is.getDurability();
+        ItemMeta meta = is.getItemMeta();
+        if (meta != null) {
+            if (meta.hasDisplayName()) { this.name = meta.getDisplayName(); }
+            if (meta.hasLore()) { this.lore = meta.getLore(); }
         }
     }
 
     public IBuilder setUnbreakable(boolean b) {
-        if (NmsManager.getFormattedNmsDouble() >= 1.10) {
-            try {
-                ItemMeta meta = is.getItemMeta();
-                Method setUnbreakable = meta.getClass().getDeclaredMethod("setUnbreakable", boolean.class);
-                setUnbreakable.setAccessible(true);
-                setUnbreakable.invoke(meta, b);
-                is.setItemMeta(meta);
-            }catch (Exception e) {
-                e.printStackTrace();
-                Bukkit.getLogger().severe("[KamiCommon IBuilder] Error setting unbreakable tag.");
-            }
-
-            is.getItemMeta().addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        }else {
-            is.getItemMeta().spigot().setUnbreakable(b);
-            is.getItemMeta().addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        }
+        unbreakable = TriState.byBoolean(b);
         return this;
     }
 
@@ -126,24 +198,22 @@ public abstract class IBuilder {
     }
 
     public IBuilder setDurability(short dur) {
-        is.setDurability(dur);
+        this.damage = dur;
         return this;
     }
 
     public IBuilder setDurability(int dur) {
-        is.setDurability((short) dur);
+        this.damage = (short) dur;
         return this;
     }
 
     public IBuilder setType(XMaterial m) {
-        is.setType(m.parseMaterial());
+        this.material = m;
         return this;
     }
 
     public IBuilder setName(String name) {
-        ItemMeta im = is.getItemMeta();
-        im.setDisplayName(StringUtil.t(name));
-        is.setItemMeta(im);
+        this.name = name;
         return this;
     }
 
@@ -152,9 +222,7 @@ public abstract class IBuilder {
     }
 
     public IBuilder replaceName(String find, String replacement) {
-        ItemMeta im = is.getItemMeta();
-        im.setDisplayName(StringUtil.t(im.getDisplayName().replace(find, replacement)));
-        is.setItemMeta(im);
+        name = name.replaceAll(Pattern.quote(find), replacement);
         return this;
     }
 
@@ -165,10 +233,9 @@ public abstract class IBuilder {
      * @return The IBuilder with replaced lore
      */
     public IBuilder replaceLoreLine(String find, List<String> replacement) {
-        final List<String> lore = getLore();
         final List<String> newLore = new ArrayList<>();
         for (String s : lore) {
-            if(ChatColor.stripColor(s).contains(find)) {
+            if (ChatColor.stripColor(s).contains(ChatColor.stripColor(find))) {
                 newLore.addAll(replacement);
             } else {
                 newLore.add(s);
@@ -180,9 +247,9 @@ public abstract class IBuilder {
 
     public IBuilder replaceLore(String find, String replacement) {
         final List<String> newLore = new ArrayList<>();
-        for (String s : getLore()) {
+        for (String s : lore) {
             if (s.contains(find)) {
-                newLore.add(s.replace(find, replacement));
+                newLore.add(s.replaceAll(Pattern.quote(find), replacement));
             }else {
                 newLore.add(s);
             }
@@ -198,12 +265,12 @@ public abstract class IBuilder {
     }
 
     public IBuilder setAmount(int amount) {
-        is.setAmount(amount);
+        this.amount = amount;
         return this;
     }
 
     public List<String> getLore() {
-        return is.getItemMeta().getLore();
+        return lore;
     }
 
     public IBuilder removeLore() {
@@ -212,38 +279,31 @@ public abstract class IBuilder {
     }
 
     public IBuilder hideAttributes() {
-        ItemMeta im = is.getItemMeta();
-        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        im.addItemFlags(ItemFlag.HIDE_PLACED_ON);
-        im.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        is.setItemMeta(im);
+        if (!itemFlags.contains(ItemFlag.HIDE_ATTRIBUTES)) { itemFlags.add(ItemFlag.HIDE_ATTRIBUTES); }
+        if (!itemFlags.contains(ItemFlag.HIDE_ENCHANTS)) { itemFlags.add(ItemFlag.HIDE_ENCHANTS); }
+        if (!itemFlags.contains(ItemFlag.HIDE_PLACED_ON)) { itemFlags.add(ItemFlag.HIDE_PLACED_ON); }
+        if (!itemFlags.contains(ItemFlag.HIDE_UNBREAKABLE)) { itemFlags.add(ItemFlag.HIDE_UNBREAKABLE); }
+        if (!itemFlags.contains(ItemFlag.HIDE_POTION_EFFECTS)) { itemFlags.add(ItemFlag.HIDE_POTION_EFFECTS); }
         return this;
     }
 
     public IBuilder addGlow() {
-        ItemMeta im = is.getItemMeta();
-        im.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-        im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        is.setItemMeta(im);
+        this.addGlow = true;
         return this;
     }
 
     public IBuilder removeEnchantment(Enchantment ench) {
-        is.removeEnchantment(ench);
+        this.enchantments.remove(ench);
         return this;
     }
 
     public IBuilder addEnchant(Enchantment ench, int level) {
-        ItemMeta im = is.getItemMeta();
-        im.addEnchant(ench, level, true);
-        is.setItemMeta(im);
+        this.enchantments.put(ench, level);
         return this;
     }
 
     public IBuilder addEnchantments(Map<Enchantment, Integer> enchantments) {
-        is.addEnchantments(enchantments);
+        this.enchantments.putAll(enchantments);
         return this;
     }
 
@@ -252,52 +312,25 @@ public abstract class IBuilder {
     }
 
     public IBuilder setLore(List<String> lore) {
-        lore = StringUtil.t(lore);
-        ItemMeta im = is.getItemMeta();
-        im.setLore(lore);
-        is.setItemMeta(im);
+        this.lore = lore;
         return this;
     }
 
-    public IBuilder addLoreLines(List<String> line) {
-        ItemMeta im = is.getItemMeta();
-        List<String> lore = new ArrayList<>();
-        if (im.hasLore()) {
-            lore = new ArrayList<>(im.getLore());
-        }
-        lore.addAll(StringUtil.t(line));
-        return setLore(lore);
+    public IBuilder addLoreLines(List<String> lines) {
+        lore.addAll(lines);
+        return this;
     }
 
     public IBuilder addLoreLines(String... line) {
         return addLoreLines(Arrays.asList(line));
     }
 
-    public IBuilder setNbtString(String key, String s) { NBT.modify(is, nbt -> { nbt.setString(key, s); }); return this; }
-    public IBuilder setNbtBoolean(String key, boolean b) { NBT.modify(is, nbt -> { nbt.setBoolean(key, b); }); return this; }
-    public IBuilder setNbtInt(String key, int i) { NBT.modify(is, nbt -> { nbt.setInteger(key, i); }); return this; }
-    public IBuilder setNbtDouble(String key, double d) { NBT.modify(is, nbt -> { nbt.setDouble(key, d); }); return this; }
-    public IBuilder setNbtLong(String key, long l) { NBT.modify(is, nbt -> { nbt.setLong(key, l); }); return this; }
-    public IBuilder setNbtFloat(String key, float f) { NBT.modify(is, nbt -> { nbt.setFloat(key, f); }); return this; }
-    public IBuilder setNbtShort(String key, short s) { NBT.modify(is, nbt -> { nbt.setShort(key, s); }); return this; }
-    public IBuilder setNbtByte(String key, byte b) { NBT.modify(is, nbt -> { nbt.setByte(key, b); }); return this; }
-    public IBuilder setNbtByteArray(String key, byte[] b) { NBT.modify(is, nbt -> { nbt.setByteArray(key, b); }); return this; }
-    public IBuilder setNbtIntArray(String key, int[] i) { NBT.modify(is, nbt -> { nbt.setIntArray(key, i); }); return this; }
-    public IBuilder setNbtItemStack(String key, ItemStack i) { NBT.modify(is, nbt -> { nbt.setItemStack(key, i); }); return this; }
-    public IBuilder setNbtItemStackArray(String key, ItemStack[] i) { NBT.modify(is, nbt -> { nbt.setItemStackArray(key, i); }); return this; }
-    public IBuilder setNbtUUID(String key, UUID uuid) { NBT.modify(is, nbt -> { nbt.setUUID(key, uuid); }); return this; }
-
-
     public IBuilder addFlag(ItemFlag flag) {
-        ItemMeta im = is.getItemMeta();
-        im.addItemFlags(flag);
-        is.setItemMeta(im);
+        if (!itemFlags.contains(flag)) { itemFlags.add(flag); }
         return this;
     }
 
-    public ItemStack toItemStack() {
-        return is;
-    }
+    public ItemStack toItemStack() { return build(); }
 
 
 
@@ -308,15 +341,9 @@ public abstract class IBuilder {
 
 
 
-    /**
-     * @return A base ItemStack from the config
-     */
-    public abstract ItemStack getBasicItem(ConfigurationSection config);
+    public abstract void loadBasicItem(ConfigurationSection config);
 
-    /**
-     * @return A player head ItemStack from the config, using offlinePlayer's skin
-     */
-    public abstract ItemStack getPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer);
+    public abstract void loadPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer);
 
     /**
      * @return A clone of this item `new IBuilder(this.is)`
