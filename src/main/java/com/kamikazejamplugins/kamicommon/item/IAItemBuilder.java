@@ -54,6 +54,9 @@ public class IAItemBuilder extends IBuilder {
         this.damage = (short) config.getInt("damage", 0);
         this.amount = config.getInt("amount", 1);
 
+        this.name = config.getString("name");
+        this.lore = config.getStringList("lore");
+
         String mat = config.getString("material");
         CustomStack customStack = CustomStack.getInstance(mat);
 
