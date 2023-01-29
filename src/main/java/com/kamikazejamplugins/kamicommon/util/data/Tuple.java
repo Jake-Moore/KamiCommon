@@ -1,11 +1,14 @@
 package com.kamikazejamplugins.kamicommon.util.data;
 
+import lombok.Data;
+
 import java.util.Objects;
 
 /**
  * This is just a helpful class to store an object of three objects. Called a Tuple.
  */
 @SuppressWarnings("unused")
+@Data
 public class Tuple<A, B, C> {
     private final A a;
     private final B b;
