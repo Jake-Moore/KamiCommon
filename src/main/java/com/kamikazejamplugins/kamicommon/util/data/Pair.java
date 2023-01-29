@@ -1,11 +1,14 @@
 package com.kamikazejamplugins.kamicommon.util.data;
 
+import lombok.Data;
+
 import java.util.Objects;
 
 /**
  * This is just a helpful class to store an object of two objects. Called a Pair.
  */
 @SuppressWarnings("unused")
+@Data
 public class Pair<A, B> {
     private final A a;
     private final B b;
