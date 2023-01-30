@@ -21,7 +21,7 @@ public abstract class KamiSubCommands {
 
     public abstract KamiSubCommand getNoneSubCommand();
 
-    protected @NotNull KamiSubCommand fromName(String name) {
+    public @NotNull KamiSubCommand fromName(String name) {
         if (subCommands.isEmpty()) {
             this.subCommands.addAll(getSubCommands());
 
