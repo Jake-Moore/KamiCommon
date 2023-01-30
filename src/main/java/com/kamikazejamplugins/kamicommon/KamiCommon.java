@@ -24,4 +24,13 @@ public class KamiCommon extends JavaPlugin implements Listener {
     public static JavaPlugin get() {
         return plugin;
     }
+
+
+    private static Boolean isWineSpigot = null;
+    public static boolean isWineSpigot() {
+        if (isWineSpigot == null) {
+            return isWineSpigot = Bukkit.getServer().getName().equals("WineSpigot");
+        }
+        return isWineSpigot;
+    }
 }
