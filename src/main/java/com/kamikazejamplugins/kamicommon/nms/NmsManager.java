@@ -1,5 +1,7 @@
 package com.kamikazejamplugins.kamicommon.nms;
 
+import com.kamikazejamplugins.kamicommon.nms.block.*;
+import com.kamikazejamplugins.kamicommon.nms.hoveritem.*;
 import org.bukkit.Bukkit;
 
 @SuppressWarnings("unused")
@@ -19,6 +21,7 @@ public class NmsManager {
      * For example 1.19.1 and 1.19.2 use the R1 class, if you are on either, it will return 1.19.2 always
      * @return The nms version, Ex: "1.8.3" or "1.19.3"
      */
+    //TODO: Add new versions as they come out
     public static String getFormattedNms(){
         String nms = normalizePackage(getNMSVersion());
         switch(nms) {
@@ -99,6 +102,101 @@ public class NmsManager {
             return "v" + nms.substring(2);
         }else {
             return nms;
+        }
+    }
+
+
+
+
+    public static IBlockUtil getBlockUtil() {
+        //TODO: Add new versions as they come out
+
+        switch(getNMSVersion()) {
+            case "v1_8_R1":
+                return new BlockUtil1_8_R1();
+            case "v1_8_R2":
+                return new BlockUtil1_8_R2();
+            case "v1_8_R3":
+                return new BlockUtil1_8_R3();
+
+            // TODO come back to this eventually to make it more efficient
+            case "v1_9_R1":
+            case "v1_9_R2":
+            case "v1_10_R1":
+            case "v1_11_R1":
+            case "v1_12_R1":
+            case "v1_13_R1":
+            case "v1_13_R2":
+            case "v1_14_R1":
+            case "v1_15_R1":
+            case "v1_16_R1":
+            case "v1_16_R2":
+            case "v1_16_R3":
+                return new BlockUtil1_9_to_1_16();
+
+            // I think this works, not sure
+            case "v1_17_R1":
+                return new BlockUtil1_17_R1();
+            case "v1_18_R1":
+                return new BlockUtil1_18_R1();
+            case "v1_18_R2":
+                return new BlockUtil1_18_R2();
+            case "v1_19_R1":
+                return new BlockUtil1_19_R1();
+            case "v1_19_R2":
+                return new BlockUtil1_19_R2();
+        }
+        throw new IllegalArgumentException(getNMSVersion() + " isn't a know version");
+    }
+
+
+    //TODO: Add new versions as they come out
+    public static ItemText getItemText() {
+        String version = NmsManager.getNMSVersion();
+        switch (version) {
+            case "v1_8_R1":
+                return new ItemText_1_8_R1();
+            case "v1_8_R2":
+                return new ItemText_1_8_R2();
+            case "v1_8_R3":
+                return new ItemText_1_8_R3();
+            case "v1_9_R1":
+                return new ItemText_1_9_R1();
+            case "v1_9_R2":
+                return new ItemText_1_9_R2();
+            case "v1_10_R1":
+                return new ItemText_1_10_R1();
+            case "v1_11_R1":
+                return new ItemText_1_11_R1();
+            case "v1_12_R1":
+                return new ItemText_1_12_R1();
+            case "v1_13_R1":
+                return new ItemText_1_13_R1();
+            case "v1_13_R2":
+                return new ItemText_1_13_R2();
+            case "v1_14_R1":
+                return new ItemText_1_14_R1();
+            case "v1_15_R1":
+                return new ItemText_1_15_R1();
+            case "v1_16_R1":
+                return new ItemText_1_16_R1();
+            case "v1_16_R2":
+                return new ItemText_1_16_R2();
+            case "v1_16_R3":
+                return new ItemText_1_16_R3();
+            case "v1_17_R1":
+                return new ItemText_1_17_R1();
+            case "v1_18_R1":
+                return new ItemText_1_18_R1();
+            case "v1_18_R2":
+                return new ItemText_1_18_R2();
+            case "v1_19_R1":
+                return new ItemText_1_19_R1();
+            case "v1_19_R2":
+                return new ItemText_1_19_R2();
+            default:
+                Bukkit.getLogger().severe("[KamiCommon NBTManager] Unsupported version: " + version);
+                return new ItemText_1_8_R1();
         }
     }
 }
