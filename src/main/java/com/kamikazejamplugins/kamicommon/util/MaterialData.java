@@ -29,4 +29,9 @@ public class MaterialData {
         this.material = xMaterial.parseMaterial();
         this.data = data;
     }
+
+    @SuppressWarnings("deprecation")
+    public org.bukkit.material.MaterialData toMaterialData() {
+        return new org.bukkit.material.MaterialData(material, data);
+    }
 }
