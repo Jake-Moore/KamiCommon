@@ -59,7 +59,9 @@ public abstract class IBuilder {
             if (damage != 0) {
                 itemStack = new ItemStack(material.parseMaterial(), amount, damage);
             } else {
-                itemStack = new ItemStack(material.parseMaterial(), amount);
+                itemStack = material.parseItem();
+                assert itemStack != null;
+                itemStack.setAmount(amount);
             }
         }
 
