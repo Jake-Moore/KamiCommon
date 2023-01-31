@@ -3,7 +3,6 @@ package com.kamikazejamplugins.kamicommon.item;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import dev.lone.itemsadder.api.CustomStack;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
@@ -64,7 +63,7 @@ public class IAItemBuilder extends IBuilder {
         if (customStack != null) {
             this.base = customStack.getItemStack();
         }else {
-            this.material = XMaterial.matchXMaterial(Material.valueOf(config.getString("material")));
+            this.material = XMaterial.matchXMaterial(config.getString("material")).orElseThrow(() -> new IllegalArgumentException("Invalid material: " + config.getString("material")));
         }
     }
 
