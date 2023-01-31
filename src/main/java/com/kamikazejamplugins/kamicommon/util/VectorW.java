@@ -101,4 +101,61 @@ public class VectorW {
     public int hashCode() {
         return Objects.hash(getWorld().getUID(), getX(), getY(), getZ());
     }
+
+
+
+
+    // Time for some typical vector methods
+    public VectorW add(VectorW vector) {
+        return new VectorW(world, x + vector.getX(), y + vector.getY(), z + vector.getZ());
+    }
+    public VectorW subtract(VectorW vector) {
+        return new VectorW(world, x - vector.getX(), y - vector.getY(), z - vector.getZ());
+    }
+    public VectorW multiply(VectorW vector) {
+        return new VectorW(world, x * vector.getX(), y * vector.getY(), z * vector.getZ());
+    }
+    public VectorW divide(VectorW vector) {
+        return new VectorW(world, x / vector.getX(), y / vector.getY(), z / vector.getZ());
+    }
+    public VectorW add(double x, double y, double z) {
+        return new VectorW(world, this.x + x, this.y + y, this.z + z);
+    }
+    public VectorW subtract(double x, double y, double z) {
+        return new VectorW(world, this.x - x, this.y - y, this.z - z);
+    }
+    public VectorW multiply(double m) {
+        return new VectorW(world, this.x * m, this.y * m, this.z * m);
+    }
+    public VectorW divide(double d) {
+        return new VectorW(world, this.x / d, this.y / d, this.z / d);
+    }
+    public VectorW multiply(double x, double y, double z) {
+        return new VectorW(world, this.x * x, this.y * y, this.z * z);
+    }
+    public VectorW divide(double x, double y, double z) {
+        return new VectorW(world, this.x / x, this.y / y, this.z / z);
+    }
+    public VectorW crossProduct(VectorW vector) {
+        return new VectorW(world, y * vector.getZ() - z * vector.getY(), z * vector.getX() - x * vector.getZ(), x * vector.getY() - y * vector.getX());
+    }
+    public double dotProduct(VectorW vector) {
+        return x * vector.getX() + y * vector.getY() + z * vector.getZ();
+    }
+    public double lengthSquared() {
+        return x * x + y * y + z * z;
+    }
+    public double length() {
+        return Math.sqrt(lengthSquared());
+    }
+    public VectorW normalize() {
+        return divide(length());
+    }
+    public VectorW zero() {
+        return new VectorW(world, 0, 0, 0);
+    }
+    public VectorW copy() {
+        return new VectorW(world, x, y, z);
+    }
+
 }
