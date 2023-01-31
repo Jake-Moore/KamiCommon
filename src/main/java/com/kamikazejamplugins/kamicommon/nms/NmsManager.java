@@ -6,24 +6,36 @@ import org.bukkit.Bukkit;
 
 @SuppressWarnings("unused")
 public class NmsManager {
+    private static String nmsVersion = null;
     /**
      * Normalizes the package name to the format used by the NMS classes.
      * @return The nms version, Ex: "v1_8_R3" or "v1_19_R2"
      */
-    public static String getNMSVersion(){
+    public static String getNMSVersion() {
+        if (nmsVersion != null) { return nmsVersion; }
+
         String v = Bukkit.getServer().getClass().getPackage().getName();
-        return normalizePackage(v.substring(v.lastIndexOf('.') + 1));
+        nmsVersion = normalizePackage(v.substring(v.lastIndexOf('.') + 1));
+        return nmsVersion;
     }
 
+
+    private static String formattedNms = null;
     /**
      * Normalizes the package name to the friendly version typically used.
      * Note: If the same NMS version was used for more than 1 version, the latest version using that nms class is returned
      * For example 1.19.1 and 1.19.2 use the R1 class, if you are on either, it will return 1.19.2 always
      * @return The nms version, Ex: "1.8.3" or "1.19.3"
      */
+    public static String getFormattedNms() {
+        if (formattedNms != null) { return formattedNms; }
+        formattedNms = getFormattedNmsInternal();
+        return formattedNms;
+    }
+
     //TODO: Add new versions as they come out
-    public static String getFormattedNms(){
-        String nms = normalizePackage(getNMSVersion());
+    private static String getFormattedNmsInternal() {
+        String nms = getNMSVersion();
         switch(nms) {
             case "v1_8_R1":
                 return "1.8";
@@ -80,12 +92,16 @@ public class NmsManager {
         throw new IllegalArgumentException(nms + " isn't a know version");
     }
 
+
+    private static double formattedNmsDouble = -1;
     /**
      * Converts {@link #getFormattedNms()} into a double
      * For example 1.8.9 becomes 1.89, and so on
      * @return The formatted version as a double for comparison
      */
-    public static double getFormattedNmsDouble(){
+    public static double getFormattedNmsDouble() {
+        if (formattedNmsDouble != -1) { return formattedNmsDouble; }
+
         String version = getFormattedNms();
         //Remove every period after the first one
         StringBuilder s = new StringBuilder();
@@ -94,7 +110,8 @@ public class NmsManager {
             if (c == '.'){ if (found) { continue; } found = true; }
             s.append(c);
         }
-        return Double.parseDouble(s.toString());
+        formattedNmsDouble = Double.parseDouble(s.toString());
+        return formattedNmsDouble;
     }
 
     private static String normalizePackage(String nms) {
@@ -106,11 +123,16 @@ public class NmsManager {
     }
 
 
-
-
+    private static IBlockUtil blockUtil = null;
     public static IBlockUtil getBlockUtil() {
-        //TODO: Add new versions as they come out
+        if (blockUtil != null) { return blockUtil; }
 
+        blockUtil = getBlockUtilInternal();
+        return blockUtil;
+    }
+
+    private static IBlockUtil getBlockUtilInternal() {
+        //TODO: Add new versions as they come out
         switch(getNMSVersion()) {
             case "v1_8_R1":
                 return new BlockUtil1_8_R1();
@@ -119,7 +141,7 @@ public class NmsManager {
             case "v1_8_R3":
                 return new BlockUtil1_8_R3();
 
-            // TODO come back to this eventually to make it more efficient
+
             case "v1_9_R1":
             case "v1_9_R2":
             case "v1_10_R1":
@@ -132,6 +154,7 @@ public class NmsManager {
             case "v1_16_R1":
             case "v1_16_R2":
             case "v1_16_R3":
+                // TODO come back to this eventually to make it more efficient
                 return new BlockUtil1_9_to_1_16();
 
             // I think this works, not sure
@@ -150,8 +173,16 @@ public class NmsManager {
     }
 
 
-    //TODO: Add new versions as they come out
+
+    private static ItemText itemText = null;
     public static ItemText getItemText() {
+        if (itemText != null) { return itemText; }
+        itemText = getItemTextInternal();
+        return itemText;
+    }
+
+    //TODO: Add new versions as they come out
+    private static ItemText getItemTextInternal() {
         String version = NmsManager.getNMSVersion();
         switch (version) {
             case "v1_8_R1":
