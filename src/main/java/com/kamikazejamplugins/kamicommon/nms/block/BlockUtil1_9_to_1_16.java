@@ -2,6 +2,7 @@ package com.kamikazejamplugins.kamicommon.nms.block;
 
 import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import com.kamikazejamplugins.kamicommon.util.MaterialData;
+import com.kamikazejamplugins.kamicommon.util.VectorW;
 import org.bukkit.block.Block;
 
 public class BlockUtil1_9_to_1_16 extends IBlockUtil {
@@ -13,7 +14,9 @@ public class BlockUtil1_9_to_1_16 extends IBlockUtil {
 
     @SuppressWarnings({"deprecation"})
     @Override
-    public void setMaterialData(Block b, MaterialData materialData, boolean lightUpdate, boolean physics) {
+    public void setMaterialData(VectorW v, MaterialData materialData, boolean lightUpdate, boolean physics) {
+
+        Block b = v.toLocation().getBlock();
 
         // Start off by setting the material
         b.setType(materialData.getMaterial());
@@ -29,7 +32,7 @@ public class BlockUtil1_9_to_1_16 extends IBlockUtil {
 
             // In reality, we should never get here, we shouldn't have a data value in 1.13+
             }else {
-                set1_13BlockData(b, materialData, lightUpdate, physics);
+                set1_13BlockData(v, materialData, lightUpdate, physics);
             }
         }
     }
