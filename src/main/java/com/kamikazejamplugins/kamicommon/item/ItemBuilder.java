@@ -2,7 +2,6 @@ package com.kamikazejamplugins.kamicommon.item;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
@@ -53,7 +52,7 @@ public class ItemBuilder extends IBuilder {
         short damage = (short) config.getInt("damage", 0);
         int amount = config.getInt("amount", 1);
 
-        this.material = XMaterial.matchXMaterial(Material.valueOf(config.getString("material")));
+        this.material = XMaterial.matchXMaterial(config.getString("material")).orElseThrow(() -> new IllegalArgumentException("Invalid material: " + config.getString("material")));
         this.amount = amount;
         this.damage = damage;
         this.name = config.getString("name");
