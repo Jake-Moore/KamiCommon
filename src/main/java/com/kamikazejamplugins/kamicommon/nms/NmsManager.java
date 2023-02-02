@@ -2,6 +2,7 @@ package com.kamikazejamplugins.kamicommon.nms;
 
 import com.kamikazejamplugins.kamicommon.nms.block.*;
 import com.kamikazejamplugins.kamicommon.nms.hoveritem.*;
+import com.kamikazejamplugins.kamicommon.nms.teleport.*;
 import org.bukkit.Bukkit;
 
 @SuppressWarnings("unused")
@@ -175,7 +176,7 @@ public class NmsManager {
             case "v1_19_R2":
                 return new ItemText_1_19_R2();
             default:
-                Bukkit.getLogger().severe("[KamiCommon NBTManager] Unsupported version: " + version);
+                Bukkit.getLogger().severe("[KamiCommon NmsManager] Unsupported version: " + version);
                 return new ItemText_1_8_R1();
         }
     }
@@ -237,5 +238,66 @@ public class NmsManager {
                 return new BlockUtil1_19_R2();
         }
         throw new IllegalArgumentException(getNMSVersion() + " isn't a know version");
+    }
+
+
+
+
+
+    private static ITeleporter teleporter = null;
+    public static ITeleporter getTeleporter() {
+        if (teleporter != null) { return teleporter; }
+        teleporter = getTeleporterInternal();
+        return teleporter;
+    }
+
+    //TODO: Add new versions as they come out
+    private static ITeleporter getTeleporterInternal() {
+        String version = NmsManager.getNMSVersion();
+        switch (version) {
+            case "v1_8_R1":
+                return new Teleporter1_8_R1();
+            case "v1_8_R2":
+                return new Teleporter1_8_R2();
+            case "v1_8_R3":
+                return new Teleporter1_8_R3();
+            case "v1_9_R1":
+                return new Teleporter1_9_R1();
+            case "v1_9_R2":
+                return new Teleporter1_9_R2();
+            case "v1_10_R1":
+                return new Teleporter1_10_R1();
+            case "v1_11_R1":
+                return new Teleporter1_11_R1();
+            case "v1_12_R1":
+                return new Teleporter1_12_R1();
+            case "v1_13_R1":
+                return new Teleporter1_13_R1();
+            case "v1_13_R2":
+                return new Teleporter1_13_R2();
+            case "v1_14_R1":
+                return new Teleporter1_14_R1();
+            case "v1_15_R1":
+                return new Teleporter1_15_R1();
+            case "v1_16_R1":
+                return new Teleporter1_16_R1();
+            case "v1_16_R2":
+                return new Teleporter1_16_R2();
+            case "v1_16_R3":
+                return new Teleporter1_16_R3();
+            case "v1_17_R1":
+                return new Teleporter1_17_R1();
+            case "v1_18_R1":
+                return new Teleporter1_18_R1();
+            case "v1_18_R2":
+                return new Teleporter1_18_R2();
+            case "v1_19_R1":
+                return new Teleporter1_19_R1();
+            case "v1_19_R2":
+                return new Teleporter1_19_R2();
+            default:
+                Bukkit.getLogger().severe("[KamiCommon NmsManager] Unsupported version: " + version);
+                return new Teleporter1_19_R2();
+        }
     }
 }

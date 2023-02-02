@@ -15,6 +15,7 @@ public class BlockUtil1_8_R3 extends IBlockUtil {
         WorldServer w = ((CraftWorld) v.getWorld()).getHandle();
         Chunk chunk = w.getChunkAt(v.getBlockX() >> 4, v.getBlockZ() >> 4);
         BlockPosition bp = new BlockPosition(v.getBlockX(), v.getBlockY(), v.getBlockZ());
+        //chunk.getSections()[bp.getY() >> 4].setType(); //TODO investigate
 
         IBlockData ibd = net.minecraft.server.v1_8_R3.Block.getByCombinedId(combined);
 
@@ -23,7 +24,7 @@ public class BlockUtil1_8_R3 extends IBlockUtil {
         }else {
             try {
                 if (KamiCommon.isWineSpigot()) {
-                    chunk.a(bp, ibd, false);
+                    chunk.a(bp, ibd, false, true);
                 }else {
                     chunk.a(bp, ibd);
                 }
