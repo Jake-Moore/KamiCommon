@@ -20,7 +20,7 @@ public class BlockUtil1_14_R1 extends IBlockUtil {
             w.setTypeAndData(bp, ibd, (physics) ? 3 : 2); // applyPhysics = 3, 2 is none
         }else {
             try {
-                chunk.a(bp, combined, physics);
+                chunk.setType(bp, ibd, physics, false);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
