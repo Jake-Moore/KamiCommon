@@ -1,6 +1,7 @@
 package com.kamikazejamplugins.kamicommon.nms.block;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import com.kamikazejamplugins.kamicommon.util.MaterialData;
 import org.bukkit.Material;
@@ -47,6 +48,8 @@ public abstract class IBlockUtil {
             throw new UnsupportedOperationException("Didn't override .setMaterialData in BlockUtil");
         }
 
+        KamiCommon.get().getLogger().info("Setting MaterialData: " + materialData.toString() + " on Block: " + b.toString() + " with lightUpdate: " + lightUpdate + " and physics: " + physics);
+
         b.setType(materialData.getMaterial());
         set1_13BlockData(b, materialData, lightUpdate, physics);
     }
@@ -57,6 +60,8 @@ public abstract class IBlockUtil {
 
     public void set1_13BlockData(Block b, MaterialData materialData, boolean lightUpdate, boolean physics) {
         if (materialData.getData() == 0) { return; }
+
+        KamiCommon.get().getLogger().info("set1_13BlockData: " + materialData.getData() + " on Block: " + b.toString() + " with lightUpdate: " + lightUpdate + " and physics: " + physics);
 
         try {
             Method getBlockData = b.getClass().getDeclaredMethod("getBlockData");
@@ -70,6 +75,7 @@ public abstract class IBlockUtil {
                 levelled.setLevel(materialData.getData());
 
                 setBlockData.invoke(b, levelled);
+                KamiCommon.get().getLogger().info("Attempted to set level to: " + (int) materialData.getData());
             }else {
                 throw new RuntimeException("BlockData: " + blockData.toString() + " is not Levelled, could not set custom MaterialData: " + materialData.getData());
             }
