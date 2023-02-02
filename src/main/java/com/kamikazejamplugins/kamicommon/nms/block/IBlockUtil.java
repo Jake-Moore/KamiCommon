@@ -1,8 +1,8 @@
 package com.kamikazejamplugins.kamicommon.nms.block;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import com.kamikazejamplugins.kamicommon.util.MaterialData;
-import com.kamikazejamplugins.kamicommon.util.VectorW;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -13,46 +13,51 @@ import java.lang.reflect.Method;
 
 @SuppressWarnings({"deprecation", "unused"})
 public abstract class IBlockUtil {
-    public void setBlockSuperFast(VectorW v, XMaterial xMaterial, boolean lightUpdate, boolean physics) {
+    public void setBlockSuperFast(Block b, XMaterial xMaterial, boolean lightUpdate, boolean physics) {
         if (supportsCombined()) {
-            setCombined(v, xMaterial.getId() + (xMaterial.getData() << 12), lightUpdate, physics);
+            setCombined(b, xMaterial.getId() + (xMaterial.getData() << 12), lightUpdate, physics);
         }else {
             assert xMaterial.parseMaterial() != null;
-            setMaterialData(v, new MaterialData(xMaterial.parseMaterial(), xMaterial.getData()), lightUpdate, physics);
+            setMaterialData(b, new MaterialData(xMaterial.parseMaterial(), xMaterial.getData()), lightUpdate, physics);
         }
     }
 
-    public void setBlockSuperFast(VectorW v, Material material, boolean lightUpdate, boolean physics) {
+    public void setBlockSuperFast(Block b, Material material, boolean lightUpdate, boolean physics) {
         if (supportsCombined()) {
-            setCombined(v, material.getId(), lightUpdate, physics);
+            setCombined(b, material.getId(), lightUpdate, physics);
         }else {
-            setMaterialData(v, new MaterialData(material, (byte) 0), lightUpdate, physics);
+            setMaterialData(b, new MaterialData(material, (byte) 0), lightUpdate, physics);
         }
     }
 
-    public void setBlockSuperFast(VectorW v, MaterialData materialData, boolean lightUpdate, boolean physics) {
+    public void setBlockSuperFast(Block b, MaterialData materialData, boolean lightUpdate, boolean physics) {
         if (supportsCombined()) {
-            setCombined(v, materialData.getMaterial().getId() + (materialData.getData() << 12), lightUpdate, physics);
+            setCombined(b, materialData.getMaterial().getId() + (materialData.getData() << 12), lightUpdate, physics);
         }else {
-            setMaterialData(v, materialData, lightUpdate, physics);
+            setMaterialData(b, materialData, lightUpdate, physics);
         }
     }
 
-    void setCombined(VectorW v, int combined, boolean lightUpdate, boolean physics) {
+    void setCombined(Block b, int combined, boolean lightUpdate, boolean physics) {
         throw new UnsupportedOperationException("Didn't override .setCombined in BlockUtil");
     }
 
-    void setMaterialData(VectorW v, MaterialData materialData, boolean lightUpdate, boolean physics) {
-        throw new UnsupportedOperationException("Didn't override .setMaterialData in BlockUtil");
+    void setMaterialData(Block b, MaterialData materialData, boolean lightUpdate, boolean physics) {
+        if (NmsManager.getFormattedNmsDouble() < 1.13) {
+            throw new UnsupportedOperationException("Didn't override .setMaterialData in BlockUtil");
+        }
+
+        b.setType(materialData.getMaterial());
+        set1_13BlockData(b, materialData, lightUpdate, physics);
     }
 
     boolean supportsCombined() {
         return true;
     }
 
-    public void set1_13BlockData(VectorW v, MaterialData materialData, boolean lightUpdate, boolean physics) {
+    public void set1_13BlockData(Block b, MaterialData materialData, boolean lightUpdate, boolean physics) {
+        if (materialData.getData() == 0) { return; }
 
-        Block b = v.toLocation().getBlock();
         try {
             Method getBlockData = b.getClass().getDeclaredMethod("getBlockData");
             Method setBlockData = b.getClass().getDeclaredMethod("setBlockData", BlockData.class);
@@ -72,7 +77,4 @@ public abstract class IBlockUtil {
             throw new RuntimeException(e);
         }
     }
-
-
-
 }

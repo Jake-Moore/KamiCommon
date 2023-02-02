@@ -1,20 +1,20 @@
 package com.kamikazejamplugins.kamicommon.nms.block;
 
-import com.kamikazejamplugins.kamicommon.util.VectorW;
 import net.minecraft.server.v1_9_R1.BlockPosition;
 import net.minecraft.server.v1_9_R1.Chunk;
 import net.minecraft.server.v1_9_R1.IBlockData;
 import net.minecraft.server.v1_9_R1.WorldServer;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 
 public class BlockUtil1_9_R1 extends IBlockUtil {
 
     @Override
-    public void setCombined(VectorW v, int combined, boolean lightUpdate, boolean physics) {
+    public void setCombined(Block b, int combined, boolean lightUpdate, boolean physics) {
 
-        WorldServer w = ((CraftWorld) v.getWorld()).getHandle();
-        Chunk chunk = w.getChunkAt(v.getBlockX() >> 4, v.getBlockZ() >> 4);
-        BlockPosition bp = new BlockPosition(v.getBlockX(), v.getBlockY(), v.getBlockZ());
+        WorldServer w = ((CraftWorld) b.getWorld()).getHandle();
+        Chunk chunk = w.getChunkAt(b.getX() >> 4, b.getZ() >> 4);
+        BlockPosition bp = new BlockPosition(b.getX(), b.getY(), b.getZ());
 
         IBlockData ibd = net.minecraft.server.v1_9_R1.Block.getByCombinedId(combined);
 
