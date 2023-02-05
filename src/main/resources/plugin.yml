@@ -2,5 +2,7 @@ name: KamiCommon
 version: ${project.version}
 main: com.kamikazejamplugins.kamicommon.KamiCommon
 authors: [ KamikazeJAM_YT ]
+softdepend:
+  - PlaceholderAPI
 description: Testing
 api-version: 1.13
