@@ -22,7 +22,7 @@ public class StringUtil {
 
         // For 1.16+ translate hex color codes as well
         if (NmsManager.getFormattedNmsDouble() >= 1.16) {
-            Pattern hex = Pattern.compile("(<*)(#[A-Fa-f0-9]{6})(>*)");
+            Pattern hex = Pattern.compile("&(#[A-Fa-f0-9]{6})");
             Matcher matcher = hex.matcher(s);
             while (matcher.find()) {
                 StringBuilder s2 = new StringBuilder(COLOR_CHAR + "x");
