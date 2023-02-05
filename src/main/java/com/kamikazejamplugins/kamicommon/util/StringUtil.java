@@ -26,7 +26,7 @@ public class StringUtil {
             Matcher matcher = hex.matcher(s);
             while (matcher.find()) {
                 StringBuilder s2 = new StringBuilder(COLOR_CHAR + "x");
-                for (char c : matcher.group(2).substring(1).toCharArray()) {
+                for (char c : matcher.group(1).substring(1).toCharArray()) {
                     s2.append(COLOR_CHAR).append(c);
                 }
 
