@@ -256,6 +256,7 @@ public class AutoUpdate implements Listener {
 
     public static void notify(Player player) {
         if (hasBeenUpdated()) {
+            // TODO this needs to use the correct plugin name
             player.sendMessage(StringUtil.t("&c&lThere is a new update for '" + KamiCommon.get().getName() + "'! This update will automatically load on the next restart."));
         }
     }
