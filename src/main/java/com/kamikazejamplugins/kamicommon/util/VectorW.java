@@ -13,29 +13,34 @@ import java.util.Objects;
 @Data
 public class VectorW {
 
-    private transient World world;
+    private transient World w;
 
-    @SerializedName("world")
-    private String worldName;
+    // DO NOT CHANGE NAME
+    private String world;
 
+    // DO NOT CHANGE NAME
     @SerializedName("x")
     private double x;
 
+    // DO NOT CHANGE NAME
     @SerializedName("y")
     private double y;
 
+    // DO NOT CHANGE NAME
     @SerializedName("z")
     private double z;
 
+    // DO NOT CHANGE NAME
     @SerializedName("pitch")
     private float pitch;
 
+    // DO NOT CHANGE NAME
     @SerializedName("yaw")
     private float yaw;
 
     public VectorW(World world, Vector vector) {
-        this.world = world;
-        this.worldName = world.getName();
+        this.w = world;
+        this.world = world.getName();
         this.x = vector.getX();
         this.y = vector.getY();
         this.z = vector.getZ();
@@ -44,8 +49,8 @@ public class VectorW {
     }
 
     public VectorW(World world, double x, double y, double z) {
-        this.world = world;
-        this.worldName = world.getName();
+        this.w = world;
+        this.world = world.getName();
         this.x = x;
         this.y = y;
         this.z = z;
@@ -54,9 +59,9 @@ public class VectorW {
     }
 
     public VectorW(Location loc) {
-        this.world = loc.getWorld();
-        assert world != null;
-        this.worldName = world.getName();
+        this.w = loc.getWorld();
+        assert w != null;
+        this.world = w.getName();
         this.x = loc.getX();
         this.y = loc.getY();
         this.z = loc.getZ();
@@ -64,13 +69,13 @@ public class VectorW {
         this.yaw = loc.getYaw();
     }
 
-    public World getWorld() {
-        if (world != null) { return world; }
-        return world = Bukkit.getWorld(worldName);
+    public World getW() {
+        if (w != null) { return w; }
+        return w = Bukkit.getWorld(world);
     }
 
     public Location toLocation() {
-        return new Location(getWorld(), x, y, z, yaw, pitch);
+        return new Location(getW(), x, y, z, yaw, pitch);
     }
 
     public Vector toVector() { return new Vector(x, y, z); }
@@ -94,12 +99,12 @@ public class VectorW {
         if (this == o) return true;
         if (!(o instanceof VectorW)) return false;
         VectorW vectorW = (VectorW) o;
-        return Double.compare(vectorW.getX(), getX()) == 0 && Double.compare(vectorW.getY(), getY()) == 0 && Double.compare(vectorW.getZ(), getZ()) == 0 && getWorld().getUID().equals(vectorW.getWorld().getUID());
+        return Double.compare(vectorW.getX(), getX()) == 0 && Double.compare(vectorW.getY(), getY()) == 0 && Double.compare(vectorW.getZ(), getZ()) == 0 && getW().getUID().equals(vectorW.getW().getUID());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getWorld().getUID(), getX(), getY(), getZ());
+        return Objects.hash(getW().getUID(), getX(), getY(), getZ());
     }
 
 
@@ -107,37 +112,37 @@ public class VectorW {
 
     // Time for some typical vector methods
     public VectorW add(VectorW vector) {
-        return new VectorW(world, x + vector.getX(), y + vector.getY(), z + vector.getZ());
+        return new VectorW(w, x + vector.getX(), y + vector.getY(), z + vector.getZ());
     }
     public VectorW subtract(VectorW vector) {
-        return new VectorW(world, x - vector.getX(), y - vector.getY(), z - vector.getZ());
+        return new VectorW(w, x - vector.getX(), y - vector.getY(), z - vector.getZ());
     }
     public VectorW multiply(VectorW vector) {
-        return new VectorW(world, x * vector.getX(), y * vector.getY(), z * vector.getZ());
+        return new VectorW(w, x * vector.getX(), y * vector.getY(), z * vector.getZ());
     }
     public VectorW divide(VectorW vector) {
-        return new VectorW(world, x / vector.getX(), y / vector.getY(), z / vector.getZ());
+        return new VectorW(w, x / vector.getX(), y / vector.getY(), z / vector.getZ());
     }
     public VectorW add(double x, double y, double z) {
-        return new VectorW(world, this.x + x, this.y + y, this.z + z);
+        return new VectorW(w, this.x + x, this.y + y, this.z + z);
     }
     public VectorW subtract(double x, double y, double z) {
-        return new VectorW(world, this.x - x, this.y - y, this.z - z);
+        return new VectorW(w, this.x - x, this.y - y, this.z - z);
     }
     public VectorW multiply(double m) {
-        return new VectorW(world, this.x * m, this.y * m, this.z * m);
+        return new VectorW(w, this.x * m, this.y * m, this.z * m);
     }
     public VectorW divide(double d) {
-        return new VectorW(world, this.x / d, this.y / d, this.z / d);
+        return new VectorW(w, this.x / d, this.y / d, this.z / d);
     }
     public VectorW multiply(double x, double y, double z) {
-        return new VectorW(world, this.x * x, this.y * y, this.z * z);
+        return new VectorW(w, this.x * x, this.y * y, this.z * z);
     }
     public VectorW divide(double x, double y, double z) {
-        return new VectorW(world, this.x / x, this.y / y, this.z / z);
+        return new VectorW(w, this.x / x, this.y / y, this.z / z);
     }
     public VectorW crossProduct(VectorW vector) {
-        return new VectorW(world, y * vector.getZ() - z * vector.getY(), z * vector.getX() - x * vector.getZ(), x * vector.getY() - y * vector.getX());
+        return new VectorW(w, y * vector.getZ() - z * vector.getY(), z * vector.getX() - x * vector.getZ(), x * vector.getY() - y * vector.getX());
     }
     public double dotProduct(VectorW vector) {
         return x * vector.getX() + y * vector.getY() + z * vector.getZ();
@@ -152,10 +157,10 @@ public class VectorW {
         return divide(length());
     }
     public VectorW zero() {
-        return new VectorW(world, 0, 0, 0);
+        return new VectorW(w, 0, 0, 0);
     }
     public VectorW copy() {
-        return new VectorW(world, x, y, z);
+        return new VectorW(w, x, y, z);
     }
 
 }
