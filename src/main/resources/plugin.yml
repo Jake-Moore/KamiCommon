@@ -4,5 +4,6 @@ main: com.kamikazejamplugins.kamicommon.KamiCommon
 authors: [ KamikazeJAM_YT ]
 softdepend:
   - PlaceholderAPI
+  - ItemsAdder
 description: Testing
 api-version: 1.13

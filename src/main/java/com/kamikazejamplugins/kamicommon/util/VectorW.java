@@ -1,6 +1,5 @@
 package com.kamikazejamplugins.kamicommon.util;
 
-import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,23 +18,18 @@ public class VectorW {
     private String world;
 
     // DO NOT CHANGE NAME
-    @SerializedName("x")
     private double x;
 
     // DO NOT CHANGE NAME
-    @SerializedName("y")
     private double y;
 
     // DO NOT CHANGE NAME
-    @SerializedName("z")
     private double z;
 
     // DO NOT CHANGE NAME
-    @SerializedName("pitch")
     private float pitch;
 
     // DO NOT CHANGE NAME
-    @SerializedName("yaw")
     private float yaw;
 
     public VectorW(World world, Vector vector) {
@@ -56,6 +50,16 @@ public class VectorW {
         this.z = z;
         this.yaw = 0;
         this.pitch = 0;
+    }
+
+    public VectorW(World world, double x, double y, double z, float yaw, float pitch) {
+        this.w = world;
+        this.world = world.getName();
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.yaw = yaw;
+        this.pitch = pitch;
     }
 
     public VectorW(Location loc) {
@@ -160,7 +164,7 @@ public class VectorW {
         return new VectorW(w, 0, 0, 0);
     }
     public VectorW copy() {
-        return new VectorW(w, x, y, z);
+        return new VectorW(w, x, y, z, pitch, yaw);
     }
 
 }
