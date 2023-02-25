@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.Menu;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickInfo;
+import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickPlayer;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuUpdate;
 import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import lombok.Getter;
@@ -137,9 +138,20 @@ public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder impl
     }
 
     @Override
+    public void addMenuClick(IBuilder builder, MenuClick click, int slot, Player forPlaceholders) {
+        addMenuClick(builder.toItemStack(forPlaceholders), click, slot);
+    }
+
+    @Override
+    public void addMenuClick(IBuilder builder, MenuClickPlayer<T> click, int slot, Player forPlaceholders) {
+        addMenuClick(builder.toItemStack(forPlaceholders), click, slot);
+    }
+
+    @Override
     public void setUpdateHandler(MenuUpdate updateHandler) {
         this.updateHandler = updateHandler;
         MenuTask.getAutoUpdateInventories().add(this);
     }
 
+    public abstract void setItem(int slot, IBuilder stack, Player forPlaceholders);
 }

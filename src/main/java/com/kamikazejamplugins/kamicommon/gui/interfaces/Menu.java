@@ -57,9 +57,17 @@ public interface Menu<T extends Player> extends InventoryHolder {
         setItem(slot, stack.toItemStack());
     }
 
+    default void setItem(IBuilder stack, int slot, Player forPlaceholders) {
+        setItem(slot, stack.toItemStack(forPlaceholders));
+    }
+
     Set<String> getIgnoredClose();
 
     MenuUpdate getUpdateHandler();
+
+    void addMenuClick(IBuilder builder, MenuClick click, int slot, Player forPlaceholders);
+
+    void addMenuClick(IBuilder builder, MenuClickPlayer<T> click, int slot, Player forPlaceholders);
 
     void setUpdateHandler(MenuUpdate update);
 

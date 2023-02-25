@@ -46,6 +46,11 @@ public class KamiMenu<T extends Player> extends AbstractKamiMenu<T> {
     }
 
     @Override
+    public void setItem(int slot, IBuilder stack, Player forPlaceholders) {
+        setItem(slot, stack.build(forPlaceholders));
+    }
+
+    @Override
     public void addMenuClick(ItemStack stack, MenuClick click, int slot) {
         addSpecialMenuClick(stack, new MenuClickTransform<>(click), slot);
     }

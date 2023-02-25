@@ -2,7 +2,7 @@ package com.kamikazejamplugins.kamicommon.item;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejamplugins.kamicommon.nms.NmsManager;
-import com.kamikazejamplugins.kamicommon.util.StringUtil;
+import com.kamikazejamplugins.kamicommon.util.StringUtilP;
 import com.kamikazejamplugins.kamicommon.util.TriState;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import org.bukkit.Bukkit;
@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,7 +18,12 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal", "deprecation"})
@@ -49,6 +55,14 @@ public abstract class IBuilder {
      * @return The item the builder has been building
      */
     public ItemStack build() {
+        return build(null);
+    }
+
+    /**
+     * @return The item the builder has been building
+     * @param player The player to build the item for (for placeholders)
+     */
+    public ItemStack build(@Nullable Player player) {
         if (material == XMaterial.AIR && base == null) { return new ItemStack(Material.AIR); }
 
         final ItemStack itemStack;
@@ -75,8 +89,8 @@ public abstract class IBuilder {
         }
 
         // Name and lore
-        if (name != null) { meta.setDisplayName(StringUtil.t(name)); }
-        if (lore != null) { meta.setLore(StringUtil.t(lore)); }
+        if (name != null) { meta.setDisplayName(StringUtilP.p(player, name)); }
+        if (lore != null) { meta.setLore(StringUtilP.p(player, lore)); }
 
         // Unbreakable
         if (unbreakable != TriState.NOT_SET) {
@@ -333,6 +347,7 @@ public abstract class IBuilder {
     }
 
     public ItemStack toItemStack() { return build(); }
+    public ItemStack toItemStack(Player player) { return build(player); }
 
 
 
