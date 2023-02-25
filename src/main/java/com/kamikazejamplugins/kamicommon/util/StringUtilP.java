@@ -3,7 +3,7 @@ package com.kamikazejamplugins.kamicommon.util;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,16 +12,16 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class StringUtilP extends StringUtil {
-    public static String p(@Nonnull Player player, String s) {
+    public static String p(@Nullable Player player, String s) {
         s = PlaceholderAPI.setPlaceholders(player, s);
         return t(s);
     }
 
-    public static List<String> p(@Nonnull Player player, List<String> msg) {
+    public static List<String> p(@Nullable Player player, List<String> msg) {
         return p(player, msg.toArray(new String[0]));
     }
 
-    public static List<String> p(@Nonnull Player player, String... msg) {
+    public static List<String> p(@Nullable Player player, String... msg) {
         List<String> strings = new ArrayList<>();
         for (String s : msg) {
             strings.add(p(player, s));
