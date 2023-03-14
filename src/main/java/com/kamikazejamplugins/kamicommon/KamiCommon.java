@@ -2,7 +2,9 @@ package com.kamikazejamplugins.kamicommon;
 
 import com.kamikazejamplugins.kamicommon.gui.MenuManager;
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @SuppressWarnings("unused")
@@ -11,17 +13,30 @@ public class KamiCommon extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable(){
-        plugin = this;
-        Bukkit.getLogger().info("KamiCommon enabled");
-        plugin.getServer().getPluginManager().registerEvents(new MenuManager(), plugin);
+        long start = System.currentTimeMillis();
+        Bukkit.getLogger().info("KamiCommon enabling...");
 
+        plugin = this;
+        plugin.getServer().getPluginManager().registerEvents(new MenuManager(), plugin);
         getServer().getPluginManager().registerEvents(this, this);
 
-        getLogger().info("IsWineSpigot: " + isWineSpigot());
+        if (isWineSpigot()) {
+            getLogger().info("WineSpigot (1.8.8) detected!");
+        }
+
+        if (System.getProperty("KAMICOMMON_ALREADY_LOADED", "").equalsIgnoreCase("TRUE")) {
+            getLogger().severe("KamiCommon is already loaded! This is not supported!");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        System.setProperty("KAMICOMMON_ALREADY_LOADED", "TRUE");
+        Bukkit.getLogger().info("KamiCommon enabled in " + (System.currentTimeMillis() - start) + "ms");
     }
 
     @Override
     public void onDisable() {
+        HandlerList.unregisterAll((Plugin) plugin);
         Bukkit.getLogger().info("KamiCommon disabled");
     }
 
