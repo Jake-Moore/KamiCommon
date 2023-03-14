@@ -24,13 +24,6 @@ public class KamiCommon extends JavaPlugin implements Listener {
             getLogger().info("WineSpigot (1.8.8) detected!");
         }
 
-        if (System.getProperty("KAMICOMMON_ALREADY_LOADED", "").equalsIgnoreCase("TRUE")) {
-            getLogger().severe("KamiCommon is already loaded! This is not supported!");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        System.setProperty("KAMICOMMON_ALREADY_LOADED", "TRUE");
         Bukkit.getLogger().info("KamiCommon enabled in " + (System.currentTimeMillis() - start) + "ms");
     }
 
