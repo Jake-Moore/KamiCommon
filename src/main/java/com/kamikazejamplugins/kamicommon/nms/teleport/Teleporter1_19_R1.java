@@ -23,7 +23,8 @@ public class Teleporter1_19_R1 extends ITeleporter {
             entityPlayer.b.teleport(location);
         }
         else {
-            MinecraftServer.getServer().ab().respawn(entityPlayer, toWorld, true, location, true);
+            // Verified for 1.19 R1
+            MinecraftServer.getServer().ac().respawn(entityPlayer, toWorld, true, location, true);
         }
     }
 }
