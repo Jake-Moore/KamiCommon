@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.5.27</version>
+    <version>1.6.0</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -155,13 +155,7 @@
             <version>1.33</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api-1.19R2</artifactId>
-            <version>1.19.3-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/lib/spigot-1.19.3-R0.1-SNAPSHOT.jar</systemPath>
-        </dependency>
+
 
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -172,26 +166,40 @@
         </dependency>
 
         <!-- Nms classes for these since all nms doesn't include them idk why -->
-        <dependency>
+        <dependency> <!-- 1.18 R1 -->
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api-1.18.1</artifactId>
             <version>1.18.1-R1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/lib/spigot-server-1.18.1-R1-SNAPSHOT.jar</systemPath>
         </dependency>
-        <dependency>
+        <dependency> <!-- 1.18 R2 -->
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api-1.18.2</artifactId>
             <version>1.18.2-R2-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/lib/spigot-server-1.18.2-R2-SNAPSHOT.jar</systemPath>
         </dependency>
-        <dependency>
+        <dependency> <!-- 1.19 R1 -->
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api-1.19</artifactId>
             <version>1.19.2-R1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/lib/spigot-server-1.19.2-R1-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency> <!-- 1.19 R2 -->
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api-1.19R2</artifactId>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/lib/spigot-1.19.3-R0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency> <!-- 1.19 R3 -->
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api-1.19R3</artifactId>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/lib/spigot-1.19.4-R0.1-SNAPSHOT.jar</systemPath>
         </dependency>
 
         <!-- Add bukkit (needed for newer World and Chunk access) -->

@@ -8,6 +8,8 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Method;
+
 @SuppressWarnings("deprecation")
 public class Teleporter1_17_R1 extends ITeleporter {
 
@@ -23,7 +25,19 @@ public class Teleporter1_17_R1 extends ITeleporter {
             entityPlayer.b.teleport(location);
         }
         else {
-            MinecraftServer.getServer().ab().respawn(entityPlayer, toWorld, true, location, true);
+            // Verified for 1.17 R1
+            // MinecraftServer.getServer().getPlayerList().moveToWorld(entityPlayer, toWorld, true, location, true);
+
+            try {
+                Method getPlayerList = MinecraftServer.getServer().getClass().getDeclaredMethod("getPlayerList");
+                getPlayerList.setAccessible(true);
+                Object playerList = getPlayerList.invoke(MinecraftServer.getServer());
+                Method moveToWorld = playerList.getClass().getDeclaredMethod("moveToWorld", EntityPlayer.class, WorldServer.class, boolean.class, Location.class, boolean.class);
+                moveToWorld.setAccessible(true);
+                moveToWorld.invoke(playerList, entityPlayer, toWorld, true, location, true);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
