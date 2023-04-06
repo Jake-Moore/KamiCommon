@@ -94,7 +94,7 @@ public class AutoUpdate implements Listener {
             try {
                 Pair<JsonObject, JsonObject> urlData = grabUrl(projectName);
                 if (urlData == null) {
-                    plugin.getLogger().severe("[AutoUpdate] Error finding latest -obf java jar from release (was null)");
+                    plugin.getLogger().severe("[AutoUpdate] Error finding latest java jar from release (was null)");
                     return;
                 }
                 if (debug) { plugin.getLogger().info("[AutoUpdate] Grabbed " + projectName + "'s Download Url: " + urlData.getB().get("url").getAsString()); }
@@ -125,17 +125,24 @@ public class AutoUpdate implements Listener {
             JsonObject jsonObject = (new JsonParser()).parse(j).getAsJsonObject();
             JsonArray array = jsonObject.getAsJsonArray("assets");
 
+            JsonObject base = null;
             for (JsonElement e : array) {
                 JsonObject file = e.getAsJsonObject();
                 if (file.get("content_type").getAsString().equals("application/java-archive")) {
+                    // Ignore all original jars, they aren't shaded
                     if (file.get("name").getAsString().startsWith("original-")) { continue; }
-                    if (!file.get("name").getAsString().endsWith("-obf.jar")) { continue; }
 
-                    return Pair.of(jsonObject, file);
+                    // If we find an -obf jar, send it immediately
+                    if (file.get("name").getAsString().endsWith("-obf.jar")) {
+                        return Pair.of(jsonObject, file);
+                    }
+                    base = file;
                 }
             }
 
-            return null;
+            // If we didn't find an -obf jar, we try to send the normal jar
+            if (base == null) { return null; }
+            return Pair.of(jsonObject, base);
         }
     }
 
