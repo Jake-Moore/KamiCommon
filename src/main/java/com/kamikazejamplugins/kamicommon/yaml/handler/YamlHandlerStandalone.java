@@ -18,6 +18,9 @@ public class YamlHandlerStandalone extends AbstractYamlHandler {
 
     @Override
     public InputStream getIS() {
+        InputStream i1 = this.getClass().getResourceAsStream("/" + configFile.getName());
+        if (i1 != null) { return i1; }
+
         return YamlHandlerStandalone.class.getClassLoader().getResourceAsStream(File.separator + configFile.getName());
     }
 
