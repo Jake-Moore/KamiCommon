@@ -99,6 +99,7 @@ public abstract class IBlockUtil {
 
             Slab slab = (Slab) blockData;
             slab.setType(slabType);
+            return slab;
         }else {
             KamiCommon.get().getLogger().warning("BlockData is not Levelled: " + blockData.getClass().getName());
         }
