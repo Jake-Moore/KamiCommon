@@ -7,7 +7,7 @@ import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock;
 
 import javax.annotation.Nullable;
 
-public class BlockUtil1_18_R1 extends IBlockUtil {
+public class BlockUtil1_18_R1 extends IBlockUtil1_13 {
 
     @Override
     boolean supportsCombined() {
