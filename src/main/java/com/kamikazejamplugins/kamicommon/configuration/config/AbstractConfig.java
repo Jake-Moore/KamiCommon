@@ -5,6 +5,7 @@ import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import com.kamikazejamplugins.kamicommon.yaml.MemoryConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
 import java.util.*;
@@ -23,6 +24,7 @@ public abstract class AbstractConfig extends ConfigurationSection {
     // Key, Comment
     @Getter private final List<ConfigComment> comments = new ArrayList<>();
     private Thread thread = null;
+    @Getter @Setter private boolean defaultCommentsOverwrite = true;
 
     /**
      * @return The file associated with this config
@@ -103,8 +105,6 @@ public abstract class AbstractConfig extends ConfigurationSection {
             e.printStackTrace();
         }
     }
-
-
 
 
 
