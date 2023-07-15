@@ -91,6 +91,8 @@ public class NmsManager {
                 return "1.19.3";
             case "v1_19_R3":
                 return "1.19.4";
+            case "v1_20_R1":
+                return "1.20.1";
         }
         throw new IllegalArgumentException(nms + " isn't a know version");
     }
@@ -186,6 +188,8 @@ public class NmsManager {
                 return new ItemText_1_19_R2();
             case "v1_19_R3":
                 return new ItemText_1_19_R3();
+            case "v1_20_R1":
+                return new ItemText_1_20_R1();
             default:
                 Bukkit.getLogger().severe("[KamiCommon NmsManager] Unsupported version: " + version);
                 return new ItemText_1_8_R1();
@@ -249,6 +253,8 @@ public class NmsManager {
                 return new BlockUtil1_19_R2();
             case "v1_19_R3":
                 return new BlockUtil1_19_R3();
+            case "v1_20_R1":
+                return new BlockUtil1_20_R1();
         }
         throw new IllegalArgumentException(getNMSVersion() + " isn't a know version");
     }
@@ -310,9 +316,11 @@ public class NmsManager {
                 return new Teleporter1_19_R2();
             case "v1_19_R3":
                 return new Teleporter1_19_R3();
+            case "v1_20_R1":
+                return new Teleporter1_20_R1();
             default:
                 Bukkit.getLogger().severe("[KamiCommon NmsManager] Unsupported version: " + version);
-                return new Teleporter1_19_R2();
+                return new Teleporter1_20_R1();
         }
     }
 }

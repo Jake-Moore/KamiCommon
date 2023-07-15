@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.7.0.1</version>
+    <version>1.7.0.2</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -159,15 +159,7 @@
             <version>2.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/lib/spigot-1.8.8-R0.2.jar</systemPath>
-        </dependency>
-
-        <!-- Nms classes for these since all nms doesn't include them idk why -->
+<!--         Nms classes for these since all nms doesn't include them idk why-->
         <dependency> <!-- 1.18 R1 -->
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api-1.18.1</artifactId>
@@ -202,6 +194,29 @@
             <version>1.19.4-R0.1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/lib/spigot-1.19.4-R0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency> <!-- 1.20 R1 -->
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api-1.20R1</artifactId>
+            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/lib/spigot-1.20.1-R0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
+
+        <!--This adds the Spigot API artifact to the build -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api1_8R1</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/lib/spigot-1.8.8-R0.2.jar</systemPath>
         </dependency>
 
         <!-- Add bukkit (needed for newer World and Chunk access) -->

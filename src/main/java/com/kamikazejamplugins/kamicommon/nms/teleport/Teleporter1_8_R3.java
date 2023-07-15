@@ -15,6 +15,8 @@ public class Teleporter1_8_R3 extends ITeleporter {
         if (player.getVehicle() != null) {
             player.getVehicle().eject();
         }
+        if (location.getWorld() == null) { return; }
+
         final WorldServer toWorld = ((CraftWorld)location.getWorld()).getHandle();
         final WorldServer fromWorld = ((CraftWorld)player.getWorld()).getHandle();
         final EntityPlayer entityPlayer = ((CraftPlayer)player).getHandle();

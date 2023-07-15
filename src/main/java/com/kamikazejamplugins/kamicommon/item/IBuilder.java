@@ -105,7 +105,14 @@ public abstract class IBuilder {
                 }
 
             }else {
-                meta.spigot().setUnbreakable(unbreakable.toBoolean());
+                try {
+                    Object o = meta.getClass().getDeclaredMethod("spigot").invoke(meta);
+                    Method setUnbreakable = o.getClass().getDeclaredMethod("setUnbreakable", boolean.class);
+                    setUnbreakable.setAccessible(true);
+                    setUnbreakable.invoke(o, unbreakable.toBoolean());
+                }catch (Throwable t) {
+                    t.printStackTrace();
+                }
             }
             meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         }
@@ -160,20 +167,17 @@ public abstract class IBuilder {
     }
 
     public IBuilder(XMaterial m, short damage) {
-        this(m.getId(), 1, damage);
-    }
-
-    public IBuilder(int id, int amount) {
-        this(id, amount, (short) 0);
+        this(m, 1, damage);
     }
 
     public IBuilder(XMaterial m, int amount) {
         this(m, amount, (short) 0);
     }
 
+    public IBuilder(int id, int amount) { this(id, amount, (short) 0); }
     public IBuilder(int id, int amount, short damage) {
         if (amount > 64) { amount = 64; }
-        material = XMaterial.matchXMaterial(Material.getMaterial(id));
+        XMaterial.matchXMaterial(id, (byte) damage).ifPresent(xMaterial -> material = xMaterial);
         this.amount = amount;
         this.damage = damage;
     }
