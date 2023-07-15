@@ -23,7 +23,7 @@
 <dependency>
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.4.0.0</version>
+    <version>1.7.0.2</version>
     <scope>provided</scope>
 </dependency>
 ```
