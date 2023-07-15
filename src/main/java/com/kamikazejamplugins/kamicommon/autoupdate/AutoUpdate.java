@@ -150,7 +150,7 @@ public class AutoUpdate implements Listener {
         JsonObject jsonObject = dataPair.getA();
         JsonObject dataJson = dataPair.getB();
         String downloadUrl = dataJson.get("url").getAsString();
-        System.out.println(downloadUrl);
+        // System.out.println(downloadUrl);
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet request = new HttpGet(downloadUrl);

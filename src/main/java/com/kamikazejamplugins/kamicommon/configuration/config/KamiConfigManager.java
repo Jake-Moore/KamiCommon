@@ -5,6 +5,7 @@ import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -17,11 +18,11 @@ import java.util.List;
 @SuppressWarnings("unused")
 class KamiConfigManager {
 
-    protected static void saveKamiConfig(AbstractConfig abstractConfig) throws Exception {
+    protected static void saveKamiConfig(AbstractConfig abstractConfig) throws IOException {
         YamlConfiguration config = abstractConfig.getYamlConfiguration();
         List<ConfigComment> comments = abstractConfig.getComments();
 
-        // Save the FileConfiguration (without comments)
+        // Save the FileConfiguration (without additionally registered comments)
         config.save();
 
         // Store the lines here so that we don't have to read the file multiple times

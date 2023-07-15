@@ -1,15 +1,19 @@
 package com.kamikazejamplugins.kamicommon.yaml.handler;
 
-import com.kamikazejamplugins.kamicommon.util.data.ANSI;
 import com.kamikazejamplugins.kamicommon.yaml.MemoryConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public abstract class AbstractYamlHandler {
@@ -30,6 +34,10 @@ public abstract class AbstractYamlHandler {
     }
 
     public YamlConfiguration loadConfig(boolean addDefaults) {
+        LoaderOptions options = new LoaderOptions();
+        options.setProcessComments(true);
+        Yaml yaml = (new Yaml(options));
+
         try {
             if (!configFile.exists()) {
                 if (!configFile.getParentFile().exists()) {
@@ -43,90 +51,56 @@ public abstract class AbstractYamlHandler {
                 }
             }
 
-            InputStream configStream = Files.newInputStream(configFile.toPath());
-            LinkedHashMap<String, Object> data = (new Yaml()).load(configStream);
-            if (data == null) {
-                data = new LinkedHashMap<>();
-            }
-
-            config = new YamlConfiguration(data, configFile);
-            return (addDefaults) ? addDefaults(config).save() : config.save();
+            Reader reader = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8);
+            config = new YamlConfiguration((MappingNode) yaml.compose(reader), configFile);
+            if (addDefaults) { addDefaults(); }
+            return config.save();
         }catch (IOException e) {
             e.printStackTrace();
         }
-        return new YamlConfiguration(new LinkedHashMap<>(), configFile);
+        return createNewConfig();
+    }
+
+    private YamlConfiguration createNewConfig() {
+        return new YamlConfiguration(createNewMappingNode(), configFile);
+    }
+
+    public static MappingNode createNewMappingNode() {
+        return new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
     }
 
     private void save() {
-        if (config != null) {
-            config.save();
-        }
+        if (config != null) { config.save(); }
     }
 
-    private YamlConfiguration addDefaults(YamlConfiguration config) {
+    private void addDefaults() {
         InputStream defConfigStream = getIS();
         if (defConfigStream == null) {
             error("Error: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!");
             save();
-            return config;
+            return;
         }
 
-        MemoryConfiguration defConfig = new MemoryConfiguration((new Yaml()).load(defConfigStream));
-        List<String> keys = getOrderedKeys(getIS(), defConfig.getKeys(true));
+        // InputStream and Reader both contain comments (verified)
+        Reader reader = new InputStreamReader(defConfigStream, StandardCharsets.UTF_8);
+        LoaderOptions options = new LoaderOptions();
+        options.setProcessComments(true);
 
-        if (!equalLists(keys, defConfig.getKeys(true))) {
-            error("Error: Error grabbing ordered defaults from (" + configFile.getName() + ")!");
-            save();
-            return config;
-        }
+        MemoryConfiguration defConfig = new MemoryConfiguration((MappingNode) (new Yaml(options)).compose(reader));
+        Set<String> keys = defConfig.getKeys(true);
 
-        // Add any existing keys that aren't in the defaults list
-        // this will make any keys set by the plugin, that aren't in the defaults, stay
-        List<String> existingKeys = new ArrayList<>(config.getKeys(true));
-        for (String key : existingKeys) {
-            if (!keys.contains(key)) { keys.add(key); }
-        }
-
-        // Make a new config so we can force the order of the keys when creating it
-        YamlConfiguration newConfig = new YamlConfiguration(new LinkedHashMap<>(), configFile);
+        // Make a new config with the keys
         for (String key : keys) {
-            Object o = (config.contains(key)) ? config.get(key) : defConfig.get(key);
-            newConfig.set(key, o);
+            // Don't overwrite existing keys
+            if (!config.contains(key)) { config.set(key, defConfig.get(key)); }
         }
+        config.copyCommentsFromDefault(keys, defConfig);
         save();
-        return newConfig;
     }
 
     public abstract InputStream getIS();
 
     public abstract void error(String s);
-
-    private List<String> getOrderedKeys(InputStream defConfigStream, Set<String> deepKeys) {
-        List<String> keys = new ArrayList<>();
-        Map<Integer, String> keyMappings = new HashMap<>();
-
-        // Store the lines here so that we don't have to read the file multiple times
-        List<String> lines = new BufferedReader(new InputStreamReader(defConfigStream, StandardCharsets.ISO_8859_1)).lines().collect(Collectors.toList());
-
-        for (String key : deepKeys) {
-            int lineNum = findLineOfKey(lines, key);
-            if (lineNum < 0) {
-                error("Could not find key: '" + key + "' in def config stream: " + configFile.getName() + ANSI.RESET);
-                int i = getHighest(keyMappings.keySet());
-                if (i < lines.size()) { i = lines.size() + 1; }else { i++; }
-                keyMappings.put(i, key);
-                continue;
-            }
-            keyMappings.put(lineNum, key);
-        }
-
-        List<Integer> keyLines = keyMappings.keySet().stream().sorted().collect(Collectors.toList());
-
-        for (int keyLine : keyLines) {
-            keys.add(keyMappings.get(keyLine));
-        }
-        return keys;
-    }
 
     private int getHighest(Set<Integer> set) {
         int highest = 0;

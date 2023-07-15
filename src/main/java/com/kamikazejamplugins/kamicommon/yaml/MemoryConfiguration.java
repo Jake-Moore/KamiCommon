@@ -1,10 +1,10 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
-import java.util.LinkedHashMap;
+import org.yaml.snakeyaml.nodes.MappingNode;
 
 @SuppressWarnings("unused")
 public class MemoryConfiguration extends MemorySection {
-    public MemoryConfiguration(LinkedHashMap<String, Object> data) {
-        super(data);
+    public MemoryConfiguration(MappingNode node) {
+        super(node);
     }
 }

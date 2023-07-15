@@ -11,6 +11,6 @@ public class Config {
         config.save();
         config.reload();
 
-        System.out.println("Keys: " + config.getConfigurationSection("levels").getKeys(false));
+        // System.out.println("Keys: " + config.getConfigurationSection("levels").getKeys(false));
     }
 }
