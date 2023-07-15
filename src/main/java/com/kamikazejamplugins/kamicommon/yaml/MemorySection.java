@@ -1,18 +1,23 @@
 package com.kamikazejamplugins.kamicommon.yaml;
 
-import com.kamikazejamplugins.kamicommon.util.data.ANSI;
+import com.kamikazejamplugins.kamicommon.yaml.handler.AbstractYamlHandler;
 import lombok.Getter;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.comments.CommentLine;
+import org.yaml.snakeyaml.nodes.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.*;
 
-@SuppressWarnings({"unchecked", "unused"})
+@SuppressWarnings({"unused"})
 public abstract class MemorySection extends ConfigurationSection {
     @Getter
-    private final LinkedHashMap<String, Object> data;
-    public MemorySection(LinkedHashMap<String, Object> data) {
-        this.data = data;
+    private final @Nonnull MappingNode node;
+    public MemorySection(@Nullable MappingNode node) {
+        if (node == null) { node = AbstractYamlHandler.createNewMappingNode(); }
+        this.node = node;
     }
 
     @Override
@@ -25,75 +30,210 @@ public abstract class MemorySection extends ConfigurationSection {
             getItemStackHelper().setItemStack(key, value); return;
         }
 
-        if (value instanceof Byte) { value = value + "b"; }
-        if (value instanceof Short) { value = value + "s"; }
-        if (value instanceof Float) { value = value + "f"; }
-        if (value instanceof Double) { value = value + "D"; }
+        if (value instanceof Byte) { put(node, key, value + "b"); return; }
+        if (value instanceof Short) { put(node, key, value + "s"); return; }
+        if (value instanceof Float) { put(node, key, value + "f"); return; }
+        if (value instanceof Double) { put(node, key, value + "d"); return; }
 
-        String[] keys = key.split("\\.");
-        if (keys.length <= 1) { data.put(key, value); return; }
-
-        LinkedHashMap<String, Object> dataRecent = data;
-        for (int i = 0; i < keys.length-1; i++) {
-            String k = keys[i];
-            if (dataRecent.containsKey(k)) {
-                if (dataRecent.get(k) instanceof LinkedHashMap) {
-                    dataRecent = (LinkedHashMap<String, Object>) dataRecent.get(k);
-                }else {
-                    StringBuilder builder = new StringBuilder();
-                    for (int j = 0; j <= i; j++) {
-                        builder.append(keys[j]).append(" ");
-                    }
-                    String newKey = builder.toString().trim().replaceAll(" ", ".");
-                    if (key.equalsIgnoreCase(newKey)) {
-                        System.out.println(ANSI.RED + "Equal Keys: " + key);
-                    }
-                    put(newKey, new LinkedHashMap<>());
-
-                    dataRecent = new LinkedHashMap<>();
-                }
-            }else if (i != keys.length - 1){
-                StringBuilder builder = new StringBuilder();
-                for (int j = 0; j <= i; j++) {
-                    builder.append(keys[j]).append(" ");
-                }
-                String newKey = builder.toString().trim().replaceAll(" ", ".");
-                put(newKey, new LinkedHashMap<>());
-
-                dataRecent = new LinkedHashMap<>();
-            }
-        }
-        dataRecent.put(keys[keys.length - 1], value);
-
-        LinkedHashMap<String, Object> newData = dataRecent;
-        newData.put(keys[keys.length - 1], value);
-        for (int j = keys.length - 2; j >= 1; j--){
-            LinkedHashMap<String, Object> temp = data;
-            for (int k = 0; k < j; k++) {
-                temp = (LinkedHashMap<String, Object>) temp.get(keys[k]);
-            }
-            temp.put(keys[j], newData);
-            newData = temp;
-        }
-
-        data.put(keys[0], newData);
+        put(node, key, value);
     }
 
-    @Override
-    public @Nullable Object get(String key) {
-        String[] keys = key.split("\\.");
-        LinkedHashMap<String, Object> map = data;
-        for (int i = 0; i < keys.length-1; i++) {
-            if (map == null) { return null; }
+    private void put(MappingNode node, String key, Object value) {
+        if (node == null) { return; }
 
-            if (map.containsKey(keys[i])) {
-                map = (LinkedHashMap<String, Object>) map.get(keys[i]);
-            } else {
-                return null;
+        // Get the current key
+        String[] keys = key.split("\\.");
+        if (keys.length == 0) { return; }
+
+        // If we have hit the end of the key and should insert the value here
+        if (keys.length == 1) {
+            String part = keys[0];
+            // Try to fetch a TupleNode with this key
+            NodeTuple tuple = null;
+            ScalarNode scalarKeyNode = null;
+            for (NodeTuple t : node.getValue()) {
+                Node keyNode = t.getKeyNode();
+                if (keyNode instanceof ScalarNode) {
+                    ScalarNode scalarNode = (ScalarNode) keyNode;
+                    if (scalarNode.getValue().equals(part)) {
+                        tuple = t;
+                        scalarKeyNode = scalarNode;
+                        break;
+                    }
+                }
+            }
+            // Save the comments
+            List<CommentLine> blockComments = null;
+            List<CommentLine> inlineComments = null;
+            List<CommentLine> endComments = null;
+            if (scalarKeyNode != null) {
+                blockComments = scalarKeyNode.getBlockComments();
+                inlineComments = scalarKeyNode.getInLineComments();
+                endComments = scalarKeyNode.getEndComments();
+            }
+
+            // Remove this node since we can't edit it
+            node.getValue().remove(tuple);
+
+            // Create a new tuple
+            Node keyNode = getScalarNode(part, DumperOptions.ScalarStyle.PLAIN);
+            keyNode.setBlockComments(blockComments); keyNode.setInLineComments(inlineComments); keyNode.setEndComments(endComments);
+            Node valueNode = getValueNode(value);
+            tuple = new NodeTuple(keyNode, valueNode);
+            node.getValue().add(tuple);
+            return;
+        }
+        // > 1 parts left
+        // We need to make sure there is a MappingNode
+        String part = keys[0];
+        NodeTuple tuple = null;
+        for (NodeTuple t : node.getValue()) {
+            Node keyNode = t.getKeyNode();
+            if (keyNode instanceof ScalarNode) {
+                ScalarNode scalarNode = (ScalarNode) keyNode;
+                if (scalarNode.getValue().equals(part)) {
+                    tuple = t;
+                    break;
+                }
             }
         }
-        if (map == null) { return null; }
-        return map.get(keys[keys.length-1]);
+
+        // Create a new Tuple for this
+        if (tuple == null) {
+            Node keyNode = getScalarNode(part, DumperOptions.ScalarStyle.PLAIN);
+            MappingNode valueNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+            tuple = new NodeTuple(keyNode, valueNode);
+            node.getValue().add(tuple);
+            put(valueNode, key.substring(part.length() + 1), value);
+            return;
+        }
+
+        // We need to preserve the data of this tuple
+        Node valueNode = tuple.getValueNode();
+        if (valueNode instanceof MappingNode) {
+            put((MappingNode) valueNode, key.substring(part.length() + 1), value);
+        }else {
+            node.getValue().remove(tuple);
+            Node keyNode = getScalarNode(part, DumperOptions.ScalarStyle.PLAIN);
+            MappingNode newValueNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+            tuple = new NodeTuple(keyNode, newValueNode);
+            node.getValue().add(tuple);
+            put(newValueNode, key.substring(part.length() + 1), value);
+        }
+    }
+
+    private ScalarNode getScalarNode(String value, DumperOptions.ScalarStyle style) {
+        return new ScalarNode(Tag.STR, value, null, null, style);
+    }
+
+    private Node getValueNode(Object value) {
+        // Lists are set as SequenceNodes
+        if (value instanceof List<?>) {
+            List<Node> list = new ArrayList<>();
+            for (Object object : (List<?>) value) {
+                list.add(getScalarNode(object.toString(), DumperOptions.ScalarStyle.DOUBLE_QUOTED));
+            }
+            return new SequenceNode(Tag.SEQ, list, DumperOptions.FlowStyle.AUTO);
+        }
+        // Booleans need to be plain (sorta)
+        if (value instanceof Boolean) {
+            return new ScalarNode(Tag.BOOL, value.toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
+        }
+        // Numbers also need to be different
+        if (getBigDecimal(value.toString()) != null) {
+            if (value.toString().contains(".")) {
+                return new ScalarNode(Tag.FLOAT, value.toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
+            }else {
+                return new ScalarNode(Tag.INT, value.toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
+            }
+        }
+
+        return getScalarNode(value.toString(), DumperOptions.ScalarStyle.DOUBLE_QUOTED);
+    }
+
+
+
+    @Override
+    public Object get(String key) {
+        return getObject(node, key);
+    }
+
+    // Internal recursive method to get an object from a MappingNode
+    private @Nullable Object getObject(MappingNode node, String search) {
+        Object o = getObjectInternal(node, search, "");
+        if (o instanceof ScalarNode) {
+            return ((ScalarNode) o).getValue();
+        }
+        if (o instanceof SequenceNode) {
+            SequenceNode s = (SequenceNode) o;
+            List<String> valuesList = new ArrayList<>();
+            for (Node n : s.getValue()) {
+                if (n instanceof ScalarNode) {
+                    ScalarNode scalar = (ScalarNode) n;
+                    valuesList.add(scalar.getValue());
+                }else { System.out.print("Unknown node type (2): " + n.getNodeId()); }
+            }
+            return valuesList;
+        }
+        return o;
+    }
+
+    @Nullable Node getNode(String key) {
+        Object o = getObjectInternal(node, key, "");
+        if (o instanceof Node) { return (Node) o; }
+        return null;
+    }
+
+    // Internal recursive method to get an object from a MappingNode
+    private @Nullable Object getObjectInternal(MappingNode node, String search, String currentKey) {
+        List<NodeTuple> values = node.getValue();
+        for (NodeTuple tuple : values) {
+            Node keyNode = tuple.getKeyNode(); // Node that contains the next key
+            Node valueNode = tuple.getValueNode(); // Node that contains the next Node or the value object
+
+            if (keyNode.getNodeId() == NodeId.mapping) {
+                if (search.equals(currentKey)) { return valueNode; } // If the key is the search, return the valueNode
+
+                Object o = getObjectInternal((MappingNode) keyNode, search, currentKey);
+                if (o != null) { return o; }
+            } else if (keyNode.getNodeId() == NodeId.scalar) {
+                ScalarNode scalarNode = (ScalarNode) keyNode;
+                String key2 = concat(currentKey, scalarNode.getValue());
+
+                // If this is a mapping node, continue (it can't be a value)
+                if (valueNode instanceof MappingNode) {
+                    MappingNode m = (MappingNode) valueNode;
+                    if (key2.equals(search)) { return m; } // If the key is the search, return the valueNode
+
+                    Object o = getObjectInternal(m, search, key2);
+                    if (o != null) { return o; }
+                    continue;
+                }
+
+                if (valueNode instanceof ScalarNode) {
+                    ScalarNode s = (ScalarNode) valueNode;
+                    if (key2.equals(search)) { return s; }
+                }else if (valueNode instanceof SequenceNode) {
+                    SequenceNode s = (SequenceNode) valueNode;
+                    if (!key2.equals(search)) { continue; }
+                    return s;
+                } else {
+                    throw new RuntimeException("Cannot get string, unknown node type: " + valueNode.getNodeId());
+                }
+            } else {
+                throw new RuntimeException("Cannot get string (2), unknown node type: " + keyNode.getNodeId());
+            }
+        }
+        return null;
+    }
+
+    // Adds a key to the current key
+    private static String concat(String key, String nextNode) {
+        if (key.isEmpty()) {
+            return nextNode;
+        } else {
+            return key + "." + nextNode;
+        }
     }
 
     @Override
@@ -133,10 +273,11 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public MemoryConfiguration getConfigurationSection(String key) {
         Object o = get(key);
-        if (!(o instanceof LinkedHashMap)) {
-            return new MemoryConfiguration(new LinkedHashMap<>());
+        if (o instanceof MappingNode) {
+            MappingNode m = (MappingNode) o;
+            return new MemoryConfiguration(m);
         }
-        return new MemoryConfiguration((LinkedHashMap<String, Object>) o);
+        return new MemoryConfiguration(AbstractYamlHandler.createNewMappingNode());
     }
 
     @Override
@@ -155,7 +296,18 @@ public abstract class MemorySection extends ConfigurationSection {
     @Override
     public boolean getBoolean(String key, boolean def) {
         Object val = get(key, def);
-        return (boolean)((val instanceof Boolean) ? val : def);
+        if (val == null) { return def; }
+        if (val instanceof Boolean) { return (boolean) val; }
+        if (val instanceof String) {
+            String s = (String) val;
+            if (s.equalsIgnoreCase("true")) { return true; }
+            if (s.equalsIgnoreCase("false")) { return false; }
+            if (s.equalsIgnoreCase("yes")) { return true; }
+            if (s.equalsIgnoreCase("no")) { return false; }
+            if (s.equalsIgnoreCase("on")) { return true; }
+            if (s.equalsIgnoreCase("off")) { return false; }
+        }
+        return def;
     }
     @Override
     public boolean isBoolean(String key) { return get(key) instanceof Boolean; }
@@ -264,6 +416,9 @@ public abstract class MemorySection extends ConfigurationSection {
         String s = getString(key);
         if (s == null) { return null; }
 
+        return getBigDecimal(s);
+    }
+    private @Nullable BigDecimal getBigDecimal(String s) {
         // If it's any of the following, remove the last character
         if (s.endsWith("D") || s.endsWith("f") || s.endsWith("s") || s.endsWith("b")) {
             String sub = s.substring(0, s.length() - 1);
@@ -275,7 +430,6 @@ public abstract class MemorySection extends ConfigurationSection {
         }
         return null;
     }
-
 
 
 
@@ -384,43 +538,83 @@ public abstract class MemorySection extends ConfigurationSection {
      */
     @Override
     public Set<String> getKeys(boolean deep) {
-        if (!deep) {
-            return data.keySet();
-        }else {
-            Set<String> keys = new HashSet<>();
-
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
-                if (entry.getValue() instanceof LinkedHashMap) {
-                    for (String k : getConfigurationSection(entry.getKey()).getKeys(true)) {
-                        keys.add(entry.getKey() + "." + k);
-                    }
-                }else {
-                    keys.add(entry.getKey());
-                }
-            }
-            return keys;
-        }
+        return getKeys(node, deep);
     }
+
+    private Set<String> getKeys(MappingNode node, boolean deep) {
+        if (node == null) { return Collections.emptySet(); }
+        if (!deep) { return getShallowKeys(node); }
+        return getDeepKeys(node, "");
+    }
+
+    private Set<String> getShallowKeys(MappingNode node) {
+        Set<String> keys = new HashSet<>();
+        for (NodeTuple tuple : node.getValue()) {
+            Node keyNode = tuple.getKeyNode();
+            if (keyNode instanceof ScalarNode) {
+                keys.add(((ScalarNode) keyNode).getValue());
+            }
+        }
+        return keys;
+    }
+
+    private Set<String> getDeepKeys(MappingNode node, String baseKey) {
+        Set<String> keys = new HashSet<>();
+        for (NodeTuple tuple : node.getValue()) {
+            Node keyNode = tuple.getKeyNode();
+            Node valueNode = tuple.getValueNode();
+            if (keyNode instanceof ScalarNode) {
+                if (valueNode instanceof MappingNode) {
+                    keys.addAll(getDeepKeys((MappingNode) valueNode, concat(baseKey, ((ScalarNode) keyNode).getValue())));
+                }else if (valueNode instanceof ScalarNode) {
+                    keys.add(concat(baseKey, ((ScalarNode) keyNode).getValue()));
+                }else if (valueNode instanceof SequenceNode) {
+                    keys.add(concat(baseKey, ((ScalarNode) keyNode).getValue()));
+                }
+            } else if (keyNode instanceof MappingNode) {
+                keys.addAll(getDeepKeys((MappingNode) keyNode, baseKey));
+            }
+        }
+        return keys;
+    }
+
+
+
+
 
     @Override
     public boolean isConfigurationSection(final String key) {
-        return get(key) instanceof LinkedHashMap;
+        return get(key) instanceof MappingNode;
     }
 
     @Override
     public boolean contains(String key) {
-        String[] keys = key.split("\\.");
+        return contains(node, key, "");
+    }
 
-        LinkedHashMap<String, Object> map = data;
-        for (int i = 0; i < keys.length-1; i++) {
-            if (map.containsKey(keys[i]) && map.get(keys[i]) instanceof LinkedHashMap) {
-                map = (LinkedHashMap<String, Object>) map.get(keys[i]);
-            } else {
-                return false;
+    // Internal method to recursively search for a key
+    private boolean contains(MappingNode node, String key, String currentKey) {
+        for (NodeTuple tuple : node.getValue()) {
+            Node keyNode = tuple.getKeyNode();
+            Node valueNode = tuple.getValueNode();
+
+            if (keyNode instanceof ScalarNode) {
+                String k = concat(currentKey, ((ScalarNode) keyNode).getValue());
+                if (k.equals(key)) { return true; }
+            }
+
+            if (valueNode instanceof MappingNode) {
+                if (keyNode instanceof ScalarNode) {
+                    String concat = concat(currentKey, ((ScalarNode) keyNode).getValue());
+                    if (!key.startsWith(concat)) { continue; }
+                    if (contains((MappingNode) valueNode, key, concat)) { return true; }
+                }
             }
         }
-        return map.containsKey(keys[keys.length - 1]);
+
+        return false;
     }
+
 
     @Override
     public boolean isSet(String key) { return contains(key); }
@@ -437,9 +631,9 @@ public abstract class MemorySection extends ConfigurationSection {
 
     @Override
     public boolean isEmpty() {
-        return data.isEmpty();
+        if (node.getValue() == null) { return true; }
+        return node.getValue().isEmpty();
     }
-
 
     @Override
     public Object getItemStack(String key) {
@@ -457,5 +651,87 @@ public abstract class MemorySection extends ConfigurationSection {
     public void setItemStack(String key, Object item) {
         if (getItemStackHelper() == null) { return; }
         getItemStackHelper().setItemStack(key, item);
+    }
+
+
+
+    @Nullable
+    public Node getKeyNode(String key) {
+        Object o = getKeyNodeInternal(node, key, "");
+        if (o instanceof Node) { return (Node) o; }
+        return null;
+    }
+
+    // Internal recursive method to get an object from a MappingNode
+    private @Nullable Object getKeyNodeInternal(MappingNode node, String search, String currentKey) {
+        List<NodeTuple> values = node.getValue();
+        for (NodeTuple tuple : values) {
+            Node keyNode = tuple.getKeyNode(); // Node that contains the next key
+            Node valueNode = tuple.getValueNode(); // Node that contains the next Node or the value object
+
+            if (keyNode.getNodeId() == NodeId.mapping) {
+                if (search.equals(currentKey)) { return keyNode; } // If the key is the search, return the valueNode
+
+                Object o = getKeyNodeInternal((MappingNode) keyNode, search, currentKey);
+                if (o != null) { return o; }
+            } else if (keyNode.getNodeId() == NodeId.scalar) {
+                ScalarNode scalarNode = (ScalarNode) keyNode;
+                String key2 = concat(currentKey, scalarNode.getValue());
+
+                // If this is a mapping node, continue (it can't be a value)
+                if (valueNode instanceof MappingNode) {
+                    MappingNode m = (MappingNode) valueNode;
+                    if (key2.equals(search)) { return keyNode; } // If the key is the search, return the valueNode
+
+                    Object o = getKeyNodeInternal(m, search, key2);
+                    if (o != null) { return o; }
+                    continue;
+                }
+
+                if (valueNode instanceof ScalarNode) {
+                    if (key2.equals(search)) { return keyNode; }
+                }else if (valueNode instanceof SequenceNode) {
+                    if (!key2.equals(search)) { continue; }
+                    return keyNode;
+                } else {
+                    throw new RuntimeException("Cannot get string, unknown node type: " + valueNode.getNodeId());
+                }
+            } else {
+                throw new RuntimeException("Cannot get string (2), unknown node type: " + keyNode.getNodeId());
+            }
+        }
+        return null;
+    }
+
+    public void copyCommentsFromDefault(Set<String> keys, MemoryConfiguration defConfig) {
+        Set<String> finalKeys = new HashSet<>(keys);
+
+        for (String key : keys) {
+            String[] parts = key.split("\\.");
+            String currentKey = "";
+
+            for (String part : parts) {
+                currentKey = concat(currentKey, part);
+                if (defConfig.contains(currentKey)) { finalKeys.add(currentKey); }
+            }
+        }
+
+        for (String key : finalKeys) {
+            copyCommentFromDefault(key, defConfig);
+        }
+    }
+
+    private void copyCommentFromDefault(String key, MemoryConfiguration defConfig) {
+        // The keyNode in the NodeTuple from a MappingNode's values contains the comments, not the value node
+        Node thisNode = getKeyNode(key);
+        if (thisNode == null) { return; }
+
+        Node defNode = defConfig.getKeyNode(key);
+        if (defNode == null) { return; }
+
+        // Set the comments that are in the default config (but we can leave ones that people set)
+        if (defNode.getBlockComments() != null) { thisNode.setBlockComments(defNode.getBlockComments()); }
+        if (defNode.getInLineComments() != null) { thisNode.setInLineComments(defNode.getInLineComments()); }
+        if (defNode.getEndComments() != null) { thisNode.setEndComments(defNode.getEndComments()); }
     }
 }
