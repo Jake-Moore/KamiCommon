@@ -1,5 +1,7 @@
 package com.kamikazejamplugins.kamicommon.yaml.handler;
 
+import com.kamikazejamplugins.kamicommon.configuration.config.AbstractConfig;
+import com.kamikazejamplugins.kamicommon.util.data.ANSI;
 import com.kamikazejamplugins.kamicommon.yaml.MemoryConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 import org.yaml.snakeyaml.DumperOptions;
@@ -11,23 +13,25 @@ import org.yaml.snakeyaml.nodes.Tag;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public abstract class AbstractYamlHandler {
     protected final File configFile;
     protected final String fileName;
     protected YamlConfiguration config;
+    protected final AbstractConfig abstractConfig;
 
-    public AbstractYamlHandler(File configFile) {
+    public AbstractYamlHandler(AbstractConfig abstractConfig, File configFile) {
+        this.abstractConfig = abstractConfig;
         this.configFile = configFile;
         this.fileName = configFile.getName();
         this.config = null;
     }
 
-    public AbstractYamlHandler(File configFile, String fileName) {
+    public AbstractYamlHandler(AbstractConfig abstractConfig, File configFile, String fileName) {
+        this.abstractConfig = abstractConfig;
         this.configFile = configFile;
         this.fileName = fileName;
         this.config = null;
@@ -53,7 +57,7 @@ public abstract class AbstractYamlHandler {
 
             Reader reader = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8);
             config = new YamlConfiguration((MappingNode) yaml.compose(reader), configFile);
-            if (addDefaults) { addDefaults(); }
+            config = (addDefaults) ? addDefaults() : config;
             return config.save();
         }catch (IOException e) {
             e.printStackTrace();
@@ -73,12 +77,12 @@ public abstract class AbstractYamlHandler {
         if (config != null) { config.save(); }
     }
 
-    private void addDefaults() {
+    private YamlConfiguration addDefaults() {
         InputStream defConfigStream = getIS();
         if (defConfigStream == null) {
             error("Error: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!");
             save();
-            return;
+            return createNewConfig();
         }
 
         // InputStream and Reader both contain comments (verified)
@@ -87,15 +91,30 @@ public abstract class AbstractYamlHandler {
         options.setProcessComments(true);
 
         MemoryConfiguration defConfig = new MemoryConfiguration((MappingNode) (new Yaml(options)).compose(reader));
-        Set<String> keys = defConfig.getKeys(true);
+        // This should help preserve the order from the default config
+        List<String> keys = getOrderedKeys(getIS(), defConfig.getKeys(true));
+
+        // Add any existing keys that aren't in the defaults list
+        // this will make any keys set by the plugin, that aren't in the defaults, stay
+        List<String> existingKeys = new ArrayList<>(config.getKeys(true));
+        for (String key : existingKeys) {
+            if (!keys.contains(key)) { keys.add(key); }
+        }
+
+        YamlConfiguration newConfig = createNewConfig();
 
         // Make a new config with the keys
         for (String key : keys) {
             // Don't overwrite existing keys
-            if (!config.contains(key)) { config.set(key, defConfig.get(key)); }
+            Object o = (config.contains(key)) ? config.get(key) : defConfig.get(key);
+            newConfig.set(key, o);
         }
-        config.copyCommentsFromDefault(keys, defConfig);
+        // Copy comments the user might have placed in the file
+        newConfig.copyCommentsFromDefault(keys, config, abstractConfig.isDefaultCommentsOverwrite());
+        // Copy comments from the default config (they will override for each specific instance)
+        newConfig.copyCommentsFromDefault(keys, defConfig, abstractConfig.isDefaultCommentsOverwrite());
         save();
+        return newConfig;
     }
 
     public abstract InputStream getIS();
@@ -156,5 +175,36 @@ public abstract class AbstractYamlHandler {
             }
         }
         return true;
+    }
+
+    private List<String> getOrderedKeys(InputStream defConfigStream, Set<String> deepKeys) {
+        List<String> keys = new ArrayList<>();
+        Map<Integer, String> keyMappings = new HashMap<>();
+
+        // Store the lines here so that we don't have to read the file multiple times
+        List<String> lines = new BufferedReader(new InputStreamReader(defConfigStream, StandardCharsets.ISO_8859_1)).lines().collect(Collectors.toList());
+
+        for (String key : deepKeys) {
+            int lineNum = findLineOfKey(lines, key);
+            if (lineNum < 0) {
+                error("Could not find key: '" + key + "' in def config stream: " + configFile.getName() + ANSI.RESET);
+                int i = getHighest(keyMappings.keySet());
+                if (i < lines.size()) {
+                    i = lines.size() + 1;
+                } else {
+                    i++;
+                }
+                keyMappings.put(i, key);
+                continue;
+            }
+            keyMappings.put(lineNum, key);
+        }
+
+        List<Integer> keyLines = keyMappings.keySet().stream().sorted().collect(Collectors.toList());
+
+        for (int keyLine : keyLines) {
+            keys.add(keyMappings.get(keyLine));
+        }
+        return keys;
     }
 }

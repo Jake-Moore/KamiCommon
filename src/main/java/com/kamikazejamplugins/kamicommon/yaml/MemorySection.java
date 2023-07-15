@@ -136,7 +136,7 @@ public abstract class MemorySection extends ConfigurationSection {
             return new SequenceNode(Tag.SEQ, list, DumperOptions.FlowStyle.AUTO);
         }
         // Booleans need to be plain (sorta)
-        if (value instanceof Boolean) {
+        if (isBooleanStr(value)) {
             return new ScalarNode(Tag.BOOL, value.toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
         }
         // Numbers also need to be different
@@ -151,7 +151,15 @@ public abstract class MemorySection extends ConfigurationSection {
         return getScalarNode(value.toString(), DumperOptions.ScalarStyle.DOUBLE_QUOTED);
     }
 
-
+    private boolean isBooleanStr(Object value) {
+        String s = value.toString();
+        if (s.equalsIgnoreCase("true")) { return true; }
+        if (s.equalsIgnoreCase("false")) { return true; }
+        if (s.equalsIgnoreCase("yes")) { return true; }
+        if (s.equalsIgnoreCase("no")) { return true; }
+        if (s.equalsIgnoreCase("on")) { return true; }
+        return s.equalsIgnoreCase("off");
+    }
 
     @Override
     public Object get(String key) {
@@ -703,7 +711,7 @@ public abstract class MemorySection extends ConfigurationSection {
         return null;
     }
 
-    public void copyCommentsFromDefault(Set<String> keys, MemoryConfiguration defConfig) {
+    public void copyCommentsFromDefault(List<String> keys, MemorySection defConfig, boolean defOverwrites) {
         Set<String> finalKeys = new HashSet<>(keys);
 
         for (String key : keys) {
@@ -717,11 +725,11 @@ public abstract class MemorySection extends ConfigurationSection {
         }
 
         for (String key : finalKeys) {
-            copyCommentFromDefault(key, defConfig);
+            copyCommentFromDefault(key, defConfig, defOverwrites);
         }
     }
 
-    private void copyCommentFromDefault(String key, MemoryConfiguration defConfig) {
+    private void copyCommentFromDefault(String key, MemorySection defConfig, boolean defOverwrites) {
         // The keyNode in the NodeTuple from a MappingNode's values contains the comments, not the value node
         Node thisNode = getKeyNode(key);
         if (thisNode == null) { return; }
@@ -730,8 +738,20 @@ public abstract class MemorySection extends ConfigurationSection {
         if (defNode == null) { return; }
 
         // Set the comments that are in the default config (but we can leave ones that people set)
-        if (defNode.getBlockComments() != null) { thisNode.setBlockComments(defNode.getBlockComments()); }
-        if (defNode.getInLineComments() != null) { thisNode.setInLineComments(defNode.getInLineComments()); }
-        if (defNode.getEndComments() != null) { thisNode.setEndComments(defNode.getEndComments()); }
+        if (defNode.getBlockComments() != null && !defNode.getBlockComments().isEmpty()) {
+            if (defOverwrites || (thisNode.getBlockComments() == null || thisNode.getBlockComments().isEmpty())) {
+                thisNode.setBlockComments(defNode.getBlockComments());
+            }
+        }
+        if (defNode.getInLineComments() != null && !defNode.getInLineComments().isEmpty()) {
+            if (defOverwrites || (thisNode.getInLineComments() == null || thisNode.getInLineComments().isEmpty())) {
+                thisNode.setInLineComments(defNode.getInLineComments());
+            }
+        }
+        if (defNode.getEndComments() != null && !defNode.getEndComments().isEmpty()) {
+            if (defOverwrites || (thisNode.getEndComments() == null || thisNode.getEndComments().isEmpty())) {
+                thisNode.setEndComments(defNode.getEndComments());
+            }
+        }
     }
 }

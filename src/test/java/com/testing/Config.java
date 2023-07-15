@@ -1,5 +1,6 @@
 package com.testing;
 
+import com.kamikazejamplugins.kamicommon.configuration.config.KamiConfig;
 import com.kamikazejamplugins.kamicommon.configuration.config.StandaloneConfig;
 
 import java.io.File;
@@ -8,6 +9,7 @@ public class Config {
 
     public static void main(String[] args) {
         StandaloneConfig config = new StandaloneConfig(new File("C:\\Users\\Jake\\Desktop\\config.yml"), true);
+        config.setDefaultCommentsOverwrite(true);
         config.save();
         config.reload();
 

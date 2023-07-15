@@ -39,7 +39,7 @@ public class KamiConfig extends AbstractConfig {
             e.printStackTrace();
         }
 
-        this.yamlHandler = new YamlHandler(plugin, file);
+        this.yamlHandler = new YamlHandler(this, plugin, file);
         this.config = yamlHandler.loadConfig(true);
         save();
     }
@@ -59,7 +59,7 @@ public class KamiConfig extends AbstractConfig {
             plugin.getLogger().severe("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
         }
 
-        this.yamlHandler = new YamlHandler(plugin, file);
+        this.yamlHandler = new YamlHandler(this, plugin, file);
         this.config = yamlHandler.loadConfig(addDefaults);
         save();
     }

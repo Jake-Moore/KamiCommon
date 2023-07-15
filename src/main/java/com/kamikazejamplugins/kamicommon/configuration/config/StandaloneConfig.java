@@ -34,7 +34,7 @@ public class StandaloneConfig extends AbstractConfig {
             e.printStackTrace();
         }
 
-        this.yamlHandler = new YamlHandlerStandalone(file);
+        this.yamlHandler = new YamlHandlerStandalone(this, file);
         this.config = yamlHandler.loadConfig(true);
         save();
     }
@@ -53,7 +53,7 @@ public class StandaloneConfig extends AbstractConfig {
             System.out.println("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
         }
 
-        this.yamlHandler = new YamlHandlerStandalone(file);
+        this.yamlHandler = new YamlHandlerStandalone(this, file);
         this.config = yamlHandler.loadConfig(addDefaults);
         save();
     }

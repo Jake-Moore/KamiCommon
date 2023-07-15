@@ -1,5 +1,6 @@
 package com.kamikazejamplugins.kamicommon.yaml.handler;
 
+import com.kamikazejamplugins.kamicommon.configuration.config.AbstractConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
@@ -10,13 +11,13 @@ import java.io.InputStream;
 public class YamlHandler extends AbstractYamlHandler {
     @Nonnull private final JavaPlugin plugin;
 
-    public YamlHandler(@Nonnull JavaPlugin plugin, File configFile) {
-        super(configFile);
+    public YamlHandler(AbstractConfig abstractConfig, @Nonnull JavaPlugin plugin, File configFile) {
+        super(abstractConfig, configFile);
         this.plugin = plugin;
     }
 
-    public YamlHandler(@Nonnull JavaPlugin plugin, File configFile, String fileName) {
-        super(configFile, fileName);
+    public YamlHandler(AbstractConfig abstractConfig, @Nonnull JavaPlugin plugin, File configFile, String fileName) {
+        super(abstractConfig, configFile, fileName);
         this.plugin = plugin;
     }
 

@@ -1,5 +1,6 @@
 package com.kamikazejamplugins.kamicommon.yaml.handler;
 
+import com.kamikazejamplugins.kamicommon.configuration.config.AbstractConfig;
 import com.kamikazejamplugins.kamicommon.util.data.ANSI;
 
 import java.io.File;
@@ -8,12 +9,12 @@ import java.io.InputStream;
 @SuppressWarnings("unused")
 public class YamlHandlerStandalone extends AbstractYamlHandler {
 
-    public YamlHandlerStandalone(File configFile) {
-        super(configFile);
+    public YamlHandlerStandalone(AbstractConfig abstractConfig, File configFile) {
+        super(abstractConfig, configFile);
     }
 
-    public YamlHandlerStandalone(File configFile, String fileName) {
-        super(configFile, fileName);
+    public YamlHandlerStandalone(AbstractConfig abstractConfig, File configFile, String fileName) {
+        super(abstractConfig, configFile, fileName);
     }
 
     @Override
