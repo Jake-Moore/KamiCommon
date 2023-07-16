@@ -25,6 +25,8 @@ public abstract class MemorySection extends ConfigurationSection {
 
     @Override
     public void put(String key, Object value) {
+        if (value == null) { put(node, key, null); return; }
+
         //ItemStacks are special
         if (getItemStackHelper() != null && getItemStackHelper().isStack(value)) {
             getItemStackHelper().setItemStack(key, value); return;
@@ -38,7 +40,7 @@ public abstract class MemorySection extends ConfigurationSection {
         put(node, key, value);
     }
 
-    private void put(MappingNode node, String key, Object value) {
+    private void put(MappingNode node, String key, @Nullable Object value) {
         if (node == null) { return; }
 
         // Get the current key
@@ -75,12 +77,14 @@ public abstract class MemorySection extends ConfigurationSection {
             // Remove this node since we can't edit it
             node.getValue().remove(tuple);
 
-            // Create a new tuple
-            Node keyNode = getScalarNode(part, DumperOptions.ScalarStyle.PLAIN);
-            keyNode.setBlockComments(blockComments); keyNode.setInLineComments(inlineComments); keyNode.setEndComments(endComments);
-            Node valueNode = getValueNode(value);
-            tuple = new NodeTuple(keyNode, valueNode);
-            node.getValue().add(tuple);
+            if (value != null) {
+                // Create a new tuple
+                Node keyNode = getScalarNode(part, DumperOptions.ScalarStyle.PLAIN);
+                keyNode.setBlockComments(blockComments); keyNode.setInLineComments(inlineComments); keyNode.setEndComments(endComments);
+                Node valueNode = getValueNode(value);
+                tuple = new NodeTuple(keyNode, valueNode);
+                node.getValue().add(tuple);
+            }
             return;
         }
         // > 1 parts left
