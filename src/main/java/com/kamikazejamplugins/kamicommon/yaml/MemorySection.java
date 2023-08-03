@@ -432,7 +432,8 @@ public abstract class MemorySection extends ConfigurationSection {
     }
     private @Nullable BigDecimal getBigDecimal(String s) {
         // If it's any of the following, remove the last character
-        if (s.endsWith("D") || s.endsWith("f") || s.endsWith("s") || s.endsWith("b")) {
+        String l = s.toLowerCase();
+        if (l.endsWith("d") || l.endsWith("f") || l.endsWith("s") || l.endsWith("b")) {
             String sub = s.substring(0, s.length() - 1);
             try { return new BigDecimal(sub);
             }catch (Exception ignored) {}
@@ -442,10 +443,6 @@ public abstract class MemorySection extends ConfigurationSection {
         }
         return null;
     }
-
-
-
-
 
 
 
