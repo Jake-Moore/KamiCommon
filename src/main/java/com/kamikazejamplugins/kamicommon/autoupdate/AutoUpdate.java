@@ -8,12 +8,10 @@ import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.configuration.ConfigHelper;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import com.kamikazejamplugins.kamicommon.util.data.Pair;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -116,33 +114,35 @@ public class AutoUpdate implements Listener {
             //System.out.println(BASE_URL + projectName);
             request.addHeader("Accept", "application/vnd.github+json");
             request.addHeader("Authorization", "Bearer " + getToken());
-            HttpResponse result = httpClient.execute(request);
-            if (result.getStatusLine().getStatusCode() != 200) {
-                throw new IOException("Unexpected code " + result.getStatusLine().getStatusCode());
-            }
 
-            String j = EntityUtils.toString(result.getEntity(), "UTF-8");
-            JsonObject jsonObject = (new JsonParser()).parse(j).getAsJsonObject();
-            JsonArray array = jsonObject.getAsJsonArray("assets");
-
-            JsonObject base = null;
-            for (JsonElement e : array) {
-                JsonObject file = e.getAsJsonObject();
-                if (file.get("content_type").getAsString().equals("application/java-archive")) {
-                    // Ignore all original jars, they aren't shaded
-                    if (file.get("name").getAsString().startsWith("original-")) { continue; }
-
-                    // If we find an -obf jar, send it immediately
-                    if (file.get("name").getAsString().endsWith("-obf.jar")) {
-                        return Pair.of(jsonObject, file);
-                    }
-                    base = file;
+            return httpClient.execute(request, result -> {
+                if (result.getCode() != 200) {
+                    throw new IOException("Unexpected code " + result.getCode());
                 }
-            }
 
-            // If we didn't find an -obf jar, we try to send the normal jar
-            if (base == null) { return null; }
-            return Pair.of(jsonObject, base);
+                String j = EntityUtils.toString(result.getEntity(), "UTF-8");
+                JsonObject jsonObject = JsonParser.parseString(j).getAsJsonObject();
+                JsonArray array = jsonObject.getAsJsonArray("assets");
+
+                JsonObject base = null;
+                for (JsonElement e : array) {
+                    JsonObject file = e.getAsJsonObject();
+                    if (file.get("content_type").getAsString().equals("application/java-archive")) {
+                        // Ignore all original jars, they aren't shaded
+                        if (file.get("name").getAsString().startsWith("original-")) { continue; }
+
+                        // If we find an -obf jar, send it immediately
+                        if (file.get("name").getAsString().endsWith("-obf.jar")) {
+                            return Pair.of(jsonObject, file);
+                        }
+                        base = file;
+                    }
+                }
+
+                // If we didn't find an -obf jar, we try to send the normal jar
+                if (base == null) { return null; }
+                return Pair.of(jsonObject, base);
+            });
         }
     }
 
@@ -156,13 +156,15 @@ public class AutoUpdate implements Listener {
             HttpGet request = new HttpGet(downloadUrl);
             request.addHeader("Accept", "application/octet-stream");
             request.addHeader("Authorization", "Bearer " + getToken());
-            CloseableHttpResponse response = httpClient.execute(request);
-            if (response.getStatusLine().getStatusCode() != 200) {
-                throw new IOException("Unexpected code " + response.getStatusLine().getStatusCode());
-            }
+            httpClient.execute(request, response -> {
+                if (response.getCode() != 200) {
+                    throw new IOException("Unexpected code " + response.getCode());
+                }
 
-            InputStream in = response.getEntity().getContent();
-            copyToFile(in, new File("C:\\Users\\Jake\\Desktop\\test.jar"));
+                InputStream in = response.getEntity().getContent();
+                copyToFile(in, new File("C:\\Users\\Jake\\Desktop\\test.jar"));
+                return null;
+            });
         }
     }
 
@@ -175,12 +177,14 @@ public class AutoUpdate implements Listener {
             HttpGet request = new HttpGet(downloadUrl);
             request.addHeader("Accept", "application/octet-stream");
             request.addHeader("Authorization", "Bearer " + getToken());
-            CloseableHttpResponse response = httpClient.execute(request);
-            if (response.getStatusLine().getStatusCode() != 200) {
-                throw new IOException("Unexpected code " + response.getStatusLine().getStatusCode());
-            }
 
-            InputStream in = response.getEntity().getContent();
+            InputStream in = httpClient.execute(request, response -> {
+                if (response.getCode() != 200) {
+                    throw new IOException("Unexpected code " + response.getCode());
+                }
+
+                return response.getEntity().getContent();
+            });
 
             //Grab the current jar File from the plugin, to determine its name
             Method getFileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
@@ -203,7 +207,6 @@ public class AutoUpdate implements Listener {
             String updatedTimestamp = (dataJson.has("updated_at") ? dataJson.get("updated_at").getAsString() : dataJson.get("created_at").getAsString());
 
             File kamicommon = KamiCommon.get().getDataFolder();
-            if (kamicommon == null) { return false; }
             FileConfiguration data = ConfigHelper.createConfig(plugin, kamicommon, "updater.yml");
 
             if (data.contains(plugin.getName())) {
