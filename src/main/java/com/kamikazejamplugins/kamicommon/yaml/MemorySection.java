@@ -32,11 +32,6 @@ public abstract class MemorySection extends ConfigurationSection {
             getItemStackHelper().setItemStack(key, value); return;
         }
 
-        if (value instanceof Byte) { put(node, key, value + "b"); return; }
-        if (value instanceof Short) { put(node, key, value + "s"); return; }
-        if (value instanceof Float) { put(node, key, value + "f"); return; }
-        if (value instanceof Double) { put(node, key, value + "d"); return; }
-
         put(node, key, value);
     }
 
@@ -433,18 +428,10 @@ public abstract class MemorySection extends ConfigurationSection {
     private @Nullable BigDecimal getBigDecimal(String s) {
         // If it's any of the following, remove the last character
         String l = s.toLowerCase();
-        if (l.endsWith("d") || l.endsWith("f") || l.endsWith("s") || l.endsWith("b")) {
-            String sub = s.substring(0, s.length() - 1);
-            try { return new BigDecimal(sub);
-            }catch (Exception ignored) {}
-        }else {
-            try { return new BigDecimal(s);
-            }catch (Exception ignored) {}
-        }
+        try { return new BigDecimal(s);
+        }catch (Exception ignored) {}
         return null;
     }
-
-
 
     @Override
     public List<?> getList(String key) { return getList(key, null); }
