@@ -1,7 +1,7 @@
 # KamiCommon
 
-- A common library for my (KamikazeJAM_YT) plugins. (This library should support all spigot versions, let me know if anything does not.)
--  Contact Info (Discord): KamikazeJAM_YT#3713
+- A common library for my (KamikazeJAM) plugins. (This library should support all spigot versions, let me know if anything does not.)
+-  Contact Info (Discord): KamikazeJAM (kamikazejam)
 
 &nbsp;
 
