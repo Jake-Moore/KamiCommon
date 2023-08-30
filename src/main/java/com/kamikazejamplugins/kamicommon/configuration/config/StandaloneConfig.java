@@ -2,8 +2,12 @@ package com.kamikazejamplugins.kamicommon.configuration.config;
 
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.handler.YamlHandlerStandalone;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * A class that represents a configuration file (Meant for implementations WITHOUT a JavaPlugin object available) <p>
@@ -22,39 +26,25 @@ public class StandaloneConfig extends AbstractConfig {
     private final boolean addDefaults;
 
     public StandaloneConfig(File file) {
-        this.file = file;
-        this.addDefaults = true;
-
-        // Ensure the file exists
-        try {
-            if (!file.exists() && !file.createNewFile()) {
-                throw new Exception("Failed to create file");
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        this.yamlHandler = new YamlHandlerStandalone(this, file);
-        this.config = yamlHandler.loadConfig(true);
-        save();
+        this(file, true);
     }
 
     public StandaloneConfig(File file, boolean addDefaults) {
+        this(file, addDefaults, null);
+    }
+
+    public StandaloneConfig(File file, InputStream defaultStream) {
+        this(file, true, defaultStream);
+    }
+
+    public StandaloneConfig(File file, boolean addDefaults, @Nullable InputStream defaultStream) {
         this.file = file;
         this.addDefaults = addDefaults;
 
-        // Ensure the file exists
-        try {
-            if (!file.exists() && !file.getParentFile().mkdirs() && !file.createNewFile()) {
-                throw new Exception("Failed to create file: " + file.getAbsolutePath());
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
-        }
+        ensureFile();
 
         this.yamlHandler = new YamlHandlerStandalone(this, file);
-        this.config = yamlHandler.loadConfig(addDefaults);
+        this.config = yamlHandler.loadConfig(addDefaults, defaultStream);
         save();
     }
 
@@ -79,5 +69,17 @@ public class StandaloneConfig extends AbstractConfig {
     @Override
     protected boolean isAddDefaults() {
         return addDefaults;
+    }
+
+    private void ensureFile() {
+        // Ensure the file exists
+        try {
+            if (!file.exists() && !file.getParentFile().mkdirs() && !file.createNewFile()) {
+                throw new Exception("Failed to create file: " + file.getAbsolutePath());
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
+        }
     }
 }

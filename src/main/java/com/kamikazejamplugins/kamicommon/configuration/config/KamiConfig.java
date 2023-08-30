@@ -5,7 +5,9 @@ import com.kamikazejamplugins.kamicommon.yaml.handler.YamlHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
+import java.io.InputStream;
 
 
 /**
@@ -26,41 +28,26 @@ public class KamiConfig extends AbstractConfig {
     private final boolean addDefaults;
 
     public KamiConfig(@Nonnull JavaPlugin plugin, File file) {
+        this(plugin, file, true);
+    }
+
+    public KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults) {
+        this(plugin, file, addDefaults, null);
+    }
+
+    public KamiConfig(@Nonnull JavaPlugin plugin, File file, InputStream defaultStream) {
+        this(plugin, file, true, defaultStream);
+    }
+
+    private KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, @Nullable InputStream defaultStream) {
         this.plugin = plugin;
         this.file = file;
         this.addDefaults = true;
 
-        // Ensure the file exists
-        try {
-            if (!file.exists() && !file.createNewFile()) {
-                throw new Exception("Failed to create file");
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+        ensureFile();
 
         this.yamlHandler = new YamlHandler(this, plugin, file);
-        this.config = yamlHandler.loadConfig(true);
-        save();
-    }
-
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults) {
-        this.plugin = plugin;
-        this.file = file;
-        this.addDefaults = addDefaults;
-
-        // Ensure the file exists
-        try {
-            if (!file.exists() && !file.getParentFile().mkdirs() && !file.createNewFile()) {
-                throw new Exception("Failed to create file: " + file.getAbsolutePath());
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-            plugin.getLogger().severe("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
-        }
-
-        this.yamlHandler = new YamlHandler(this, plugin, file);
-        this.config = yamlHandler.loadConfig(addDefaults);
+        this.config = yamlHandler.loadConfig(addDefaults, defaultStream);
         save();
     }
 
@@ -87,5 +74,17 @@ public class KamiConfig extends AbstractConfig {
     @Override
     protected boolean isAddDefaults() {
         return addDefaults;
+    }
+
+    private void ensureFile() {
+        // Ensure the file exists
+        try {
+            if (!file.exists() && !file.getParentFile().mkdirs() && !file.createNewFile()) {
+                throw new Exception("Failed to create file: " + file.getAbsolutePath());
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            plugin.getLogger().severe("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
+        }
     }
 }
