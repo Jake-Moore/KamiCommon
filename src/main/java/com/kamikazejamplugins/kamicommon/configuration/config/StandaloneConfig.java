@@ -2,12 +2,11 @@ package com.kamikazejamplugins.kamicommon.configuration.config;
 
 import com.kamikazejamplugins.kamicommon.yaml.YamlConfiguration;
 import com.kamikazejamplugins.kamicommon.yaml.handler.YamlHandlerStandalone;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
+import java.util.function.Supplier;
 
 /**
  * A class that represents a configuration file (Meant for implementations WITHOUT a JavaPlugin object available) <p>
@@ -33,11 +32,11 @@ public class StandaloneConfig extends AbstractConfig {
         this(file, addDefaults, null);
     }
 
-    public StandaloneConfig(File file, InputStream defaultStream) {
+    public StandaloneConfig(File file, Supplier<InputStream> defaultStream) {
         this(file, true, defaultStream);
     }
 
-    public StandaloneConfig(File file, boolean addDefaults, @Nullable InputStream defaultStream) {
+    public StandaloneConfig(File file, boolean addDefaults, @Nullable Supplier<InputStream> defaultStream) {
         this.file = file;
         this.addDefaults = addDefaults;
 

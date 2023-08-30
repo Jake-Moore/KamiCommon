@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
+import java.util.function.Supplier;
 
 
 /**
@@ -35,11 +36,11 @@ public class KamiConfig extends AbstractConfig {
         this(plugin, file, addDefaults, null);
     }
 
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file, InputStream defaultStream) {
-        this(plugin, file, true, defaultStream);
+    public KamiConfig(@Nonnull JavaPlugin plugin, File file, Supplier<InputStream> defaultSupplier) {
+        this(plugin, file, true, defaultSupplier);
     }
 
-    private KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, @Nullable InputStream defaultStream) {
+    private KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, @Nullable Supplier<InputStream> defaultSupplier) {
         this.plugin = plugin;
         this.file = file;
         this.addDefaults = true;
@@ -47,7 +48,7 @@ public class KamiConfig extends AbstractConfig {
         ensureFile();
 
         this.yamlHandler = new YamlHandler(this, plugin, file);
-        this.config = yamlHandler.loadConfig(addDefaults, defaultStream);
+        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
         save();
     }
 

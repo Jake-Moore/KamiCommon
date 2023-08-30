@@ -15,6 +15,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -42,7 +43,7 @@ public abstract class AbstractYamlHandler {
         return loadConfig(addDefaults, null);
     }
 
-    public YamlConfiguration loadConfig(boolean addDefaults, @Nullable InputStream stream) {
+    public YamlConfiguration loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream) {
         LoaderOptions options = new LoaderOptions();
         options.setProcessComments(true);
         Yaml yaml = (new Yaml(options));
@@ -82,9 +83,9 @@ public abstract class AbstractYamlHandler {
         if (config != null) { config.save(); }
     }
 
-    private YamlConfiguration addDefaults(@Nullable InputStream defConfigStream) {
+    private YamlConfiguration addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) {
         // Use passed arg unless it's null, then grab the IS from the plugin
-        defConfigStream = (defConfigStream == null) ? getIS() : defConfigStream;
+        InputStream defConfigStream = getIS(defStreamSupplier);
 
         // Error if we still don't have a default config stream
         if (defConfigStream == null) {
@@ -100,7 +101,7 @@ public abstract class AbstractYamlHandler {
 
         MemoryConfiguration defConfig = new MemoryConfiguration((MappingNode) (new Yaml(options)).compose(reader));
         // This should help preserve the order from the default config
-        List<String> keys = getOrderedKeys(getIS(), defConfig.getKeys(true));
+        List<String> keys = getOrderedKeys(getIS(defStreamSupplier), defConfig.getKeys(true));
 
         // Add any existing keys that aren't in the defaults list
         // this will make any keys set by the plugin, that aren't in the defaults, stay
@@ -123,6 +124,10 @@ public abstract class AbstractYamlHandler {
         newConfig.copyCommentsFromDefault(keys, defConfig, abstractConfig.isDefaultCommentsOverwrite());
         save();
         return newConfig;
+    }
+
+    private InputStream getIS(@Nullable Supplier<InputStream> defStreamSupplier) {
+        return (defStreamSupplier == null) ? getIS() : defStreamSupplier.get();
     }
 
     public abstract InputStream getIS();
