@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -38,6 +39,10 @@ public abstract class AbstractYamlHandler {
     }
 
     public YamlConfiguration loadConfig(boolean addDefaults) {
+        return loadConfig(addDefaults, null);
+    }
+
+    public YamlConfiguration loadConfig(boolean addDefaults, @Nullable InputStream stream) {
         LoaderOptions options = new LoaderOptions();
         options.setProcessComments(true);
         Yaml yaml = (new Yaml(options));
@@ -57,7 +62,7 @@ public abstract class AbstractYamlHandler {
 
             Reader reader = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8);
             config = new YamlConfiguration((MappingNode) yaml.compose(reader), configFile);
-            config = (addDefaults) ? addDefaults() : config;
+            config = (addDefaults) ? addDefaults(stream) : config;
             return config.save();
         }catch (IOException e) {
             e.printStackTrace();
@@ -77,8 +82,11 @@ public abstract class AbstractYamlHandler {
         if (config != null) { config.save(); }
     }
 
-    private YamlConfiguration addDefaults() {
-        InputStream defConfigStream = getIS();
+    private YamlConfiguration addDefaults(@Nullable InputStream defConfigStream) {
+        // Use passed arg unless it's null, then grab the IS from the plugin
+        defConfigStream = (defConfigStream == null) ? getIS() : defConfigStream;
+
+        // Error if we still don't have a default config stream
         if (defConfigStream == null) {
             error("Error: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!");
             save();
