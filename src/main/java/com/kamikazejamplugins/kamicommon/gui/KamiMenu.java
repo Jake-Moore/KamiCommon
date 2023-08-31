@@ -7,10 +7,8 @@ import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class KamiMenu<T extends Player> extends AbstractKamiMenu<T> {
+public class KamiMenu extends AbstractKamiMenu {
 
     public KamiMenu(String name, int lines) {
         super(name, lines);
@@ -31,10 +29,6 @@ public class KamiMenu<T extends Player> extends AbstractKamiMenu<T> {
         }
     }
 
-    public void addItem(List<ItemStack> items) {
-        items.forEach(i -> getInventory().addItem(i));
-    }
-
     @Override
     public void setItem(int slot, ItemStack stack) {
         addMenuClick(stack, (MenuClick) null, slot);
@@ -52,23 +46,21 @@ public class KamiMenu<T extends Player> extends AbstractKamiMenu<T> {
 
     @Override
     public void addMenuClick(ItemStack stack, MenuClick click, int slot) {
-        addSpecialMenuClick(stack, new MenuClickTransform<>(click), slot);
+        addSpecialMenuClick(stack, new MenuClickTransform(click), slot);
     }
 
     @Override
-    public void addMenuClick(ItemStack stack, MenuClickPlayer<T> click, int slot) {
-        addSpecialMenuClick(stack, new MenuClickPlayerTransform<>(click), slot);
+    public void addMenuClick(ItemStack stack, MenuClickPlayer click, int slot) {
+        addSpecialMenuClick(stack, new MenuClickPlayerTransform(click), slot);
     }
 
     @Override
-    public void addSpecialMenuClick(ItemStack stack, MenuClickInfo<T> click, int slot) {
+    public void addSpecialMenuClick(ItemStack stack, MenuClickInfo click, int slot) {
         // prevent inventory null pointers
-        if (slot < 0 || stack == null) {
-            return;
-        }
+        if (slot < 0 || stack == null) { return; }
 
         // limit max amount to 64.
-        if (stack.getAmount() > 64) stack.setAmount(64);
+        if (stack.getAmount() > 64) { stack.setAmount(64); }
 
         if (click != null) {
             getClickableItems().put(new MenuItem(stack, slot), click);
@@ -82,12 +74,12 @@ public class KamiMenu<T extends Player> extends AbstractKamiMenu<T> {
         return new ItemBuilder(mat, 1, mat.getData()).setName(" ").toItemStack();
     }
 
-    public KamiMenu<T> fill() {
+    public KamiMenu fill() {
         fill(getDefaultFiller());
         return this;
     }
 
-    public KamiMenu<T> fill(ItemStack fillerItem) {
+    public KamiMenu fill(ItemStack fillerItem) {
         while (getInventory().firstEmpty() != -1) {
             addMenuClick(fillerItem, (MenuClick) null, getInventory().firstEmpty());
         }

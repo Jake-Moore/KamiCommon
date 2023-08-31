@@ -102,11 +102,7 @@ public abstract class MemorySection extends ConfigurationSection {
 
         // Create a new Tuple for this
         if (tuple == null) {
-            Node keyNode = getScalarNode(part, DumperOptions.ScalarStyle.PLAIN);
-            MappingNode valueNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
-            tuple = new NodeTuple(keyNode, valueNode);
-            node.getValue().add(tuple);
-            put(valueNode, key.substring(part.length() + 1), value);
+            insertNewTuple(node, key, value, part);
             return;
         }
 
@@ -116,12 +112,16 @@ public abstract class MemorySection extends ConfigurationSection {
             put((MappingNode) valueNode, key.substring(part.length() + 1), value);
         }else {
             node.getValue().remove(tuple);
-            Node keyNode = getScalarNode(part, DumperOptions.ScalarStyle.PLAIN);
-            MappingNode newValueNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
-            tuple = new NodeTuple(keyNode, newValueNode);
-            node.getValue().add(tuple);
-            put(newValueNode, key.substring(part.length() + 1), value);
+            insertNewTuple(node, key, value, part);
         }
+    }
+
+    private void insertNewTuple(MappingNode node, String key, @Nullable Object value, String part) {
+        Node keyNode = getScalarNode(part, DumperOptions.ScalarStyle.PLAIN);
+        MappingNode valueNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+        NodeTuple tuple = new NodeTuple(keyNode, valueNode);
+        node.getValue().add(tuple);
+        put(valueNode, key.substring(part.length() + 1), value);
     }
 
     private ScalarNode getScalarNode(String value, DumperOptions.ScalarStyle style) {

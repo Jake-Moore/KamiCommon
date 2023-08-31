@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
 @SuppressWarnings("unused")
-public interface MenuClickPlayer<T extends Player> {
+public interface MenuClickPlayer {
 
-    void onItemClickMember(T member, ClickType clickType);
+    void onItemClickMember(Player player, ClickType clickType);
 }

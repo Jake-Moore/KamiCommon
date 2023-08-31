@@ -25,9 +25,9 @@ public abstract class PageBuilder<T extends Player> {
             (9 * 4 + 1), (9 * 4 + 2), (9 * 4 + 3), (9 * 4 + 4), (9 * 4 + 5), (9 * 4 + 6), (9 * 4 + 7)));
     @Getter public boolean usingMenu = false;
     @Getter public int currentPage;
-    private KamiMenu<T> menu;
+    private KamiMenu menu;
     private int maxPages = 0;
-    private Pagination<PageItem<T>> items;
+    private Pagination<PageItem> items;
 
     public PageBuilder() {
         this.items = new Pagination<>(21, this.getItems());
@@ -52,7 +52,7 @@ public abstract class PageBuilder<T extends Player> {
         this.items = new Pagination<>(21, this.getItems());
     }
 
-    public Pagination<PageItem<T>> getPageItems() {
+    public Pagination<PageItem> getPageItems() {
         return this.items;
     }
 
@@ -62,7 +62,7 @@ public abstract class PageBuilder<T extends Player> {
 
     public abstract String getMenuName();
 
-    public abstract List<PageItem<T>> getItems();
+    public abstract List<PageItem> getItems();
 
     public ItemStack getEmptyItem() {
         return null;
@@ -80,7 +80,7 @@ public abstract class PageBuilder<T extends Player> {
         return new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page");
     }
 
-    public PageItem<T> getBackItem() {
+    public PageItem getBackItem() {
         // null by default.
         return null;
     }
@@ -124,7 +124,7 @@ public abstract class PageBuilder<T extends Player> {
         if (title == null) {
             title = getMenuName() + " " + (maxPages > 1 ? "(Page " + (page + 1) + "/" + maxPages + ")" : "");
         }
-        this.menu = new KamiMenu<>(title, getFixedSize() == -1 ? getLinesFilled(page) : getFixedSize());
+        this.menu = new KamiMenu(title, getFixedSize() == -1 ? getLinesFilled(page) : getFixedSize());
 
         if (page > 0) {
             IBuilder builder = getPreviousPage();
@@ -156,10 +156,10 @@ public abstract class PageBuilder<T extends Player> {
             menu.setItem(getEmptyItem(), getEmptySlot() != -1 ? getEmptySlot() : middleSlots[getLinesFilled(page)]);
         } else {
             if (items.exists(page)) {
-                for (PageItem<T> pageItem : items.getPage(page)) {
+                for (PageItem pageItem : items.getPage(page)) {
                     if (pageItem != null) {
                         if (firstEmpty() != -1) {
-                            MenuClickPlayer<T> menuClick = pageItem.getMenuClick();
+                            MenuClickPlayer menuClick = pageItem.getMenuClick();
                             if (menuClick == null) {
                                 menu.setItem(firstEmpty(), pageItem.getItemStack());
                             } else {
@@ -186,7 +186,7 @@ public abstract class PageBuilder<T extends Player> {
         return -1;
     }
 
-    public KamiMenu<T> getMenu() {
+    public KamiMenu getMenu() {
         return menu;
     }
 }

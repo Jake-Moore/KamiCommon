@@ -1,12 +1,13 @@
 package com.kamikazejamplugins.kamicommon.gui;
 
+import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.util.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -15,8 +16,7 @@ public class MenuHolder implements InventoryHolder {
 
     private transient Inventory inventory;
     @Getter @Setter private String invName;
-    @Getter @Setter private int lines;
-    @Getter @Setter private InventoryType inventoryType;
+    @Getter @Setter private int rows;
 
     public MenuHolder() {}
 
@@ -24,25 +24,17 @@ public class MenuHolder implements InventoryHolder {
         this.invName = name;
     }
 
-    public MenuHolder(String name, int lines) {
+    public MenuHolder(String name, int rows) {
         this.invName = StringUtil.t(name);
-        this.lines = lines;
-    }
-
-    public MenuHolder(String name, InventoryType inventoryType) {
-        this.invName = name;
-        this.inventoryType = inventoryType;
+        this.rows = rows;
     }
 
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         if (this.inventory == null) {
-            if (this.inventoryType == null) {
-                this.inventory = Bukkit.createInventory(this, lines * 9, invName);
-                //this.inventory = Bukkit.createInventory(this, lines * 9, StringUtils.abbreviate(invName, 32));
-            } else {
-                this.inventory = Bukkit.createInventory(this, inventoryType, invName);
-                //this.inventory = Bukkit.createInventory(this, inventoryType, StringUtils.abbreviate(invName, 32));
+            this.inventory = Bukkit.createInventory(this, rows * 9, invName);
+            if (invName.length() > 32) {
+                KamiCommon.get().getLogger().warning("Inventory name is too long! (" + invName.length() + " > 32)");
             }
         }
         return this.inventory;

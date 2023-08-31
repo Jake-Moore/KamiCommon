@@ -8,6 +8,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -15,15 +16,15 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @SuppressWarnings({"unused", "SameReturnValue"})
-public interface Menu<T extends Player> extends InventoryHolder {
+public interface Menu extends InventoryHolder {
 
-    Inventory getInventory();
+    @NotNull Inventory getInventory();
 
     int getSize();
 
     ItemStack getItem(int i);
 
-    Map<MenuItem, MenuClickInfo<T>> getClickableItems();
+    Map<MenuItem, MenuClickInfo> getClickableItems();
 
     void addMenuClick(ItemStack stack, MenuClick click, int slot);
 
@@ -31,17 +32,17 @@ public interface Menu<T extends Player> extends InventoryHolder {
         addMenuClick(builder.toItemStack(), click, slot);
     }
 
-    void addMenuClick(ItemStack stack, MenuClickPlayer<T> click, int slot);
+    void addMenuClick(ItemStack stack, MenuClickPlayer click, int slot);
 
-    default void addMenuClick(IBuilder builder, MenuClickPlayer<T> click, int slot) {
+    default void addMenuClick(IBuilder builder, MenuClickPlayer click, int slot) {
         addMenuClick(builder.toItemStack(), click, slot);
     }
 
-    default void addSpecialMenuClick(IBuilder builder, MenuClickInfo<T> click, int slot) {
+    default void addSpecialMenuClick(IBuilder builder, MenuClickInfo click, int slot) {
         addSpecialMenuClick(builder.toItemStack(), click, slot);
     }
 
-    void addSpecialMenuClick(ItemStack stack, MenuClickInfo<T> click, int slot);
+    void addSpecialMenuClick(ItemStack stack, MenuClickInfo click, int slot);
 
     void setItem(int slot, ItemStack stack);
 
@@ -67,7 +68,7 @@ public interface Menu<T extends Player> extends InventoryHolder {
 
     void addMenuClick(IBuilder builder, MenuClick click, int slot, Player forPlaceholders);
 
-    void addMenuClick(IBuilder builder, MenuClickPlayer<T> click, int slot, Player forPlaceholders);
+    void addMenuClick(IBuilder builder, MenuClickPlayer click, int slot, Player forPlaceholders);
 
     void setUpdateHandler(MenuUpdate update);
 
