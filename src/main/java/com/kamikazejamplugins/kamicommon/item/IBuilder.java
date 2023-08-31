@@ -312,13 +312,13 @@ public abstract class IBuilder {
         return this;
     }
 
-    public IBuilder removeEnchantment(Enchantment ench) {
-        this.enchantments.remove(ench);
+    public IBuilder removeEnchantment(Enchantment enchant) {
+        this.enchantments.remove(enchant);
         return this;
     }
 
-    public IBuilder addEnchant(Enchantment ench, int level) {
-        this.enchantments.put(ench, level);
+    public IBuilder addEnchant(Enchantment enchant, int level) {
+        this.enchantments.put(enchant, level);
         return this;
     }
 

@@ -24,10 +24,10 @@ import java.util.function.Predicate;
 
 @Getter @Setter
 @SuppressWarnings("unused")
-public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder implements Menu<T> {
+public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
 
     private final Set<String> ignoredClose = new HashSet<>();
-    private final Map<MenuItem, MenuClickInfo<T>> clickableItems = new ConcurrentHashMap<>();
+    private final Map<MenuItem, MenuClickInfo> clickableItems = new ConcurrentHashMap<>();
     private Predicate<InventoryClickEvent> clickHandler;
     private Consumer<InventoryCloseEvent> closeHandler;
     private Consumer<InventoryCloseEvent> instantCloseHandler;
@@ -61,38 +61,18 @@ public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder impl
     }
 
     public int firstEmpty(List<Integer> slots) {
-        if (getInventory() == null) {
-            return -1;
-        }
-
-        for (int s : slots) {
-            try {
-                if (s > getSize()) {
-                    throw new IllegalStateException("Slot could fit in this inventory size.");
-                }
-                if (getInventory().getItem(s) == null || XMaterial.matchXMaterial(getInventory().getItem(s)).equals(XMaterial.AIR)) {
-                    return s;
-                }
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return -1;
+        return firstEmpty(slots.stream().mapToInt(i -> i).toArray());
     }
 
     @Override
     public int firstEmpty(int[] slots) {
-        if (getInventory() == null) {
-            return -1;
-        }
-
         for (int s : slots) {
             try {
                 if (s > getSize()) {
                     throw new IllegalStateException("Slot could fit in this inventory size.");
                 }
-                if (getInventory().getItem(s) == null || XMaterial.matchXMaterial(getInventory().getItem(s)).equals(XMaterial.AIR)) {
+                ItemStack slotStack = getInventory().getItem(s);
+                if (slotStack == null || XMaterial.matchXMaterial(slotStack).equals(XMaterial.AIR)) {
                     return s;
                 }
             } catch (IllegalStateException e) {
@@ -133,17 +113,12 @@ public abstract class AbstractKamiMenu<T extends Player> extends MenuHolder impl
     }
 
     @Override
-    public void addMenuClick(IBuilder builder, MenuClick click, int slot) {
-        addMenuClick(builder.toItemStack(), click, slot);
-    }
-
-    @Override
     public void addMenuClick(IBuilder builder, MenuClick click, int slot, Player forPlaceholders) {
         addMenuClick(builder.toItemStack(forPlaceholders), click, slot);
     }
 
     @Override
-    public void addMenuClick(IBuilder builder, MenuClickPlayer<T> click, int slot, Player forPlaceholders) {
+    public void addMenuClick(IBuilder builder, MenuClickPlayer click, int slot, Player forPlaceholders) {
         addMenuClick(builder.toItemStack(forPlaceholders), click, slot);
     }
 
