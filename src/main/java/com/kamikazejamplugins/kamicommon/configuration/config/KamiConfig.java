@@ -27,6 +27,7 @@ public class KamiConfig extends AbstractConfig {
     private final YamlHandler yamlHandler;
     private YamlConfiguration config;
     private final boolean addDefaults;
+    private final @Nullable Supplier<InputStream> defaultSupplier;
 
     public KamiConfig(@Nonnull JavaPlugin plugin, File file) {
         this(plugin, file, true);
@@ -44,6 +45,7 @@ public class KamiConfig extends AbstractConfig {
         this.plugin = plugin;
         this.file = file;
         this.addDefaults = true;
+        this.defaultSupplier = defaultSupplier;
 
         ensureFile();
 
@@ -55,7 +57,7 @@ public class KamiConfig extends AbstractConfig {
     @Override
     public void reload() {
         try {
-            config = yamlHandler.loadConfig(addDefaults);
+            config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
             save();
         }catch (Exception e) {
             e.printStackTrace();

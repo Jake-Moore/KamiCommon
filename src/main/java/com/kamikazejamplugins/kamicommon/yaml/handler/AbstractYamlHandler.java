@@ -84,6 +84,8 @@ public abstract class AbstractYamlHandler {
     }
 
     private YamlConfiguration addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) {
+        System.out.println("DefaultStreamSupplier: "  + defStreamSupplier);
+
         // Use passed arg unless it's null, then grab the IS from the plugin
         InputStream defConfigStream = getIS(defStreamSupplier);
 
