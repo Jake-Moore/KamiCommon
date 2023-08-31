@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "UnusedReturnValue", "DuplicatedCode"})
 public class Pagination<E> extends ArrayList<E> {
 
     private final int pageSize;

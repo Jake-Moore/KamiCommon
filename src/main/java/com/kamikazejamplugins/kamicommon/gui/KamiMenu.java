@@ -85,4 +85,8 @@ public class KamiMenu extends AbstractKamiMenu {
         }
         return this;
     }
+
+    public KamiMenu fill(IBuilder iBuilder) {
+        return fill(iBuilder.toItemStack());
+    }
 }

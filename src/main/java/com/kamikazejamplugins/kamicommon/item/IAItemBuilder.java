@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
-@SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal"})
+@SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal", "DuplicatedCode"})
 public class IAItemBuilder extends IBuilder {
 
     public IAItemBuilder(ConfigurationSection section) {
@@ -56,14 +56,14 @@ public class IAItemBuilder extends IBuilder {
         this.name = config.getString("name");
         this.lore = config.getStringList("lore");
 
-        String mat = config.getString("material");
+        String mat = config.getString("material", config.getString("type"));
         CustomStack customStack = CustomStack.getInstance(mat);
 
         ItemStack item;
         if (customStack != null) {
             this.base = customStack.getItemStack();
         }else {
-            this.material = XMaterial.matchXMaterial(config.getString("material")).orElseThrow(() -> new IllegalArgumentException("Invalid material: " + config.getString("material")));
+            this.material = XMaterial.matchXMaterial(config.getString("material", config.getString("type"))).orElseThrow(() -> new IllegalArgumentException("Invalid material: " + config.getString("material", config.getString("type"))));
         }
     }
 
