@@ -196,15 +196,7 @@ public abstract class IBuilder {
 
     public IBuilder(ItemStack is, boolean clone) {
         is = (clone) ? is.clone() : is;
-
-        this.material = XMaterial.matchXMaterial(is.getType());
-        this.amount = is.getAmount();
-        this.damage = is.getDurability();
-        ItemMeta meta = is.getItemMeta();
-        if (meta != null) {
-            if (meta.hasDisplayName()) { this.name = meta.getDisplayName(); }
-            if (meta.hasLore()) { this.lore = meta.getLore(); }
-        }
+        this.base = is;
     }
 
     public IBuilder setUnbreakable(boolean b) {
