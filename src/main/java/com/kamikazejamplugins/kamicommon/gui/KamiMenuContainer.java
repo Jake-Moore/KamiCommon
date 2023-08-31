@@ -6,8 +6,11 @@ import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickPlayer;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickPlayerTransform;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickTransform;
 import com.kamikazejamplugins.kamicommon.gui.items.KamiMenuItem;
+import com.kamikazejamplugins.kamicommon.item.IAItemBuilder;
+import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import lombok.Getter;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -17,9 +20,9 @@ import java.util.Map;
 @Getter
 @SuppressWarnings("unused")
 public class KamiMenuContainer {
-    private final String title;
-    private final int rows;
-    @Nullable private final KamiMenuItem fillerItem;
+    private String title;
+    private int rows;
+    @Nullable private KamiMenuItem fillerItem;
 
     private final Map<String, KamiMenuItem> menuItemMap = new HashMap<>();
 
@@ -122,4 +125,45 @@ public class KamiMenuContainer {
         }
         return true;
     }
+
+    public KamiMenuContainer setFillerItem(IBuilder fillerItem) {
+        this.fillerItem = new KamiMenuItem(true, fillerItem, -1);
+        return this;
+    }
+
+    public KamiMenuContainer setFillerItem(ItemStack item) {
+        this.fillerItem = new KamiMenuItem(true, new IAItemBuilder(item), -1);
+        return this;
+    }
+
+    public KamiMenuContainer removeIcon(String key) {
+        menuItemMap.remove(key);
+        return this;
+    }
+
+    public KamiMenuContainer addIcon(String key, KamiMenuItem item) {
+        menuItemMap.put(key, item);
+        return this;
+    }
+
+    public KamiMenuContainer addIcon(String key, IBuilder item, int slot) {
+        menuItemMap.put(key, new KamiMenuItem(true, item, slot));
+        return this;
+    }
+
+    public KamiMenuContainer addIcon(String key, ItemStack item, int slot) {
+        menuItemMap.put(key, new KamiMenuItem(true, new IAItemBuilder(item), slot));
+        return this;
+    }
+
+    public KamiMenuContainer setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public KamiMenuContainer setRows(int rows) {
+        this.rows = rows;
+        return this;
+    }
+
 }
