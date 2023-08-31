@@ -23,6 +23,7 @@ public class StandaloneConfig extends AbstractConfig {
     private final YamlHandlerStandalone yamlHandler;
     private YamlConfiguration config;
     private final boolean addDefaults;
+    private final @Nullable Supplier<InputStream> defaultSupplier;
 
     public StandaloneConfig(File file) {
         this(file, true);
@@ -39,18 +40,19 @@ public class StandaloneConfig extends AbstractConfig {
     public StandaloneConfig(File file, boolean addDefaults, @Nullable Supplier<InputStream> defaultStream) {
         this.file = file;
         this.addDefaults = addDefaults;
+        this.defaultSupplier = defaultStream;
 
         ensureFile();
 
         this.yamlHandler = new YamlHandlerStandalone(this, file);
-        this.config = yamlHandler.loadConfig(addDefaults, defaultStream);
+        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
         save();
     }
 
     @Override
     public void reload() {
         try {
-            config = yamlHandler.loadConfig(addDefaults);
+            config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
             save();
         }catch (Exception e) {
             e.printStackTrace();
