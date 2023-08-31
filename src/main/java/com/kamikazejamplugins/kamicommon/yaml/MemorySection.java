@@ -29,7 +29,10 @@ public abstract class MemorySection extends ConfigurationSection {
 
         //ItemStacks are special
         if (getItemStackHelper() != null && getItemStackHelper().isStack(value)) {
-            getItemStackHelper().setItemStack(key, value); return;
+            setItemStack(key, value); return;
+        }
+        if (getItemStackHelper() != null && getItemStackHelper().isBuilder(value)) {
+            setItemBuilder(key, value); return;
         }
 
         put(node, key, value);
@@ -649,7 +652,11 @@ public abstract class MemorySection extends ConfigurationSection {
         getItemStackHelper().setItemStack(key, item);
     }
 
-
+    @Override
+    public void setItemBuilder(String key, Object builder) {
+        if (getItemStackHelper() == null) { return; }
+        getItemStackHelper().setItemBuilder(key, builder);
+    }
 
     @Nullable
     public Node getKeyNode(String key) {

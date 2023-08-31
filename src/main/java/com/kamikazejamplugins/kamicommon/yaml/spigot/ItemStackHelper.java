@@ -1,5 +1,6 @@
 package com.kamikazejamplugins.kamicommon.yaml.spigot;
 
+import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -15,9 +16,23 @@ public class ItemStackHelper {
         return obj instanceof ItemStack;
     }
 
+    public boolean isBuilder(Object obj) {
+        return obj instanceof IBuilder;
+    }
+
     public void setItemStack(String key, Object item) {
+        if (item instanceof ItemStack) { setItemStack(key, (ItemStack) item); }
+        throw new IllegalArgumentException("Object is not an ItemStack");
+    }
+
+    public void setItemBuilder(String key, Object builder) {
+        if (builder instanceof IBuilder) { setItemStack(key, ((IBuilder) builder).toItemStack()); }
+        throw new IllegalArgumentException("Object is not an IBuilder");
+    }
+
+    private void setItemStack(String key, ItemStack stack) {
         YamlConfiguration config = new YamlConfiguration();
-        config.set("item", item);
+        config.set("item", stack);
         String stringData = config.saveToString();
         section.setString(key, stringData);
     }
