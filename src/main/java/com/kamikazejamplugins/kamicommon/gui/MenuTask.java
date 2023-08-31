@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Set;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings("UnstableApiUsage")
 public class MenuTask implements Runnable {
 
     @Getter private static final Set<Menu> autoUpdateInventories = Sets.newCopyOnWriteArraySet();

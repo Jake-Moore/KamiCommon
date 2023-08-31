@@ -116,6 +116,8 @@ public abstract class AbstractConfig extends ConfigurationSection {
 
     @Override public void set(String key, Object value) { getYamlConfiguration().put(key, value); }
     @Override public void setItemStack(String key, Object itemStack) { getYamlConfiguration().setItemStack(key, itemStack); }
+    @Override
+    public void setItemBuilder(String key, Object builder) { getYamlConfiguration().setItemBuilder(key, builder); }
     @Override public void put(String key, Object value) { getYamlConfiguration().put(key, value); }
     @Override public void putString(String key, String value) { getYamlConfiguration().put(key, value); }
     @Override public void putBoolean(String key, boolean value) { getYamlConfiguration().put(key, value); }

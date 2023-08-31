@@ -146,7 +146,7 @@ public abstract class IBuilder {
     }
 
     public void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
-        Optional<XMaterial> optional = XMaterial.matchXMaterial(config.getString("material"));
+        Optional<XMaterial> optional = XMaterial.matchXMaterial(config.getString("material", config.getString("type")));
         if (optional.isPresent() && optional.get().equals(XMaterial.PLAYER_HEAD)) {
             loadPlayerHead(config, offlinePlayer);
         }
