@@ -93,4 +93,6 @@ public abstract class ConfigurationSection {
     public abstract Object getItemStack(String key);
     public abstract Object getItemStack(String key, Object def);
     public abstract void setItemStack(String key, Object item);
+
+    public abstract void setItemBuilder(String key, Object builder);
 }
