@@ -2,6 +2,7 @@ package com.kamikazejamplugins.kamicommon.util;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
@@ -35,7 +36,7 @@ public class DiscordWebhook {
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.content = content.replaceAll("\n", "\\\\n");
     }
 
     public void setUsername(String username) {
@@ -147,6 +148,8 @@ public class DiscordWebhook {
 
             json.put("embeds", embedObjects.toArray());
         }
+
+        System.out.println(json);
 
         URL url = new URL(this.url);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -413,23 +416,32 @@ public class DiscordWebhook {
         df.setTimeZone(TimeZone.getTimeZone("PST"));
         String nowAsISO = df.format(new Date());
 
-        DiscordWebhook webhook = new DiscordWebhook("https://discord.com/api/webhooks/1062889527875747993/Wo-f9MR25PvdcCUeJneYIrIoNMtuUpPujBcFwQcl7ALmy2x0QDROdioDTRdmTAP8JyBW");
-        webhook.addEmbed(
-                new DiscordWebhook.EmbedObject()
-                        .setThumbnail("https://i.imgur.com/kDhrprY.png")
-                        .setTitle("Dupe Detector | {player}")
-                        .addField("{player} tried to use a duped item!",
-                                " \\n"
-                                        + "Item: {item}\\n"
-                                        + "Worth: {amount}!\\n"
-                                        + "Time: " + nowAsISO + "\\n"
-                                        + "Result: Duped item removed.", true
-                        )
-                        .setFooter("JunoMC | Dupe Detector", "https://i.imgur.com/kDhrprY.png")
-                        .setTimeStamp()
-        );
+        File txtFile = new File("C:\\Users\\Jake\\url.txt");
+        Scanner myReader = new Scanner(txtFile);
+        String data = myReader.nextLine();
+        myReader.close();
 
-        webhook.execute();
+//        DiscordWebhook webhook = new DiscordWebhook(data);
+//        webhook.addEmbed(
+//                new DiscordWebhook.EmbedObject()
+//                        .setThumbnail("https://i.imgur.com/kDhrprY.png")
+//                        .setTitle("Dupe Detector | {player}")
+//                        .addField("{player} tried to use a duped item!",
+//                                " \\n"
+//                                        + "Item: {item}\\n"
+//                                        + "Worth: {amount}!\\n"
+//                                        + "Time: " + nowAsISO + "\\n"
+//                                        + "Result: Duped item removed.", true
+//                        )
+//                        .setFooter("JunoMC | Dupe Detector", "https://i.imgur.com/kDhrprY.png")
+//                        .setTimeStamp()
+//        );
+//        webhook.execute();
+
+//        DiscordWebhook webhook = new DiscordWebhook(data);
+//        webhook.setContent("title\ndescription");
+//        webhook.execute();
+
     }
 
 }
