@@ -3,6 +3,7 @@ package com.kamikazejamplugins.kamicommon.util;
 import com.kamikazejamplugins.kamicommon.configuration.config.KamiConfig;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import lombok.Getter;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -107,6 +108,26 @@ public class MessageBuilder {
         List<String> newLines = new ArrayList<>();
         for (String line : this.lines) {
             newLines.add(line.replace(key, value));
+        }
+        this.lines.clear();
+        this.lines.addAll(newLines);
+        return this;
+    }
+
+    /**
+     * Searches for the find placeholder in the text, and replaces that entire line with replacement
+     * @param find The string to search for in the lore
+     * @param replacement The lines to swap in, in place of the entire line containing find
+     * @return The IBuilder with replaced lore
+     */
+    public MessageBuilder replaceLine(String find, List<String> replacement) {
+        List<String> newLines = new ArrayList<>();
+        for (String line : this.lines) {
+            if (ChatColor.stripColor(line).contains(ChatColor.stripColor(find))) {
+                newLines.addAll(replacement);
+            } else {
+                newLines.add(line);
+            }
         }
         this.lines.clear();
         this.lines.addAll(newLines);
