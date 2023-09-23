@@ -8,13 +8,15 @@ import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class KamiMenuItem {
     private boolean enabled;
     private IBuilder iBuilder;
-    private int slot;
+    private List<Integer> slots;
     @Nullable private MenuClickInfo clickInfo = null;
 
     // For like KamiMenuItem(config, "menus.menu1")
@@ -38,13 +40,30 @@ public class KamiMenuItem {
     public KamiMenuItem(ConfigurationSection section, @Nullable OfflinePlayer player) {
         enabled = section.getBoolean("enabled", true);
         iBuilder = new IAItemBuilder(section, player); // Null safe for player arg
-        slot = section.getInt("slot", -1);
+
+        slots = new ArrayList<>();
+        if (section.isInt("slot")) {
+            slots.add(section.getInt("slot"));
+        }else if (section.isList("slot")) {
+            slots.addAll(section.getIntegerList("slot"));
+        }else if (section.isList("slots")) {
+            slots.addAll(section.getIntegerList("slots"));
+        }else if (section.isInt("slots")) {
+            slots.add(section.getInt("slots"));
+        }
+    }
+
+    public KamiMenuItem(boolean enabled, IBuilder builder, List<Integer> slots) {
+        this.enabled = enabled;
+        this.iBuilder = builder;
+        this.slots = slots;
     }
 
     public KamiMenuItem(boolean enabled, IBuilder builder, int slot) {
         this.enabled = enabled;
         this.iBuilder = builder;
-        this.slot = slot;
+        this.slots = new ArrayList<>();
+        this.slots.add(slot);
     }
 
     public KamiMenuItem setEnabled(boolean enabled) {
@@ -58,9 +77,16 @@ public class KamiMenuItem {
     }
 
     public KamiMenuItem setSlot(int slot) {
-        this.slot = slot;
+        this.slots = new ArrayList<>();
+        this.slots.add(slot);
         return this;
     }
+
+    public KamiMenuItem setSlots(List<Integer> slots) {
+        this.slots = slots;
+        return this;
+    }
+
 
     public KamiMenuItem setClickInfo(MenuClickInfo clickInfo) {
         this.clickInfo = clickInfo;

@@ -109,9 +109,12 @@ public class KamiMenuContainer {
         for (Map.Entry<String, KamiMenuItem> entry : menuItemMap.entrySet()) {
             KamiMenuItem item = entry.getValue();
             int totalSlots = menu.getRows() * 9;
-            if (!item.isEnabled() || item.getSlot() < 0 || item.getSlot() >= totalSlots) { continue; }
+            if (!item.isEnabled()) { continue; }
 
-            menu.addSpecialMenuClick(item.getIBuilder().build(), item.getClickInfo(), item.getSlot());
+            for (int slot : item.getSlots()) {
+                if (slot < 0 || slot >= totalSlots) { continue; }
+                menu.addSpecialMenuClick(item.getIBuilder().build(), item.getClickInfo(), slot);
+            }
         }
 
         // Filler items
@@ -156,8 +159,18 @@ public class KamiMenuContainer {
         return this;
     }
 
+    public KamiMenuContainer addIcon(String key, IBuilder item, List<Integer> slots) {
+        menuItemMap.put(key, new KamiMenuItem(true, item, slots));
+        return this;
+    }
+
     public KamiMenuContainer addIcon(String key, ItemStack item, int slot) {
         menuItemMap.put(key, new KamiMenuItem(true, new IAItemBuilder(item), slot));
+        return this;
+    }
+
+    public KamiMenuContainer addIcon(String key, ItemStack item, List<Integer> slots) {
+        menuItemMap.put(key, new KamiMenuItem(true, new IAItemBuilder(item), slots));
         return this;
     }
 
