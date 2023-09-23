@@ -55,6 +55,11 @@ public class KamiMenuContainer {
         }
     }
 
+    public KamiMenuContainer replaceTitle(String find, String replacement) {
+        title = title.replace(find, replacement);
+        return this;
+    }
+
     public KamiMenuContainer replaceLore(String key, String find, String replacement) {
         if (!validateKey(key)) { return this; }
         KamiMenuItem item = menuItemMap.get(key);
