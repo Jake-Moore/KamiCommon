@@ -149,7 +149,7 @@ public class DiscordWebhook {
             json.put("embeds", embedObjects.toArray());
         }
 
-        System.out.println(json);
+        // System.out.println(json);
 
         URL url = new URL(this.url);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
