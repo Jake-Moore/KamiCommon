@@ -5,6 +5,7 @@ import com.kamikazejamplugins.kamicommon.nms.NmsManager;
 import com.kamikazejamplugins.kamicommon.util.StringUtilP;
 import com.kamikazejamplugins.kamicommon.util.TriState;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -40,7 +41,7 @@ public abstract class IBuilder {
     Map<Enchantment, Integer> enchantments = new HashMap<>();
     boolean addGlow = false;
 
-    String skullOwner = null;
+    @Setter String skullOwner = null; // player name
     int slot;
 
     public IBuilder(ConfigurationSection section) {
