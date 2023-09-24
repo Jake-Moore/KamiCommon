@@ -10,6 +10,7 @@ import com.kamikazejamplugins.kamicommon.item.IAItemBuilder;
 import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -184,4 +185,14 @@ public class KamiMenuContainer {
         return this;
     }
 
+    public KamiMenuContainer setPlayerHeadOwner(String key, Player player) {
+        return setPlayerHeadOwner(key, player.getName());
+    }
+
+    public KamiMenuContainer setPlayerHeadOwner(String key, String playerName) {
+        if (!validateKey(key)) { return this; }
+        KamiMenuItem item = menuItemMap.get(key);
+        item.getIBuilder().setSkullOwner(playerName);
+        return this;
+    }
 }
