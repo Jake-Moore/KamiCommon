@@ -17,6 +17,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class KamiConfirmMenu {
     @Getter private final KamiMenuContainer container;
+    @Nullable private IBuilder infoIcon = null;
 
     public KamiConfirmMenu(String title) {
         container = new KamiMenuContainer(title, 3);
@@ -113,7 +114,17 @@ public class KamiConfirmMenu {
         return this;
     }
 
+    public KamiConfirmMenu setInfoIcon(@Nullable IBuilder iBuilder) {
+        this.infoIcon = iBuilder;
+        return this;
+    }
+
     public void open(Player player) {
+        // Add the info icon if specified
+        if (infoIcon != null) {
+            container.addIcon("info", infoIcon, 13);
+        }
+
         container.createKamiMenu().openMenu(player);
     }
 }
