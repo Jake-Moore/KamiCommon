@@ -19,13 +19,18 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class KamiMenuContainer {
     private String title;
     private int rows;
-    @Nullable private KamiMenuItem fillerItem;
+    @Nullable private KamiMenuItem fillerItem = null;
 
     private final Map<String, KamiMenuItem> menuItemMap = new HashMap<>();
+
+    public KamiMenuContainer(String title, int rows) {
+        this.title = title;
+        this.rows = rows;
+    }
 
     // For calls like new KamiMenuContainer(config, "menus.menu1")
     public KamiMenuContainer(ConfigurationSection section, String key) {
@@ -135,12 +140,16 @@ public class KamiMenuContainer {
         return true;
     }
 
-    public KamiMenuContainer setFillerItem(IBuilder fillerItem) {
+    public KamiMenuContainer setFillerItem(@Nullable IBuilder fillerItem) {
+        if (fillerItem == null) { this.fillerItem = null; return this; }
+
         this.fillerItem = new KamiMenuItem(true, fillerItem, -1);
         return this;
     }
 
-    public KamiMenuContainer setFillerItem(ItemStack item) {
+    public KamiMenuContainer setFillerItem(@Nullable ItemStack item) {
+        if (item == null) { this.fillerItem = null; return this; }
+
         this.fillerItem = new KamiMenuItem(true, new IAItemBuilder(item), -1);
         return this;
     }
