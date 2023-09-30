@@ -176,7 +176,7 @@ public class KamiMenuContainer {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean isValidKey(String key) {
+    public boolean isValidKey(String key) {
         return menuItemMap.containsKey(key) || pagedItemMap.containsKey(key);
     }
 
