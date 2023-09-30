@@ -45,7 +45,7 @@ public abstract class PageBuilder<T extends Player> {
 
         int rows = getRows(page);
         List<Integer> slots = new ArrayList<>();
-        for (int i = 0; i < rows; i++) {
+        for (int i = 1; i <= (rows-3); i++) {
             slots.addAll(Arrays.asList((9 * i + 1), (9 * i + 2), (9 * i + 3), (9 * i + 4), (9 * i + 5), (9 * i + 6), (9 * i + 7)));
         }
         return slots;
