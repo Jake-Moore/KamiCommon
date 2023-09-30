@@ -125,6 +125,6 @@ public class KamiConfirmMenu {
             container.addIcon("info", infoIcon, 13);
         }
 
-        container.createKamiMenu().openMenu(player);
+        container.createKamiMenu(player).openMenu(player);
     }
 }

@@ -3,9 +3,9 @@ package com.kamikazejamplugins.kamicommon.gui;
 import com.kamikazejamplugins.kamicommon.KamiCommon;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickPlayer;
-import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickPlayerTransform;
-import com.kamikazejamplugins.kamicommon.gui.interfaces.MenuClickTransform;
 import com.kamikazejamplugins.kamicommon.gui.items.KamiMenuItem;
+import com.kamikazejamplugins.kamicommon.gui.page.PageBuilder;
+import com.kamikazejamplugins.kamicommon.gui.page.PageItem;
 import com.kamikazejamplugins.kamicommon.item.IAItemBuilder;
 import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import com.kamikazejamplugins.kamicommon.yaml.ConfigurationSection;
@@ -14,9 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 
 @Getter
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -26,6 +25,7 @@ public class KamiMenuContainer {
     @Nullable private KamiMenuItem fillerItem = null;
 
     private final Map<String, KamiMenuItem> menuItemMap = new HashMap<>();
+    private final Map<String, KamiMenuItem> pagedItemMap = new HashMap<>();
 
     public KamiMenuContainer(String title, int rows) {
         this.title = title;
@@ -52,12 +52,26 @@ public class KamiMenuContainer {
         }
 
         ConfigurationSection icons = section.getConfigurationSection("icons");
-        if (icons == null) { throw new IllegalArgumentException("No icons section found"); }
+        ConfigurationSection pagedIcons = section.getConfigurationSection("pagedIcons");
+        if (icons != null) {
+            // Load the MenuItems
+            for (String key : icons.getKeys(false)) {
+                KamiMenuItem item = new KamiMenuItem(icons, key);
+                menuItemMap.put(key, item);
+            }
+        }
 
-        // Load the MenuItems
-        for (String key : icons.getKeys(false)) {
-            KamiMenuItem item = new KamiMenuItem(icons, key);
-            menuItemMap.put(key, item);
+        if (pagedIcons != null) {
+            // Load the MenuItems
+            for (String key : pagedIcons.getKeys(false)) {
+                KamiMenuItem item = new KamiMenuItem(pagedIcons, key);
+                pagedItemMap.put(key, item);
+            }
+        }
+
+        // Error only if no icons or pagedIcons section found
+        if (icons == null && pagedIcons == null) {
+            throw new IllegalArgumentException("No icons or pagedIcons section found!!!");
         }
     }
 
@@ -67,73 +81,108 @@ public class KamiMenuContainer {
     }
 
     public KamiMenuContainer replaceLore(String key, String find, String replacement) {
-        if (!validateKey(key)) { return this; }
-        KamiMenuItem item = menuItemMap.get(key);
-        item.getIBuilder().replaceLore(find, replacement);
-        return this;
+        return modifyItem(key, item -> item.getIBuilder().replaceLore(find, replacement));
     }
 
     public KamiMenuContainer replaceLoreLine(String key, String find, List<String> replacement) {
-        if (!validateKey(key)) { return this; }
-        KamiMenuItem item = menuItemMap.get(key);
-        item.getIBuilder().replaceLoreLine(find, replacement);
-        return this;
+        return modifyItem(key, item -> item.getIBuilder().replaceLoreLine(find, replacement));
     }
 
     public KamiMenuContainer replaceName(String key, String find, String replacement) {
-        if (!validateKey(key)) { return this; }
-        KamiMenuItem item = menuItemMap.get(key);
-        item.getIBuilder().replaceName(find, replacement);
-        return this;
+        return modifyItem(key, item -> item.getIBuilder().replaceName(find, replacement));
     }
 
-    public KamiMenuItem getItem(String key) {
-        if (!validateKey(key)) { return null; }
+    /**
+     * @return A @Nullable KamiMenuItem of the menuItemMap with the given key. <p>
+     *         This is a regular menu item, and not from the paged list. (Use {@link #getPagedItem(String)} for that)
+     */
+    public @Nullable KamiMenuItem getItem(String key) {
+        if (!menuItemMap.containsKey(key)) { return null; }
         return menuItemMap.get(key);
     }
 
-
+    /**
+     * @return A @Nullable KamiMenuItem of the pagedItemMap with the given key. <p>
+     *         This is a PAGED menu item, not a slot-based item. (Use {@link #getItem(String)} for that)
+     */
+    public @Nullable KamiMenuItem getPagedItem(String key) {
+        if (!pagedItemMap.containsKey(key)) { return null; }
+        return pagedItemMap.get(key);
+    }
 
     public KamiMenuContainer addMenuClick(String key, MenuClick click) {
-        if (!validateKey(key)) { return this; }
-        KamiMenuItem item = menuItemMap.get(key);
-        item.setClickInfo(new MenuClickTransform(click));
-        return this;
+        return modifyItem(key, item -> item.setMenuClick(click));
     }
 
     public KamiMenuContainer addMenuClick(String key, MenuClickPlayer click) {
-        if (!validateKey(key)) { return this; }
-        KamiMenuItem item = menuItemMap.get(key);
-        item.setClickInfo(new MenuClickPlayerTransform(click));
+        return modifyItem(key, item -> item.setMenuClick(click));
+    }
+
+    public void openMenu(Player player) {
+        openMenu(player, 0);
+    }
+    public void openMenu(Player player, int page) {
+        createKamiMenu(player, page).openMenu(player);
+    }
+
+    public KamiMenu createKamiMenu(Player player) {
+        return createKamiMenu(player, 0);
+    }
+
+    /**
+     * Use if you have established pagedIcons or added paged icons / anticipate pages in this menu
+     */
+    public KamiMenu createKamiMenu(Player player, int page) {
+        PageBuilder<Player> builder = new PageBuilder<Player>() {
+            @Override
+            public String getMenuName() { return title; }
+            @Override
+            public int getRows(int page) { return rows; }
+
+            @Override
+            public Collection<? extends PageItem> getItems() {
+                return pagedItemMap.values();
+            }
+
+            @Override
+            public Collection<KamiMenuItem> supplyOtherIcons() {
+                return menuItemMap.values();
+            }
+
+            @Override
+            public KamiMenuItem getFillerIcon() {
+                return fillerItem;
+            }
+        };
+
+        return builder.createMenu(player, page);
+    }
+
+    private KamiMenuContainer modifyItem(String key, Consumer<KamiMenuItem> consumer) {
+        if (!isValidKey(key)) {
+            KamiCommon.get().getLogger().warning("[KamiMenuContainer] Could not find icon key: " + key);
+            return this;
+        }
+        KamiMenuItem menuItem = menuItemMap.get(key);
+        if (menuItem != null) {
+            consumer.accept(menuItem);
+        }
+
+        KamiMenuItem pagedItem = pagedItemMap.get(key);
+        if (pagedItem != null) {
+            consumer.accept(pagedItem);
+        }
         return this;
     }
 
-    public KamiMenu createKamiMenu() {
-        KamiMenu menu = new KamiMenu(title, rows);
-
-        // Regular items
-        for (Map.Entry<String, KamiMenuItem> entry : menuItemMap.entrySet()) {
-            KamiMenuItem item = entry.getValue();
-            int totalSlots = menu.getRows() * 9;
-            if (!item.isEnabled()) { continue; }
-
-            for (int slot : item.getSlots()) {
-                if (slot < 0 || slot >= totalSlots) { continue; }
-                menu.addSpecialMenuClick(item.getIBuilder().build(), item.getClickInfo(), slot);
-            }
-        }
-
-        // Filler items
-        if (fillerItem != null && fillerItem.isEnabled()) {
-            menu.fill(fillerItem.getIBuilder());
-        }
-
-        return menu;
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean isValidKey(String key) {
+        return menuItemMap.containsKey(key) || pagedItemMap.containsKey(key);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean validateKey(String key) {
-        if (!menuItemMap.containsKey(key)) {
+        if (!isValidKey(key)) {
             KamiCommon.get().getLogger().warning("[KamiMenuContainer] Could not find icon key: " + key);
             return false;
         }
@@ -158,31 +207,57 @@ public class KamiMenuContainer {
         menuItemMap.remove(key);
         return this;
     }
+    public KamiMenuContainer removePagedIcon(String key) {
+        pagedItemMap.remove(key);
+        return this;
+    }
 
     public KamiMenuContainer addIcon(String key, KamiMenuItem item) {
         menuItemMap.put(key, item);
         return this;
     }
-
     public KamiMenuContainer addIcon(String key, IBuilder item, int slot) {
         menuItemMap.put(key, new KamiMenuItem(true, item, slot));
         return this;
     }
-
     public KamiMenuContainer addIcon(String key, IBuilder item, List<Integer> slots) {
         menuItemMap.put(key, new KamiMenuItem(true, item, slots));
         return this;
     }
-
     public KamiMenuContainer addIcon(String key, ItemStack item, int slot) {
         menuItemMap.put(key, new KamiMenuItem(true, new IAItemBuilder(item), slot));
         return this;
     }
-
     public KamiMenuContainer addIcon(String key, ItemStack item, List<Integer> slots) {
         menuItemMap.put(key, new KamiMenuItem(true, new IAItemBuilder(item), slots));
         return this;
     }
+
+
+    public KamiMenuContainer addPagedIcon(String key, KamiMenuItem item) {
+        pagedItemMap.put(key, item);
+        return this;
+    }
+    public KamiMenuContainer addPagedIcon(String key, IBuilder item, int slot) {
+        pagedItemMap.put(key, new KamiMenuItem(true, item, slot));
+        return this;
+    }
+    public KamiMenuContainer addPagedIcon(String key, IBuilder item, List<Integer> slots) {
+        pagedItemMap.put(key, new KamiMenuItem(true, item, slots));
+        return this;
+    }
+    public KamiMenuContainer addPagedIcon(String key, ItemStack item, int slot) {
+        pagedItemMap.put(key, new KamiMenuItem(true, new IAItemBuilder(item), slot));
+        return this;
+    }
+    public KamiMenuContainer addPagedIcon(String key, ItemStack item, List<Integer> slots) {
+        pagedItemMap.put(key, new KamiMenuItem(true, new IAItemBuilder(item), slots));
+        return this;
+    }
+
+
+
+
 
     public KamiMenuContainer setTitle(String title) {
         this.title = title;
@@ -195,13 +270,10 @@ public class KamiMenuContainer {
     }
 
     public KamiMenuContainer setPlayerHeadOwner(String key, Player player) {
-        return setPlayerHeadOwner(key, player.getName());
+        return this.setPlayerHeadOwner(key, player.getName());
     }
 
     public KamiMenuContainer setPlayerHeadOwner(String key, String playerName) {
-        if (!validateKey(key)) { return this; }
-        KamiMenuItem item = menuItemMap.get(key);
-        item.getIBuilder().setSkullOwner(playerName);
-        return this;
+        return modifyItem(key, item -> item.getIBuilder().setSkullOwner(playerName));
     }
 }
