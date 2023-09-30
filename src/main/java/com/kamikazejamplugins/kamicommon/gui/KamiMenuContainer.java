@@ -139,6 +139,8 @@ public class KamiMenuContainer {
             @Override
             public int getRows(int page) { return rows; }
 
+
+
             @Override
             public Collection<? extends PageItem> getItems() {
                 return pagedItemMap.values();
