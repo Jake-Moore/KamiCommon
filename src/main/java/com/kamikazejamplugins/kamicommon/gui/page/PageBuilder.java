@@ -6,6 +6,7 @@ import com.kamikazejamplugins.kamicommon.gui.items.KamiMenuItem;
 import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -15,17 +16,11 @@ import java.util.*;
 public abstract class PageBuilder<T extends Player> {
 
     private final int[] middleSlots = new int[]{0, 0, 0, 13, 13, 22, 22, 22};
-    //TODO configurability for the placedSlots
-    @Getter private final List<Integer> placedSlots = new ArrayList<>(Arrays.asList(
-            (9 + 1),     (9 + 2),     (9 + 3),     (9 + 4),     (9 + 5),     (9 + 6),     (9 + 7),
-            (9 * 2 + 1), (9 * 2 + 2), (9 * 2 + 3), (9 * 2 + 4), (9 * 2 + 5), (9 * 2 + 6), (9 * 2 + 7),
-            (9 * 3 + 1), (9 * 3 + 2), (9 * 3 + 3), (9 * 3 + 4), (9 * 3 + 5), (9 * 3 + 6), (9 * 3 + 7),
-            (9 * 4 + 1), (9 * 4 + 2), (9 * 4 + 3), (9 * 4 + 4), (9 * 4 + 5), (9 * 4 + 6), (9 * 4 + 7)
-    ));
 
     @Getter public int currentPage;
     private KamiMenu menu;
     private final Pagination<? extends PageItem> items;
+    @Setter private List<Integer> slotsOverride = null;
 
     public PageBuilder() {
         // 21 makes a 7x3 grid, which in a 6 row gui allows for an action row on the final row
@@ -34,16 +29,26 @@ public abstract class PageBuilder<T extends Player> {
 
     public PageBuilder(List<Integer> slots) {
         this.items = new Pagination<>(slots.size(), this.getItems());
-        this.placedSlots.clear();
-        placedSlots.addAll(slots);
+        slotsOverride = slots;
     }
 
     public PageBuilder(int[] slots) {
         this.items = new Pagination<>(slots.length, this.getItems());
-        this.placedSlots.clear();
+        slotsOverride = new ArrayList<>();
         for (int slot : slots) {
-            placedSlots.add(slot);
+            slotsOverride.add(slot);
         }
+    }
+
+    public List<Integer> getPlacedSlots(int page) {
+        if (slotsOverride != null) { return slotsOverride; }
+
+        int rows = getRows(page);
+        List<Integer> slots = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            slots.addAll(Arrays.asList((9 * i + 1), (9 * i + 2), (9 * i + 3), (9 * i + 4), (9 * i + 5), (9 * i + 6), (9 * i + 7)));
+        }
+        return slots;
     }
 
     public Pagination<? extends PageItem> getPageItems() {
@@ -148,8 +153,8 @@ public abstract class PageBuilder<T extends Player> {
 
         // Add all page items
         for (PageItem pageItem : items.getPage(page)) {
-            if (pageItem != null && firstEmpty() != -1) {
-                pageItem.addToMenu(menu, firstEmpty());
+            if (pageItem != null && firstEmpty(page) != -1) {
+                pageItem.addToMenu(menu, firstEmpty(page));
             }
         }
 
@@ -175,8 +180,8 @@ public abstract class PageBuilder<T extends Player> {
 
     public Collection<KamiMenuItem> supplyOtherIcons() { return new ArrayList<>(); }
 
-    private int firstEmpty() {
-        for (int i : placedSlots) {
+    private int firstEmpty(int page) {
+        for (int i : getPlacedSlots(currentPage)) {
             if (i >= menu.getSize()) {
                 return -1;
             }
