@@ -7,30 +7,29 @@ import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @Getter @Setter
 public class PageItem {
 
-    public @Nonnull IBuilder iBuilder;
+    public IBuilder iBuilder;
 
     // Only one should ever be set
     public @Nullable MenuClick menuClick = null;
     public @Nullable MenuClickPlayer menuClickPlayer = null;
 
-    public PageItem(@Nonnull IBuilder iBuilder, @Nullable MenuClick menuClick) {
+    public PageItem(IBuilder iBuilder, @Nullable MenuClick menuClick) {
         this.iBuilder = iBuilder;
         this.menuClick = menuClick;
     }
 
-    public PageItem(@Nonnull IBuilder iBuilder, @Nullable MenuClickPlayer menuClickPlayer) {
+    public PageItem(IBuilder iBuilder, @Nullable MenuClickPlayer menuClickPlayer) {
         this.iBuilder = iBuilder;
         this.menuClickPlayer = menuClickPlayer;
     }
 
-    public PageItem setIBuilder(@Nonnull IBuilder iBuilder) {
+    public PageItem setIBuilder(IBuilder iBuilder) {
         this.iBuilder = iBuilder;
         return this;
     }

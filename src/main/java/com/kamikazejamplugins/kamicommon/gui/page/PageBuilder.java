@@ -142,7 +142,7 @@ public abstract class PageBuilder<T extends Player> {
 
         // Filler items
         KamiMenuItem fillerItem = getFillerIcon();
-        if (fillerItem != null && fillerItem.isEnabled()) {
+        if (fillerItem != null && fillerItem.getIBuilder() != null && fillerItem.isEnabled()) {
             menu.fill(fillerItem.getIBuilder());
         }
 

@@ -87,6 +87,11 @@ public class KamiMenu extends AbstractKamiMenu {
     }
 
     public KamiMenu fill(IBuilder iBuilder) {
+        if (iBuilder == null) {
+            try { throw new Exception("iBuilder is null in fill(iBuilder). Using default filler!");
+            }catch (Throwable t) { t.printStackTrace(); }
+            return fill();
+        }
         return fill(iBuilder.toItemStack());
     }
 }
