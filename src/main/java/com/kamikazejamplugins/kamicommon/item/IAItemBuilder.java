@@ -48,6 +48,17 @@ public class IAItemBuilder extends IBuilder {
         super(is, clone);
     }
 
+    public IAItemBuilder(String namespacedID) {
+        this(namespacedID, 1);
+    }
+
+    public IAItemBuilder(String namespacedID, int amount) {
+        super((ItemStack) null);
+
+        CustomStack stack = CustomStack.getInstance(namespacedID);
+        this.base = stack.getItemStack();
+    }
+
     @Override
     public void loadBasicItem(ConfigurationSection config) {
         this.damage = (short) config.getInt("damage", 0);
