@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +16,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-@SuppressWarnings({"unused", "SameReturnValue"})
+@SuppressWarnings({"unused", "SameReturnValue", "UnusedReturnValue"})
 public interface Menu extends InventoryHolder {
 
     @NotNull Inventory getInventory();
@@ -76,9 +77,9 @@ public interface Menu extends InventoryHolder {
 
     void setAutoUpdate();
 
-    void openMenu(Player player);
+    InventoryView openMenu(Player player);
 
-    void openMenu(Player player, boolean ignoreCloseHandler);
+    InventoryView openMenu(Player player, boolean ignoreCloseHandler);
 
     int firstEmpty(int[] slots);
 

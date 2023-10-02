@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
@@ -46,19 +47,19 @@ public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
     }
 
     @Override
-    public void openMenu(Player player) {
-        openMenu(player, false);
+    public InventoryView openMenu(Player player) {
+        return openMenu(player, false);
     }
 
     @Override
-    public void openMenu(Player player, boolean ignoreCloseHandler) {
+    public InventoryView openMenu(Player player, boolean ignoreCloseHandler) {
         update();
 
         if (ignoreCloseHandler) {
             getIgnoredClose().add(player.getName());
         }
 
-        player.openInventory(getInventory());
+        return player.openInventory(getInventory());
     }
 
     public int firstEmpty() {
