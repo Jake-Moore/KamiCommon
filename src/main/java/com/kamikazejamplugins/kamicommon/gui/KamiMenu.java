@@ -5,6 +5,7 @@ import com.kamikazejamplugins.kamicommon.gui.interfaces.*;
 import com.kamikazejamplugins.kamicommon.item.IBuilder;
 import com.kamikazejamplugins.kamicommon.item.ItemBuilder;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -12,6 +13,10 @@ public class KamiMenu extends AbstractKamiMenu {
 
     public KamiMenu(String name, int lines) {
         super(name, lines);
+    }
+
+    public KamiMenu(String name, InventoryType type) {
+        super(name, type);
     }
 
     public void clear() {
