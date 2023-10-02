@@ -44,6 +44,10 @@ public abstract class IBuilder {
     @Setter String skullOwner = null; // player name
     int slot;
 
+    public IBuilder() {
+
+    }
+
     public IBuilder(ConfigurationSection section) {
         loadConfigItem(section, null);
     }
@@ -196,6 +200,8 @@ public abstract class IBuilder {
     }
 
     public IBuilder(ItemStack is, boolean clone) {
+        if (is == null) { return; }
+
         is = (clone) ? is.clone() : is;
         this.base = is;
     }
