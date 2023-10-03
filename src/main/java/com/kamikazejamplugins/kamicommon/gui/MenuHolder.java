@@ -64,4 +64,6 @@ public class MenuHolder implements InventoryHolder {
     public int hashCode() {
         return Objects.hash(getInventory());
     }
+
+    public InventoryHolder getHolder() { return this; }
 }
