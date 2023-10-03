@@ -17,7 +17,7 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class MenuHolder implements InventoryHolder {
 
-    private transient Inventory inventory;
+    public transient Inventory inventory;
     @Getter @Setter private String invName;
     @Getter @Setter private int rows;
     @Getter @Setter private @Nullable InventoryType type;
