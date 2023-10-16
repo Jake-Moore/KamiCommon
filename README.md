@@ -23,7 +23,7 @@
 <dependency>
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.7.0.2</version>
+    <version>1.8.2.9</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -36,7 +36,7 @@
 ``` java
 String title = "test";
 int rows = 3, slot = 8;
-KamiMenu<Player> menu = new KamiMenu<>(title, rows);
+KamiMenu menu = new KamiMenu(title, rows);
 menu.addMenuClick(itemstack, clickInfo -> {
     //code on click
 }, slot);
