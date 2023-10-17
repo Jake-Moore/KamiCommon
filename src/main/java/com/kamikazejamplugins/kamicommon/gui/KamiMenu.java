@@ -19,6 +19,7 @@ public class KamiMenu extends AbstractKamiMenu {
         super(name, type);
     }
 
+    @Override
     public void clear() {
         getInventory().clear();
         getClickableItems().clear();
