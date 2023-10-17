@@ -17,7 +17,7 @@ public class MenuTask implements Runnable {
     public void run() {
         for (Menu inv : autoUpdateInventories) {
             if (!inv.getInventory().getViewers().isEmpty()) {
-                inv.getInventory().clear();
+                if (inv.isClearBeforeUpdate()) { inv.clear(); }
                 inv.update();
 
                 for (HumanEntity entity : inv.getInventory().getViewers()) {

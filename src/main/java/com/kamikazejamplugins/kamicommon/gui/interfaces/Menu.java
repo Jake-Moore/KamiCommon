@@ -75,6 +75,10 @@ public interface Menu extends InventoryHolder {
 
     void setClearBeforeUpdate(boolean clearBeforeUpdate);
 
+    void clear();
+
+    boolean isClearBeforeUpdate();
+
     void update();
 
     void setAutoUpdate();
