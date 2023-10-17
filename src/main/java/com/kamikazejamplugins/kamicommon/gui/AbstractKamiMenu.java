@@ -34,6 +34,7 @@ public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
     private Consumer<InventoryCloseEvent> closeHandler;
     private Consumer<InventoryCloseEvent> instantCloseHandler;
     private MenuUpdate updateHandler;
+    private boolean clearBeforeUpdate = false;
     private boolean allowItemPickup;
 
     public AbstractKamiMenu() {}
@@ -132,6 +133,11 @@ public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
     public void setUpdateHandler(MenuUpdate updateHandler) {
         this.updateHandler = updateHandler;
         MenuTask.getAutoUpdateInventories().add(this);
+    }
+
+    @Override
+    public void setClearBeforeUpdate(boolean b) {
+        this.clearBeforeUpdate = b;
     }
 
     public abstract void setItem(int slot, IBuilder stack, Player forPlaceholders);

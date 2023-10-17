@@ -73,6 +73,8 @@ public interface Menu extends InventoryHolder {
 
     void setUpdateHandler(MenuUpdate update);
 
+    void setClearBeforeUpdate(boolean clearBeforeUpdate);
+
     void update();
 
     void setAutoUpdate();

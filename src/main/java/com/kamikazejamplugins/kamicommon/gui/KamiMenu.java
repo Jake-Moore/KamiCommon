@@ -29,7 +29,7 @@ public class KamiMenu extends AbstractKamiMenu {
         MenuUpdate menuUpdate = getUpdateHandler();
 
         if (menuUpdate != null) {
-            clear();
+            if (isClearBeforeUpdate()) { clear(); }
             menuUpdate.onUpdate();
         }
     }
