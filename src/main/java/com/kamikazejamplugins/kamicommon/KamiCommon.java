@@ -1,6 +1,7 @@
 package com.kamikazejamplugins.kamicommon;
 
 import com.kamikazejamplugins.kamicommon.gui.MenuManager;
+import com.kamikazejamplugins.kamicommon.gui.MenuTask;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -19,6 +20,9 @@ public class KamiCommon extends JavaPlugin implements Listener {
         plugin = this;
         plugin.getServer().getPluginManager().registerEvents(new MenuManager(), plugin);
         getServer().getPluginManager().registerEvents(this, this);
+
+        // Schedule menu task to run every 1 second
+        Bukkit.getScheduler().runTaskTimer(this, new MenuTask(), 0L, 20L);
 
         if (isWineSpigot()) {
             getLogger().info("WineSpigot (1.8.8) detected!");
