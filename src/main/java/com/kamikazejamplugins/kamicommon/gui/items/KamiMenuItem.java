@@ -41,6 +41,9 @@ public class KamiMenuItem extends PageItem {
         super(new IAItemBuilder(section, player), (MenuClick) null); // Null safe for player arg
         enabled = section.getBoolean("enabled", true);
 
+        boolean hideAttributes = section.getBoolean("hideAttributes", true);
+        if (hideAttributes) { iBuilder.hideAttributes(); }
+
         slots = new ArrayList<>();
         if (section.isInt("slot")) {
             slots.add(section.getInt("slot"));
