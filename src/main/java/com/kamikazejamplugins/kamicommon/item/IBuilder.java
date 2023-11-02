@@ -44,9 +44,7 @@ public abstract class IBuilder {
     @Setter String skullOwner = null; // player name
     int slot;
 
-    public IBuilder() {
-
-    }
+    public IBuilder() {}
 
     public IBuilder(ConfigurationSection section) {
         loadConfigItem(section, null);
@@ -201,6 +199,9 @@ public abstract class IBuilder {
 
     public IBuilder(ItemStack is, boolean clone) {
         if (is == null) { return; }
+        // Erase default name and lore, so that the base isn't overwritten
+        this.name = null;
+        this.lore = null;
 
         is = (clone) ? is.clone() : is;
         this.base = is;
