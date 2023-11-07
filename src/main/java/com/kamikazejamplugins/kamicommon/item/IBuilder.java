@@ -222,10 +222,7 @@ public abstract class IBuilder {
         return this;
     }
 
-    public IBuilder setDurability(int dur) {
-        this.damage = (short) dur;
-        return this;
-    }
+    public IBuilder setDurability(int dur) { return setDurability((short) dur); }
 
     public IBuilder setType(XMaterial m) {
         this.material = m;
@@ -239,6 +236,14 @@ public abstract class IBuilder {
 
     public IBuilder setDisplayName(String name) {
         return setName(name);
+    }
+
+    public IBuilder setMaterial(XMaterial material) {
+        this.material = material;
+        return this;
+    }
+    public IBuilder setMaterial(Material material) {
+        return setMaterial(XMaterial.matchXMaterial(material));
     }
 
     public IBuilder replaceName(String find, String replacement) {
