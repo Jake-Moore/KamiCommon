@@ -149,13 +149,15 @@ public abstract class IBuilder {
     }
 
     public void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
-        Optional<XMaterial> optional = XMaterial.matchXMaterial(config.getString("material", config.getString("type")));
-        if (optional.isPresent() && optional.get().equals(XMaterial.PLAYER_HEAD)) {
-            loadPlayerHead(config, offlinePlayer);
+        String mat = config.getString("material", config.getString("type"));
+        if (mat != null) {
+            if (XMaterial.matchXMaterial(mat).orElse(XMaterial.AIR).equals(XMaterial.PLAYER_HEAD)) {
+                loadPlayerHead(config, offlinePlayer);
+                return;
+            }
         }
         loadBasicItem(config);
     }
-
 
     public IBuilder(XMaterial m) {
         this(m, 1);
