@@ -67,14 +67,15 @@ public class IAItemBuilder extends IBuilder {
         this.name = config.getString("name");
         this.lore = config.getStringList("lore");
 
-        String mat = config.getString("material", config.getString("type"));
+        String mat = config.getString("material", config.getString("type", null));
+        if (mat == null) { return; }
+        
         CustomStack customStack = CustomStack.getInstance(mat);
-
         ItemStack item;
         if (customStack != null) {
             this.base = customStack.getItemStack();
         }else {
-            this.material = XMaterial.matchXMaterial(config.getString("material", config.getString("type"))).orElseThrow(() -> new IllegalArgumentException("Invalid material: " + config.getString("material", config.getString("type"))));
+            this.material = XMaterial.matchXMaterial(mat).orElseThrow(() -> new IllegalArgumentException("Invalid material: " + config.getString("material", config.getString("type"))));
         }
     }
 
