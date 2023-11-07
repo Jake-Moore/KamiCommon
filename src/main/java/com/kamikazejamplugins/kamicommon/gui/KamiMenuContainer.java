@@ -80,6 +80,10 @@ public class KamiMenuContainer {
         return this;
     }
 
+    public KamiMenuContainer replaceBoth(String key, String find, String replacement) {
+        return modifyItem(key, item -> item.getIBuilder().replaceBoth(find, replacement));
+    }
+
     public KamiMenuContainer replaceLore(String key, String find, String replacement) {
         return modifyItem(key, item -> item.getIBuilder().replaceLore(find, replacement));
     }
