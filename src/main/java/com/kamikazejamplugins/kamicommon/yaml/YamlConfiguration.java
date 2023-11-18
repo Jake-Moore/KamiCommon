@@ -23,10 +23,11 @@ public class YamlConfiguration extends MemorySection {
         try {
             DumperOptions options = new DumperOptions();
             options.setIndent(2);
-            options.setPrettyFlow(true);
             options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             options.setAllowUnicode(true);
             options.setProcessComments(true);
+            options.setPrettyFlow(false); // When Disabled, [] will be used for empty lists instead of [\n]  (Keep Disabled)
+            options.setSplitLines(false); // When Enabled, string lines might be split into multiple lines   (Keep Disabled)
 
             // Dump the Node (should keep comments)
             Writer writer = new OutputStreamWriter(Files.newOutputStream(configFile.toPath()), StandardCharsets.UTF_8);

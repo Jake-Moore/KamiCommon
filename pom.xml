@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.8.3.10</version>
+    <version>1.8.3.11</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -123,13 +123,11 @@
 
     <repositories>
         <repository>
-            <id>papermc-repo</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <id>luxious-public</id>
+            <name>Luxious Repository</name>
+            <url>https://nexus.luxiouslabs.net/public</url>
         </repository>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
+
         <!-- CodeMC -->
         <repository>
             <id>codemc-repo</id>
@@ -141,15 +139,6 @@
             <url>https://maven.pkg.github.com/Jacxk/all-spigot-nms</url>
         </repository>
 
-        <repository>
-            <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
-
-        <repository>
-            <id>jitpack-repo</id>
-            <url>https://jitpack.io</url>
-        </repository>
     </repositories>
 
     <dependencies>
