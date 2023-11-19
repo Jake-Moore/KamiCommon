@@ -130,8 +130,17 @@ public class Config extends KamiConfig {
     }
 }
 ```
-- **Utility Classes**
-   - All of XSeries, DiscordWebhook utility, StringUtil, and StringUtilP (StringUtil with Placeholder methods)
+- **Utility Classes (shaded)**
+  - org.yaml.snakeyaml (latest)
+  - org.json
+  - redis.clients.jedis
+  - org.apache.httpcomponents
+  - [NBT-API](https://github.com/tr7zw/Item-NBT-API)
+  - [XSeries](https://github.com/CryptoMorin/XSeries)
+- **Utility Classes (other)**
+  - DiscordWebhook (for sending simple webhooks)
+  - StringUtil (spigot-independant translation from & to §, and other useful string / string-list methods)
+  - StringUtilP (spigot and PlaceholderAPI-dependant expansion of StringUtil. Includes .p(...) methods for parsing PAPI placeholders)
 - **Yaml Management** - YamlHandler and YamlHandlerStandalone (for using .yml files outside of spigot)
   - Utilized internally by AbstractConfig
 ``` java
