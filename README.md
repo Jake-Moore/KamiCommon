@@ -6,7 +6,7 @@
 # KamiCommon
 
 - A common library for my (KamikazeJAM) plugins.
-- This library aims to support all spigot versions, contact me if anything does not.
+- This library aims to support all spigot versions (since 1.8.x), contact me if anything does not.
 -  Contact Info (Discord): KamikazeJAM (kamikazejam)
 
 
