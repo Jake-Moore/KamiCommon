@@ -56,3 +56,16 @@ jobs:
         omitNameDuringUpdate: true
         omitPrereleaseDuringUpdate: true
         tag: "${{ steps.project.outputs.version }}"
+
+
+
+    # Update the README.md Badge with the new version
+    - name: Create Version Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
+        filename: test.json # Use test.svg if you want to use the SVG mode.
+        label: Latest Release
+        message: "${{ steps.project.outputs.version }}"
+        color: blue
