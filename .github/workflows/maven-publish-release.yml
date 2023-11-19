@@ -45,6 +45,9 @@ jobs:
       run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
       id: project
 
+    - name: Tests
+      run: ls target
+
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
