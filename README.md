@@ -14,7 +14,7 @@
 Before you can use KamiCommon, you have to import it into your project.  
 If you are developing an application outside of spigot, you can shade the jar using maven-shade-plugin and by removing the provided scope from the dependency.
 
-### Import with Gradle
+### Plugin YML!!!
 Before you continue, if you're working on a spigot plugin make sure to add `KamiCommon` to your plugin.yml (or otherwise) in the `depend:` list
 
 ### Import with Maven
