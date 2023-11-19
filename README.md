@@ -6,25 +6,23 @@
 &nbsp;
 
 ## Using the Common
-- Either download it from spigot, or you can use the maven repository with your own PAT.
-- GitHub packages with Maven requires that all users have a PAT (personal access token) configured, in order to download packages
-- If you do not know how to create one up please refer to: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
-- With your PAT, you must add it to maven, please refer to: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry ("Authenticating with a personal access token")
+- The common is deployed to the Luxious Maven repository (https://nexus.luxiouslabs.net/)
 - The first step towards using the maven dependency is configuring the repository
 ```xml
 <repository>
-    <id>github</id>
-    <url>https://maven.pkg.github.com/jake-moore/kamicommon</url>
+  <id>luxious-public</id>
+  <name>Luxious Repository</name>
+  <url>https://nexus.luxiouslabs.net/public</url>
 </repository>
 ```
-- From there you can use the maven dependency for it
+- From there you can use the maven dependency for it (replace `{version}` with the latest release)
 ```xml
 <!-- KamiCommon -->
 <dependency>
-    <groupId>com.kamikazejamplugins</groupId>
-    <artifactId>kamicommon</artifactId>
-    <version>1.8.2.9</version>
-    <scope>provided</scope>
+  <groupId>com.kamikazejam</groupId>
+  <artifactId>kamicommon</artifactId>
+  <version>{version}</version>
+  <scope>provided</scope>
 </dependency>
 ```
 
@@ -37,35 +35,67 @@
 String title = "test";
 int rows = 3, slot = 8;
 KamiMenu menu = new KamiMenu(title, rows);
-menu.addMenuClick(itemstack, clickInfo -> {
+menu.addMenuClick(itemstack, (plr, click) -> {
     //code on click
 }, slot);
 menu.openMenu(player);
 ```
-- ItemBuilder for easier item manipulation
+- ItemBuilders for easier item manipulation
 ``` java
 XMaterial material = XMaterial.CHEST;
 short damage = (short) 0;
 int amount = 64;
 
-//Various ways to create an ItemBuilder:
+// Various ways to create an ItemBuilder:
 ItemBuilder builder = new ItemBuilder(material);
 builder = new ItemBuilder(material, (short) damage);
 builder = new ItemBuilder(material, (short) damage);
 builder = new ItemBuilder(material, amount, (short) damage);
 //builder...
 builder.toItemStack();
+
+// IAItemBuilder is an extension of ItemBuilder
+//   which adds support for namespacedids as the type
+builder = new IAItemBuilder("namespace:id");
 ```
-- Auto update for plugins (hard coded for my use only, but feel free to edit the repo and PAT to use it on your own)
+- Auto update for plugins
    - This feature requires that each plugin repository using auto update have a configured GitHub action to publish a release for each version
    - Probably best to contact me if you're interested in using this feature with your own plugin
-- Commands library for easier subcommand management
-   - Contact me on discord for more info on this
-- A few bulky methods simplified for Configuration management (ConfigManager.java)
-   - Create empty configs, save configs, reload configs 
+- Commands library for subcommand management
+  - No longer receiving updates, I'm now primarily using MassiveCore commands
+- Config Management
+  - Files
+    - KamiConfig (for plugin configs)
+    - StandaloneConfig (for yaml configs outside of spigot)
+  - Features
+    - Support to save and get ItemStacks (uses spigot config serialization)
+    - Full integrated comments support (loads comments from defaults file, and preserves user-generated comments)
+    - Native support for creating custom configs and loading defaults from resources
+```java
+// Example with KamiConfig 
+// StandaloneConfig works the same, but doesn't require a plugin, 
+//   and fetches the defaults stream from the jar
+public class Config extends KamiConfig {
+    public Config(JavaPlugin plugin, File file) {
+        // When addDefaults is true, KamiConfig will look for
+        //   a resource file with the same name as file, and load defaults
+        super(plugin, file, true);
+
+        // You can also add defaults manually
+        addDefaults();
+        save();
+    }
+
+    private void addDefaults() {
+        // Add defaults manually
+        addDefault("some.key", "some-value");
+    }
+}
+```
 - A few utilities
-   - All of XSeries, DiscordWebhook utility, StringUtil.t() as an alias of ChatColor...
-- A YamlHandler (for using .yml files outside of spigot, standalone compatible)
+   - All of XSeries, DiscordWebhook utility, StringUtil, and StringUtilP (StringUtil with Placeholder methods)
+- YamlHandler and YamlHandlerStandalone (for using .yml files outside of spigot)
+  - Utilized internally by AbstractConfig
 ``` java
 YamlHandler yaml = new YamlHandler(File configFile, String fileName);
 config = yaml.loadConfig(boolean addDefaults)
@@ -76,7 +106,7 @@ config.put(key, value)
 ```
 - Version command
    - If using KamiCommand implementation, you can specify if you'd like an additional version subcommand
-   - Requires a version.json inside your resources folder with the following
+   - Requires a `version.json` inside your resources folder with the following
 ```json
 {
   "name": "${project.artifactId}",

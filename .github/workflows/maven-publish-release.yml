@@ -1,4 +1,4 @@
-name: Maven Deploy
+name: Maven Deploy & Release
 
 on:
   push:
@@ -13,6 +13,9 @@ jobs:
       contents: read
       packages: write
 
+    #--------------------------------------------------------------------------------------------
+    #           Build the Artifact and Publish to Luxious Repository
+    #--------------------------------------------------------------------------------------------
     steps:
     - uses: actions/checkout@v3
     
@@ -34,4 +37,13 @@ jobs:
 
     - name: Publish to Luxious Maven
       run: mvn deploy
-      
+
+    #--------------------------------------------------------------------------------------------
+    #           Create a Github Release
+    #--------------------------------------------------------------------------------------------
+    - uses: actions/checkout@v3
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "target/*.jar"
+        bodyFile: "body.md"
+        removeArtifacts: true
