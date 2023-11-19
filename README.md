@@ -1,10 +1,12 @@
+&nbsp;
 > <a href="https://github.com/Jake-Moore/KamiCommon/releases/latest"> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/test.json" /></a>
 > 
 > The GitHub release may be different from the spigot release
 
 # KamiCommon
 
-- A common library for my (KamikazeJAM) plugins. (This library should support all spigot versions, let me know if anything does not.)
+- A common library for my (KamikazeJAM) plugins.
+- This library aims to support all spigot versions, contact me if anything does not.
 -  Contact Info (Discord): KamikazeJAM (kamikazejam)
 
 
@@ -31,7 +33,7 @@ Replace `{VERSION}` with the version listed at the top of this page.
   <scope>provided</scope>
 </dependency>
 ```
-
+&nbsp;
 ### Import with Gradle
 ```kotlin
 maven {
@@ -42,14 +44,14 @@ maven {
 Then add the following dependency  
 Replace `{VERSION}` with the version listed at the top of this page.
 ```kotlin
-compileOnly 'com.kamikazejam:kamicommon:2.0.0.2'
+compileOnly 'com.kamikazejam:kamicommon:{VERSION}'
 ```
 
 &nbsp;
 &nbsp;
 
-## Notable features include:
-- Easier inventory management for click events
+## Features
+- Easier inventory management with click callbacks
 ``` java
 String title = "test";
 int rows = 3, slot = 8;
@@ -77,13 +79,25 @@ builder.toItemStack();
 //   which adds support for namespacedids as the type
 builder = new IAItemBuilder("namespace:id");
 ```
-- Auto update for plugins
+- **Auto Update** for plugins
    - This feature requires that each plugin repository using auto update have a configured GitHub action to publish a release for each version
    - Probably best to contact me if you're interested in using this feature with your own plugin
-- Commands library for subcommand management
-  - No longer receiving updates, I'm now primarily using MassiveCore commands
-- Config Management
-  - Files
+- **Commands Library** for subcommand management (I would personally recommend the MassiveCore command system over this, this is very simplistic by comparison)
+  - **1.** Create your sub command classes that extend `KamiSubCommand`
+    - Override the required methods
+    - You can optionally override `performTabComplete` to supply tab completions
+    - Make sure to create a "none" sub command, which will act as the help when no sub command is found
+  - **2.** Create a sub commands container class that extends `KamiSubCommands`
+    - Override `getSubCommands()` and return a list of your sub command instances
+    - It is advised to store the "NoneCommand" in a local varaible so it can be supplied to both `getSubCommands()` and `getNoneSubCommand()`
+  - **3.** Create a command class that extends `KamiCommand`
+    - Use `super(new YourSubCommands())`
+    - Override the required methods
+    - Do NOT override `onCommand`, this will break all sub commands
+    - Optionally override `onTabComplete` to supply tab completions (sub commands)
+      - you can access your sub commands with `getKamiSubCommands()`
+- **Config Management**
+  - Files (create classes extending these, and then create an instance to use)
     - KamiConfig (for plugin configs)
     - StandaloneConfig (for yaml configs outside of spigot)
   - Features
@@ -103,6 +117,11 @@ public class Config extends KamiConfig {
         // You can also add defaults manually
         addDefaults();
         save();
+
+        // Casts to ItemStack will act normally if you use KamiConfig and provide a plugin object
+        // This config system supports environments without spigot classes like ItemStack, so at a base ConfigurationSection level
+        //   it cannot return ItemStack or standalone environments would not work, this is the compromise
+        ItemStack stack = (ItemStack) getItemStack("key");
     }
 
     private void addDefaults() {
@@ -111,9 +130,9 @@ public class Config extends KamiConfig {
     }
 }
 ```
-- A few utilities
+- **Utility Classes**
    - All of XSeries, DiscordWebhook utility, StringUtil, and StringUtilP (StringUtil with Placeholder methods)
-- YamlHandler and YamlHandlerStandalone (for using .yml files outside of spigot)
+- **Yaml Management** - YamlHandler and YamlHandlerStandalone (for using .yml files outside of spigot)
   - Utilized internally by AbstractConfig
 ``` java
 YamlHandler yaml = new YamlHandler(File configFile, String fileName);
@@ -124,8 +143,9 @@ config.get(key)
 config.put(key, value)
 ```
 - Version command
-   - If using KamiCommand implementation, you can specify if you'd like an additional version subcommand
-   - Requires a `version.json` inside your resources folder with the following
+   - If you are using a KamiCommand implementation, the `KamiSubCommands` constructor takes a boolean for version command
+     - When set to true, a sample Version subcommand will be added, and reads from the following file:
+   - Requires a `version.json` inside your resources folder with the following keys (See below for a sample maven example, Tip: enable resource filtering)
 ```json
 {
   "name": "${project.artifactId}",
