@@ -30,14 +30,7 @@ jobs:
     - name: Maven Settings
       uses: s4u/maven-settings-action@v2.6.0
       with:
-        servers: '[{"id": "github", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}" }, {"id": "github3", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}" }]'
-
-    #- name: Extract Maven project version
-    #  run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-    #  id: project
-
-    #- name: Show extracted Maven project version
-    #  run: echo ${{ steps.project.outputs.version }}
+        servers: '[{"id": "luxious-public", "username": "${{ secrets.LUXIOUS_NEXUS_USER }}", "password": "${{ secrets.LUXIOUS_NEXUS_PASS }}" }, {"id": "all-spigot-nms-github", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}" }]'
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
@@ -47,18 +40,3 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       
-    #- name: Swap to Snapshot Version
-    #  run: mvn versions:set -DnewVersion=${{steps.project.outputs.version}}-SNAPSHOT
-    
-    #- name: Maven Settings
-    #  uses: s4u/maven-settings-action@v2.6.0
-    #  with:
-    #    servers: '[{"id": "jartexsys-snapshots", "username": "KamikazeJAM_YT", "password": "${{ secrets.JARTEX_PASS }}" }]'
-
-    #- name: Publish to Jartex Nexus
-    #  run: mvn deploy
-    
-    #- name: Revert Version
-    #  run: mvn versions:set -DnewVersion=${{steps.project.outputs.version}}
-
-

@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejamplugins</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>1.8.3.11</version>
+    <version>1.8.4.0</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -16,22 +16,12 @@
     </properties>
 
     <distributionManagement>
+        <!-- Publish to Luxious Nexus -->
         <repository>
-            <id>github</id>
-            <name>GitHub jake-moore Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/jake-moore/kamicommon</url>
+            <id>luxious-public</id>
+            <url>https://nexus.luxiouslabs.net/public</url>
         </repository>
-        <snapshotRepository>
-            <id>jartexsys-snapshots</id>
-            <url>https://nexus.jartexsys.net/repository/jartexsys-snapshots/</url>
-        </snapshotRepository>
     </distributionManagement>
-
-    <scm>
-        <url>https://github.com/Jake-Moore/KamiCommon</url>
-        <connection>scm:git:https://github.com/Jake-Moore/KamiCommon.git</connection>
-      <tag>kamicommon-1.0.20</tag>
-    </scm>
 
     <build>
         <plugins>
@@ -135,7 +125,7 @@
             <layout>default</layout>
         </repository>
         <repository>
-            <id>github3</id>
+            <id>all-spigot-nms-github</id>
             <url>https://maven.pkg.github.com/Jacxk/all-spigot-nms</url>
         </repository>
 
