@@ -33,7 +33,7 @@ jobs:
         servers: '[{"id": "luxious-public", "username": "${{ secrets.LUXIOUS_NEXUS_USER }}", "password": "${{ secrets.LUXIOUS_NEXUS_PASS }}" }, {"id": "all-spigot-nms-github", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}" }]'
 
     - name: Show extracted LUXIOUS_NEXUS_USER
-      run: echo ${{ secrets.LUXIOUS_NEXUS_USER }}
+      run: echo '${{ secrets.LUXIOUS_NEXUS_USER }}'
 
     - name: Publish to Luxious Maven
       run: mvn -B deploy -s $GITHUB_WORKSPACE/settings.xml -f pom.xml
