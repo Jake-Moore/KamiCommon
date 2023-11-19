@@ -30,14 +30,14 @@ jobs:
         servers: '[{"id": "luxious-public", "username": "${{ secrets.MAVEN_NAME }}", "password": "${{ secrets.MAVEN_SECRET }}"}, {"id": "all-spigot-nms", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}"}]'
 
     - name: Display Settings.xml
-      run: cat settings.xml
+      run: cat /home/runner/.m2/settings.xml
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file pom.xml -s /home/runner/.m2/settings.xml
 
     - name: Display Settings.xml
-      run: cat $GITHUB_WORKSPACE/settings.xml
+      run: cat /home/runner/.m2/settings.xml
 
     - name: Publish to Luxious Maven
-      run: mvn deploy
+      run: mvn deploy -s /home/runner/.m2/settings.xml
       
