@@ -10,8 +10,8 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write # Access to Publish a Release
+      packages: write # Access to Publish a Package
 
     #--------------------------------------------------------------------------------------------
     #           Build the Artifact and Publish to Luxious Repository
