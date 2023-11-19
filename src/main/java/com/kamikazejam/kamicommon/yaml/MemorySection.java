@@ -634,6 +634,10 @@ public abstract class MemorySection extends ConfigurationSection {
         return node.getValue().isEmpty();
     }
 
+    /**
+     * Supported in Spigot-Backed Config classes, you must cast to ItemStack if return is not null.
+     * @return the ItemStack at the given key, or null if it doesn't exist
+     */
     @Override
     public Object getItemStack(String key) {
         if (getItemStackHelper() == null) { return null; }
