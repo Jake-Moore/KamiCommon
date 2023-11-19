@@ -41,8 +41,18 @@ jobs:
     #--------------------------------------------------------------------------------------------
     #           Create a Github Release
     #--------------------------------------------------------------------------------------------
-    - uses: ncipollo/release-action@v1
+    - name: Extract Maven Project Version
+      run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+      id: project
+
+    - name: Create Release
+      uses: ncipollo/release-action@v1
       with:
         artifacts: "target/*.jar"
-        bodyFile: "body.md"
+        allowUpdates: true
         removeArtifacts: true
+        omitBodyDuringUpdate: true
+        omitDraftDuringUpdate: true
+        omitNameDuringUpdate: true
+        omitPrereleaseDuringUpdate: true
+        tag: "${{ steps.project.outputs.version }}"
