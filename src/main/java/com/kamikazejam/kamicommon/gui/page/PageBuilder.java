@@ -143,14 +143,9 @@ public abstract class PageBuilder<T extends Player> {
         // Add other icons
         addOtherIcons();
 
-        // Filler items
-        KamiMenuItem fillerItem = getFillerIcon();
-        if (fillerItem != null && fillerItem.getIBuilder() != null && fillerItem.isEnabled()) {
-            menu.fill(fillerItem.getIBuilder());
-        }
-
         // If there are no items to add, open the menu
         if (!items.exists(page)) {
+            tryFill();
             return menu;
         }
 
@@ -162,7 +157,18 @@ public abstract class PageBuilder<T extends Player> {
         }
 
         // Return the menu !
+        tryFill();
         return menu;
+    }
+
+    private void tryFill() {
+        if (menu == null) { return; }
+
+        // Filler items
+        KamiMenuItem fillerItem = getFillerIcon();
+        if (fillerItem != null && fillerItem.getIBuilder() != null && fillerItem.isEnabled()) {
+            menu.fill(fillerItem.getIBuilder());
+        }
     }
 
     public void addOtherIcons() {
