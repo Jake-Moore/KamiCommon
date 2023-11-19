@@ -30,7 +30,7 @@ jobs:
     - name: Maven Settings
       uses: s4u/maven-settings-action@v2.6.0
       with:
-        servers: '[{"id": "luxious-public", "username": "${{ secrets.LUXIOUS_NEXUS_USER }}", "password": "${{ secrets.LUXIOUS_NEXUS_PASS }}" }, {"id": "all-spigot-nms-github", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}" }]'
+        servers: '[{"id": "luxious-public", "username": "${{ secrets.LUXIOUS_NEXUS_USER }}", "password": "${{ secrets.LUXIOUS_NEXUS_PASS }}" }, {"id": "all-spigot-nms", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}" }]'
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
