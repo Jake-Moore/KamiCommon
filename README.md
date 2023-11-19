@@ -1,13 +1,19 @@
+> <a href="https://github.com/Jake-Moore/KamiCommon/releases/latest"> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/test.json" /></a>
+> 
+> The GitHub release may be different from the spigot release
+
 # KamiCommon
 
 - A common library for my (KamikazeJAM) plugins. (This library should support all spigot versions, let me know if anything does not.)
 -  Contact Info (Discord): KamikazeJAM (kamikazejam)
 
-&nbsp;
 
 ## Using the Common
-- The common is deployed to the Luxious Maven repository (https://nexus.luxiouslabs.net/)
-- The first step towards using the maven dependency is configuring the repository
+Before you can use KamiCommon, you have to import it into your project.  
+If you are developing an application outside of spigot, you can shade the jar using maven-shade-plugin and by removing the provided scope from the dependency.
+
+### Import with Maven
+Add the following Repository to your pom.xml
 ```xml
 <repository>
   <id>luxious-public</id>
@@ -15,15 +21,28 @@
   <url>https://nexus.luxiouslabs.net/public</url>
 </repository>
 ```
-- From there you can use the maven dependency for it (replace `{version}` with the latest release)
+Then add the following dependency  
+Replace `{VERSION}` with the version listed at the top of this page.
 ```xml
-<!-- KamiCommon -->
 <dependency>
   <groupId>com.kamikazejam</groupId>
   <artifactId>kamicommon</artifactId>
-  <version>{version}</version>
+  <version>{VERSION}</version>
   <scope>provided</scope>
 </dependency>
+```
+
+### Import with Gradle
+```kotlin
+maven {
+    name = "luxiousPublic"
+    url = uri("https://nexus.luxiouslabs.net/public")
+}
+```
+Then add the following dependency  
+Replace `{VERSION}` with the version listed at the top of this page.
+```kotlin
+compileOnly 'com.kamikazejam:kamicommon:2.0.0.2'
 ```
 
 &nbsp;
