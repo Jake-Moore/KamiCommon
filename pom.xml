@@ -125,10 +125,9 @@
             <layout>default</layout>
         </repository>
         <repository>
-            <id>all-spigot-nms-github</id>
+            <id>all-spigot-nms</id>
             <url>https://maven.pkg.github.com/Jacxk/all-spigot-nms</url>
         </repository>
-
     </repositories>
 
     <dependencies>
