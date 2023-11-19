@@ -1,6 +1,6 @@
 package com.testing;
 
-import com.kamikazejamplugins.kamicommon.configuration.config.StandaloneConfig;
+import com.kamikazejam.kamicommon.configuration.config.StandaloneConfig;
 
 import java.io.File;
 
