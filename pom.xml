@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejam</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>2.0.0.4</version>
+    <version>2.0.0.5</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -64,26 +64,26 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.cryptomorin.xseries</pattern>
-                                    <shadedPattern>com.kamikazejamplugins.kamicommon.util</shadedPattern>
+                                    <shadedPattern>com.kamikazejam.kamicommon.util</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>de.tr7zw</pattern>
-                                    <shadedPattern>com.kamikazejamplugins.kamicommon.nbt</shadedPattern>
+                                    <shadedPattern>com.kamikazejam.kamicommon.nbt</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache.commons.pool2</pattern>
-                                    <shadedPattern>com.kamikazejamplugins.kamicommon.pool</shadedPattern>
+                                    <shadedPattern>com.kamikazejam.kamicommon.pool</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>redis.clients</pattern>
-                                    <shadedPattern>com.kamikazejamplugins.kamicommon.redis</shadedPattern>
+                                    <shadedPattern>com.kamikazejam.kamicommon.redis</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache.commons</pattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.yaml</pattern>
-                                    <shadedPattern>com.kamikazejamplugins.kamicommon.yaml</shadedPattern>
+                                    <shadedPattern>com.kamikazejam.kamicommon.yaml</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
