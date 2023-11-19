@@ -14,6 +14,18 @@ public abstract class KamiSubCommands {
     private final boolean versionCmd, updateCmd;
     private final List<KamiSubCommand> subCommands = new ArrayList<>();
 
+    public KamiSubCommands(JavaPlugin plugin) {
+        this.plugin = plugin;
+        this.versionCmd = false;
+        this.updateCmd = false;
+    }
+
+    public KamiSubCommands(JavaPlugin plugin, boolean versionCmd) {
+        this.plugin = plugin;
+        this.versionCmd = versionCmd;
+        this.updateCmd = false;
+    }
+
     public KamiSubCommands(JavaPlugin plugin, boolean versionCmd, boolean updateCmd) {
         this.plugin = plugin;
         this.versionCmd = versionCmd;
