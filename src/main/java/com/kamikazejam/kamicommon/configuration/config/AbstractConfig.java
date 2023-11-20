@@ -57,7 +57,6 @@ public abstract class AbstractConfig extends ConfigurationSection {
     // Below this point are overrides for the ConfigurationSection abstract class
     // This allows this class to be used as a swap in replacement for a YamlConfiguration (same methods)
 
-    @Override public void set(String key, Object value) { getYamlConfiguration().put(key, value); }
     @Override public void setItemStack(String key, Object itemStack) { getYamlConfiguration().setItemStack(key, itemStack); }
     @Override
     public void setItemBuilder(String key, Object builder) { getYamlConfiguration().setItemBuilder(key, builder); }
