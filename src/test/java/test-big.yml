@@ -332,8 +332,8 @@ test1:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -691,8 +691,8 @@ test2:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -1050,8 +1050,8 @@ test3:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -1409,8 +1409,8 @@ test4:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -1768,8 +1768,8 @@ test5:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -2127,8 +2127,8 @@ test6:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -2486,8 +2486,8 @@ test7:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -2845,8 +2845,8 @@ test8:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -3204,8 +3204,8 @@ test9:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -3563,8 +3563,8 @@ test10:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -3922,8 +3922,8 @@ test11:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -4281,8 +4281,8 @@ test12:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -4640,8 +4640,8 @@ test13:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
@@ -4999,8 +4999,8 @@ test14:
       description: "&7Tells you in chat how much mining experience you have gained in the past 5 minutes."
       maxLevel: 1
       message:
-      - " "
-      - "&7You have mined &f{xp} xp &7in the past 5 minutes."
+        - " "
+        - "&7You have mined &f{xp} xp &7in the past 5 minutes."
     transfuse:
       name: "Transfuse"
       rarity: "ELITE"
