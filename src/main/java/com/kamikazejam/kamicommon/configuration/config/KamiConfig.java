@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 /**
  * A class that represents a configuration file (Meant for implementations WITH a JavaPlugin object available) <p>
  * If you DO NOT have a JavaPlugin object, it is recommended to use {@link StandaloneConfig} instead <p>
- * Key methods are {@link KamiConfig#addCommentAbove(String, String...)} and {@link KamiConfig#addCommentInline(String, String)} <p>
  * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <p>
  * <p></p>
  * When extending this class, provide the File to the config in the super, and then add all desired comments <p>

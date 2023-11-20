@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.configuration.config;
 
-import com.kamikazejam.kamicommon.configuration.config.data.ConfigComment;
 import com.kamikazejam.kamicommon.yaml.ConfigurationSection;
 import com.kamikazejam.kamicommon.yaml.MemoryConfiguration;
 import com.kamikazejam.kamicommon.yaml.YamlConfiguration;
@@ -8,23 +7,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 
 /**
  * A class that represents a configuration file <p>
- * Key methods are {@link AbstractConfig#addCommentAbove(String, String...)} and {@link AbstractConfig#addCommentInline(String, String)} <p>
  * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <p>
  * <p></p>
  * When extending this class, provide the File to the config in the super, and then add all desired comments <p>
  * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link AbstractConfig#save()} and {@link AbstractConfig#reload()} <p>
  */
+@Getter
 @SuppressWarnings("unused")
 public abstract class AbstractConfig extends ConfigurationSection {
-    // Key, Comment
-    @Getter private final List<ConfigComment> comments = new ArrayList<>();
-    private Thread thread = null;
-    @Getter @Setter private boolean defaultCommentsOverwrite = true;
+    @Setter private boolean defaultCommentsOverwrite = true;
 
     /**
      * @return The file associated with this config
@@ -46,67 +43,13 @@ public abstract class AbstractConfig extends ConfigurationSection {
      */
     public abstract void reload();
 
-
-
-    /**
-     * Adds a comment above the specified key
-     * @param key The key to add the comment above
-     * @param comment The comment to add (can be multiple lines separated by \n)
-     * Note: Each string will split lines by "\n", empty lines will be generated as newlines without a #
-     * You can supply one string with \n or multiple strings.
-     */
-    public void addCommentAbove(String key, String... comment) {
-        List<String> comments = new ArrayList<>();
-        for (String s : comment) {
-            comments.addAll(Arrays.asList(s.split("\n")));
-        }
-
-        this.comments.add(new ConfigComment(key, comments, true));
-        checkAutoSave();
-    }
-
-    /**
-     * Adds a comment inline with the specified key
-     * @param key The key to add the comment inline with
-     * @param comment The comment to add (will be formatted like "# {comment}")
-     */
-    public void addCommentInline(String key, String comment) {
-        comments.add(new ConfigComment(key, Collections.singletonList(comment), false));
-        checkAutoSave();
-    }
-
-    // This is essentially a debounce system. It will only save after 1 second. So if 100 addComment methods are
-    // called in the constructor, it will save only once after 1 second.
-    private void checkAutoSave() {
-        if (thread != null) { return; }
-        int size = comments.size();
-
-        thread = new Thread(() -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ignored) {}
-
-            // If the size is the same or more, save it
-            if (comments.size() >= size) {
-                //System.out.println("Saving " + comments.size() + " comments");
-                save();
-            }
-        });
-        thread.start();
-    }
-
     /**
      * Saves the config to the file
+     * @return IFF the config was saved (can be skipped if no changes were made)
      */
-    public void save() {
-        try {
-            KamiConfigManager.saveKamiConfig(this);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+    public boolean save() {
+        return getYamlConfiguration().save();
     }
-
-
 
 
 

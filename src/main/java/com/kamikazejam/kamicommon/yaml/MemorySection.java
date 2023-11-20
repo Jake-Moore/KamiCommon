@@ -11,9 +11,9 @@ import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.*;
 
+@Getter
 @SuppressWarnings({"unused"})
 public abstract class MemorySection extends ConfigurationSection {
-    @Getter
     private final @Nonnull MappingNode node;
     public MemorySection(@Nullable MappingNode node) {
         if (node == null) { node = AbstractYamlHandler.createNewMappingNode(); }
@@ -25,6 +25,9 @@ public abstract class MemorySection extends ConfigurationSection {
 
     @Override
     public void put(String key, Object value) {
+        // Keep track of if we have changed the config
+        if (!this.isChanged()) { this.setChanged(true); }
+
         if (value == null) { put(node, key, null); return; }
 
         //ItemStacks are special
@@ -710,31 +713,30 @@ public abstract class MemorySection extends ConfigurationSection {
         return null;
     }
 
-    public void copyCommentsFromDefault(List<String> keys, MemorySection defConfig, boolean defOverwrites) {
-        Set<String> finalKeys = new HashSet<>(keys);
-
-        for (String key : keys) {
-            String[] parts = key.split("\\.");
-            String currentKey = "";
-
-            for (String part : parts) {
-                currentKey = concat(currentKey, part);
-                if (defConfig.contains(currentKey)) { finalKeys.add(currentKey); }
-            }
-        }
-
-        for (String key : finalKeys) {
+    private long nanos;
+    private long nanos2;
+    public void copyCommentsFromDefault(List<String> allKeys, MemorySection defConfig, boolean defOverwrites) {
+        nanos = 0; nanos2 = 0;
+        for (String key : allKeys) {
             copyCommentFromDefault(key, defConfig, defOverwrites);
         }
+        System.out.println("Node Fetching Took: " + nanos + " ns.");
+        System.out.println("Comment Setting Took: " + nanos2 + " ns.");
     }
 
     private void copyCommentFromDefault(String key, MemorySection defConfig, boolean defOverwrites) {
+        // Fetching Nodes takes 99.6% of the time in this method
+
         // The keyNode in the NodeTuple from a MappingNode's values contains the comments, not the value node
+        long nanos = System.nanoTime();
         Node thisNode = getKeyNode(key);
         if (thisNode == null) { return; }
 
         Node defNode = defConfig.getKeyNode(key);
         if (defNode == null) { return; }
+        this.nanos += System.nanoTime() - nanos; nanos = System.nanoTime();
+
+        // Setting Comments takes 0.4% of the time compared to fetching nodes
 
         // Set the comments that are in the default config (but we can leave ones that people set)
         if (defNode.getBlockComments() != null && !defNode.getBlockComments().isEmpty()) {
@@ -752,5 +754,6 @@ public abstract class MemorySection extends ConfigurationSection {
                 thisNode.setEndComments(defNode.getEndComments());
             }
         }
+        this.nanos2 += System.nanoTime() - nanos;
     }
 }
