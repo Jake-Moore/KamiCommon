@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 /**
  * A class that represents a configuration file (Meant for implementations WITHOUT a JavaPlugin object available) <p>
  * If you have a JavaPlugin object, it is recommended to use {@link KamiConfig} instead <p>
- * Key methods are {@link StandaloneConfig#addCommentAbove(String, String...)} and {@link StandaloneConfig#addCommentInline(String, String)} <p>
  * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <p>
  * <p></p>
  * IF extending this class, provide the File to the config in the super, and then add all desired comments <p>
@@ -44,9 +43,16 @@ public class StandaloneConfig extends AbstractConfig {
 
         ensureFile();
 
+        long ms = System.currentTimeMillis();
         this.yamlHandler = new YamlHandlerStandalone(this, file);
+        System.out.println("YamlHandler took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+
+        System.out.println("Loading config...");
         this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
-        save();
+        System.out.println("Config took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+
+        boolean b = save();
+        System.out.println("Save (" + b + ") took: " + (System.currentTimeMillis() - ms) + " ms.");
     }
 
     @Override

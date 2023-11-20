@@ -2,14 +2,18 @@ package com.kamikazejam.kamicommon.yaml;
 
 import com.kamikazejam.kamicommon.yaml.spigot.ItemStackHelper;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
+@Getter
 @SuppressWarnings("unused")
 public abstract class ConfigurationSection {
-    @Getter @Nullable private final ItemStackHelper itemStackHelper;
+    @Nullable private final ItemStackHelper itemStackHelper;
+    @Setter private boolean changed = false;
+
     public ConfigurationSection() {
         ItemStackHelper temp; //IDK why intelliJ got mad lol
         try {

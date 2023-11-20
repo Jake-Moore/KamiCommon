@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.yaml;
 
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
+import com.kamikazejam.kamicommon.KamiCommon;
 import org.yaml.snakeyaml.nodes.MappingNode;
 
 import java.io.File;
@@ -19,23 +18,23 @@ public class YamlConfiguration extends MemorySection {
         this.configFile = configFile;
     }
 
-    public YamlConfiguration save() {
-        try {
-            DumperOptions options = new DumperOptions();
-            options.setIndent(2);
-            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-            options.setAllowUnicode(true);
-            options.setProcessComments(true);
-            options.setPrettyFlow(false); // When Disabled, [] will be used for empty lists instead of [\n]  (Keep Disabled)
-            options.setSplitLines(false); // When Enabled, string lines might be split into multiple lines   (Keep Disabled)
+    /**
+     * Saves the config to the file
+     * @return true IFF the config was saved successfully (can be skipped if the config is not changed)
+     */
+    public boolean save() {
+        if (!isChanged()) { return false; }
 
+        try {
             // Dump the Node (should keep comments)
             Writer writer = new OutputStreamWriter(Files.newOutputStream(configFile.toPath()), StandardCharsets.UTF_8);
-            new Yaml(options).serialize(this.getNode(), writer);
+            KamiCommon.getYaml().serialize(this.getNode(), writer);
+            setChanged(false);
+            return true;
 
         } catch(IOException e) {
             e.printStackTrace();
         }
-        return this;
+        return false;
     }
 }

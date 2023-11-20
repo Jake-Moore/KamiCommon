@@ -1,12 +1,11 @@
 package com.kamikazejam.kamicommon.yaml.handler;
 
+import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.configuration.config.AbstractConfig;
-import com.kamikazejam.kamicommon.util.data.ANSI;
+import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.yaml.MemoryConfiguration;
 import com.kamikazejam.kamicommon.yaml.YamlConfiguration;
 import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
@@ -14,11 +13,13 @@ import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class AbstractYamlHandler {
     protected final File configFile;
     protected final String fileName;
@@ -44,9 +45,7 @@ public abstract class AbstractYamlHandler {
     }
 
     public YamlConfiguration loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream) {
-        LoaderOptions options = new LoaderOptions();
-        options.setProcessComments(true);
-        Yaml yaml = (new Yaml(options));
+        long ms = System.currentTimeMillis();
 
         try {
             if (!configFile.exists()) {
@@ -60,11 +59,23 @@ public abstract class AbstractYamlHandler {
                     System.exit(0);
                 }
             }
+            System.out.println("  Create took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
             Reader reader = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8);
-            config = new YamlConfiguration((MappingNode) yaml.compose(reader), configFile);
-            config = (addDefaults) ? addDefaults(stream) : config;
-            return config.save();
+            System.out.println("  Reader took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+
+            config = new YamlConfiguration((MappingNode) KamiCommon.getYaml().compose(reader), configFile);
+            System.out.println("  Compose took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+
+            if (addDefaults) {
+                config = addDefaults(stream);
+                System.out.println("  Add Defaults took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+            }
+
+            boolean b = config.save();
+            System.out.println("  Save (" + b + ") took: " + (System.currentTimeMillis() - ms) + " ms.");
+
+            return config;
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,11 +90,20 @@ public abstract class AbstractYamlHandler {
         return new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
     }
 
-    private void save() {
-        if (config != null) { config.save(); }
+
+    /**
+     * Saves the config to the file
+     * @return true IFF the config was saved successfully (can be skipped if the config is not changed)
+     */
+    private boolean save() {
+        if (config != null) { return config.save(); }
+        return false;
     }
 
     private YamlConfiguration addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) {
+        long ms = System.currentTimeMillis();
+        System.out.println("  START addDefaults");
+
         // Use passed arg unless it's null, then grab the IS from the plugin
         InputStream defConfigStream = getIS(defStreamSupplier);
 
@@ -91,38 +111,57 @@ public abstract class AbstractYamlHandler {
         if (defConfigStream == null) {
             error("Error: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!");
             save();
-            return createNewConfig();
+            return config;
         }
+        System.out.println("    Get IS took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
         // InputStream and Reader both contain comments (verified)
         Reader reader = new InputStreamReader(defConfigStream, StandardCharsets.UTF_8);
-        LoaderOptions options = new LoaderOptions();
-        options.setProcessComments(true);
 
-        MemoryConfiguration defConfig = new MemoryConfiguration((MappingNode) (new Yaml(options)).compose(reader));
-        // This should help preserve the order from the default config
-        List<String> keys = getOrderedKeys(getIS(defStreamSupplier), defConfig.getKeys(true));
+        MemoryConfiguration defConfig = new MemoryConfiguration((MappingNode) (KamiCommon.getYaml()).compose(reader));
+        System.out.println("    Compose took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+
+        boolean needsNewKeys = false;
+        for (String key : defConfig.getKeys(true)) {
+            if (!config.contains(key)) { needsNewKeys = true; break; }
+        }
+        System.out.println("    Needs New Keys took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+        System.out.println("      NeedsNewKeys: " + needsNewKeys);
+
+        // This is a massive optimization, because if we need to insert new defaults, it requires a
+        //  full recreate and rewrite of the config file, which is very slow
+        if (!needsNewKeys) { return config; }
+
+        Pair<List<String>, List<String>> pair = YAMLParser.parseOrderedKeys(getIS(defStreamSupplier));
+        List<String> keys = pair.getA();
+        List<String> allKeys = pair.getB();
+        System.out.println("    Parse Keys took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
         // Add any existing keys that aren't in the defaults list
         // this will make any keys set by the plugin, that aren't in the defaults, stay
-        List<String> existingKeys = new ArrayList<>(config.getKeys(true));
-        for (String key : existingKeys) {
+        for (String key : config.getKeys(true)) {
             if (!keys.contains(key)) { keys.add(key); }
         }
+        System.out.println("    Add Existing Keys took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+        System.out.println("      Total Keys: " + keys.size());
 
         YamlConfiguration newConfig = createNewConfig();
+        System.out.println("    Create New Config took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
         // Make a new config with the keys
         for (String key : keys) {
-            // Don't overwrite existing keys
-            Object o = (config.contains(key)) ? config.get(key) : defConfig.get(key);
+            Object o = config.get(key, null);
+            if (o == null) { o = defConfig.get(key); }
             newConfig.set(key, o);
         }
+        System.out.println("    Set Keys took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+
         // Copy comments the user might have placed in the file
         newConfig.copyCommentsFromDefault(keys, config, abstractConfig.isDefaultCommentsOverwrite());
         // Copy comments from the default config (they will override for each specific instance)
-        newConfig.copyCommentsFromDefault(keys, defConfig, abstractConfig.isDefaultCommentsOverwrite());
-        save();
+        newConfig.copyCommentsFromDefault(allKeys, defConfig, abstractConfig.isDefaultCommentsOverwrite());
+        System.out.println("    Copy Comments took: " + (System.currentTimeMillis() - ms) + " ms.");
+
         return newConfig;
     }
 
@@ -133,12 +172,6 @@ public abstract class AbstractYamlHandler {
     public abstract InputStream getIS();
 
     public abstract void error(String s);
-
-    private int getHighest(Set<Integer> set) {
-        int highest = 0;
-        for (int i : set) { if (i > highest) { highest = i; } }
-        return highest;
-    }
 
     private int findLineOfKey(List<String> lines, String key) {
         String[] parts = key.split("\\.");
@@ -190,34 +223,39 @@ public abstract class AbstractYamlHandler {
         return true;
     }
 
-    private List<String> getOrderedKeys(InputStream defConfigStream, Set<String> deepKeys) {
-        List<String> keys = new ArrayList<>();
-        Map<Integer, String> keyMappings = new HashMap<>();
+    public static class YAMLParser {
+        public static Pair<List<String>, List<String>> parseOrderedKeys(InputStream stream) {
+            List<String> valueKeys = new ArrayList<>();
+            List<String> allKeys = new ArrayList<>();
 
-        // Store the lines here so that we don't have to read the file multiple times
-        List<String> lines = new BufferedReader(new InputStreamReader(defConfigStream, StandardCharsets.ISO_8859_1)).lines().collect(Collectors.toList());
-
-        for (String key : deepKeys) {
-            int lineNum = findLineOfKey(lines, key);
-            if (lineNum < 0) {
-                error("Could not find key: '" + key + "' in def config stream: " + configFile.getName() + ANSI.RESET);
-                int i = getHighest(keyMappings.keySet());
-                if (i < lines.size()) {
-                    i = lines.size() + 1;
-                } else {
-                    i++;
-                }
-                keyMappings.put(i, key);
-                continue;
+            Iterable<Object> yamlObjects = KamiCommon.getYaml().loadAll(stream);
+            for (Object yamlObject : yamlObjects) {
+                processYAMLObject(yamlObject, valueKeys, allKeys, "");
             }
-            keyMappings.put(lineNum, key);
+
+            return Pair.of(valueKeys, allKeys);
         }
 
-        List<Integer> keyLines = keyMappings.keySet().stream().sorted().collect(Collectors.toList());
+        @SuppressWarnings("unchecked")
+        private static void processYAMLObject(Object yamlObject, List<String> keysWithValues, List<String> allKeys, String parentKey) {
+            if (yamlObject instanceof Map) {
+                Map<String, Object> yamlMap = (Map<String, Object>) yamlObject;
 
-        for (int keyLine : keyLines) {
-            keys.add(keyMappings.get(keyLine));
+                for (Map.Entry<String, Object> entry : yamlMap.entrySet()) {
+                    String currentKey = parentKey.isEmpty() ? entry.getKey() : parentKey + "." + entry.getKey();
+                    allKeys.add(currentKey);
+
+                    // Add only keys that terminate in a value
+                    Object value = entry.getValue();
+                    if (value != null && !(value instanceof Map)) {
+                        keysWithValues.add(currentKey);
+                    }
+
+                    if (value instanceof Map) {
+                        processYAMLObject(value, keysWithValues, allKeys, currentKey);
+                    }
+                }
+            }
         }
-        return keys;
     }
 }
