@@ -10,8 +10,8 @@ import java.nio.file.Files;
 
 public class Test {
     public static void main(String[] args) throws IOException {
-        String defs = "C:\\Users\\Jake\\Desktop\\Spigot Plugins\\KamiCommon\\src\\test\\java\\test.yml";
-        String path = "C:\\Users\\Jake\\Desktop\\Spigot Plugins\\KamiCommon\\src\\test\\java\\out" + "put.yml";
+        String defs = "C:\\Users\\Jake\\Desktop\\Spigot Plugins\\KamiCommon\\src\\test\\java\\test-big.yml";
+        String path = "C:\\Users\\Jake\\Desktop\\Spigot Plugins\\KamiCommon\\src\\test\\java\\output.yml";
 
         long ymlMs = System.currentTimeMillis();
         KamiCommon.getYaml();
@@ -32,7 +32,9 @@ public class Test {
             }
         });
 
-        int fileLines = IOUtils.readLines(Files.newInputStream(f.toPath())).size();
-        System.out.println("Took: " + (System.currentTimeMillis() - ms) + " ms to load " + fileLines + " lines.");
+        File d = new File(defs);
+        int defLines = IOUtils.readLines(Files.newInputStream(d.toPath())).size();
+        int cfgLines = IOUtils.readLines(Files.newInputStream(f.toPath())).size();
+        System.out.println("Took: " + (System.currentTimeMillis() - ms) + " ms to load " + cfgLines + "/" + defLines + " lines.");
     }
 }

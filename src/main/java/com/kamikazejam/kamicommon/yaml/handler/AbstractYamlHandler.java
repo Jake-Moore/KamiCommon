@@ -90,7 +90,7 @@ public abstract class AbstractYamlHandler {
         return false;
     }
 
-    private final DecimalFormat DF_THOUSANDS = new DecimalFormat("#,###");
+    private static final DecimalFormat DF_THOUSANDS = new DecimalFormat("#,###");
     private YamlConfiguration addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) throws IOException {
         // Use passed arg unless it's null, then grab the IS from the plugin
         InputStream defConfigStream = getIS(defStreamSupplier);
@@ -130,27 +130,24 @@ public abstract class AbstractYamlHandler {
 
         // Compile the Nodes for the user config and default config
         //   We can do this while we update defaults, saving cycles later by using this cached data
-        Map<String, Node> newConfigKeyNodes = new HashMap<>();
         List<NodePair> configKeyNodes = new ArrayList<>();
         for (String key : keys) {
             // Fetch the config NodeTuple if it exists, and add it to the list (for copying comments)
             NodeTuple tuple = config.getNodeTuple(key);
-            if (tuple != null) { configKeyNodes.add(new NodePair(key, tuple.getKeyNode())); }
+            if (tuple != null) { configKeyNodes.add(new NodePair(key, (ScalarNode) tuple.getKeyNode(), true)); }
 
             // Fetch the value we want in the newConfig, and add it to the newConfig
             //   Ignore null since this is a new config, setting to null is a waste of time
             Object v = (tuple != null) ? MemorySection.getNodeValue(tuple.getValueNode()) : defConfig.get(key);
 
             if (v == null) { continue; }
-            NodeTuple t = newConfig.internalPut(key, v);
-
-            if (t != null) { newConfigKeyNodes.put(key, t.getKeyNode()); }
+            newConfig.internalPut(key, v);
         }
 
         // Copy comments the user might have placed in the file
-        copyCommentsFromDefault(newConfigKeyNodes, defaultKeyNodes, abstractConfig.isDefaultCommentsOverwrite());
+        copyCommentsFromDefault(newConfig, defaultKeyNodes, abstractConfig.isDefaultCommentsOverwrite());
         // Copy comments from the default config (they will override for each specific instance)
-        copyCommentsFromDefault(newConfigKeyNodes, configKeyNodes, abstractConfig.isDefaultCommentsOverwrite());
+        copyCommentsFromDefault(newConfig, configKeyNodes, abstractConfig.isDefaultCommentsOverwrite());
 
         return newConfig;
     }
@@ -222,17 +219,18 @@ public abstract class AbstractYamlHandler {
 
                 for (int i = 0; i < mappingNode.getValue().size(); i++) {
                     NodeTuple tuple = mappingNode.getValue().get(i);
-                    Node keyNode = tuple.getKeyNode();
+                    ScalarNode keyNode = (ScalarNode) tuple.getKeyNode();
                     Node valueNode = tuple.getValueNode();
 
-                    String currentKey = parentKey.isEmpty() ? ((ScalarNode) keyNode).getValue() : parentKey + "." + ((ScalarNode) keyNode).getValue();
-                    allKeyNodes.add(new NodePair(currentKey, keyNode));
+                    String currentKey = parentKey.isEmpty() ? keyNode.getValue() : parentKey + "." + keyNode.getValue();
 
                     // Add only keys that terminate in a value
-                    if (!(valueNode instanceof MappingNode) && keysWithValues != null) {
+                    boolean terminates = (!(valueNode instanceof MappingNode) && keysWithValues != null);
+                    if (terminates) {
                         keysWithValues.add(currentKey);
                     }
 
+                    allKeyNodes.add(new NodePair(currentKey, keyNode, terminates));
                     processYAMLNode(valueNode, keysWithValues, allKeyNodes, currentKey);
                 }
             }
@@ -240,43 +238,38 @@ public abstract class AbstractYamlHandler {
     }
 
     /**
-     * @param baseNodes The base nodes to copy comments to
+     * @param config The config to copy comments to
      * @param keyNodes NodePairs of the keys to copy comments from
      */
-    public static void copyCommentsFromDefault(Map<String, Node> baseNodes, List<NodePair> keyNodes, boolean defOverwrites) {
+    public static void copyCommentsFromDefault(YamlConfiguration config, List<NodePair> keyNodes, boolean defOverwrites) {
         for (NodePair nodePair : keyNodes) {
-            copyCommentFromDefault(baseNodes, nodePair, defOverwrites);
+            copyCommentFromDefault(config, nodePair, defOverwrites);
         }
     }
 
-    private static void copyCommentFromDefault(Map<String, Node> baseNodes, NodePair nodePair, boolean defOverwrites) {
-        // Fetching Nodes takes 99.6% of the time in this method
-
-        // The keyNode in the NodeTuple from a MappingNode's values contains the comments, not the value node
-        Node thisNode = baseNodes.get(nodePair.key);
-        if (thisNode == null) { return; }
-
-        Node defNode = nodePair.node;
+    private static void copyCommentFromDefault(YamlConfiguration config, NodePair nodePair, boolean defOverwrites) {
+        Node defNode = nodePair.scalarNode;
         if (defNode == null) { return; }
 
+        // Optimization to skip if the default node doesn't have comments
+        boolean blocks = (defNode.getBlockComments() != null && !defNode.getBlockComments().isEmpty());
+        boolean inLine = (defNode.getInLineComments() != null && !defNode.getInLineComments().isEmpty());
+        boolean end = (defNode.getEndComments() != null && !defNode.getEndComments().isEmpty());
+        if (!blocks && !inLine && !end) { return; }
 
-        // Setting Comments takes 0.4% of the time compared to fetching nodes
+        // The keyNode in the NodeTuple from a MappingNode's values contains the comments, not the value node
+        Node thisNode = config.getKeyNode(nodePair.key);
+        if (thisNode == null) { return; }
 
         // Set the comments that are in the default config (but we can leave ones that people set)
-        if (defNode.getBlockComments() != null && !defNode.getBlockComments().isEmpty()) {
-            if (defOverwrites || thisNode.getBlockComments() == null || thisNode.getBlockComments().isEmpty()) {
-                thisNode.setBlockComments(defNode.getBlockComments());
-            }
+        if (blocks && defOverwrites || thisNode.getBlockComments() == null || thisNode.getBlockComments().isEmpty()) {
+            thisNode.setBlockComments(defNode.getBlockComments());
         }
-        if (defNode.getInLineComments() != null && !defNode.getInLineComments().isEmpty()) {
-            if (defOverwrites || thisNode.getInLineComments() == null || thisNode.getInLineComments().isEmpty()) {
-                thisNode.setInLineComments(defNode.getInLineComments());
-            }
+        if (inLine && defOverwrites || thisNode.getInLineComments() == null || thisNode.getInLineComments().isEmpty()) {
+            thisNode.setInLineComments(defNode.getInLineComments());
         }
-        if (defNode.getEndComments() != null && !defNode.getEndComments().isEmpty()) {
-            if (defOverwrites || thisNode.getEndComments() == null || thisNode.getEndComments().isEmpty()) {
-                thisNode.setEndComments(defNode.getEndComments());
-            }
+        if (end && defOverwrites || thisNode.getEndComments() == null || thisNode.getEndComments().isEmpty()) {
+            thisNode.setEndComments(defNode.getEndComments());
         }
     }
 }

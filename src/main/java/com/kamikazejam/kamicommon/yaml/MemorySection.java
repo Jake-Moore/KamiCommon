@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Getter
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class MemorySection extends ConfigurationSection {
     private final @Nonnull MappingNode node;
     public MemorySection(@Nullable MappingNode node) {
