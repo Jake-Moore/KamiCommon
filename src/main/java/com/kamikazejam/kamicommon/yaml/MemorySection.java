@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.yaml;
 
+import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.yaml.handler.AbstractYamlHandler;
 import lombok.Getter;
 import org.yaml.snakeyaml.DumperOptions;
@@ -21,13 +22,7 @@ public abstract class MemorySection extends ConfigurationSection {
     }
 
     @Override
-    public void set(String key, Object value) { put(key, value); }
-
-    @Override
     public void put(String key, Object value) {
-        // Keep track of if we have changed the config
-        if (!this.isChanged()) { this.setChanged(true); }
-
         if (value == null) { put(node, key, null); return; }
 
         //ItemStacks are special
@@ -41,12 +36,19 @@ public abstract class MemorySection extends ConfigurationSection {
         put(node, key, value);
     }
 
-    private void put(MappingNode node, String key, @Nullable Object value) {
-        if (node == null) { return; }
+    public @Nullable NodeTuple internalPut(String key, @Nullable Object value) {
+        return put(node, key, value);
+    }
+
+    private @Nullable NodeTuple put(MappingNode node, String key, @Nullable Object value) {
+        if (node == null) { return null; }
 
         // Get the current key
         String[] keys = key.split("\\.");
-        if (keys.length == 0) { return; }
+        if (keys.length == 0) { return null; }
+
+        // Keep track of if we have changed the config
+        if (!this.isChanged()) { this.setChanged(true); }
 
         // If we have hit the end of the key and should insert the value here
         if (keys.length == 1) {
@@ -85,8 +87,9 @@ public abstract class MemorySection extends ConfigurationSection {
                 Node valueNode = getValueNode(value);
                 tuple = new NodeTuple(keyNode, valueNode);
                 node.getValue().add(tuple);
+                return tuple;
             }
-            return;
+            return null;
         }
         // > 1 parts left
         // We need to make sure there is a MappingNode
@@ -105,26 +108,26 @@ public abstract class MemorySection extends ConfigurationSection {
 
         // Create a new Tuple for this
         if (tuple == null) {
-            insertNewTuple(node, key, value, part);
-            return;
+            return insertNewTuple(node, key, value, part);
         }
 
         // We need to preserve the data of this tuple
         Node valueNode = tuple.getValueNode();
         if (valueNode instanceof MappingNode) {
-            put((MappingNode) valueNode, key.substring(part.length() + 1), value);
+            return put((MappingNode) valueNode, key.substring(part.length() + 1), value);
         }else {
             node.getValue().remove(tuple);
-            insertNewTuple(node, key, value, part);
+            return insertNewTuple(node, key, value, part);
         }
     }
 
-    private void insertNewTuple(MappingNode node, String key, @Nullable Object value, String part) {
+    private NodeTuple insertNewTuple(MappingNode node, String key, @Nullable Object value, String part) {
         Node keyNode = getScalarNode(part, DumperOptions.ScalarStyle.PLAIN);
         MappingNode valueNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
         NodeTuple tuple = new NodeTuple(keyNode, valueNode);
         node.getValue().add(tuple);
         put(valueNode, key.substring(part.length() + 1), value);
+        return tuple;
     }
 
     private ScalarNode getScalarNode(String value, DumperOptions.ScalarStyle style) {
@@ -173,68 +176,61 @@ public abstract class MemorySection extends ConfigurationSection {
 
     // Internal recursive method to get an object from a MappingNode
     private @Nullable Object getObject(MappingNode node, String search) {
-        Object o = getObjectInternal(node, search, "");
-        if (o instanceof ScalarNode) {
-            return ((ScalarNode) o).getValue();
+        Node n = getNodeInternal(node, search, "");
+        return getNodeValue(n);
+    }
+
+    public static @Nullable Object getNodeValue(Node node) {
+        if (node instanceof ScalarNode) {
+            return ((ScalarNode) node).getValue();
         }
-        if (o instanceof SequenceNode) {
-            SequenceNode s = (SequenceNode) o;
+        if (node instanceof SequenceNode) {
+            SequenceNode s = (SequenceNode) node;
             List<String> valuesList = new ArrayList<>();
-            for (Node n : s.getValue()) {
-                if (n instanceof ScalarNode) {
-                    ScalarNode scalar = (ScalarNode) n;
+            for (Node n2 : s.getValue()) {
+                if (n2 instanceof ScalarNode) {
+                    ScalarNode scalar = (ScalarNode) n2;
                     valuesList.add(scalar.getValue());
-                }else { System.out.print("Unknown node type (2): " + n.getNodeId()); }
+                }else { System.out.print("Unknown node type (2): " + n2.getNodeId()); }
             }
             return valuesList;
         }
-        return o;
+        return node;
     }
 
     @Nullable Node getNode(String key) {
-        Object o = getObjectInternal(node, key, "");
-        if (o instanceof Node) { return (Node) o; }
-        return null;
+        return getNodeInternal(node, key, "");
     }
 
     // Internal recursive method to get an object from a MappingNode
-    private @Nullable Object getObjectInternal(MappingNode node, String search, String currentKey) {
+    private @Nullable Node getNodeInternal(MappingNode node, String search, String currentKey) {
         List<NodeTuple> values = node.getValue();
         for (NodeTuple tuple : values) {
-            Node keyNode = tuple.getKeyNode(); // Node that contains the next key
-            Node valueNode = tuple.getValueNode(); // Node that contains the next Node or the value object
+            // Skip non-scalar nodes (shouldn't happen) and nodes that don't match the search
+            Pair<Node, String> pair = verifyNodeTuple(tuple, search, currentKey);
+            if (pair == null) { continue; }
+            Node valueNode = pair.getA();
+            String key2 = pair.getB();
 
-            if (keyNode.getNodeId() == NodeId.mapping) {
-                if (search.equals(currentKey)) { return valueNode; } // If the key is the search, return the valueNode
+            // If this is a mapping node, continue (it can't be a value)
+            if (valueNode instanceof MappingNode) {
+                MappingNode m = (MappingNode) valueNode;
+                if (key2.equals(search)) { return m; } // If the key is the search, return the valueNode
 
-                Object o = getObjectInternal((MappingNode) keyNode, search, currentKey);
-                if (o != null) { return o; }
-            } else if (keyNode.getNodeId() == NodeId.scalar) {
-                ScalarNode scalarNode = (ScalarNode) keyNode;
-                String key2 = concat(currentKey, scalarNode.getValue());
+                Node n = getNodeInternal(m, search, key2);
+                if (n != null) { return n; }
+                continue;
+            }
 
-                // If this is a mapping node, continue (it can't be a value)
-                if (valueNode instanceof MappingNode) {
-                    MappingNode m = (MappingNode) valueNode;
-                    if (key2.equals(search)) { return m; } // If the key is the search, return the valueNode
-
-                    Object o = getObjectInternal(m, search, key2);
-                    if (o != null) { return o; }
-                    continue;
-                }
-
-                if (valueNode instanceof ScalarNode) {
-                    ScalarNode s = (ScalarNode) valueNode;
-                    if (key2.equals(search)) { return s; }
-                }else if (valueNode instanceof SequenceNode) {
-                    SequenceNode s = (SequenceNode) valueNode;
-                    if (!key2.equals(search)) { continue; }
-                    return s;
-                } else {
-                    throw new RuntimeException("Cannot get string, unknown node type: " + valueNode.getNodeId());
-                }
+            if (valueNode instanceof ScalarNode) {
+                ScalarNode s = (ScalarNode) valueNode;
+                if (key2.equals(search)) { return s; }
+            }else if (valueNode instanceof SequenceNode) {
+                SequenceNode s = (SequenceNode) valueNode;
+                if (!key2.equals(search)) { continue; }
+                return s;
             } else {
-                throw new RuntimeException("Cannot get string (2), unknown node type: " + keyNode.getNodeId());
+                throw new RuntimeException("Cannot get string, unknown node type: " + valueNode.getNodeId());
             }
         }
         return null;
@@ -667,93 +663,60 @@ public abstract class MemorySection extends ConfigurationSection {
 
     @Nullable
     public Node getKeyNode(String key) {
-        Object o = getKeyNodeInternal(node, key, "");
-        if (o instanceof Node) { return (Node) o; }
+        NodeTuple o = getNodeTuple(key);
+        if (o != null) { return o.getKeyNode(); }
         return null;
     }
+
+    @Nullable
+    public NodeTuple getNodeTuple(String key) {
+        return getNodeTupleInternal(node, key, "");
+    }
+
 
     // Internal recursive method to get an object from a MappingNode
-    private @Nullable Object getKeyNodeInternal(MappingNode node, String search, String currentKey) {
+    private @Nullable NodeTuple getNodeTupleInternal(MappingNode node, String search, String currentKey) {
         List<NodeTuple> values = node.getValue();
         for (NodeTuple tuple : values) {
-            Node keyNode = tuple.getKeyNode(); // Node that contains the next key
-            Node valueNode = tuple.getValueNode(); // Node that contains the next Node or the value object
+            // Skip non-scalar nodes (shouldn't happen) and nodes that don't match the search
+            Pair<Node, String> pair = verifyNodeTuple(tuple, search, currentKey);
+            if (pair == null) { continue; }
+            Node valueNode = pair.getA();
+            String key2 = pair.getB();
 
-            if (keyNode.getNodeId() == NodeId.mapping) {
-                if (search.equals(currentKey)) { return keyNode; } // If the key is the search, return the valueNode
+            // If this is a mapping node, continue (it can't be a value)
+            if (valueNode instanceof MappingNode) {
+                MappingNode m = (MappingNode) valueNode;
+                if (key2.equals(search)) { return tuple; } // If the key is the search, return the valueNode
 
-                Object o = getKeyNodeInternal((MappingNode) keyNode, search, currentKey);
+                NodeTuple o = getNodeTupleInternal(m, search, key2);
                 if (o != null) { return o; }
-            } else if (keyNode.getNodeId() == NodeId.scalar) {
-                ScalarNode scalarNode = (ScalarNode) keyNode;
-                String key2 = concat(currentKey, scalarNode.getValue());
+                continue;
+            }
 
-                // If this is a mapping node, continue (it can't be a value)
-                if (valueNode instanceof MappingNode) {
-                    MappingNode m = (MappingNode) valueNode;
-                    if (key2.equals(search)) { return keyNode; } // If the key is the search, return the valueNode
-
-                    Object o = getKeyNodeInternal(m, search, key2);
-                    if (o != null) { return o; }
-                    continue;
-                }
-
-                if (valueNode instanceof ScalarNode) {
-                    if (key2.equals(search)) { return keyNode; }
-                }else if (valueNode instanceof SequenceNode) {
-                    if (!key2.equals(search)) { continue; }
-                    return keyNode;
-                } else {
-                    throw new RuntimeException("Cannot get string, unknown node type: " + valueNode.getNodeId());
-                }
+            if (valueNode instanceof ScalarNode) {
+                if (key2.equals(search)) { return tuple; }
+            }else if (valueNode instanceof SequenceNode) {
+                if (!key2.equals(search)) { continue; }
+                return tuple;
             } else {
-                throw new RuntimeException("Cannot get string (2), unknown node type: " + keyNode.getNodeId());
+                throw new RuntimeException("Cannot get string, unknown node type: " + valueNode.getNodeId());
             }
         }
         return null;
     }
 
-    private long nanos;
-    private long nanos2;
-    public void copyCommentsFromDefault(List<String> allKeys, MemorySection defConfig, boolean defOverwrites) {
-        nanos = 0; nanos2 = 0;
-        for (String key : allKeys) {
-            copyCommentFromDefault(key, defConfig, defOverwrites);
+    private @Nullable Pair<Node, String> verifyNodeTuple(NodeTuple tuple, String search, String currentKey) {
+        if (!(tuple.getKeyNode() instanceof ScalarNode)) {
+            throw new RuntimeException("getNodeInternal unknown node type: " + tuple.getKeyNode());
         }
-        System.out.println("Node Fetching Took: " + nanos + " ns.");
-        System.out.println("Comment Setting Took: " + nanos2 + " ns.");
-    }
+        Node valueNode = tuple.getValueNode(); // Node that contains the next Node or the value object
 
-    private void copyCommentFromDefault(String key, MemorySection defConfig, boolean defOverwrites) {
-        // Fetching Nodes takes 99.6% of the time in this method
+        ScalarNode scalarNode = (ScalarNode) tuple.getKeyNode();
+        String key2 = concat(currentKey, scalarNode.getValue());
 
-        // The keyNode in the NodeTuple from a MappingNode's values contains the comments, not the value node
-        long nanos = System.nanoTime();
-        Node thisNode = getKeyNode(key);
-        if (thisNode == null) { return; }
-
-        Node defNode = defConfig.getKeyNode(key);
-        if (defNode == null) { return; }
-        this.nanos += System.nanoTime() - nanos; nanos = System.nanoTime();
-
-        // Setting Comments takes 0.4% of the time compared to fetching nodes
-
-        // Set the comments that are in the default config (but we can leave ones that people set)
-        if (defNode.getBlockComments() != null && !defNode.getBlockComments().isEmpty()) {
-            if (defOverwrites || (thisNode.getBlockComments() == null || thisNode.getBlockComments().isEmpty())) {
-                thisNode.setBlockComments(defNode.getBlockComments());
-            }
-        }
-        if (defNode.getInLineComments() != null && !defNode.getInLineComments().isEmpty()) {
-            if (defOverwrites || (thisNode.getInLineComments() == null || thisNode.getInLineComments().isEmpty())) {
-                thisNode.setInLineComments(defNode.getInLineComments());
-            }
-        }
-        if (defNode.getEndComments() != null && !defNode.getEndComments().isEmpty()) {
-            if (defOverwrites || (thisNode.getEndComments() == null || thisNode.getEndComments().isEmpty())) {
-                thisNode.setEndComments(defNode.getEndComments());
-            }
-        }
-        this.nanos2 += System.nanoTime() - nanos;
+        // Optimize by pruning branches that don't match the search
+        if (!search.startsWith(key2)) { return null; }
+        return Pair.of(valueNode, key2);
     }
 }

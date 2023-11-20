@@ -4,19 +4,18 @@ import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.configuration.config.AbstractConfig;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.yaml.MemoryConfiguration;
+import com.kamikazejam.kamicommon.yaml.MemorySection;
 import com.kamikazejam.kamicommon.yaml.YamlConfiguration;
+import com.kamikazejam.kamicommon.yaml.data.NodePair;
 import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.nodes.*;
 
 import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.DecimalFormat;
+import java.util.*;
 import java.util.function.Supplier;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -45,8 +44,6 @@ public abstract class AbstractYamlHandler {
     }
 
     public YamlConfiguration loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream) {
-        long ms = System.currentTimeMillis();
-
         try {
             if (!configFile.exists()) {
                 if (!configFile.getParentFile().exists()) {
@@ -59,22 +56,15 @@ public abstract class AbstractYamlHandler {
                     System.exit(0);
                 }
             }
-            System.out.println("  Create took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
             Reader reader = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8);
-            System.out.println("  Reader took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
-
             config = new YamlConfiguration((MappingNode) KamiCommon.getYaml().compose(reader), configFile);
-            System.out.println("  Compose took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
             if (addDefaults) {
                 config = addDefaults(stream);
-                System.out.println("  Add Defaults took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
             }
 
-            boolean b = config.save();
-            System.out.println("  Save (" + b + ") took: " + (System.currentTimeMillis() - ms) + " ms.");
-
+            config.save();
             return config;
         }catch (IOException e) {
             e.printStackTrace();
@@ -100,10 +90,8 @@ public abstract class AbstractYamlHandler {
         return false;
     }
 
-    private YamlConfiguration addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) {
-        long ms = System.currentTimeMillis();
-        System.out.println("  START addDefaults");
-
+    private final DecimalFormat DF_THOUSANDS = new DecimalFormat("#,###");
+    private YamlConfiguration addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) throws IOException {
         // Use passed arg unless it's null, then grab the IS from the plugin
         InputStream defConfigStream = getIS(defStreamSupplier);
 
@@ -113,54 +101,56 @@ public abstract class AbstractYamlHandler {
             save();
             return config;
         }
-        System.out.println("    Get IS took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
         // InputStream and Reader both contain comments (verified)
         Reader reader = new InputStreamReader(defConfigStream, StandardCharsets.UTF_8);
 
         MemoryConfiguration defConfig = new MemoryConfiguration((MappingNode) (KamiCommon.getYaml()).compose(reader));
-        System.out.println("    Compose took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
         boolean needsNewKeys = false;
         for (String key : defConfig.getKeys(true)) {
             if (!config.contains(key)) { needsNewKeys = true; break; }
         }
-        System.out.println("    Needs New Keys took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
-        System.out.println("      NeedsNewKeys: " + needsNewKeys);
 
         // This is a massive optimization, because if we need to insert new defaults, it requires a
         //  full recreate and rewrite of the config file, which is very slow
         if (!needsNewKeys) { return config; }
 
-        Pair<List<String>, List<String>> pair = YAMLParser.parseOrderedKeys(getIS(defStreamSupplier));
-        List<String> keys = pair.getA();
-        List<String> allKeys = pair.getB();
-        System.out.println("    Parse Keys took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
+        Pair<List<String>, List<NodePair>> pair2 = YAMLParser.parseOrderedKeys(getIS(defStreamSupplier));
+        List<String> keys = pair2.getA();
+        List<NodePair> defaultKeyNodes = pair2.getB();
 
         // Add any existing keys that aren't in the defaults list
         // this will make any keys set by the plugin, that aren't in the defaults, stay
         for (String key : config.getKeys(true)) {
             if (!keys.contains(key)) { keys.add(key); }
         }
-        System.out.println("    Add Existing Keys took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
-        System.out.println("      Total Keys: " + keys.size());
 
         YamlConfiguration newConfig = createNewConfig();
-        System.out.println("    Create New Config took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
-        // Make a new config with the keys
+        // Compile the Nodes for the user config and default config
+        //   We can do this while we update defaults, saving cycles later by using this cached data
+        Map<String, Node> newConfigKeyNodes = new HashMap<>();
+        List<NodePair> configKeyNodes = new ArrayList<>();
         for (String key : keys) {
-            Object o = config.get(key, null);
-            if (o == null) { o = defConfig.get(key); }
-            newConfig.set(key, o);
+            // Fetch the config NodeTuple if it exists, and add it to the list (for copying comments)
+            NodeTuple tuple = config.getNodeTuple(key);
+            if (tuple != null) { configKeyNodes.add(new NodePair(key, tuple.getKeyNode())); }
+
+            // Fetch the value we want in the newConfig, and add it to the newConfig
+            //   Ignore null since this is a new config, setting to null is a waste of time
+            Object v = (tuple != null) ? MemorySection.getNodeValue(tuple.getValueNode()) : defConfig.get(key);
+
+            if (v == null) { continue; }
+            NodeTuple t = newConfig.internalPut(key, v);
+
+            if (t != null) { newConfigKeyNodes.put(key, t.getKeyNode()); }
         }
-        System.out.println("    Set Keys took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
         // Copy comments the user might have placed in the file
-        newConfig.copyCommentsFromDefault(keys, config, abstractConfig.isDefaultCommentsOverwrite());
+        copyCommentsFromDefault(newConfigKeyNodes, defaultKeyNodes, abstractConfig.isDefaultCommentsOverwrite());
         // Copy comments from the default config (they will override for each specific instance)
-        newConfig.copyCommentsFromDefault(allKeys, defConfig, abstractConfig.isDefaultCommentsOverwrite());
-        System.out.println("    Copy Comments took: " + (System.currentTimeMillis() - ms) + " ms.");
+        copyCommentsFromDefault(newConfigKeyNodes, configKeyNodes, abstractConfig.isDefaultCommentsOverwrite());
 
         return newConfig;
     }
@@ -172,29 +162,6 @@ public abstract class AbstractYamlHandler {
     public abstract InputStream getIS();
 
     public abstract void error(String s);
-
-    private int findLineOfKey(List<String> lines, String key) {
-        String[] parts = key.split("\\.");
-        int searchingFor = 0;
-
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            String part = parts[searchingFor];
-            //Integer keys are wrapped in ''
-            if (isInteger(part)) { part = "'" + part + "'"; }
-
-            String start = repeat("  ", searchingFor) + part + ":";
-            if (line.startsWith(start)) {
-                if (searchingFor == parts.length - 1) {
-                    // We've found the key we're looking for
-                    return i+1;
-                } else {
-                    searchingFor++;
-                }
-            }
-        }
-        return -1;
-    }
 
     @SuppressWarnings("SameParameterValue")
     private String repeat(String s, int times) {
@@ -223,38 +190,92 @@ public abstract class AbstractYamlHandler {
         return true;
     }
 
-    public static class YAMLParser {
-        public static Pair<List<String>, List<String>> parseOrderedKeys(InputStream stream) {
-            List<String> valueKeys = new ArrayList<>();
-            List<String> allKeys = new ArrayList<>();
 
-            Iterable<Object> yamlObjects = KamiCommon.getYaml().loadAll(stream);
-            for (Object yamlObject : yamlObjects) {
-                processYAMLObject(yamlObject, valueKeys, allKeys, "");
+    private static class YAMLParser {
+
+        public static Pair<List<String>, List<NodePair>> parseOrderedKeys(InputStream stream) {
+            List<String> valueKeys = new ArrayList<>();
+            List<NodePair> allKeyNodes = new ArrayList<>();
+
+            Node rootNode = KamiCommon.getYaml().compose(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            if (rootNode instanceof MappingNode) {
+                processYAMLNode(rootNode, valueKeys, allKeyNodes, "");
             }
 
-            return Pair.of(valueKeys, allKeys);
+            return Pair.of(valueKeys, allKeyNodes);
         }
 
-        @SuppressWarnings("unchecked")
-        private static void processYAMLObject(Object yamlObject, List<String> keysWithValues, List<String> allKeys, String parentKey) {
-            if (yamlObject instanceof Map) {
-                Map<String, Object> yamlMap = (Map<String, Object>) yamlObject;
+        public static List<NodePair> parseOrderedNodes(InputStream stream) {
+            List<NodePair> allKeyNodes = new ArrayList<>();
 
-                for (Map.Entry<String, Object> entry : yamlMap.entrySet()) {
-                    String currentKey = parentKey.isEmpty() ? entry.getKey() : parentKey + "." + entry.getKey();
-                    allKeys.add(currentKey);
+            Node rootNode = KamiCommon.getYaml().compose(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            if (rootNode instanceof MappingNode) {
+                processYAMLNode(rootNode, null, allKeyNodes, "");
+            }
+
+            return allKeyNodes;
+        }
+
+        private static void processYAMLNode(Node node, @Nullable List<String> keysWithValues, List<NodePair> allKeyNodes, String parentKey) {
+            if (node instanceof MappingNode) {
+                MappingNode mappingNode = (MappingNode) node;
+
+                for (int i = 0; i < mappingNode.getValue().size(); i++) {
+                    NodeTuple tuple = mappingNode.getValue().get(i);
+                    Node keyNode = tuple.getKeyNode();
+                    Node valueNode = tuple.getValueNode();
+
+                    String currentKey = parentKey.isEmpty() ? ((ScalarNode) keyNode).getValue() : parentKey + "." + ((ScalarNode) keyNode).getValue();
+                    allKeyNodes.add(new NodePair(currentKey, keyNode));
 
                     // Add only keys that terminate in a value
-                    Object value = entry.getValue();
-                    if (value != null && !(value instanceof Map)) {
+                    if (!(valueNode instanceof MappingNode) && keysWithValues != null) {
                         keysWithValues.add(currentKey);
                     }
 
-                    if (value instanceof Map) {
-                        processYAMLObject(value, keysWithValues, allKeys, currentKey);
-                    }
+                    processYAMLNode(valueNode, keysWithValues, allKeyNodes, currentKey);
                 }
+            }
+        }
+    }
+
+    /**
+     * @param baseNodes The base nodes to copy comments to
+     * @param keyNodes NodePairs of the keys to copy comments from
+     */
+    public static void copyCommentsFromDefault(Map<String, Node> baseNodes, List<NodePair> keyNodes, boolean defOverwrites) {
+        for (NodePair nodePair : keyNodes) {
+            copyCommentFromDefault(baseNodes, nodePair, defOverwrites);
+        }
+    }
+
+    private static void copyCommentFromDefault(Map<String, Node> baseNodes, NodePair nodePair, boolean defOverwrites) {
+        // Fetching Nodes takes 99.6% of the time in this method
+
+        // The keyNode in the NodeTuple from a MappingNode's values contains the comments, not the value node
+        Node thisNode = baseNodes.get(nodePair.key);
+        if (thisNode == null) { return; }
+
+        Node defNode = nodePair.node;
+        if (defNode == null) { return; }
+
+
+        // Setting Comments takes 0.4% of the time compared to fetching nodes
+
+        // Set the comments that are in the default config (but we can leave ones that people set)
+        if (defNode.getBlockComments() != null && !defNode.getBlockComments().isEmpty()) {
+            if (defOverwrites || thisNode.getBlockComments() == null || thisNode.getBlockComments().isEmpty()) {
+                thisNode.setBlockComments(defNode.getBlockComments());
+            }
+        }
+        if (defNode.getInLineComments() != null && !defNode.getInLineComments().isEmpty()) {
+            if (defOverwrites || thisNode.getInLineComments() == null || thisNode.getInLineComments().isEmpty()) {
+                thisNode.setInLineComments(defNode.getInLineComments());
+            }
+        }
+        if (defNode.getEndComments() != null && !defNode.getEndComments().isEmpty()) {
+            if (defOverwrites || thisNode.getEndComments() == null || thisNode.getEndComments().isEmpty()) {
+                thisNode.setEndComments(defNode.getEndComments());
             }
         }
     }

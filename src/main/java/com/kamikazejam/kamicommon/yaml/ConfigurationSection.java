@@ -25,7 +25,7 @@ public abstract class ConfigurationSection {
         itemStackHelper = temp;
     }
 
-    public abstract void set(String key, Object value);
+    public final void set(String key, Object value) { put(key, value); }
     public abstract void put(String key, Object value);
     public abstract Object get(String key);
     public abstract Object get(String key, Object def);

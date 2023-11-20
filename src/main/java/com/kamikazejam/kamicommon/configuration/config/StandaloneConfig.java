@@ -43,16 +43,10 @@ public class StandaloneConfig extends AbstractConfig {
 
         ensureFile();
 
-        long ms = System.currentTimeMillis();
         this.yamlHandler = new YamlHandlerStandalone(this, file);
-        System.out.println("YamlHandler took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
-
-        System.out.println("Loading config...");
         this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
-        System.out.println("Config took: " + (System.currentTimeMillis() - ms) + " ms."); ms = System.currentTimeMillis();
 
-        boolean b = save();
-        System.out.println("Save (" + b + ") took: " + (System.currentTimeMillis() - ms) + " ms.");
+        save();
     }
 
     @Override
