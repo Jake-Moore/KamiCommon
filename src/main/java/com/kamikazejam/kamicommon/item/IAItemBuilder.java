@@ -90,17 +90,6 @@ public class IAItemBuilder extends IBuilder {
 
     @Override
     public IBuilder clone() {
-
-        IAItemBuilder itemBuilder = new IAItemBuilder(this.material, this.amount, this.damage);
-        itemBuilder.name = name;
-        itemBuilder.lore = lore;
-        itemBuilder.unbreakable = unbreakable;
-        itemBuilder.itemFlags = itemFlags;
-        itemBuilder.enchantments = enchantments;
-        itemBuilder.addGlow = addGlow;
-        itemBuilder.skullOwner = skullOwner;
-        itemBuilder.slot = slot;
-
-        return itemBuilder;
+        return loadClone(new IAItemBuilder(this.material, this.amount, this.damage));
     }
 }
