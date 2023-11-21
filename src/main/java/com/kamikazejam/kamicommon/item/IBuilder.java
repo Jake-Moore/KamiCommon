@@ -372,4 +372,17 @@ public abstract class IBuilder {
      * @return A clone of this item `new IBuilder(this.is)`
      */
     public abstract IBuilder clone();
+
+    public IBuilder loadClone(IBuilder builder) {
+        builder.name = name;
+        builder.lore = lore;
+        builder.unbreakable = unbreakable;
+        builder.itemFlags = itemFlags;
+        builder.enchantments = enchantments;
+        builder.addGlow = addGlow;
+        builder.skullOwner = skullOwner;
+        builder.slot = slot;
+        builder.base = base;
+        return builder;
+    }
 }
