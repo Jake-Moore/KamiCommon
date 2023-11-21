@@ -382,7 +382,7 @@ public abstract class IBuilder {
         builder.addGlow = addGlow;
         builder.skullOwner = skullOwner;
         builder.slot = slot;
-        builder.base = base;
+        builder.base = base.clone();
         return builder;
     }
 }
