@@ -375,10 +375,10 @@ public abstract class IBuilder {
 
     public IBuilder loadClone(IBuilder builder) {
         builder.name = name;
-        builder.lore = lore;
+        builder.lore.addAll(lore);
         builder.unbreakable = unbreakable;
-        builder.itemFlags = itemFlags;
-        builder.enchantments = enchantments;
+        builder.itemFlags.addAll(itemFlags);
+        builder.enchantments.putAll(enchantments);
         builder.addGlow = addGlow;
         builder.skullOwner = skullOwner;
         builder.slot = slot;
