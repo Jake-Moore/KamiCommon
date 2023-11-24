@@ -12,13 +12,14 @@ import redis.clients.jedis.Protocol;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
+@Getter
 @SuppressWarnings("unused")
 public abstract class JedisHandler {
-    @Getter private JedisPool jedisPool;
-    @Getter private PubSubListener pubSubListener;
-    @Getter Thread subscription;
-    @Getter final Plugin plugin;
-    @Getter @Setter private boolean debug = false;
+    private JedisPool jedisPool;
+    private PubSubListener pubSubListener;
+    Thread subscription;
+    final Plugin plugin;
+    @Setter private boolean debug = false;
 
     //Constructor 1
     public JedisHandler(Plugin plugin) {
@@ -91,8 +92,9 @@ public abstract class JedisHandler {
 
     //Mandatory to create because of createPubSubListener() method
     //  onMessage override also required
+    @Getter
     public static abstract class PubSubListener extends JedisPubSub {
-        @Getter private final Plugin plugin;
+        private final Plugin plugin;
         public PubSubListener(Plugin plugin) {
             this.plugin = plugin;
         }

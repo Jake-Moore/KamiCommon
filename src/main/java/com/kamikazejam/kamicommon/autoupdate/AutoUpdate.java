@@ -37,7 +37,7 @@ import java.util.Base64;
  * This utility also renames the current jar to .off and places the new jar into /plugins if the names do not match.
  *   This allows linux machines to update jars that have different versions seamlessly
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class AutoUpdate implements Listener {
     private static boolean updated = false;
     private static final String BASE_URL = "https://api.github.com/repos/KamiUpdates/AutoUpdate/releases/tags/";

@@ -1,12 +1,9 @@
-package com.kamikazejam.kamicommon.yaml.handler;
+package com.kamikazejam.kamicommon.yaml;
 
 import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.configuration.config.AbstractConfig;
 import com.kamikazejam.kamicommon.util.data.Pair;
-import com.kamikazejam.kamicommon.yaml.MemoryConfiguration;
-import com.kamikazejam.kamicommon.yaml.MemorySection;
-import com.kamikazejam.kamicommon.yaml.YamlConfiguration;
-import com.kamikazejam.kamicommon.yaml.data.NodePair;
+import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.*;
 
@@ -15,35 +12,43 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public abstract class AbstractYamlHandler {
+public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
     protected final File configFile;
     protected final String fileName;
-    protected YamlConfiguration config;
-    protected final AbstractConfig abstractConfig;
+    protected T config;
+    protected final AbstractConfig<?> abstractConfig;
 
-    public AbstractYamlHandler(AbstractConfig abstractConfig, File configFile) {
+    public AbstractYamlHandler(AbstractConfig<?> abstractConfig, File configFile) {
         this.abstractConfig = abstractConfig;
         this.configFile = configFile;
         this.fileName = configFile.getName();
         this.config = null;
     }
 
-    public AbstractYamlHandler(AbstractConfig abstractConfig, File configFile, String fileName) {
+    public AbstractYamlHandler(AbstractConfig<?> abstractConfig, File configFile, String fileName) {
         this.abstractConfig = abstractConfig;
         this.configFile = configFile;
         this.fileName = fileName;
         this.config = null;
     }
 
-    public YamlConfiguration loadConfig(boolean addDefaults) {
+    public abstract T newConfig(MappingNode node, File configFile);
+    public abstract MemorySectionMethods<?> newMemorySection(MappingNode node);
+
+
+
+
+    public T loadConfig(boolean addDefaults) {
         return loadConfig(addDefaults, null);
     }
 
-    public YamlConfiguration loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream) {
+    public T loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream) {
         try {
             if (!configFile.exists()) {
                 if (!configFile.getParentFile().exists()) {
@@ -58,7 +63,7 @@ public abstract class AbstractYamlHandler {
             }
 
             Reader reader = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8);
-            config = new YamlConfiguration((MappingNode) KamiCommon.getYaml().compose(reader), configFile);
+            config = newConfig((MappingNode) (KamiCommon.getYaml()).compose(reader), configFile);
 
             if (addDefaults) {
                 config = addDefaults(stream);
@@ -69,11 +74,7 @@ public abstract class AbstractYamlHandler {
         }catch (IOException e) {
             e.printStackTrace();
         }
-        return createNewConfig();
-    }
-
-    private YamlConfiguration createNewConfig() {
-        return new YamlConfiguration(createNewMappingNode(), configFile);
+        return newConfig(createNewMappingNode(), configFile);
     }
 
     public static MappingNode createNewMappingNode() {
@@ -91,7 +92,7 @@ public abstract class AbstractYamlHandler {
     }
 
     private static final DecimalFormat DF_THOUSANDS = new DecimalFormat("#,###");
-    private YamlConfiguration addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) throws IOException {
+    private T addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) {
         // Use passed arg unless it's null, then grab the IS from the plugin
         InputStream defConfigStream = getIS(defStreamSupplier);
 
@@ -105,7 +106,7 @@ public abstract class AbstractYamlHandler {
         // InputStream and Reader both contain comments (verified)
         Reader reader = new InputStreamReader(defConfigStream, StandardCharsets.UTF_8);
 
-        MemoryConfiguration defConfig = new MemoryConfiguration((MappingNode) (KamiCommon.getYaml()).compose(reader));
+        MemorySectionMethods<?> defConfig = newMemorySection((MappingNode) (KamiCommon.getYaml()).compose(reader));
 
         boolean needsNewKeys = false;
         for (String key : defConfig.getKeys(true)) {
@@ -126,7 +127,7 @@ public abstract class AbstractYamlHandler {
             if (!keys.contains(key)) { keys.add(key); }
         }
 
-        YamlConfiguration newConfig = createNewConfig();
+        T newConfig = newConfig(createNewMappingNode(), configFile);
 
         // Compile the Nodes for the user config and default config
         //   We can do this while we update defaults, saving cycles later by using this cached data
@@ -138,7 +139,7 @@ public abstract class AbstractYamlHandler {
 
             // Fetch the value we want in the newConfig, and add it to the newConfig
             //   Ignore null since this is a new config, setting to null is a waste of time
-            Object v = (tuple != null) ? MemorySection.getNodeValue(tuple.getValueNode()) : defConfig.get(key);
+            Object v = (tuple != null) ? AbstractMemorySection.getNodeValue(tuple.getValueNode()) : defConfig.get(key);
 
             if (v == null) { continue; }
             newConfig.internalPut(key, v);
@@ -241,13 +242,13 @@ public abstract class AbstractYamlHandler {
      * @param config The config to copy comments to
      * @param keyNodes NodePairs of the keys to copy comments from
      */
-    public static void copyCommentsFromDefault(YamlConfiguration config, List<NodePair> keyNodes, boolean defOverwrites) {
+    public static void copyCommentsFromDefault(AbstractYamlConfiguration config, List<NodePair> keyNodes, boolean defOverwrites) {
         for (NodePair nodePair : keyNodes) {
             copyCommentFromDefault(config, nodePair, defOverwrites);
         }
     }
 
-    private static void copyCommentFromDefault(YamlConfiguration config, NodePair nodePair, boolean defOverwrites) {
+    private static void copyCommentFromDefault(AbstractYamlConfiguration config, NodePair nodePair, boolean defOverwrites) {
         Node defNode = nodePair.scalarNode;
         if (defNode == null) { return; }
 
@@ -270,6 +271,18 @@ public abstract class AbstractYamlHandler {
         }
         if (end && defOverwrites || thisNode.getEndComments() == null || thisNode.getEndComments().isEmpty()) {
             thisNode.setEndComments(defNode.getEndComments());
+        }
+    }
+
+
+    public static class NodePair {
+        public final String key;
+        public final ScalarNode scalarNode;
+        public final boolean terminatesInValue;
+        public NodePair(String key, ScalarNode scalarNode, boolean terminatesInValue) {
+            this.key = key;
+            this.scalarNode = scalarNode;
+            this.terminatesInValue = terminatesInValue;
         }
     }
 }

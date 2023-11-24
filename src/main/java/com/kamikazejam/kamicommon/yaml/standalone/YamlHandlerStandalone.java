@@ -1,19 +1,22 @@
-package com.kamikazejam.kamicommon.yaml.handler;
+package com.kamikazejam.kamicommon.yaml.standalone;
 
 import com.kamikazejam.kamicommon.configuration.config.AbstractConfig;
 import com.kamikazejam.kamicommon.util.data.ANSI;
+import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
+import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
+import org.yaml.snakeyaml.nodes.MappingNode;
 
 import java.io.File;
 import java.io.InputStream;
 
 @SuppressWarnings("unused")
-public class YamlHandlerStandalone extends AbstractYamlHandler {
+public class YamlHandlerStandalone extends AbstractYamlHandler<YamlConfigurationStandalone> {
 
-    public YamlHandlerStandalone(AbstractConfig abstractConfig, File configFile) {
+    public YamlHandlerStandalone(AbstractConfig<?> abstractConfig, File configFile) {
         super(abstractConfig, configFile);
     }
 
-    public YamlHandlerStandalone(AbstractConfig abstractConfig, File configFile, String fileName) {
+    public YamlHandlerStandalone(AbstractConfig<?> abstractConfig, File configFile, String fileName) {
         super(abstractConfig, configFile, fileName);
     }
 
@@ -31,5 +34,16 @@ public class YamlHandlerStandalone extends AbstractYamlHandler {
     @Override
     public void error(String s) {
         System.out.println(ANSI.RED + "[KamiCommon] " + s);
+    }
+
+
+    @Override
+    public YamlConfigurationStandalone newConfig(MappingNode node, File configFile) {
+        return new YamlConfigurationStandalone(node, configFile);
+    }
+
+    @Override
+    public MemorySectionMethods<?> newMemorySection(MappingNode node) {
+        return new MemorySectionStandalone(node);
     }
 }

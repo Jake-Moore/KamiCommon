@@ -1,12 +1,14 @@
 package com.kamikazejam.kamicommon.util.data;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.Objects;
 
 /**
  * This is just a helpful class to store an object of two objects. Called a Pair.
  */
+@Getter
 @SuppressWarnings("unused")
 @Data
 public class Pair<A, B> {
@@ -20,14 +22,6 @@ public class Pair<A, B> {
 
     public static <A, B> Pair<A, B> of(A a, B b) {
         return new Pair<>(a, b);
-    }
-
-    public A getA() {
-        return a;
-    }
-
-    public B getB() {
-        return b;
     }
 
     @Override

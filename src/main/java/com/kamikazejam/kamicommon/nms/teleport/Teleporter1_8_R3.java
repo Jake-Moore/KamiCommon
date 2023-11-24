@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("DuplicatedCode")
 public class Teleporter1_8_R3 extends ITeleporter {
 
     @Override

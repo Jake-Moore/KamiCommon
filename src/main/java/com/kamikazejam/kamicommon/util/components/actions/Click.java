@@ -9,9 +9,10 @@ import org.bukkit.inventory.ItemStack;
 // ClickEvent.Action.SUGGEST_COMMAND;
 // ClickEvent.Action.OPEN_URL
 
+@Getter
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class Click extends Action {
-    @Getter private Hover hoverAction = null;
+    private Hover hoverAction = null;
     public Click(String placeholder, String replacement) {
         super(placeholder, replacement);
     }

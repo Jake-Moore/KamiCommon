@@ -60,6 +60,17 @@ public class KamiCommon extends JavaPlugin implements Listener {
         return isWineSpigot;
     }
 
+
+    private static Boolean hasItemsAdder = null;
+    public static boolean hasItemsAdder() {
+        if (hasItemsAdder == null) {
+            return hasItemsAdder = Bukkit.getPluginManager().getPlugin("ItemsAdder") != null;
+        }
+        return hasItemsAdder;
+    }
+
+
+
     private static Yaml yaml = null;
     public static @NotNull Yaml getYaml() {
         if (yaml == null) {

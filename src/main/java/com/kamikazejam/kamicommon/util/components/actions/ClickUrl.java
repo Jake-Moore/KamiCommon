@@ -4,9 +4,9 @@ import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 
+@Getter
 @SuppressWarnings("unused")
 public class ClickUrl extends Click {
-    @Getter
     private final String url;
 
     /**

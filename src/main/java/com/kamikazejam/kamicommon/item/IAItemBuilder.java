@@ -1,20 +1,20 @@
 package com.kamikazejam.kamicommon.item;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.yaml.ConfigurationSection;
+import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
-@SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal", "DuplicatedCode"})
+@SuppressWarnings({"unused"})
 public class IAItemBuilder extends IBuilder {
 
-    public IAItemBuilder(ConfigurationSection section) {
+    public IAItemBuilder(MemorySection section) {
         super(section);
     }
-    public IAItemBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
+    public IAItemBuilder(MemorySection section, OfflinePlayer offlinePlayer) {
         super(section, offlinePlayer);
     }
     public IAItemBuilder(XMaterial m) {
@@ -60,7 +60,7 @@ public class IAItemBuilder extends IBuilder {
     }
 
     @Override
-    public void loadBasicItem(ConfigurationSection config) {
+    public void loadBasicItem(MemorySection config) {
         this.damage = (short) config.getInt("damage", 0);
         this.amount = config.getInt("amount", 1);
 
@@ -80,7 +80,7 @@ public class IAItemBuilder extends IBuilder {
     }
 
     @Override
-    public void loadPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
+    public void loadPlayerHead(MemorySection config, @Nullable OfflinePlayer offlinePlayer) {
         loadBasicItem(config);
         // Set the skull owner if it's not null
         if (offlinePlayer != null) {

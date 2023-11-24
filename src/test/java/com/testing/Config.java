@@ -35,7 +35,7 @@ public class Config {
         float cf = config.getFloat("numbers.float");
         short cs = config.getShort("numbers.short");
         byte cb = config.getByte("numbers.byte");
-        boolean cbool = config.getBoolean("numbers.boolean");
+        boolean cBool = config.getBoolean("numbers.boolean");
 
         assert ci == i;
         assert cd == d;
@@ -43,7 +43,7 @@ public class Config {
         assert cf == f;
         assert cs == s;
         assert cb == b;
-        assert cbool == bool;
+        assert cBool == bool;
 
         System.out.println("All tests passed!");
 
@@ -53,7 +53,7 @@ public class Config {
         System.out.println("Float: " + cf);
         System.out.println("Short: " + cs);
         System.out.println("Byte: " + cb);
-        System.out.println("Boolean: " + cbool);
+        System.out.println("Boolean: " + true);
 
         // System.out.println("Keys: " + config.getConfigurationSection("levels").getKeys(false));
     }

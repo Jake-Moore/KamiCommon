@@ -7,10 +7,11 @@ import java.util.List;
 /**
  * This object contains the data for an AbstractConfig yaml comment.
  */
+@Getter
 public class ConfigComment {
-    @Getter private final String key;
-    @Getter private final List<String> comment;
-    @Getter private final boolean above;
+    private final String key;
+    private final List<String> comment;
+    private final boolean above;
 
     /**
      * Internal Class for the Parser, do not use :)

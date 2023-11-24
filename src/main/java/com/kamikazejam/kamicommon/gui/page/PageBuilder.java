@@ -21,6 +21,7 @@ public abstract class PageBuilder<T extends Player> {
     private final int[] middleSlots = new int[]{0, 0, 0, 13, 13, 22, 22, 22};
 
     @Getter public int currentPage;
+    @Getter
     private KamiMenu menu;
     private final Pagination<? extends PageItem> items;
     @Setter private List<Integer> slotsOverride = null;
@@ -201,7 +202,4 @@ public abstract class PageBuilder<T extends Player> {
         return -1;
     }
 
-    public KamiMenu getMenu() {
-        return menu;
-    }
 }

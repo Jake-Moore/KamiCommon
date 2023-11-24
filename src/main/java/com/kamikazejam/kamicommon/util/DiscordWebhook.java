@@ -1,5 +1,7 @@
 package com.kamikazejam.kamicommon.util;
 
+import lombok.Getter;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.Color;
 import java.io.File;
@@ -14,7 +16,7 @@ import java.util.*;
 /**
  * A simple class for sending discord webhooks, supports basic embeds and such
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class DiscordWebhook {
 
     private final String url;
@@ -167,53 +169,26 @@ public class DiscordWebhook {
     }
 
     public static class EmbedObject {
+        @Getter
         private String title;
+        @Getter
         private String description;
+        @Getter
         private String url;
+        @Getter
         private Color color;
 
+        @Getter
         private Footer footer;
+        @Getter
         private Thumbnail thumbnail;
+        @Getter
         private Image image;
+        @Getter
         private Author author;
         private boolean timeStamp;
+        @Getter
         private final List<Field> fields = new ArrayList<>();
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public Color getColor() {
-            return color;
-        }
-
-        public Footer getFooter() {
-            return footer;
-        }
-
-        public Thumbnail getThumbnail() {
-            return thumbnail;
-        }
-
-        public Image getImage() {
-            return image;
-        }
-
-        public Author getAuthor() {
-            return author;
-        }
-
-        public List<Field> getFields() {
-            return fields;
-        }
 
         public EmbedObject setTimeStamp() {
             this.timeStamp = true;

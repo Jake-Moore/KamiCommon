@@ -6,9 +6,9 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-@SuppressWarnings("unused")
+@Getter
+@SuppressWarnings({"unused", "deprecation"})
 public class HoverText extends Hover {
-    @Getter
     private final String text;
 
     /**

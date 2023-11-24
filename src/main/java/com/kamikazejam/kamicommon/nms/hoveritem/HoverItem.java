@@ -10,9 +10,10 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
-@SuppressWarnings("unused")
+@Getter
+@SuppressWarnings({"unused", "deprecation"})
 public class HoverItem extends Hover {
-    @Getter private final @Nullable ItemStack itemStack;
+    private final @Nullable ItemStack itemStack;
 
     /**
      * Creates a HoverItem object which will only have a hoverEvent for running the command

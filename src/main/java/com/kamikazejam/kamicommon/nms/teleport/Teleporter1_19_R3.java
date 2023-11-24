@@ -11,7 +11,8 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "DuplicatedCode"})
+
 public class Teleporter1_19_R3 extends ITeleporter {
 
     @Override

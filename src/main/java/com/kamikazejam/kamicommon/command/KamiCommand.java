@@ -5,10 +5,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
+@Getter
 @SuppressWarnings("unused")
 public abstract class KamiCommand implements TabExecutor {
-	@Getter private final KamiSubCommands kamiSubCommands;
+	private final KamiSubCommands kamiSubCommands;
 
 	public KamiCommand(KamiSubCommands kamiSubCommands) {
 		this.kamiSubCommands = kamiSubCommands;
@@ -21,7 +23,7 @@ public abstract class KamiCommand implements TabExecutor {
 
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 		String arg = (args.length > 0) ? args[0] : "none";
 		KamiSubCommand kamiSubCommand = kamiSubCommands.fromName(arg);
 		if (kamiSubCommand.requiresAdmin() && !sender.hasPermission(getAdminPermission())) {

@@ -9,8 +9,10 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "DuplicatedCode"})
+
 public class Teleporter1_17_R1 extends ITeleporter {
 
     @Override
@@ -18,7 +20,7 @@ public class Teleporter1_17_R1 extends ITeleporter {
         if (player.getVehicle() != null) {
             player.getVehicle().eject();
         }
-        final WorldServer toWorld = ((CraftWorld)location.getWorld()).getHandle();
+        final WorldServer toWorld = ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle();
         final WorldServer fromWorld = ((CraftWorld)player.getWorld()).getHandle();
         final EntityPlayer entityPlayer = ((CraftPlayer)player).getHandle();
         if (toWorld == fromWorld) {
