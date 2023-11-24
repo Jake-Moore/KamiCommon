@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.yaml;
+package com.kamikazejam.kamicommon.yaml.base;
 
 import java.util.List;
 import java.util.Set;
