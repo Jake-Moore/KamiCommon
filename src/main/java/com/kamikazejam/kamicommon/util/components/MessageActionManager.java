@@ -27,21 +27,7 @@ public class MessageActionManager {
      * @param actions The actions to add
      */
     public static void processAndSend(Player player, String line, Action... actions) {
-        Bukkit.getLogger().info("Line: " + StringUtil.reverseT(line));
-
-        for (Action action : actions) {
-            Bukkit.getLogger().info("  " + action.getPlaceholder() + " -> " + action.getReplacement());
-        }
-
         BaseComponent[] components = processPlaceholders(line, actions);
-
-        Bukkit.getLogger().info("Components:");
-        StringBuilder s = new StringBuilder();
-        for (BaseComponent component : components) {
-            s.append(component.toLegacyText());
-        }
-        Bukkit.getLogger().info("  " + StringUtil.reverseT(s.toString()));
-
         player.spigot().sendMessage(components);
     }
 
@@ -85,27 +71,12 @@ public class MessageActionManager {
         List<BaseComponent> temp = new ArrayList<>();
         temp.add(base);
 
-        Bukkit.getLogger().info("Process Components: ");
-        StringBuilder s = new StringBuilder();
-        for (BaseComponent component : temp) {
-            s.append(component.toLegacyText());
-        }
-        Bukkit.getLogger().info("  " + StringUtil.reverseT(s.toString()));
-
         //For each ClickContainer, reprocess a new temp list of components (replacing placeholders and stuff)
         for (Action action : actions) {
             List<BaseComponent> newTemp = processMultiPlaceholders(action, temp);
             temp.clear();
             temp.addAll(newTemp);
-
-            Bukkit.getLogger().info(" Process Components (" + action.getPlaceholder() + "): ");
-            s = new StringBuilder();
-            for (BaseComponent component : temp) {
-                s.append(component.toLegacyText());
-            }
-            Bukkit.getLogger().info("  " + StringUtil.reverseT(s.toString()));
         }
-        Bukkit.getLogger().info(" ");
 
         return temp.toArray(new BaseComponent[0]);
     }
@@ -114,22 +85,7 @@ public class MessageActionManager {
         List<BaseComponent> newComponentList = new ArrayList<>();
         for (BaseComponent component : components) {
             if (component.toLegacyText().contains(action.getPlaceholder())) {
-                Bukkit.getLogger().info("   processMultiPlaceholders Components (" + action.getPlaceholder() + "): ");
-                StringBuilder s = new StringBuilder();
-                for (BaseComponent c : components) {
-                    s.append(c.toLegacyText());
-                }
-                Bukkit.getLogger().info("     " + StringUtil.reverseT(s.toString()));
-
                 List<BaseComponent> merged = new ArrayList<>(getComponentsWithButton(action, component));
-
-                Bukkit.getLogger().info("     merged Components (" + action.getPlaceholder() + "): ");
-                s = new StringBuilder();
-                for (BaseComponent c : merged) {
-                    s.append(c.toLegacyText());
-                }
-                Bukkit.getLogger().info("       " + StringUtil.reverseT(s.toString()));
-
                 newComponentList.addAll(merged);
             }else {
                 newComponentList.add(component);
