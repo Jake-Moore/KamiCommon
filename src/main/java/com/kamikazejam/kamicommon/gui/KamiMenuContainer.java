@@ -8,7 +8,7 @@ import com.kamikazejam.kamicommon.gui.page.PageBuilder;
 import com.kamikazejam.kamicommon.gui.page.PageItem;
 import com.kamikazejam.kamicommon.item.IAItemBuilder;
 import com.kamikazejam.kamicommon.item.IBuilder;
-import com.kamikazejam.kamicommon.yaml.ConfigurationSection;
+import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,12 +36,12 @@ public class KamiMenuContainer {
     }
 
     // For calls like new KamiMenuContainer(config, "menus.menu1")
-    public KamiMenuContainer(ConfigurationSection section, String key) {
+    public KamiMenuContainer(MemorySection section, String key) {
         this(section.getConfigurationSection(key));
     }
 
     // For calls like new KamiMenuContainer(config.getConfigurationSection("menus.menu1"))
-    public KamiMenuContainer(ConfigurationSection section) {
+    public KamiMenuContainer(MemorySection section) {
         title = section.getString("title", section.getString("name", " "));
         rows = section.getInt("rows", -1);
         if (rows < 1) { throw new IllegalArgumentException("Invalid rows: " + rows); }
@@ -54,8 +54,8 @@ public class KamiMenuContainer {
             fillerItem = null;
         }
 
-        ConfigurationSection icons = section.getConfigurationSection("icons");
-        ConfigurationSection pagedIcons = section.getConfigurationSection("pagedIcons");
+        MemorySection icons = section.getConfigurationSection("icons");
+        MemorySection pagedIcons = section.getConfigurationSection("pagedIcons");
         if (icons != null) {
             // Load the MenuItems
             for (String key : icons.getKeys(false)) {

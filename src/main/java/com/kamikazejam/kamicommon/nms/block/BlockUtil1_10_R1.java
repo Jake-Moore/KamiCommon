@@ -7,6 +7,7 @@ import net.minecraft.server.v1_10_R1.WorldServer;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
 
+@SuppressWarnings("DuplicatedCode")
 public class BlockUtil1_10_R1 extends IBlockUtil {
 
     @Override

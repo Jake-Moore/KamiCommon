@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util;
 
 import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
-import com.kamikazejam.kamicommon.yaml.ConfigurationSection;
+import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -18,9 +18,10 @@ import java.util.List;
  * It will detect which one to use and the server owner can configure it as either. <p>
  * The secondary function of this class is to send messages translated, and with PAPI placeholders replaced
  */
+@Getter
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class MessageBuilder {
-    @Getter private final List<String> lines = new ArrayList<>();
+    private final List<String> lines = new ArrayList<>();
 
     public static MessageBuilder of(org.bukkit.configuration.ConfigurationSection config, String key) {
         return new MessageBuilder(config, key);
@@ -34,7 +35,7 @@ public class MessageBuilder {
         return new MessageBuilder(config, key);
     }
 
-    public static MessageBuilder of(ConfigurationSection section, String key) {
+    public static MessageBuilder of(MemorySection section, String key) {
         return new MessageBuilder(section, key);
     }
 
@@ -45,7 +46,7 @@ public class MessageBuilder {
      * This class will detect if the key points to a string or a list of strings,
      *   and then handle things accordingly.
      */
-    public MessageBuilder(ConfigurationSection section, String key) {
+    public MessageBuilder(MemorySection section, String key) {
         if (section.isString(key)) {
             this.lines.add(section.getString(key));
         } else {

@@ -4,7 +4,8 @@ import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.nms.NmsManager;
 import com.kamikazejam.kamicommon.util.StringUtilP;
 import com.kamikazejam.kamicommon.util.TriState;
-import com.kamikazejam.kamicommon.yaml.ConfigurationSection;
+import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
+import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,7 +23,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
 
-@SuppressWarnings({"unused", "UnusedReturnValue", "FieldCanBeLocal", "deprecation"})
+@SuppressWarnings({"unused", "UnusedReturnValue", "deprecation"})
 public abstract class IBuilder {
 
     ItemStack base = null;
@@ -30,10 +31,11 @@ public abstract class IBuilder {
     int amount = 1;
     short damage = 0;
     String name = " ";
+    @Getter
     List<String> lore = new ArrayList<>();
     TriState unbreakable = TriState.NOT_SET;
-    List<ItemFlag> itemFlags = new ArrayList<>();
-    Map<Enchantment, Integer> enchantments = new HashMap<>();
+    final List<ItemFlag> itemFlags = new ArrayList<>();
+    final Map<Enchantment, Integer> enchantments = new HashMap<>();
     boolean addGlow = false;
 
     @Setter String skullOwner = null; // player name
@@ -41,11 +43,11 @@ public abstract class IBuilder {
 
     public IBuilder() {}
 
-    public IBuilder(ConfigurationSection section) {
+    public IBuilder(MemorySection section) {
         loadConfigItem(section, null);
     }
     
-    public IBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
+    public IBuilder(MemorySection section, OfflinePlayer offlinePlayer) {
         loadConfigItem(section, offlinePlayer);
     }
 
@@ -139,11 +141,11 @@ public abstract class IBuilder {
         return itemStack;
     }
     
-    public void loadConfigItem(ConfigurationSection config) {
+    public void loadConfigItem(MemorySection config) {
         loadConfigItem(config, null);
     }
 
-    public void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
+    public void loadConfigItem(MemorySection config, @Nullable OfflinePlayer offlinePlayer) {
         String mat = config.getString("material", config.getString("type"));
         if (mat != null) {
             if (XMaterial.matchXMaterial(mat).orElse(XMaterial.AIR).equals(XMaterial.PLAYER_HEAD)) {
@@ -291,10 +293,6 @@ public abstract class IBuilder {
         return this;
     }
 
-    public List<String> getLore() {
-        return lore;
-    }
-
     public IBuilder removeLore() {
         setLore(new ArrayList<>());
         return this;
@@ -364,9 +362,9 @@ public abstract class IBuilder {
 
 
 
-    public abstract void loadBasicItem(ConfigurationSection config);
+    public abstract void loadBasicItem(MemorySection config);
 
-    public abstract void loadPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer);
+    public abstract void loadPlayerHead(MemorySection config, @Nullable OfflinePlayer offlinePlayer);
 
     /**
      * @return A clone of this item `new IBuilder(this.is)`

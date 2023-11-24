@@ -7,6 +7,7 @@ import net.minecraft.server.v1_13_R2.WorldServer;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 
+@SuppressWarnings("DuplicatedCode")
 public class BlockUtil1_13_R2 extends IBlockUtil {
     @Override
     public void setCombined(Block b, int combined, boolean lightUpdate, boolean physics) {

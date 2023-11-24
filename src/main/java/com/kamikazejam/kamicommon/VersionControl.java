@@ -21,13 +21,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-@SuppressWarnings("SameParameterValue")
+@SuppressWarnings({"SameParameterValue", "deprecation"})
 public class VersionControl {
+    @Getter
     public static class Version {
-        @Setter @Getter private boolean loaded;
-        @Setter @Getter private String name;
-        @Setter @Getter private String versionStr;
-        @Setter @Getter private Instant buildDate;
+        @Setter
+        private boolean loaded;
+        @Setter
+        private String name;
+        @Setter
+        private String versionStr;
+        @Setter
+        private Instant buildDate;
 
         public Version() {
             loaded = false;

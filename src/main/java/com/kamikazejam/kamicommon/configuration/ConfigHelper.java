@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * This is a utility class for creating and saving configurations in a JavaPlugin
@@ -53,7 +54,7 @@ public class ConfigHelper {
         //Load defaults into the rewards config
         if (defaultsFromResource) {
             // Load input stream as ISO_8859_1 in case there are special characters
-            Reader defConfigStream2 = new InputStreamReader(plugin.getResource(fileName), StandardCharsets.ISO_8859_1);
+            Reader defConfigStream2 = new InputStreamReader(Objects.requireNonNull(plugin.getResource(fileName)), StandardCharsets.ISO_8859_1);
             YamlConfiguration defConfig2 = YamlConfiguration.loadConfiguration(defConfigStream2);
             config.addDefaults(defConfig2);
             config.options().copyDefaults(true);

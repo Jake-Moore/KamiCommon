@@ -30,7 +30,8 @@ public class PlayerUtil {
     public static boolean emptyInventory(Player player, boolean checkArmor) {
         //Check their 36 slots for items
         for (int i = 0; i < 36; i++) {
-            if (player.getInventory().getItem(i) != null && XMaterial.matchXMaterial(player.getInventory().getItem(i)) != XMaterial.AIR) {
+            ItemStack item = player.getInventory().getItem(i);
+            if (item != null && XMaterial.matchXMaterial(item) != XMaterial.AIR) {
                 return false;
             }
         }

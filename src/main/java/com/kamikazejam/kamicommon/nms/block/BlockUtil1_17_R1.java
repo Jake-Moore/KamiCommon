@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock;
 
 import javax.annotation.Nullable;
 
+@SuppressWarnings("DuplicatedCode")
 public class BlockUtil1_17_R1 extends IBlockUtil1_13 {
 
     @Override

@@ -1,12 +1,14 @@
 package com.kamikazejam.kamicommon.util.data;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.Objects;
 
 /**
  * This is just a helpful class to store an object of three objects. Called a Tuple.
  */
+@Getter
 @SuppressWarnings("unused")
 @Data
 public class Tuple<A, B, C> {
@@ -22,18 +24,6 @@ public class Tuple<A, B, C> {
 
     public static <A, B, C> Tuple<A, B, C> of(A a, B b, C c) {
         return new Tuple<>(a, b, c);
-    }
-
-    public A getA() {
-        return a;
-    }
-
-    public B getB() {
-        return b;
-    }
-
-    public C getC() {
-        return c;
     }
 
     @Override

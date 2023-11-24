@@ -13,7 +13,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.lang.reflect.Method;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "DuplicatedCode"})
+
 public class Teleporter1_20_R1 extends ITeleporter {
 
     @Override

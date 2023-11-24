@@ -4,9 +4,10 @@ import com.kamikazejam.kamicommon.util.StringUtil;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 
+@Getter
 public abstract class Action {
-    @Getter private final String placeholder;
-    @Getter private final String replacement;
+    private final String placeholder;
+    private final String replacement;
 
     public Action(String placeholder, String replacement) {
         this.placeholder = placeholder;

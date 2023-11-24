@@ -6,9 +6,9 @@ import net.md_5.bungee.api.chat.BaseComponent;
 // HoverEvent.Action.SHOW_TEXT;
 // HoverEvent.Action.SHOW_ITEM;
 
+@Getter
 @SuppressWarnings("unused")
 public abstract class Hover extends Action {
-    @Getter
     private Click clickAction = null;
     public Hover(String placeholder, String replacement) {
         super(placeholder, replacement);
