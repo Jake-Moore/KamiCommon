@@ -49,12 +49,17 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
 
     @Override
     public Object get(String key) {
-        // Return ItemStack for our custom stack type if it exists
-        ItemStack stack = getItemStack(key);
-        if (stack != null) { return stack; }
+        Object o = super.get(key);
+
+        // Check ItemStack logic
+        if (o instanceof String) {
+            String s = (String) o;
+            ItemStack stack = parseItemStackData(s);
+            if (stack != null) { return stack; }
+        }
 
         // Otherwise return the default value
-        return super.get(key);
+        return o;
     }
 
     /**
@@ -63,8 +68,13 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
      */
     @Override
     public ItemStack getItemStack(String key) {
+        return parseItemStackData(getString(key));
+    }
+
+    private @Nullable ItemStack parseItemStackData(@Nullable String stringData) {
+        if (stringData == null) { return null; }
+
         try {
-            String stringData = getString(key);
             YamlConfiguration config = new YamlConfiguration();
             config.loadFromString(stringData);
             return config.getItemStack("item");
@@ -73,6 +83,7 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         }
         return null;
     }
+
 
     @Override
     public ItemStack getItemStack(String key, ItemStack def) {
