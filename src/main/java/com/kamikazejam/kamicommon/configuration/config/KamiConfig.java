@@ -211,5 +211,5 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     @Override public void setItemStack(String key, ItemStack item) { getYamlConfiguration().setItemStack(key, item); }
     @Override public void setItemBuilder(String key, IBuilder builder) { getYamlConfiguration().setItemBuilder(key, builder); }
     @Override public IBuilder getItemBuilder(String key) { return getYamlConfiguration().getItemBuilder(key); }
-
+    @Override public boolean isItemStack(String key) { return getYamlConfiguration().isItemStack(key); }
 }
