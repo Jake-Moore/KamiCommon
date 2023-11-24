@@ -78,9 +78,7 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
             YamlConfiguration config = new YamlConfiguration();
             config.loadFromString(stringData);
             return config.getItemStack("item");
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+        }catch (Throwable ignored) {}
         return null;
     }
 
