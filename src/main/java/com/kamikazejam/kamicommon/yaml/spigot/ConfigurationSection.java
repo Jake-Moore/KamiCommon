@@ -13,4 +13,6 @@ public interface ConfigurationSection extends ConfigurationMethods<Configuration
 
     void setItemBuilder(String key, IBuilder builder);
     IBuilder getItemBuilder(String key);
+
+    boolean isItemStack(String key);
 }

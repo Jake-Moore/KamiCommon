@@ -47,7 +47,15 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         super.put(key, value);
     }
 
+    @Override
+    public Object get(String key) {
+        // Return ItemStack for our custom stack type if it exists
+        ItemStack stack = getItemStack(key);
+        if (stack != null) { return stack; }
 
+        // Otherwise return the default value
+        return super.get(key);
+    }
 
     /**
      * Supported in Spigot-Backed Config classes, you must cast to ItemStack if return is not null.
@@ -95,4 +103,10 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         return new ItemBuilder(stack);
     }
 
+    @Override
+    public boolean isItemStack(String key) {
+        if (!contains(key)) { return false; }
+        ItemStack stack = getItemStack(key);
+        return stack != null;
+    }
 }
