@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.yaml.spigot;
 
 import com.kamikazejam.kamicommon.item.IBuilder;
-import com.kamikazejam.kamicommon.yaml.ConfigurationMethods;
+import com.kamikazejam.kamicommon.yaml.base.ConfigurationMethods;
 import org.bukkit.inventory.ItemStack;
 
 @SuppressWarnings("unused")
