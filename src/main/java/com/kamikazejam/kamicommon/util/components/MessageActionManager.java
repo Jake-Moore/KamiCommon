@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.util.components;
 
-import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.components.actions.Action;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -28,12 +27,20 @@ public class MessageActionManager {
      * @param actions The actions to add
      */
     public static void processAndSend(Player player, String line, Action... actions) {
+        Bukkit.getLogger().info("Line: " + StringUtil.reverseT(line));
+
+        for (Action action : actions) {
+            Bukkit.getLogger().info("  " + action.getPlaceholder() + " -> " + action.getReplacement());
+        }
+
         BaseComponent[] components = processPlaceholders(line, actions);
 
         Bukkit.getLogger().info("Components:");
+        StringBuilder s = new StringBuilder();
         for (BaseComponent component : components) {
-            Bukkit.getLogger().info(component.toLegacyText());
+            s.append(component.toLegacyText());
         }
+        Bukkit.getLogger().info("  " + StringUtil.reverseT(s.toString()));
 
         player.spigot().sendMessage(components);
     }
@@ -78,12 +85,27 @@ public class MessageActionManager {
         List<BaseComponent> temp = new ArrayList<>();
         temp.add(base);
 
+        Bukkit.getLogger().info("Process Components: ");
+        StringBuilder s = new StringBuilder();
+        for (BaseComponent component : temp) {
+            s.append(component.toLegacyText());
+        }
+        Bukkit.getLogger().info("  " + StringUtil.reverseT(s.toString()));
+
         //For each ClickContainer, reprocess a new temp list of components (replacing placeholders and stuff)
         for (Action action : actions) {
             List<BaseComponent> newTemp = processMultiPlaceholders(action, temp);
             temp.clear();
             temp.addAll(newTemp);
+
+            Bukkit.getLogger().info(" Process Components (" + action.getPlaceholder() + "): ");
+            s = new StringBuilder();
+            for (BaseComponent component : temp) {
+                s.append(component.toLegacyText());
+            }
+            Bukkit.getLogger().info("  " + StringUtil.reverseT(s.toString()));
         }
+        Bukkit.getLogger().info(" ");
 
         return temp.toArray(new BaseComponent[0]);
     }
@@ -92,7 +114,22 @@ public class MessageActionManager {
         List<BaseComponent> newComponentList = new ArrayList<>();
         for (BaseComponent component : components) {
             if (component.toLegacyText().contains(action.getPlaceholder())) {
+                Bukkit.getLogger().info("   processMultiPlaceholders Components (" + action.getPlaceholder() + "): ");
+                StringBuilder s = new StringBuilder();
+                for (BaseComponent c : components) {
+                    s.append(c.toLegacyText());
+                }
+                Bukkit.getLogger().info("     " + StringUtil.reverseT(s.toString()));
+
                 List<BaseComponent> merged = new ArrayList<>(getComponentsWithButton(action, component));
+
+                Bukkit.getLogger().info("     merged Components (" + action.getPlaceholder() + "): ");
+                s = new StringBuilder();
+                for (BaseComponent c : merged) {
+                    s.append(c.toLegacyText());
+                }
+                Bukkit.getLogger().info("       " + StringUtil.reverseT(s.toString()));
+
                 newComponentList.addAll(merged);
             }else {
                 newComponentList.add(component);
@@ -104,30 +141,33 @@ public class MessageActionManager {
     private static List<BaseComponent> getComponentsWithButton(Action action, BaseComponent component) {
         List<BaseComponent> components = new ArrayList<>();
 
-        //Create the click TextComponent
+        // Create the click TextComponent
+        // This ENTIRE array represents the replacement, in this specific order
         BaseComponent[] legacyTexts = TextComponent.fromLegacyText(action.getReplacement());
         for (BaseComponent clickComponent : legacyTexts) {
             action.addClickEvent(clickComponent);
             action.addHoverEvent(clickComponent);
+        }
 
-            String text = component.toLegacyText();
-            String[] parts = text.split(Pattern.quote(action.getPlaceholder()));
-            //If the message starts with the click, send the click and then the rest of the message
-            if (ChatColor.stripColor(text).startsWith(action.getPlaceholder())) {
-                components.add(clickComponent);
-                components.add(new TextComponent(parts[parts.length-1]));
-                //If the message ends with the click, send the rest, then the click
-            }else if (ChatColor.stripColor(text).endsWith(action.getPlaceholder())) {
-                components.add(new TextComponent(parts[0]));
-                components.add(clickComponent);
-                //If the click is somewhere in between, form the message around the click
-            }else if (parts.length == 2) {
-                components.add(new TextComponent(parts[0]));
-                components.add(clickComponent);
-                components.add(new TextComponent(parts[parts.length-1]));
-            }else {
-                KamiCommon.get().getLogger().warning(action.getPlaceholder() + " in raidPlan.request.message of lang.yml is formatted in a way this plugin could not understand. There should only be 1 instance of it, and it can either be in the front, at the end, or in the middle. Splitting with that placeholder should produce 1-2 parts");
-            }
+        // Check the text and split it into parts
+        String text = component.toLegacyText();
+        String[] parts = text.split(Pattern.quote(action.getPlaceholder()));
+
+        //If the message starts with the click, send the click and then the rest of the message
+        if (ChatColor.stripColor(text).startsWith(action.getPlaceholder())) {
+            components.addAll(Arrays.asList(legacyTexts));
+            components.add(new TextComponent(parts[parts.length-1]));
+            //If the message ends with the click, send the rest, then the click
+        }else if (ChatColor.stripColor(text).endsWith(action.getPlaceholder())) {
+            components.add(new TextComponent(parts[0]));
+            components.addAll(Arrays.asList(legacyTexts));
+            //If the click is somewhere in between, form the message around the click
+        }else if (parts.length == 2) {
+            components.add(new TextComponent(parts[0]));
+            components.addAll(Arrays.asList(legacyTexts));
+            components.add(new TextComponent(parts[parts.length-1]));
+        }else {
+            throw new IllegalArgumentException("Invalid placeholder: " + action.getPlaceholder());
         }
 
         return components;
