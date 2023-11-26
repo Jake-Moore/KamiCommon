@@ -61,16 +61,6 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         // Otherwise return the default value
         return o;
     }
-
-    /**
-     * Supported in Spigot-Backed Config classes, you must cast to ItemStack if return is not null.
-     * @return the ItemStack at the given key, or null if it doesn't exist
-     */
-    @Override
-    public ItemStack getItemStack(String key) {
-        return parseItemStackData(getString(key));
-    }
-
     private @Nullable ItemStack parseItemStackData(@Nullable String stringData) {
         if (stringData == null) { return null; }
 
@@ -83,9 +73,21 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
     }
 
 
+    /**
+     * Supported in Spigot-Backed Config classes, you must cast to ItemStack if return is not null.
+     * @return the ItemStack at the given key, or null if it doesn't exist
+     */
+    @Override
+    public ItemStack getItemStack(String key) {
+        return getItemStack(key, null);
+    }
+
     @Override
     public ItemStack getItemStack(String key, ItemStack def) {
-        if (contains(key)) { return getItemStack(key); }
+        if (!contains(key)) { return def; }
+
+        Object o = get(key);
+        if (o instanceof ItemStack) { return (ItemStack) o; }
         return def;
     }
 
