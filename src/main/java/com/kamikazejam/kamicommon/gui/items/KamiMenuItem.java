@@ -4,7 +4,7 @@ import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejam.kamicommon.gui.page.PageItem;
 import com.kamikazejam.kamicommon.item.IAItemBuilder;
 import com.kamikazejam.kamicommon.item.IBuilder;
-import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -21,23 +21,23 @@ public class KamiMenuItem extends PageItem {
     private List<Integer> slots;
 
     // For like KamiMenuItem(config, "menus.menu1")
-    public KamiMenuItem(MemorySection section, String key) {
+    public KamiMenuItem(ConfigurationSection section, String key) {
         this(section.getConfigurationSection(key));
     }
-    public KamiMenuItem(MemorySection section, String key, OfflinePlayer player) {
+    public KamiMenuItem(ConfigurationSection section, String key, OfflinePlayer player) {
         this(section.getConfigurationSection(key));
     }
 
 
     // For calls like KamiMenuItem(config.getConfigurationSection("menus.menu1"))
-    public KamiMenuItem(MemorySection section) {
+    public KamiMenuItem(ConfigurationSection section) {
         this(section, (OfflinePlayer) null);
     }
 
     /**
      * @param player Only required for PLAYER_HEAD ItemStacks, player is used as the skullOwner
      */
-    public KamiMenuItem(MemorySection section, @Nullable OfflinePlayer player) {
+    public KamiMenuItem(ConfigurationSection section, @Nullable OfflinePlayer player) {
         super(new IAItemBuilder(section, player), (MenuClick) null); // Null safe for player arg
         enabled = section.getBoolean("enabled", true);
 
