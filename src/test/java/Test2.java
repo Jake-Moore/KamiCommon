@@ -1,7 +1,5 @@
 import com.kamikazejam.kamicommon.configuration.config.StandaloneConfig;
-import com.kamikazejam.kamicommon.util.StringUtil;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.FileInputStream;

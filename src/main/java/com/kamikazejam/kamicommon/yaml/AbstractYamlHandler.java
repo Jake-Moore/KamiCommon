@@ -1,9 +1,9 @@
 package com.kamikazejam.kamicommon.yaml;
 
-import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.configuration.config.AbstractConfig;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
+import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.*;
 
@@ -63,7 +63,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
             }
 
             Reader reader = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8);
-            config = newConfig((MappingNode) (KamiCommon.getYaml()).compose(reader), configFile);
+            config = newConfig((MappingNode) (YamlUtil.getYaml()).compose(reader), configFile);
 
             if (addDefaults) {
                 config = addDefaults(stream);
@@ -106,7 +106,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
         // InputStream and Reader both contain comments (verified)
         Reader reader = new InputStreamReader(defConfigStream, StandardCharsets.UTF_8);
 
-        MemorySectionMethods<?> defConfig = newMemorySection((MappingNode) (KamiCommon.getYaml()).compose(reader));
+        MemorySectionMethods<?> defConfig = newMemorySection((MappingNode) (YamlUtil.getYaml()).compose(reader));
 
         boolean needsNewKeys = false;
         for (String key : defConfig.getKeys(true)) {
@@ -195,7 +195,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
             List<String> valueKeys = new ArrayList<>();
             List<NodePair> allKeyNodes = new ArrayList<>();
 
-            Node rootNode = KamiCommon.getYaml().compose(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            Node rootNode = YamlUtil.getYaml().compose(new InputStreamReader(stream, StandardCharsets.UTF_8));
             if (rootNode instanceof MappingNode) {
                 processYAMLNode(rootNode, valueKeys, allKeyNodes, "");
             }
@@ -206,7 +206,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
         public static List<NodePair> parseOrderedNodes(InputStream stream) {
             List<NodePair> allKeyNodes = new ArrayList<>();
 
-            Node rootNode = KamiCommon.getYaml().compose(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            Node rootNode = YamlUtil.getYaml().compose(new InputStreamReader(stream, StandardCharsets.UTF_8));
             if (rootNode instanceof MappingNode) {
                 processYAMLNode(rootNode, null, allKeyNodes, "");
             }
