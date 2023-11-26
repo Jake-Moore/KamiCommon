@@ -1,5 +1,5 @@
-import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.configuration.config.StandaloneConfig;
+import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -14,7 +14,7 @@ public class Test {
         String path = "C:\\Users\\Jake\\Desktop\\Spigot Plugins\\KamiCommon\\src\\test\\java\\output.yml";
 
         long ymlMs = System.currentTimeMillis();
-        KamiCommon.getYaml();
+        YamlUtil.getYaml();
         System.out.println("Initial Yaml Took: " + (System.currentTimeMillis() - ymlMs) + " ms.");
 
         // Delete Files

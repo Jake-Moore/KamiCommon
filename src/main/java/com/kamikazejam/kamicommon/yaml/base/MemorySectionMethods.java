@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.yaml.base;
 
-import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.yaml.AbstractMemorySection;
+import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
 import org.yaml.snakeyaml.nodes.MappingNode;
 
 import javax.annotation.Nullable;
@@ -469,7 +469,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
         try {
             // Dump the Node (should keep comments)
             Writer writer = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8);
-            KamiCommon.getYaml().serialize(this.getNode(), writer);
+            YamlUtil.getYaml().serialize(this.getNode(), writer);
             setChanged(false);
             return true;
 

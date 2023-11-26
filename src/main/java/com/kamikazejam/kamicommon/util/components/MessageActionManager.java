@@ -4,7 +4,6 @@ import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.components.actions.Action;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
