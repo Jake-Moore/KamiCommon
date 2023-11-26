@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.item;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,10 +10,10 @@ import javax.annotation.Nullable;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class ItemBuilder extends IBuilder {
 
-    public ItemBuilder(MemorySection section) {
+    public ItemBuilder(ConfigurationSection section) {
         super(section);
     }
-    public ItemBuilder(MemorySection section, OfflinePlayer offlinePlayer) {
+    public ItemBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
         super(section, offlinePlayer);
     }
     public ItemBuilder(XMaterial m) {
@@ -48,7 +48,7 @@ public class ItemBuilder extends IBuilder {
     }
 
     @Override
-    public void loadBasicItem(MemorySection config) {
+    public void loadBasicItem(ConfigurationSection config) {
         short damage = (short) config.getInt("damage", 0);
         int amount = config.getInt("amount", 1);
 
@@ -63,7 +63,7 @@ public class ItemBuilder extends IBuilder {
     }
 
     @Override
-    public void loadPlayerHead(MemorySection config, @Nullable OfflinePlayer offlinePlayer) {
+    public void loadPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
         loadBasicItem(config);
         if (offlinePlayer != null) {
             this.skullOwner = offlinePlayer.getName();

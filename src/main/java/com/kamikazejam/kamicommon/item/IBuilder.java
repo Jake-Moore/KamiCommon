@@ -4,7 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.nms.NmsManager;
 import com.kamikazejam.kamicommon.util.StringUtilP;
 import com.kamikazejam.kamicommon.util.TriState;
-import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -43,11 +43,11 @@ public abstract class IBuilder {
 
     public IBuilder() {}
 
-    public IBuilder(MemorySection section) {
+    public IBuilder(ConfigurationSection section) {
         loadConfigItem(section, null);
     }
     
-    public IBuilder(MemorySection section, OfflinePlayer offlinePlayer) {
+    public IBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
         loadConfigItem(section, offlinePlayer);
     }
 
@@ -141,11 +141,11 @@ public abstract class IBuilder {
         return itemStack;
     }
     
-    public void loadConfigItem(MemorySection config) {
+    public void loadConfigItem(ConfigurationSection config) {
         loadConfigItem(config, null);
     }
 
-    public void loadConfigItem(MemorySection config, @Nullable OfflinePlayer offlinePlayer) {
+    public void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
         String mat = config.getString("material", config.getString("type"));
         if (mat != null) {
             if (XMaterial.matchXMaterial(mat).orElse(XMaterial.AIR).equals(XMaterial.PLAYER_HEAD)) {
@@ -362,9 +362,9 @@ public abstract class IBuilder {
 
 
 
-    public abstract void loadBasicItem(MemorySection config);
+    public abstract void loadBasicItem(ConfigurationSection config);
 
-    public abstract void loadPlayerHead(MemorySection config, @Nullable OfflinePlayer offlinePlayer);
+    public abstract void loadPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer);
 
     /**
      * @return A clone of this item `new IBuilder(this.is)`
