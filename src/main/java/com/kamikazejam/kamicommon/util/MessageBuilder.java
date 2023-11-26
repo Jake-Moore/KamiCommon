@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util;
 
 import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
-import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -35,7 +35,7 @@ public class MessageBuilder {
         return new MessageBuilder(config, key);
     }
 
-    public static MessageBuilder of(MemorySection section, String key) {
+    public static MessageBuilder of(ConfigurationSection section, String key) {
         return new MessageBuilder(section, key);
     }
 
@@ -46,7 +46,7 @@ public class MessageBuilder {
      * This class will detect if the key points to a string or a list of strings,
      *   and then handle things accordingly.
      */
-    public MessageBuilder(MemorySection section, String key) {
+    public MessageBuilder(ConfigurationSection section, String key) {
         if (section.isString(key)) {
             this.lines.add(section.getString(key));
         } else {
