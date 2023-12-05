@@ -4,6 +4,11 @@ import com.kamikazejam.kamicommon.nms.block.*;
 import com.kamikazejam.kamicommon.nms.hoveritem.*;
 import com.kamikazejam.kamicommon.nms.teleport.*;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings("unused")
 public class NmsManager {
@@ -321,6 +326,18 @@ public class NmsManager {
             default:
                 Bukkit.getLogger().severe("[KamiCommon NmsManager] Unsupported version: " + version);
                 return new Teleporter1_20_R1();
+        }
+    }
+
+    @SuppressWarnings("all")
+    public static @Nullable ItemStack getItemInMainHand(Player player) {
+        PlayerInventory playerInventory = player.getInventory();
+
+        // If pre 1.9, we don't have an offhand slot
+        if (NmsManager.getFormattedNmsDouble() < 190) {
+            return playerInventory.getItemInHand();
+        }else {
+            return playerInventory.getItemInMainHand();
         }
     }
 }

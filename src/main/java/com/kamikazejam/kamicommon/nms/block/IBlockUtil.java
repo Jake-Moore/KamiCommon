@@ -3,7 +3,7 @@ package com.kamikazejam.kamicommon.nms.block;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.nms.NmsManager;
-import com.kamikazejam.kamicommon.util.MaterialData;
+import com.kamikazejam.kamicommon.util.data.MaterialData;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
