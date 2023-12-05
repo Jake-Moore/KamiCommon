@@ -10,7 +10,7 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,7 +44,7 @@ public class VersionControl {
 
     private static Version version = null;
 
-    public static Version getVersion(JavaPlugin plugin) {
+    public static Version getVersion(Plugin plugin) {
         if (version == null) {
             setup(plugin.getClass().getClassLoader().getResourceAsStream("version.json"));
         }
@@ -80,7 +80,7 @@ public class VersionControl {
     }
 
     @SuppressWarnings("unused")
-    public static void sendDetails(JavaPlugin plugin, CommandSender sender) {
+    public static void sendDetails(Plugin plugin, CommandSender sender) {
         Version version = getVersion(plugin);
         if (version.isLoaded()) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bName: " + version.getName()));

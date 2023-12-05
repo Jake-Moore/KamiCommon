@@ -113,7 +113,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
             if (!config.contains(key)) { needsNewKeys = true; break; }
         }
 
-        // This is a massive optimization, because if we need to insert new defaults, it requires a
+        // This is a very large optimization, because if we need to insert new defaults, it requires a
         //  full recreate and rewrite of the config file, which is very slow
         if (!needsNewKeys) { return config; }
 

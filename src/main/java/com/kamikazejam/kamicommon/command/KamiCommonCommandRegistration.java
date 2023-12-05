@@ -24,7 +24,7 @@ public class KamiCommonCommandRegistration implements Listener {
     // -------------------------------------------- //
     public KamiCommonCommandRegistration(KamiPlugin plugin) {
         // default to every hour
-        long interval = Long.getLong("MassiveCoreCommandRegistrationPeriod", 20L * 60L * 60L);
+        long interval = Long.getLong("KamiCommonCommandRegistrationPeriod", 20L * 60L * 60L);
 
         // Register this task under our KamiPlugin (so it gets shut down automatically)
         plugin.registerTask(new BukkitRunnable() {
@@ -46,9 +46,9 @@ public class KamiCommonCommandRegistration implements Listener {
         // Step #2: Create a "name --> target" map that contains the KamiCommands that /should/ be registered in Bukkit. 
         Map<String, KamiCommand> nameTargets = new HashMap<>();
         // For each KamiCommand that is supposed to be registered ...
-        for (KamiCommand massiveCommand : KamiCommand.getAllInstances()) {
+        for (KamiCommand kamiCommand : KamiCommand.getAllInstances()) {
             // ... and for each of it's aliases ...
-            for (String alias : massiveCommand.getAliases()) {
+            for (String alias : kamiCommand.getAliases()) {
                 // ... that aren't null ...
                 if (alias == null) continue;
 
@@ -57,7 +57,7 @@ public class KamiCommonCommandRegistration implements Listener {
 
                 // ... and put it in the map.
                 // NOTE: In case the same alias is used by many commands the overwrite occurs here!
-                nameTargets.put(alias, massiveCommand);
+                nameTargets.put(alias, kamiCommand);
             }
         }
 
@@ -69,12 +69,12 @@ public class KamiCommonCommandRegistration implements Listener {
 
             // ... find the current command registered in Bukkit under that name (if any) ...
             Command current = knownCommands.get(name);
-            KamiCommand massiveCurrent = getKamiCommand(current);
+            KamiCommand kamiCurrent = getKamiCommand(current);
 
             // ... and if the current command is not the target ...
-            // NOTE: We do this check since it's important we don't create new MassiveCoreBukkitCommands unless required.
+            // NOTE: We do this check since it's important we don't create new KamiCommonBukkitCommand unless required.
             // NOTE: Before I implemented this check I caused a memory leak in tandem with Spigots timings system.
-            if (target == massiveCurrent) continue;
+            if (target == kamiCurrent) continue;
 
             // ... unregister the current command if there is one ...
             if (current != null) {
@@ -82,7 +82,7 @@ public class KamiCommonCommandRegistration implements Listener {
                 current.unregister(simpleCommandMap);
             }
 
-            // ... create a new MassiveCoreBukkitCommand ...
+            // ... create a new KamiCommonBukkitCommand ...
             KamiCommonBukkitCommand command = new KamiCommonBukkitCommand(name, target);
 
             // ... and finally register it.
@@ -99,9 +99,9 @@ public class KamiCommonCommandRegistration implements Listener {
             String name = entry.getKey();
             Command command = entry.getValue();
 
-            // ... that is a MassiveCoreBukkitCommand ...
-            KamiCommand massiveCommand = getKamiCommand(command);
-            if (massiveCommand == null) continue;
+            // ... that is a KamiCommonBukkitCommand ...
+            KamiCommand kamiCommand = getKamiCommand(command);
+            if (kamiCommand == null) continue;
 
             // ... and not a target ...
             if (nameTargets.containsKey(name)) continue;

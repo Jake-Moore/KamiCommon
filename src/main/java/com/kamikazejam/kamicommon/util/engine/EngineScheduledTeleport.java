@@ -24,19 +24,19 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
-public class EngineMassiveCoreScheduledTeleport extends Engine {
+public class EngineScheduledTeleport extends Engine {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
 	// -------------------------------------------- //
 
-	private static final EngineMassiveCoreScheduledTeleport i = new EngineMassiveCoreScheduledTeleport();
+	private static final EngineScheduledTeleport i = new EngineScheduledTeleport();
 
 	@Contract(pure = true)
-	public static EngineMassiveCoreScheduledTeleport get() {
+	public static EngineScheduledTeleport get() {
 		return i;
 	}
 
-	public EngineMassiveCoreScheduledTeleport() {
+	public EngineScheduledTeleport() {
 		this.setPeriod(1L);
 	}
 

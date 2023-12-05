@@ -70,6 +70,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         this.enableTime = System.currentTimeMillis();
         log("=== ENABLE START ===");
 
+        // Create the Module Manager
         this.moduleManager = new ModuleManager(this);
 
         // Listener
@@ -111,6 +112,11 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         unregisterListener(listeners.toArray(new Listener[0]));
         unregisterTask(taskList.toArray(new BukkitTask[0]));
         unregisterDisableable(disableables.toArray(new Disableable[0]));
+
+        // Cleanup Modules
+        if (moduleManager != null) {
+            moduleManager.unregister();
+        }
 
         log("Disabled");
     }

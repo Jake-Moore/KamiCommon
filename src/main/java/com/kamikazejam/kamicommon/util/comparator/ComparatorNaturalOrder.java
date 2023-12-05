@@ -23,7 +23,7 @@
  */
 
 /*
-This version has been slightly modified for usage in the MassiveCore library.
+This version has been slightly modified for usage in the KamiCommon library.
 Check out the original at: https://github.com/paour/natorder/blob/master/NaturalOrderComparator.java 
 */
 

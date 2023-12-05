@@ -47,7 +47,7 @@ public class Test {
 														" test3",
 														mson("this ", "is only ", "one way to do it!")
 												)
-								).link("www.massivecraft,com")
+								).link("www.google.com")
 				).color(BLUE)
 				.tooltip("Holy Moly");
 

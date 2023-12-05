@@ -2,21 +2,21 @@ package com.kamikazejam.kamicommon.util.adapter;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
-import com.kamikazejam.kamicommon.util.collections.KamiSet;
+import com.kamikazejam.kamicommon.util.collections.KamiList;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-public class AdapterMassiveSet extends AdapterMassiveX<KamiSet<?>> {
+public class AdapterKamiList extends AdapterKamiX<KamiList<?>> {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
 	// -------------------------------------------- //
 
-	private static final AdapterMassiveSet i = new AdapterMassiveSet();
+	private static final AdapterKamiList i = new AdapterKamiList();
 
 	@Contract(pure = true)
-	public static AdapterMassiveSet get() {
+	public static AdapterKamiList get() {
 		return i;
 	}
 
@@ -26,8 +26,7 @@ public class AdapterMassiveSet extends AdapterMassiveX<KamiSet<?>> {
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	public KamiSet<?> create(Object parent, JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-		return new KamiSet((Collection) parent);
+	public KamiList<?> create(Object parent, JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		return new KamiList<>((Collection) parent);
 	}
-
 }
