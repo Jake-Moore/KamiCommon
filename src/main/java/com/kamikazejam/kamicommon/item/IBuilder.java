@@ -3,7 +3,7 @@ package com.kamikazejam.kamicommon.item;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.nms.NmsManager;
 import com.kamikazejam.kamicommon.util.StringUtilP;
-import com.kamikazejam.kamicommon.util.TriState;
+import com.kamikazejam.kamicommon.util.data.TriState;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import lombok.Setter;

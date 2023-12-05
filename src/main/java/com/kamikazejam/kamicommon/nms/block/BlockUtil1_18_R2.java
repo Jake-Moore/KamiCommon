@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.nms.block;
 
-import com.kamikazejam.kamicommon.util.MaterialData;
+import com.kamikazejam.kamicommon.util.data.MaterialData;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;

@@ -5,4 +5,6 @@ import org.bukkit.inventory.ItemStack;
 
 public interface ItemText {
     BaseComponent[] getComponents(ItemStack item);
+
+    String getNbtStringTooltip(ItemStack item);
 }

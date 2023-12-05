@@ -13,4 +13,11 @@ public class ItemText_1_9_R2 implements ItemText {
         if (v1_9_R2Stack == null) { return TextComponent.fromLegacyText(""); }
         return new BaseComponent[]{ new TextComponent(v1_9_R2Stack.save(new NBTTagCompound()).toString()) };
     }
+
+    @Override
+    public String getNbtStringTooltip(ItemStack item) {
+        net.minecraft.server.v1_9_R2.ItemStack v1_9_R2Stack = CraftItemStack.asNMSCopy(item);
+        if (v1_9_R2Stack == null) { return ""; }
+        return v1_9_R2Stack.save(new NBTTagCompound()).toString();
+    }
 }

@@ -85,6 +85,10 @@
                                     <pattern>org.yaml</pattern>
                                     <shadedPattern>com.kamikazejam.kamicommon.yaml</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.google.code.gson</pattern>
+                                    <shadedPattern>com.kamikazejam.kamicommon.gson</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -135,9 +139,18 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>2.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- GSON -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+            <scope>compile</scope>
         </dependency>
 
-<!--         Nms classes for these since all nms doesn't include them idk why-->
+
+        <!--         Nms classes for these since all nms doesn't include them idk why-->
         <dependency> <!-- 1.18 R1 -->
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api-1.18.1</artifactId>

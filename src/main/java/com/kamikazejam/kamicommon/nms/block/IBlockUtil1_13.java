@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.nms.block;
 
 import com.kamikazejam.kamicommon.KamiCommon;
-import com.kamikazejam.kamicommon.util.MaterialData;
+import com.kamikazejam.kamicommon.util.data.MaterialData;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.type.Slab;
