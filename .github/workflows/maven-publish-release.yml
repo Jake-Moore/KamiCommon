@@ -42,8 +42,8 @@ jobs:
         gh run watch ${{ github.run_id }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          - name: Maven Settings
+
+    - name: Maven Settings
       uses: s4u/maven-settings-action@v2.8.0
       with:
         servers: '[{"id": "luxious-public", "username": "${{ secrets.MAVEN_NAME }}", "password": "${{ secrets.MAVEN_SECRET }}"}, {"id": "all-spigot-nms", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}"}]'
