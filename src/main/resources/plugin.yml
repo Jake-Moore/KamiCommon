@@ -5,5 +5,7 @@ authors: [ KamikazeJAM ]
 softdepend:
   - PlaceholderAPI
   - ItemsAdder
+  - MythicMobs
+  - Citizens
 description: KamikazeJAM's common library for Spigot and Standalone projects.
 api-version: 1.13

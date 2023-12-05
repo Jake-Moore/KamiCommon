@@ -35,7 +35,21 @@ public class ReflectionUtil {
         }
     }
 
-    @Contract(value = "null -> fail", mutates = "param1")
+    // -------------------------------------------- //
+    // MAKE ACCESSIBLE
+    // -------------------------------------------- //
+
+    @Contract(value = "null -> fail")
+    public static void makeAccessible(Field field) {
+        try {
+            // Mark as accessible using reflection.
+            field.setAccessible(true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Contract(value = "null -> fail")
     public static void makeAccessible(Constructor<?> constructor) {
         try {
             // Mark as accessible using reflection.
@@ -45,7 +59,7 @@ public class ReflectionUtil {
         }
     }
 
-    @Contract(value = "null -> fail", mutates = "param1")
+    @Contract(value = "null -> fail")
     public static void makeAccessible(Method method) {
         try {
             // Mark as accessible using reflection.
@@ -74,8 +88,7 @@ public class ReflectionUtil {
     // -------------------------------------------- //
     // SUPERCLASSES
     // -------------------------------------------- //
-
-    public static @NotNull List<@NotNull Class<?>> getSuperclasses(@NotNull Class<?> clazz, boolean includeSelf) {
+    public static @NotNull List<Class<?>> getSuperclasses(@NotNull Class<?> clazz, boolean includeSelf) {
         // Create
         List<Class<?>> ret = new ArrayList<>();
 
@@ -198,4 +211,29 @@ public class ReflectionUtil {
         return (Class<?>) type;
     }
 
+    // -------------------------------------------- //
+    // FIELD > GET
+    // -------------------------------------------- //
+
+    @Contract("null, _ -> fail; !null, null -> fail")
+    public static @NotNull Field getField(Class<?> clazz, String name) {
+        if (clazz == null) throw new NullPointerException("clazz");
+        if (name == null) throw new NullPointerException("name");
+        try {
+            Field ret = clazz.getDeclaredField(name);
+            makeAccessible(ret);
+            return ret;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getField(@NotNull Field field, Object object) {
+        try {
+            return (T) field.get(object);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

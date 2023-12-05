@@ -21,5 +21,6 @@ public class Lang {
     public static final Mson COMMAND_CHILD_NONE = mson("The sub command ", COMMAND_REPLACEMENT, " couldn't be found.").color(ChatColor.YELLOW);
     public static final Mson COMMAND_CHILD_HELP = mson("Use ", COMMAND_REPLACEMENT, " to see all commands.").color(ChatColor.YELLOW);
 
+    public static final String COMMAND_TOO_MANY_TAB_SUGGESTIONS = "<h>%d <b>tab completions available. Be more specific and try again.";
 }
 

@@ -17,7 +17,6 @@ public class PredicateStringStartsWith implements Predicate<String> {
 		return new PredicateStringStartsWith(prefix);
 	}
 
-	@Contract("null -> fail")
 	public PredicateStringStartsWith(String prefix) {
 		if (prefix == null) throw new NullPointerException("prefix");
 		this.prefix = prefix.toLowerCase();
