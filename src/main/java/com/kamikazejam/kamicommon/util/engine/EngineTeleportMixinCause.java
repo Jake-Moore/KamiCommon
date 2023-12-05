@@ -13,15 +13,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
-public class EngineMassiveCoreTeleportMixinCause extends Engine {
+public class EngineTeleportMixinCause extends Engine {
     // -------------------------------------------- //
     // INSTANCE & CONSTRUCT
     // -------------------------------------------- //
 
-    private static final EngineMassiveCoreTeleportMixinCause i = new EngineMassiveCoreTeleportMixinCause();
+    private static final EngineTeleportMixinCause i = new EngineTeleportMixinCause();
 
     @Contract(pure = true)
-    public static EngineMassiveCoreTeleportMixinCause get() {
+    public static EngineTeleportMixinCause get() {
         return i;
     }
 

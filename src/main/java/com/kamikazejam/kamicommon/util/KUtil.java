@@ -404,7 +404,7 @@ public class KUtil {
     // Teleportation delay permissions.
 
     public static final Map<String, Integer> permissionToTpdelay = KUtil.map(
-            "massivecore.notpdelay", 0,
+            "kamicommon.notpdelay", 0,
             "default", 10
     );
 

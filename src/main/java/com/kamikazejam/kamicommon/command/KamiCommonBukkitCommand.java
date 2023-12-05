@@ -4,6 +4,7 @@ import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
+import lombok.Getter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
@@ -14,30 +15,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 @SuppressWarnings({"unused", "NullableProblems"})
 public class KamiCommonBukkitCommand extends Command implements PluginIdentifiableCommand {
 	// -------------------------------------------- //
 	// FIELDS
 	// -------------------------------------------- //
 
-	protected final KamiCommand massiveCommand;
-
-	public KamiCommand getKamiCommand() {
-		return this.massiveCommand;
-	}
+	protected final KamiCommand kamiCommand;
 
 	// -------------------------------------------- //
 	// CONSTRUCT
 	// -------------------------------------------- //
 
-	public KamiCommonBukkitCommand(String name, @NotNull KamiCommand massiveCommand) {
+	public KamiCommonBukkitCommand(String name, @NotNull KamiCommand kamiCommand) {
 		super(
 				name,
-				massiveCommand.getDesc(),
-				massiveCommand.getTemplate().toPlain(true),
+				kamiCommand.getDesc(),
+				kamiCommand.getTemplate().toPlain(true),
 				Collections.emptyList() // We don't use aliases
 		);
-		this.massiveCommand = massiveCommand;
+		this.kamiCommand = kamiCommand;
 	}
 
 	// -------------------------------------------- //

@@ -96,11 +96,11 @@ public class KamiCommon extends KamiPlugin implements Listener {
         ret.excludeFieldsWithModifiers(Modifier.TRANSIENT);
         ret.excludeFieldsWithModifiers(Modifier.STATIC);
 
-        // Massive Containers
-        ret.registerTypeAdapter(KamiList.class, AdapterMassiveList.get());
-        ret.registerTypeAdapter(KamiMap.class, AdapterMassiveMap.get());
-        ret.registerTypeAdapter(KamiSet.class, AdapterMassiveSet.get());
-        ret.registerTypeAdapter(KamiTreeSet.class, AdapterMassiveTreeSet.get());
+        // KamiCommon Containers
+        ret.registerTypeAdapter(KamiList.class, AdapterKamiList.get());
+        ret.registerTypeAdapter(KamiMap.class, AdapterKamiMap.get());
+        ret.registerTypeAdapter(KamiSet.class, AdapterKamiSet.get());
+        ret.registerTypeAdapter(KamiTreeSet.class, AdapterKamiTreeSet.get());
 
         // Mson
         ret.registerTypeAdapter(Mson.class, AdapterMson.get());

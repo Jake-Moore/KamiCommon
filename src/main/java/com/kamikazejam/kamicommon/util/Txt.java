@@ -477,11 +477,11 @@ public class Txt {
         );
     }
 
-    private static KamiCommandHelp massiveCommandHelp = null;
+    private static KamiCommandHelp kamiCommandHelp = null;
 
-    public static @NotNull KamiCommandHelp getMassiveCommandHelp() {
-        if (massiveCommandHelp == null) massiveCommandHelp = new KamiCommandHelp();
-        return massiveCommandHelp;
+    public static @NotNull KamiCommandHelp getKamiCommandHelp() {
+        if (kamiCommandHelp == null) kamiCommandHelp = new KamiCommandHelp();
+        return kamiCommandHelp;
     }
 
     private static @NotNull Mson setFlipPageCommand(@NotNull Mson mson, int pageHumanBased, int destinationPage, @Nullable List<String> args, KamiCommand command) {
@@ -512,7 +512,7 @@ public class Txt {
         String tooltip = MsonEvent.command(commandLine).createTooltip();
 
         // Make command line clicking
-        commandLine = getMassiveCommandHelp().getCommandLine(commandLine);
+        commandLine = getKamiCommandHelp().getCommandLine(commandLine);
 
         // Apply command
         mson = mson.command(commandLine);

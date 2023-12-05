@@ -9,15 +9,15 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-public class AdapterMassiveTreeSet extends AdapterMassiveX<KamiTreeSet<?, ?>> {
+public class AdapterKamiTreeSet extends AdapterKamiX<KamiTreeSet<?, ?>> {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
 	// -------------------------------------------- //
 
-	private static final AdapterMassiveTreeSet i = new AdapterMassiveTreeSet();
+	private static final AdapterKamiTreeSet i = new AdapterKamiTreeSet();
 
 	@Contract(pure = true)
-	public static AdapterMassiveTreeSet get() {
+	public static AdapterKamiTreeSet get() {
 		return i;
 	}
 

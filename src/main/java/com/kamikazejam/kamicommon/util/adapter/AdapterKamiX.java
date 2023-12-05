@@ -12,12 +12,12 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * This is the abstract adapter for all "Massive structures".
+ * This is the abstract adapter for all "KamiCommon structures".
  * It makes sure Def instances "handle empty as null".
  * It makes sure we avoid infinite GSON recurse loops by recursing with supertype.
  */
 @SuppressWarnings("unused")
-public abstract class AdapterMassiveX<T> implements JsonDeserializer<T>, JsonSerializer<T> {
+public abstract class AdapterKamiX<T> implements JsonDeserializer<T>, JsonSerializer<T> {
 	// -------------------------------------------- //
 	// OVERRIDE
 	// -------------------------------------------- //
@@ -26,9 +26,9 @@ public abstract class AdapterMassiveX<T> implements JsonDeserializer<T>, JsonSer
 	public JsonElement serialize(T src, Type type, JsonSerializationContext context) {
 		ParameterizedType pType = (ParameterizedType) type;
 
-		// This a regular Massive structure and not a Def ...
+		// This a regular Kami structure
 		//  Serialize it as if it were the regular java collection!
-		//  SUPER TYPE x1 EXAMPLE: MassiveList --> ArrayList
+		//  SUPER TYPE x1 EXAMPLE: KamiList --> ArrayList
 		return context.serialize(src, getSuperType(pType));
 	}
 
@@ -44,7 +44,7 @@ public abstract class AdapterMassiveX<T> implements JsonDeserializer<T>, JsonSer
 		// ... and it's non null and contains something ...
 		else {
 			// ... then deserialize it as if it were the regular java collection!
-			// SUPER TYPE x1 EXAMPLE: MassiveList --> ArrayList
+			// SUPER TYPE x1 EXAMPLE: KamiList --> ArrayList
 			Object parent = context.deserialize(json, getSuperType(pType));
 			return create(parent, json, type, context);
 		}

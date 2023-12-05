@@ -1,9 +1,9 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
-import com.kamikazejam.kamicommon.event.EventMassiveCorePlayerPSTeleport;
+import com.kamikazejam.kamicommon.event.PlayerPSTeleportEvent;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Txt;
-import com.kamikazejam.kamicommon.util.engine.EngineMassiveCoreTeleportMixinCause;
+import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.id.IdUtil;
 import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
@@ -39,7 +39,7 @@ public class MixinTeleport extends Mixin {
 	// -------------------------------------------- //
 
 	public boolean isCausedByMixin(PlayerTeleportEvent event) {
-		return EngineMassiveCoreTeleportMixinCause.get().isCausedByTeleportMixin(event);
+		return EngineTeleportMixinCause.get().isCausedByTeleportMixin(event);
 	}
 
 	public void teleport(Object teleportee, Destination destination) throws KamiCommonException {
@@ -75,9 +75,9 @@ public class MixinTeleport extends Mixin {
 		if (vehicle != null) vehicle.eject();
 
 		// Do the teleport
-		EngineMassiveCoreTeleportMixinCause.get().setMixinCausedTeleportIncoming(true);
+		EngineTeleportMixinCause.get().setMixinCausedTeleportIncoming(true);
 		player.teleport(location);
-		EngineMassiveCoreTeleportMixinCause.get().setMixinCausedTeleportIncoming(false);
+		EngineTeleportMixinCause.get().setMixinCausedTeleportIncoming(false);
 
 		// Bukkit velocity
 		Vector velocity;
@@ -120,7 +120,7 @@ public class MixinTeleport extends Mixin {
 			// Without delay AKA "now"/"at once"
 
 			// Run event
-			EventMassiveCorePlayerPSTeleport event = new EventMassiveCorePlayerPSTeleport(teleporteeId, MixinSenderPs.get().getSenderPs(teleporteeId), destination);
+			PlayerPSTeleportEvent event = new PlayerPSTeleportEvent(teleporteeId, MixinSenderPs.get().getSenderPs(teleporteeId), destination);
 			event.run();
 			if (event.isCancelled()) return;
 			destination = event.getDestination();

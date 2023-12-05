@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
-import com.kamikazejam.kamicommon.util.engine.EngineMassiveCoreScheduledTeleport;
+import com.kamikazejam.kamicommon.util.engine.EngineScheduledTeleport;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.mixin.MixinTeleport;
 import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
@@ -45,15 +45,15 @@ public class ScheduledTeleport implements Runnable {
     // -------------------------------------------- //
 
     public boolean isScheduled() {
-        return EngineMassiveCoreScheduledTeleport.get().isScheduled(this);
+        return EngineScheduledTeleport.get().isScheduled(this);
     }
 
     public ScheduledTeleport schedule() {
-        return EngineMassiveCoreScheduledTeleport.get().schedule(this);
+        return EngineScheduledTeleport.get().schedule(this);
     }
 
     public boolean unschedule() {
-        return EngineMassiveCoreScheduledTeleport.get().unschedule(this);
+        return EngineScheduledTeleport.get().unschedule(this);
     }
 
     // -------------------------------------------- //

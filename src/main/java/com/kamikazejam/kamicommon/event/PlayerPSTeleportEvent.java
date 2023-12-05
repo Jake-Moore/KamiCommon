@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
-public class EventMassiveCorePlayerPSTeleport extends EventMassiveCore {
+public class PlayerPSTeleportEvent extends KamiCommonEvent {
     // -------------------------------------------- //
     // REQUIRED EVENT CODE
     // -------------------------------------------- //
@@ -42,7 +42,7 @@ public class EventMassiveCorePlayerPSTeleport extends EventMassiveCore {
     // CONSTRUCT
     // -------------------------------------------- //
 
-    public EventMassiveCorePlayerPSTeleport(String teleporteeId, PS origin, Destination destination) {
+    public PlayerPSTeleportEvent(String teleporteeId, PS origin, Destination destination) {
         this.teleporteeId = teleporteeId;
         this.origin = origin;
         this.destination = destination;

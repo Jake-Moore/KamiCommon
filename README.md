@@ -85,20 +85,8 @@ builder = new IAItemBuilder("namespace:id");
 - **Auto Update** for plugins
    - This feature requires that each plugin repository using auto update have a configured GitHub action to publish a release for each version
    - Probably best to contact me if you're interested in using this feature with your own plugin
-- **Commands Library** for subcommand management (I would personally recommend the MassiveCore command system over this, this is very simplistic by comparison)
-  - **1.** Create your sub command classes that extend `KamiSubCommand`
-    - Override the required methods
-    - You can optionally override `performTabComplete` to supply tab completions
-    - Make sure to create a "none" sub command, which will act as the help when no sub command is found
-  - **2.** Create a sub commands container class that extends `KamiSubCommands`
-    - Override `getSubCommands()` and return a list of your sub command instances
-    - It is advised to store the "NoneCommand" in a local varaible so it can be supplied to both `getSubCommands()` and `getNoneSubCommand()`
-  - **3.** Create a command class that extends `KamiCommand`
-    - Use `super(new YourSubCommands())`
-    - Override the required methods
-    - Do NOT override `onCommand`, this will break all sub commands
-    - Optionally override `onTabComplete` to supply tab completions (sub commands)
-      - you can access your sub commands with `getKamiSubCommands()`
+- **Commands Library** for subcommand management (forked from the MassiveCore commands system)
+  - WIP (see MassiveCore development guide for now)
 - **Config Management**
   - Files (create classes extending these, and then create an instance to use)
     - KamiConfig (for plugin configs)

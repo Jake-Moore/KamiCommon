@@ -9,7 +9,7 @@ import org.bukkit.event.Event;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public abstract class EventMassiveCore extends Event implements Runnable, Cancellable {
+public abstract class KamiCommonEvent extends Event implements Runnable, Cancellable {
     // -------------------------------------------- //
     // FIELDS
     // -------------------------------------------- //
@@ -42,11 +42,11 @@ public abstract class EventMassiveCore extends Event implements Runnable, Cancel
     // CONSTRUCT
     // -------------------------------------------- //
 
-    public EventMassiveCore() {
+    public KamiCommonEvent() {
         super(!Bukkit.isPrimaryThread()); // TODO - Is this incredibly dangerous?
     }
 
-    public EventMassiveCore(boolean isAsync) {
+    public KamiCommonEvent(boolean isAsync) {
         super(isAsync);
     }
 

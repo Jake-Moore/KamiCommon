@@ -8,15 +8,15 @@ import org.jetbrains.annotations.Contract;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-public class AdapterMassiveMap extends AdapterMassiveX<KamiMap<?, ?>> {
+public class AdapterKamiMap extends AdapterKamiX<KamiMap<?, ?>> {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
 	// -------------------------------------------- //
 
-	private static final AdapterMassiveMap i = new AdapterMassiveMap();
+	private static final AdapterKamiMap i = new AdapterKamiMap();
 
 	@Contract(pure = true)
-	public static AdapterMassiveMap get() {
+	public static AdapterKamiMap get() {
 		return i;
 	}
 

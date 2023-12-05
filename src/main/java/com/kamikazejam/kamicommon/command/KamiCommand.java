@@ -728,7 +728,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	// PREPROCESS
 	// -------------------------------------------- //
 	// These options are applied very early.
-	// The code is located in the MassiveCoreBukkitCommand.
+	// The code is located in the KamiCommonBukkitCommand.
 
 	@Contract(mutates = "this")
 	public void setTokenizing(boolean tokenizing) {
