@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.command.type.RegistryType;
 import com.kamikazejam.kamicommon.gui.MenuManager;
 import com.kamikazejam.kamicommon.gui.MenuTask;
@@ -23,11 +24,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Modifier;
 
 @SuppressWarnings("unused")
-public class KamiCommon extends JavaPlugin implements Listener {
+public class KamiCommon extends KamiPlugin implements Listener {
     private static KamiCommon plugin;
 
     @Override
-    public void onEnable(){
+    public void onEnableInner(){
         long start = System.currentTimeMillis();
         getLogger().info("KamiCommon enabling...");
 
@@ -52,16 +53,21 @@ public class KamiCommon extends JavaPlugin implements Listener {
         // Setup RegistryType (Types for Commands)
         RegistryType.registerAll();
 
+        // Setup Commands
+        new KamiCommonCommandRegistration(this);
+
         getLogger().info("KamiCommon enabled in " + (System.currentTimeMillis() - start) + "ms");
     }
 
     @Override
-    public void onDisable() {
+    public void onDisableInner() {
+        // Unregister all listeners
         HandlerList.unregisterAll((Plugin) plugin);
-        Bukkit.getLogger().info("KamiCommon disabled");
 
         // Save IdUtil
         IdUtil.saveCachefileDatas();
+
+        Bukkit.getLogger().info("KamiCommon disabled");
     }
 
     public static JavaPlugin get() {
@@ -75,15 +81,6 @@ public class KamiCommon extends JavaPlugin implements Listener {
             return isWineSpigot = Bukkit.getServer().getName().equals("WineSpigot");
         }
         return isWineSpigot;
-    }
-
-
-    private static Boolean hasItemsAdder = null;
-    public static boolean hasItemsAdder() {
-        if (hasItemsAdder == null) {
-            return hasItemsAdder = Bukkit.getPluginManager().getPlugin("ItemsAdder") != null;
-        }
-        return hasItemsAdder;
     }
 
 

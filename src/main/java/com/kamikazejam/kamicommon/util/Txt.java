@@ -596,4 +596,85 @@ public class Txt {
         return matcher.group(1);
     }
 
+
+    // -------------------------------------------- //
+    // Tokenization
+    // -------------------------------------------- //
+
+    public static @NotNull List<String> tokenizeArguments(@NotNull String str) {
+        List<String> ret = new ArrayList<>();
+        StringBuilder token = null;
+        boolean escaping = false;
+        boolean citing = false;
+
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (token == null) {
+                token = new StringBuilder();
+            }
+
+            if (escaping) {
+                escaping = false;
+                token.append(c);
+            } else if (c == '\\') {
+                escaping = true;
+            } else if (c == '"') {
+                if (citing || token.length() > 0) {
+                    ret.add(token.toString());
+                    token = null;
+                }
+                citing = !citing;
+            } else if (!citing && c == ' ') {
+                if (token.length() > 0) {
+                    ret.add(token.toString());
+                    token = null;
+                }
+            } else {
+                token.append(c);
+            }
+        }
+
+        if (token != null) {
+            ret.add(token.toString());
+        }
+
+        return ret;
+    }
+
+
+    // -------------------------------------------- //
+    // "SMART" QUOTES
+    // -------------------------------------------- //
+    // The quite stupid "Smart quotes" design idea means replacing normal characters with mutated UTF-8 alternatives.
+    // The normal characters look good in Minecraft.
+    // The UFT-8 "smart" alternatives look quite bad.
+    // http://www.fileformat.info/info/unicode/block/general_punctuation/list.htm
+
+    @Contract("null -> null; !null -> !null")
+    public static String removeSmartQuotes(String string) {
+        if (string == null) return null;
+
+        // LEFT SINGLE QUOTATION MARK
+        string = string.replace("\u2018", "'");
+
+        // RIGHT SINGLE QUOTATION MARK
+        string = string.replace("\u2019", "'");
+
+        // LEFT DOUBLE QUOTATION MARK
+        string = string.replace("\u201C", "\"");
+
+        // RIGHT DOUBLE QUOTATION MARK
+        string = string.replace("\u201D", "\"");
+
+        // ONE DOT LEADER
+        string = string.replace("\u2024", ".");
+
+        // TWO DOT LEADER
+        string = string.replace("\u2025", "..");
+
+        // HORIZONTAL ELLIPSIS
+        string = string.replace("\u2026", "...");
+
+        return string;
+    }
 }

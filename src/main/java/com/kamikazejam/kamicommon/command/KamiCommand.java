@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.command;
 
-import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.command.requirement.Requirement;
 import com.kamikazejam.kamicommon.command.requirement.RequirementAbstract;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
@@ -10,6 +9,7 @@ import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
+import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.interfaces.Active;
 import com.kamikazejam.kamicommon.util.mson.Mson;
 import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
@@ -36,6 +36,29 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	public static Set<KamiCommand> getAllInstances() {
 		return allInstances;
 	}
+
+	// -------------------------------------------- //
+	// REGISTRATION
+	// -------------------------------------------- //
+
+	/**
+	 * If you register a command after the server has started, you must call the following method: <p>
+	 * @see KamiCommonCommandRegistration#updateRegistrations() <p>
+	 * In order for the command to be added to the server.
+	 */
+	public void registerCommand() {
+		this.setActive(true);
+	}
+
+	/**
+	 * If you unregister a command after the server has started, you must call the following method: <p>
+	 * @see KamiCommonCommandRegistration#updateRegistrations() <p>
+	 * In order for the command to be removed from the server.
+	 */
+	public void unregisterCommand() {
+		this.setActive(false);
+	}
+
 
 	// -------------------------------------------- //
 	// ACTIVE
