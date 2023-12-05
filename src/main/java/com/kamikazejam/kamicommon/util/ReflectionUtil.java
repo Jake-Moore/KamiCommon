@@ -78,6 +78,15 @@ public class ReflectionUtil {
         });
     }
 
+    public static Class<?> getSuperclassDeclaringField(@NotNull Class<?> clazz, boolean includeSelf, final String fieldName) {
+        return getSuperclassPredicate(clazz, includeSelf, clazz1 -> {
+            for (Field field : clazz1.getDeclaredFields()) {
+                if (field.getName().equals(fieldName)) return true;
+            }
+            return false;
+        });
+    }
+
     public static @Nullable Class<?> getSuperclassPredicate(@NotNull Class<?> clazz, boolean includeSelf, @NotNull Predicate<Class<?>> predicate) {
         for (Class<?> superClazz : getSuperclasses(clazz, includeSelf)) {
             if (predicate.apply(superClazz)) return superClazz;
@@ -132,6 +141,17 @@ public class ReflectionUtil {
         if (!clazz.isAssignableFrom(ret.getClass()))
             throw new IllegalStateException("Singleton instance was not of same or subclass for: " + clazz);
         return ret;
+    }
+
+    public static <T> T getSingletonInstanceFirstCombatible(Iterable<Class<?>> classes, T fallback) {
+        for (Class<?> c : classes) {
+            try {
+                return ReflectionUtil.getSingletonInstance(c);
+            } catch (Throwable t) {
+                // Not Compatible
+            }
+        }
+        return fallback;
     }
 
 
@@ -232,6 +252,31 @@ public class ReflectionUtil {
     public static <T> T getField(@NotNull Field field, Object object) {
         try {
             return (T) field.get(object);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // -------------------------------------------- //
+    // FIELD > SIMPLE
+    // -------------------------------------------- //
+
+    public static <T> T getField(@NotNull Class<?> clazz, @NotNull String name, Object object) {
+        Field field = getField(clazz, name);
+        return getField(field, object);
+    }
+
+    public static void setField(@NotNull Class<?> clazz, @NotNull String name, Object object, Object value) {
+        Field field = getField(clazz, name);
+        setField(field, object, value);
+    }
+
+    // -------------------------------------------- //
+    // FIELD > SET
+    // -------------------------------------------- //
+    public static void setField(@NotNull Field field, Object object, Object value) {
+        try {
+            field.set(object, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

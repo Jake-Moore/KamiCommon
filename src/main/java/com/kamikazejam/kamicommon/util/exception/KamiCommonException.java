@@ -18,6 +18,10 @@ public class KamiCommonException extends Exception {
 
     protected Mson messages = Mson.mson();
 
+    // Empty constructor, to add messages use one of the below methods
+    public KamiCommonException() {
+    }
+
     public boolean hasMessages() {
         return !this.messages.isEmpty();
     }
