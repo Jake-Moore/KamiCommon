@@ -1,15 +1,20 @@
 package com.kamikazejam.kamicommon.util;
 
+import com.kamikazejam.kamicommon.command.Lang;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
+import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
 import com.kamikazejam.kamicommon.util.comparator.ComparatorCaseInsensitive;
+import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.Metadatable;
+import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -271,6 +276,22 @@ public class KUtil {
         return new KamiTreeSet<String, ComparatorCaseInsensitive>(ComparatorCaseInsensitive.get(), items);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <K, V> @NotNull Map<K, V> map(K key1, V value1, Object @NotNull ... objects) {
+        Map<K, V> ret = new KamiMap<>();
+
+        ret.put(key1, value1);
+
+        Iterator<Object> iter = Arrays.asList(objects).iterator();
+        while (iter.hasNext()) {
+            K key = (K) iter.next();
+            V value = (V) iter.next();
+            ret.put(key, value);
+        }
+
+        return ret;
+    }
+
     public static @NotNull List<Integer> range(int from, int to) {
         List<Integer> ret = new KamiList<>(to - from);
         for (int i = from; i < to; i++) {
@@ -375,5 +396,87 @@ public class KUtil {
 
     public static boolean isValidPlayerName(String string) {
         return PATTERN_PLAYER_NAME.matcher(string).matches();
+    }
+
+    // -------------------------------------------- //
+    // TP DELAY
+    // -------------------------------------------- //
+    // Teleportation delay permissions.
+
+    public static final Map<String, Integer> permissionToTpdelay = KUtil.map(
+            "massivecore.notpdelay", 0,
+            "default", 10
+    );
+
+    public static int getTpdelay(Permissible permissible) {
+        Integer ret = pickFirstVal(permissible, permissionToTpdelay);
+        if (ret == null) ret = 0;
+        return ret;
+    }
+
+    @Contract("_, null -> null")
+    public static <T> T pickFirstVal(@NotNull Permissible permissible, Map<String, T> perm2val) {
+        if (perm2val == null) return null;
+        T ret = null;
+
+        for (Map.Entry<String, T> entry : perm2val.entrySet()) {
+            ret = entry.getValue();
+            if (hasPermission(permissible, entry.getKey())) break;
+        }
+
+        return ret;
+    }
+
+    @Contract("null, _ -> fail; !null, null -> fail")
+    public static boolean hasPermission(Permissible permissible, String permission) {
+        return hasPermission(permissible, permission, false);
+    }
+
+    @Contract("null, _, _ -> fail; !null, null, _ -> fail")
+    public static boolean hasPermission(Permissible permissible, String permission, boolean verbose) {
+        // Fail Fast
+        if (permissible == null) throw new NullPointerException("permissible");
+        if (permission == null) throw new NullPointerException("permission");
+
+        if (permissible.hasPermission(permission)) return true;
+
+        if (verbose && permissible instanceof CommandSender) {
+            CommandSender sender = (CommandSender) permissible;
+            String message = getPermissionDeniedMessage(permission);
+            MsonMessenger.get().messageOne(sender, message);
+        }
+
+        return false;
+    }
+
+    public static String getPermissionDeniedMessage(Object permission) {
+        String deniedFormat = Lang.PERM_DEFAULT_DENIED_FORMAT;
+        String action = Lang.PERM_DEFAULT_DESCRIPTION;
+        return Txt.parse(deniedFormat, action);
+    }
+
+    // -------------------------------------------- //
+    // LOCATIONS COMPARISON
+    // -------------------------------------------- //
+
+    public static boolean isSameBlock(@NotNull PlayerMoveEvent event) {
+        return isSameBlock(event.getFrom(), Objects.requireNonNull(event.getTo()));
+    }
+
+    public static boolean isSameBlock(@NotNull Location one, @NotNull Location two) {
+        if (one.getBlockX() != two.getBlockX()) return false;
+        if (one.getBlockZ() != two.getBlockZ()) return false;
+        if (one.getBlockY() != two.getBlockY()) return false;
+        return Objects.equals(one.getWorld(), two.getWorld());
+    }
+
+    public static boolean isSameChunk(@NotNull PlayerMoveEvent event) {
+        return isSameChunk(event.getFrom(), Objects.requireNonNull(event.getTo()));
+    }
+
+    public static boolean isSameChunk(@NotNull Location one, @NotNull Location two) {
+        if (one.getBlockX() >> 4 != two.getBlockX() >> 4) return false;
+        if (one.getBlockZ() >> 4 != two.getBlockZ() >> 4) return false;
+        return one.getWorld() == two.getWorld();
     }
 }
