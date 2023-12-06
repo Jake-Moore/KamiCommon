@@ -7,6 +7,7 @@ import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
 import com.kamikazejam.kamicommon.util.comparator.ComparatorCaseInsensitive;
 import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
+import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -479,4 +480,116 @@ public class KUtil {
         if (one.getBlockZ() >> 4 != two.getBlockZ() >> 4) return false;
         return one.getWorld() == two.getWorld();
     }
+
+
+    // -------------------------------------------- //
+    // TRANSFORM
+    // -------------------------------------------- //
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Predicate<? super T> where, Comparator<? super T> orderby, Integer limit, Integer offset) {
+        // Collection
+        Collection<T> collection = null;
+        if (items instanceof Collection<?>) collection = (Collection<T>) items;
+
+        // WHERE
+        List<T> ret;
+        if (where == null) {
+            if (collection != null) {
+                ret = new ArrayList<>(collection);
+            } else {
+                ret = new ArrayList<>();
+                for (T item : items) {
+                    ret.add(item);
+                }
+            }
+        } else {
+            if (collection != null) {
+                ret = new ArrayList<>(collection.size());
+            } else {
+                ret = new ArrayList<>();
+            }
+
+            for (T item : items) {
+                if (where.apply(item)) {
+                    ret.add(item);
+                }
+            }
+        }
+
+        // ORDERBY
+        if (orderby != null) {
+            ret.sort(orderby);
+        }
+
+        // LIMIT AND OFFSET
+        // Parse args
+        int fromIndex = 0;
+        if (offset != null) {
+            fromIndex = offset;
+        }
+
+        int toIndex = ret.size() - 1;
+        if (limit != null) {
+            toIndex = fromIndex + limit;
+        }
+
+        // Clean args
+        if (fromIndex <= 0) {
+            fromIndex = 0;
+        } else if (fromIndex > ret.size() - 1) {
+            fromIndex = ret.size() - 1;
+        }
+
+        if (toIndex < fromIndex) {
+            toIndex = fromIndex;
+        } else if (toIndex > ret.size() - 1) {
+            toIndex = ret.size() - 1;
+        }
+
+        // No limit?
+        if (fromIndex == 0 && toIndex == ret.size() - 1) return ret;
+
+        return new ArrayList<>(ret.subList(fromIndex, toIndex));
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Predicate<? super T> where) {
+        return transform(items, where, null, null, null);
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Predicate<? super T> where, Comparator<? super T> orderby) {
+        return transform(items, where, orderby, null, null);
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Predicate<? super T> where, Comparator<? super T> orderby, Integer limit) {
+        return transform(items, where, orderby, limit, null);
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Predicate<? super T> where, Integer limit) {
+        return transform(items, where, null, limit, null);
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Predicate<? super T> where, Integer limit, Integer offset) {
+        return transform(items, where, null, limit, offset);
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Comparator<? super T> orderby) {
+        return transform(items, null, orderby, null, null);
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Comparator<? super T> orderby, Integer limit) {
+        return transform(items, null, orderby, limit, null);
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Comparator<? super T> orderby, Integer limit, Integer offset) {
+        return transform(items, null, orderby, limit, offset);
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Integer limit) {
+        return transform(items, null, null, limit, null);
+    }
+
+    public static <T> @NotNull List<T> transform(@NotNull Iterable<T> items, Integer limit, Integer offset) {
+        return transform(items, null, null, limit, offset);
+    }
+
 }
