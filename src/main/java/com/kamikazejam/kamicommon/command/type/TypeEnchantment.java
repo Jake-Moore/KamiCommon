@@ -5,7 +5,7 @@ import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
-import com.kamikazejam.kamicommon.util.nms.NMS_Methods_1_13;
+import com.kamikazejam.kamicommon.util.nms.NMS_Methods;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
@@ -66,14 +66,8 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 			"swift_sneak", new KamiList<>("Swift Sneak", "SWIFT_SNEAK", "SwiftSneak")
 	);
 
-	@SuppressWarnings("deprecation")
 	public static @NotNull String enchantmentToKey(@NotNull Enchantment enchantment) {
-		// If after 1.13, we have access to namespaced keys
-		if (NmsManager.getFormattedNmsDouble() >= 1130) {
-			return NMS_Methods_1_13.getNamespaced(enchantment);
-		}else {
-			return "minecraft:" + enchantment.getName().toLowerCase();
-		}
+		return NMS_Methods.getNamespaced(enchantment);
 	}
 
 	// -------------------------------------------- //
@@ -116,7 +110,7 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 
 		// If after 1.13, we have access to namespaced keys
 		if (NmsManager.getFormattedNmsDouble() >= 1130) {
-			raws.add(NMS_Methods_1_13.getNamespaced(enchantment));
+			raws.add(enchantmentToKey(enchantment));
 		}
 
 		for (String raw : raws) {
