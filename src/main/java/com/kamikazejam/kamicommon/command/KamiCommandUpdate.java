@@ -1,22 +1,23 @@
 package com.kamikazejam.kamicommon.command;
 
-import com.kamikazejam.kamicommon.VersionControl;
+import com.kamikazejam.kamicommon.autoupdate.AutoUpdate;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
+import org.bukkit.plugin.java.JavaPlugin;
 
 @SuppressWarnings("unused")
-public class KamiCommandVersion extends KamiCommand {
+public class KamiCommandUpdate extends KamiCommand {
 	// -------------------------------------------- //
 	// CONSTRUCT
 	// -------------------------------------------- //
-	public KamiCommandVersion() {
+	public KamiCommandUpdate() {
 		// Aliases
-		this.addAliases("ver", "version");
+		this.addAliases("update");
 
-		this.addRequirements(RequirementHasPerm.get("kamicommon.command.version"));
+		this.addRequirements(RequirementHasPerm.get("kamicommon.command.update"));
 
 		// Other
-		this.setDesc("Gets the version of this plugin.");
+		this.setDesc("Runs the update check again, downloading new jars if applicable.");
 	}
 
 	// -------------------------------------------- //
@@ -24,6 +25,6 @@ public class KamiCommandVersion extends KamiCommand {
 	// -------------------------------------------- //
 	@Override
 	public void perform() throws KamiCommonException {
-		VersionControl.sendDetails(getPlugin(), sender);
+		AutoUpdate.updateNow((JavaPlugin) getPlugin());
 	}
 }
