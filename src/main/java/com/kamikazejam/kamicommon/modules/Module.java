@@ -58,7 +58,7 @@ public abstract class Module {
 
         List<KamiCommand> commands = getCommands();
         if (commands == null) { return; }
-        commands.forEach(KamiCommand::registerCommand);
+        commands.forEach(c -> c.registerCommand(getPlugin()));
         commandList.addAll(commands);
     }
 
