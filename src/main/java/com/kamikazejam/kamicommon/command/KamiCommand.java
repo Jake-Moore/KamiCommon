@@ -46,8 +46,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	 * @see KamiCommonCommandRegistration#updateRegistrations() <p>
 	 * In order for the command to be added to the server.
 	 */
-	public void registerCommand() {
-		this.setActive(true);
+	public void registerCommand(Plugin plugin) {
+		this.setActive(plugin);
 	}
 
 	/**
@@ -91,6 +91,14 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
 	@Override
 	public Plugin getActivePlugin() {
+		// Automatically fetch from parent if null.
+		if (this.activePlugin == null) {
+			if (parent != null && !Objects.equals(parent, this)) {
+				this.activePlugin = this.getParent().getActivePlugin();
+			}else {
+				throw new RuntimeException("No active plugin set for command " + this.getClass().getSimpleName());
+			}
+		}
 		return this.activePlugin;
 	}
 

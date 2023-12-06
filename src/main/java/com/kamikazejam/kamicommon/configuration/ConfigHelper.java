@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class ConfigHelper {
      * @param fileName The name of the file for the new configuration
      * @return The FileConfiguration which was created and saved to file
      */
-    public static FileConfiguration createConfig(JavaPlugin plugin, String fileName) {
+    public static FileConfiguration createConfig(Plugin plugin, String fileName) {
         return createConfig(plugin, plugin.getDataFolder(), fileName, false);
     }
 
@@ -36,7 +36,7 @@ public class ConfigHelper {
      * @param fileName The name of the file for the new configuration
      * @return The FileConfiguration which was created and saved to file
      */
-    public static FileConfiguration createConfig(JavaPlugin plugin, File dataFolder, String fileName) {
+    public static FileConfiguration createConfig(Plugin plugin, File dataFolder, String fileName) {
         return createConfig(plugin, dataFolder, fileName, false);
     }
 
@@ -47,7 +47,7 @@ public class ConfigHelper {
      * @param defaultsFromResource Whether to load defaults from the jar resources folder
      * @return The FileConfiguration which was created and saved to file
      */
-    public static FileConfiguration createConfig(JavaPlugin plugin, File dataFolder, String fileName, boolean defaultsFromResource) {
+    public static FileConfiguration createConfig(Plugin plugin, File dataFolder, String fileName, boolean defaultsFromResource) {
         //Initialize the rewards config
         File f = createPluginFile(plugin, dataFolder.getPath(), fileName);
         FileConfiguration config = YamlConfiguration.loadConfiguration(f);
@@ -71,7 +71,7 @@ public class ConfigHelper {
      * @param config The configuration to save to file
      * @param fileName The name of the file to save to
      */
-    public static FileConfiguration saveConfig(JavaPlugin plugin, FileConfiguration config, String fileName) {
+    public static FileConfiguration saveConfig(Plugin plugin, FileConfiguration config, String fileName) {
         File f = new File(plugin.getDataFolder(), fileName);
         try {
             config.save(f);
@@ -88,7 +88,7 @@ public class ConfigHelper {
      * @param config The configuration to save to file
      * @param fileName The name of the file to save to
      */
-    public static FileConfiguration saveConfig(JavaPlugin plugin, File dataFolder, FileConfiguration config, String fileName) {
+    public static FileConfiguration saveConfig(Plugin plugin, File dataFolder, FileConfiguration config, String fileName) {
         File f = new File(dataFolder, fileName);
         try {
             config.save(f);
@@ -104,7 +104,7 @@ public class ConfigHelper {
      * @param fileName The name of the file to grab
      * @return The same config object for chaining
      */
-    public static FileConfiguration reloadConfig(JavaPlugin plugin, String fileName) {
+    public static FileConfiguration reloadConfig(Plugin plugin, String fileName) {
         File f = new File(plugin.getDataFolder(), fileName);
         return YamlConfiguration.loadConfiguration(f);
     }
@@ -112,7 +112,7 @@ public class ConfigHelper {
     /**
      * Creates an empty plugin file at a specified path with a specified name
      */
-    public static File createPluginFile(JavaPlugin plugin, String folder, String fileName) {
+    public static File createPluginFile(Plugin plugin, String folder, String fileName) {
         File file = new File(folder, fileName);
         if (!file.exists()) {
             try {
