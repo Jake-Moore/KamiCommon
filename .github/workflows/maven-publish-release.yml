@@ -27,22 +27,6 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-
-    - name: Extract Maven project version
-      run: echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-
-    - name: Show extracted project version env
-      run: echo ${{ env.RELEASE_VERSION }}
-
-      # If the version is a snapshot, we don't want to release it
-    - name: Early Exit for SNAPSHOTS
-      if: contains(env.RELEASE_VERSION, 'SNAPSHOT') != true
-      run: |
-        gh run cancel ${{ github.run_id }}
-        gh run watch ${{ github.run_id }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Maven Settings
       uses: s4u/maven-settings-action@v2.8.0
       with:
