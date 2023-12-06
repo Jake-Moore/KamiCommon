@@ -66,8 +66,14 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 			"swift_sneak", new KamiList<>("Swift Sneak", "SWIFT_SNEAK", "SwiftSneak")
 	);
 
+	@SuppressWarnings("deprecation")
 	public static @NotNull String enchantmentToKey(@NotNull Enchantment enchantment) {
-		return enchantment.getKey().getKey();
+		// If after 1.13, we have access to namespaced keys
+		if (NmsManager.getFormattedNmsDouble() >= 1130) {
+			return NMS_Methods_1_13.getNamespaced(enchantment);
+		}else {
+			return "minecraft:" + enchantment.getName().toLowerCase();
+		}
 	}
 
 	// -------------------------------------------- //
@@ -92,7 +98,7 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 
 	@Override
 	public String getNameInner(Enchantment enchantment) {
-		String rawname = enchantment.getKey().getKey();
+		String rawname = enchantmentToKey(enchantment);
 		List<String> rawnames = ID_TO_RAWNAMES.get(enchantmentToKey(enchantment));
 		if (rawnames != null) rawname = rawnames.get(0);
 		return Txt.getNicedEnumString(rawname);
