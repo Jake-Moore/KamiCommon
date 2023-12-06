@@ -1,8 +1,7 @@
 package com.kamikazejam.kamicommon.command.type;
 
-import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.Txt;
-import org.bukkit.NamespacedKey;
+import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 
 import javax.annotation.Nullable;
@@ -37,8 +36,8 @@ public class TypeNamespacedKey extends TypeAbstract<String> {
 		String namespace = parts[0];
 		String key = parts[1];
 
-		if (namespace.equals(NamespacedKey.MINECRAFT)) namespaceColour = "<green>";
-		else if (namespace.equals(NamespacedKey.BUKKIT)) namespaceColour = "<purple>";
+		if (namespace.equals("minecraft")) namespaceColour = "<green>";
+		else if (namespace.equals("bukkit")) namespaceColour = "<purple>";
 
 		return Txt.parse(namespaceColour + "%s<n>:<v>%s", namespace, key);
 	}
@@ -52,7 +51,7 @@ public class TypeNamespacedKey extends TypeAbstract<String> {
 		if (x == null) { return null; }
 
 		String[] parts = x.toLowerCase().split(":");
-		if (parts.length == 1) { return NamespacedKey.MINECRAFT + ":" + parts[0]; }
+		if (parts.length == 1) { return "minecraft" + ":" + parts[0]; }
 
 		return parts[0] + ":" + parts[1];
 	}

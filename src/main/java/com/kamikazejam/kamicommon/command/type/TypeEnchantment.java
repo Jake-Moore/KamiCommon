@@ -1,11 +1,12 @@
 package com.kamikazejam.kamicommon.command.type;
 
+import com.kamikazejam.kamicommon.nms.NmsManager;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
+import com.kamikazejam.kamicommon.util.nms.NMS_Methods_1_13;
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,10 +70,6 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 		return enchantment.getKey().getKey();
 	}
 
-	public static Enchantment enchantmentFromKey(String key) {
-		return Enchantment.getByKey(NamespacedKey.minecraft(key));
-	}
-
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
 	// -------------------------------------------- //
@@ -110,7 +107,12 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 		List<String> raws = new KamiList<>();
 		List<String> rawNames = ID_TO_RAWNAMES.get(enchantmentToKey(enchantment));
 		if (rawNames != null) raws.addAll(rawNames);
-		raws.add(enchantment.getKey().getKey());
+
+		// If after 1.13, we have access to namespaced keys
+		if (NmsManager.getFormattedNmsDouble() >= 1130) {
+			raws.add(NMS_Methods_1_13.getNamespaced(enchantment));
+		}
+
 		for (String raw : raws) {
 			ret.add(Txt.getNicedEnumString(raw));
 		}
