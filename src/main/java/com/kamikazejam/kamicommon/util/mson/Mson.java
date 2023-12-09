@@ -10,7 +10,6 @@ import com.kamikazejam.kamicommon.util.adapter.AdapterLowercaseEnum;
 import com.kamikazejam.kamicommon.util.adapter.AdapterMsonEventFix;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
-import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +20,7 @@ import org.jetbrains.annotations.Range;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1151,10 +1151,10 @@ public class Mson implements Serializable {
 		if (pattern == null) throw new NullPointerException("pattern");
 		if (replacements == null) throw new NullPointerException("replacements");
 
-		final MutableInt i = new MutableInt(0);
+		final AtomicInteger i = new AtomicInteger(0);
 		MsonReplacement replacer = (match, parent) -> {
 			int idx = i.intValue();
-			i.setValue(idx + 1);
+			i.set(idx + 1);
 			return replacements[idx % replacements.length];
 		};
 		return this.replaceAll(pattern, replacer);

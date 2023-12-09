@@ -3,7 +3,7 @@ package com.kamikazejam.kamicommon.command.type;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.command.type.container.AllAble;
 import com.kamikazejam.kamicommon.util.Txt;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public abstract class TypeAbstractSelect<T> extends TypeAbstract<T> implements AllAble<T> {
 	// -------------------------------------------- //
 	// CONSTANT
@@ -97,7 +98,7 @@ public abstract class TypeAbstractSelect<T> extends TypeAbstract<T> implements A
 
 		for (String alias : this.altNames(sender)) {
 			String aliaslc = alias.toLowerCase();
-			int distance = StringUtils.getLevenshteinDistance(arg, aliaslc);
+			int distance = LevenshteinDistance.getDefaultInstance().apply(arg, aliaslc);
 			if (distance > maxLevenshteinDistance) continue;
 			matches.add(alias);
 		}

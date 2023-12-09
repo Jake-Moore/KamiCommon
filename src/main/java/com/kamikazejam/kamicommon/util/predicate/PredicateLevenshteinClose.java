@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.predicate;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +47,7 @@ public class PredicateLevenshteinClose implements Predicate<String> {
 	@Override
 	public boolean apply(String type) {
 		if (type == null) return false;
-		int distance = StringUtils.getLevenshteinDistance(this.token, type);
+		int distance = LevenshteinDistance.getDefaultInstance().apply(this.token, type);
 		return distance <= this.levenshteinMax;
 	}
 
