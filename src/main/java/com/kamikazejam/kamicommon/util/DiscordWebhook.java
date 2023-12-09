@@ -1,17 +1,20 @@
 package com.kamikazejam.kamicommon.util;
 
 import lombok.Getter;
+import lombok.Setter;
+import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.Color;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 /**
  * A simple class for sending discord webhooks, supports basic embeds and such
@@ -20,9 +23,15 @@ import java.util.*;
 public class DiscordWebhook {
 
     private final String url;
+
+    // Hopefully this will sanitize the content
+    @Setter
     private String content;
+    @Setter
     private String username;
+    @Setter
     private String avatarUrl;
+    @Setter
     private boolean tts;
 
     private final List<EmbedObject> embeds = new ArrayList<>();
@@ -34,22 +43,6 @@ public class DiscordWebhook {
      */
     public DiscordWebhook(String url) {
         this.url = url;
-    }
-
-    public void setContent(String content) {
-        this.content = content.replaceAll("\n", "\\\\n");
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
-    public void setTts(boolean tts) {
-        this.tts = tts;
     }
 
     public void addEmbed(EmbedObject embed) {
@@ -330,92 +323,4 @@ public class DiscordWebhook {
             }
         }
     }
-
-    private static class JSONObject {
-
-        private final HashMap<String, Object> map = new HashMap<>();
-
-        void put(String key, Object value) {
-            if (value != null) {
-                map.put(key, value);
-            }
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            Set<Map.Entry<String, Object>> entrySet = map.entrySet();
-            builder.append("{");
-
-            int i = 0;
-            for (Map.Entry<String, Object> entry : entrySet) {
-                Object val = entry.getValue();
-                builder.append(quote(entry.getKey())).append(":");
-
-                if (val instanceof String) {
-                    builder.append(quote(String.valueOf(val)));
-                } else if (val instanceof Integer) {
-                    builder.append(Integer.valueOf(String.valueOf(val)));
-                } else if (val instanceof Boolean) {
-                    builder.append(val);
-                } else if (val instanceof JSONObject) {
-                    builder.append(val);
-                } else if (val.getClass().isArray()) {
-                    builder.append("[");
-                    int len = Array.getLength(val);
-                    for (int j = 0; j < len; j++) {
-                        builder.append(Array.get(val, j).toString()).append(j != len - 1 ? "," : "");
-                    }
-                    builder.append("]");
-                }
-
-                builder.append(++i == entrySet.size() ? "}" : ",");
-            }
-
-            return builder.toString();
-        }
-
-        private String quote(String string) {
-            return "\"" + string + "\"";
-        }
-    }
-
-
-
-
-
-
-    public static void main(String[] args) throws IOException {
-        DateFormat df = new SimpleDateFormat("MMM dd, yyyy @ hh:mm aa 'PST'");
-        df.setTimeZone(TimeZone.getTimeZone("PST"));
-        String nowAsISO = df.format(new Date());
-
-        File txtFile = new File("C:\\Users\\Jake\\url.txt");
-        Scanner myReader = new Scanner(txtFile);
-        String data = myReader.nextLine();
-        myReader.close();
-
-//        DiscordWebhook webhook = new DiscordWebhook(data);
-//        webhook.addEmbed(
-//                new DiscordWebhook.EmbedObject()
-//                        .setThumbnail("https://i.imgur.com/kDhrprY.png")
-//                        .setTitle("Dupe Detector | {player}")
-//                        .addField("{player} tried to use a duped item!",
-//                                " \\n"
-//                                        + "Item: {item}\\n"
-//                                        + "Worth: {amount}!\\n"
-//                                        + "Time: " + nowAsISO + "\\n"
-//                                        + "Result: Duped item removed.", true
-//                        )
-//                        .setFooter("JunoMC | Dupe Detector", "https://i.imgur.com/kDhrprY.png")
-//                        .setTimeStamp()
-//        );
-//        webhook.execute();
-
-//        DiscordWebhook webhook = new DiscordWebhook(data);
-//        webhook.setContent("title\ndescription");
-//        webhook.execute();
-
-    }
-
 }
