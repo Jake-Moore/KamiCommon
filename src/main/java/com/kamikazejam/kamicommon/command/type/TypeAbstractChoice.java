@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.command.type;
 
-import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.command.type.container.AllAble;
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
 import com.kamikazejam.kamicommon.util.Txt;
@@ -9,9 +8,10 @@ import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
 import com.kamikazejam.kamicommon.util.comparator.ComparatorCaseInsensitive;
+import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.mson.Mson;
 import lombok.Getter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -283,7 +283,7 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
 
 	public boolean isLevenshteinSimilar(String arg, String string) {
 		int max = this.getLevenshteinMax(arg);
-		return StringUtils.getLevenshteinDistance(arg, string) <= max;
+		return LevenshteinDistance.getDefaultInstance().apply(arg, string) <= max;
 	}
 
 	public int getLevenshteinMax(String arg) {
