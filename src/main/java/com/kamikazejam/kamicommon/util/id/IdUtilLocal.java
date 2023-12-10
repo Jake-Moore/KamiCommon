@@ -171,7 +171,7 @@ public class IdUtilLocal implements Listener, Runnable {
 		registrySenderToId.put(sender, id);
 
 		// Update data before the event is ran so that data is available.
-		update(id, id, SenderPresence.LOCAL);
+		update(id, id, SenderPresence.ONLINE);
 	}
 
 	@Contract("null -> fail")
@@ -415,7 +415,7 @@ public class IdUtilLocal implements Listener, Runnable {
 		String name = player.getName();
 
 		// Joining? The player must be local at this point.
-		update(id, name, SenderPresence.LOCAL);
+		update(id, name, SenderPresence.ONLINE);
 	}
 
 	// Can't be cancelled
@@ -839,12 +839,12 @@ public class IdUtilLocal implements Listener, Runnable {
 
 		KamiCommon.get().getLogger().info(Txt.parse("<i>Loading Onlineplayer datas..."));
 		for (IdData data : getLocalPlayerDatas()) {
-			update(data.getId(), data.getName(), data.getMillis(), SenderPresence.LOCAL);
+			update(data.getId(), data.getName(), data.getMillis(), SenderPresence.ONLINE);
 		}
 
 		KamiCommon.get().getLogger().info(Txt.parse("<i>Loading Registry datas..."));
 		for (String id : registryIdToSender.keySet()) {
-			update(id, id, SenderPresence.LOCAL);
+			update(id, id, SenderPresence.ONLINE);
 		}
 
 		KamiCommon.get().getLogger().info(Txt.parse("<i>Saving Cachefile..."));
