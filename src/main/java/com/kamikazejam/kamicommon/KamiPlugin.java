@@ -103,7 +103,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         onDisableInner();
 
         // Cleanup any commands that were forgotten about
-        KamiCommand.getAllInstances().forEach(KamiCommand::unregisterCommand);
+        // Loop through KamiCommand.getAllInstances() without causing a ConcurrentModificationException
+        for (KamiCommand command : new ArrayList<>(KamiCommand.getAllInstances())) {
+            command.unregisterCommand();
+        }
         try {
             KamiCommonCommandRegistration.updateRegistrations();
         }catch (Throwable ignored) {}
