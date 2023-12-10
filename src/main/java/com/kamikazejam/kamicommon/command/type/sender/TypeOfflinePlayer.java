@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.command.type.sender;
 
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
-import com.kamikazejam.kamicommon.util.id.IdUtil;
+import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.id.SenderPresence;
 import com.kamikazejam.kamicommon.util.id.SenderType;
 import org.bukkit.OfflinePlayer;
@@ -25,12 +25,12 @@ public class TypeOfflinePlayer extends TypeAbstract<OfflinePlayer> {
 
 	@Override
 	public OfflinePlayer read(String str, CommandSender sender) throws KamiCommonException {
-		return IdUtil.getOfflinePlayer(str);
+		return IdUtilLocal.getOfflinePlayer(str);
 	}
 
 	@Override
 	public Collection<String> getTabList(CommandSender commandSender, String s) {
-		return IdUtil.getNames(SenderPresence.LOCAL, SenderType.PLAYER).stream()
+		return IdUtilLocal.getNames(SenderPresence.LOCAL, SenderType.PLAYER).stream()
 				.filter(key -> key.toLowerCase().startsWith(s.toLowerCase())).limit(20)
 				.collect(Collectors.toList());
 	}

@@ -57,7 +57,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * Non standard CommandSenders must be manually registered using the register method.
  */
 @SuppressWarnings({"SpellCheckingInspection", "unused", "ResultOfMethodCallIgnored"})
-public class IdUtil implements Listener, Runnable {
+public class IdUtilLocal implements Listener, Runnable {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
 	// -------------------------------------------- //
@@ -65,11 +65,8 @@ public class IdUtil implements Listener, Runnable {
 	// A few things needs an instantiated class though.
 	// Such as the event listeners.
 
-	private static final IdUtil i = new IdUtil();
-
-	public static IdUtil get() {
-		return i;
-	}
+	private static final IdUtilLocal i = new IdUtilLocal();
+	public static IdUtilLocal get() { return i; }
 
 	// -------------------------------------------- //
 	// CONSTANTS
@@ -402,7 +399,7 @@ public class IdUtil implements Listener, Runnable {
 		// Declaring Existence? Sure, whatever you were before!
 		// It can definitely not be local at this point.
 		// But online or offline is fine.
-		boolean online = IdUtil.isOnline(player);
+		boolean online = IdUtilLocal.isOnline(player);
 
 		update(id, name, SenderPresence.fromOnline(online));
 	}
@@ -752,7 +749,7 @@ public class IdUtil implements Listener, Runnable {
 		if (CONSOLE_ID.equals(id)) return true;
 
 		// ... return by (case insensitive) set contains.
-		return IdUtil.getIds(SenderPresence.ONLINE, SenderType.ANY).contains(id);
+		return IdUtilLocal.getIds(SenderPresence.ONLINE, SenderType.ANY).contains(id);
 	}
 
 	@Contract("null -> null")
@@ -773,7 +770,7 @@ public class IdUtil implements Listener, Runnable {
 
 	@Contract("null -> false")
 	public static boolean isPlayer(Object senderObject) {
-		String id = IdUtil.getId(senderObject);
+		String id = IdUtilLocal.getId(senderObject);
 		if (id == null) return false;
 		return isPlayerId(id);
 	}
@@ -785,7 +782,7 @@ public class IdUtil implements Listener, Runnable {
 
 	@Contract("null -> false")
 	public static boolean isConsole(Object senderObject) {
-		String id = IdUtil.getId(senderObject);
+		String id = IdUtilLocal.getId(senderObject);
 		if (id == null) return false;
 		return isConsoleId(id);
 	}

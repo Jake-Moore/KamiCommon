@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
-import com.kamikazejam.kamicommon.util.id.IdUtil;
+import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -25,7 +25,7 @@ public class MixinSenderPs extends Mixin {
     // -------------------------------------------- //
 
     public PS getSenderPs(Object senderObject) {
-        Player player = IdUtil.getPlayer(senderObject);
+        Player player = IdUtilLocal.getPlayer(senderObject);
         if (player == null) return null;
         return PS.valueOf(player.getLocation());
     }

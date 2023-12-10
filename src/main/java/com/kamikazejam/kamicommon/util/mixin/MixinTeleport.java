@@ -5,7 +5,7 @@ import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
-import com.kamikazejam.kamicommon.util.id.IdUtil;
+import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import com.kamikazejam.kamicommon.util.teleport.Destination;
 import com.kamikazejam.kamicommon.util.teleport.ScheduledTeleport;
@@ -95,9 +95,9 @@ public class MixinTeleport extends Mixin {
 	// -------------------------------------------- //
 
 	public void teleport(Object teleporteeObject, Destination destination, int delaySeconds) throws KamiCommonException {
-		String teleporteeId = IdUtil.getId(teleporteeObject);
-		if (!IdUtil.isPlayerId(teleporteeId))
-			throw new KamiCommonException().addMsg(Txt.parse("<white>%s <b>is not a player.", MixinDisplayName.get().getDisplayName(teleporteeId, IdUtil.getConsole())));
+		String teleporteeId = IdUtilLocal.getId(teleporteeObject);
+		if (!IdUtilLocal.isPlayerId(teleporteeId))
+			throw new KamiCommonException().addMsg(Txt.parse("<white>%s <b>is not a player.", MixinDisplayName.get().getDisplayName(teleporteeId, IdUtilLocal.getConsole())));
 
 		PS ps;
 		try {
@@ -130,7 +130,7 @@ public class MixinTeleport extends Mixin {
 				MsonMessenger.get().msgOne(teleporteeId, "<i>Teleporting to <h>" + desc + "<i>.");
 			}
 
-			Player teleportee = IdUtil.getPlayer(teleporteeId);
+			Player teleportee = IdUtilLocal.getPlayer(teleporteeId);
 			if (teleportee != null) {
 				teleportPlayer(teleportee, ps);
 			} else {

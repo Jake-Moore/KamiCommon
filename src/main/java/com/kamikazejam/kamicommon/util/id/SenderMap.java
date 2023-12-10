@@ -176,7 +176,7 @@ public final class SenderMap {
 	}
 
 	public static boolean isPlayerValue(String value) {
-		return IdUtil.isPlayerId(value);
+		return IdUtilLocal.isPlayerId(value);
 		//return MUtil.isValidPlayerName(value) || MUtil.isUuid(value);
 	}
 

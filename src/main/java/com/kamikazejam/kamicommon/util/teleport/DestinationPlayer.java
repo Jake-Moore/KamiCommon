@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
 import com.kamikazejam.kamicommon.util.Txt;
-import com.kamikazejam.kamicommon.util.id.IdUtil;
+import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mixin.MixinDisplayName;
 import com.kamikazejam.kamicommon.util.mixin.MixinPlayed;
 import com.kamikazejam.kamicommon.util.mixin.MixinSenderPs;
@@ -24,15 +24,15 @@ public class DestinationPlayer extends DestinationAbstract {
     }
 
     public void setPlayer(Object playerObject) {
-        this.playerId = IdUtil.getId(playerObject);
+        this.playerId = IdUtilLocal.getId(playerObject);
     }
 
     public CommandSender getSender() {
-        return IdUtil.getSender(this.playerId);
+        return IdUtilLocal.getSender(this.playerId);
     }
 
     public Player getPlayer() {
-        return IdUtil.getPlayer(this.playerId);
+        return IdUtilLocal.getPlayer(this.playerId);
     }
 
     // -------------------------------------------- //

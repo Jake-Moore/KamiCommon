@@ -11,7 +11,7 @@ import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
-import com.kamikazejam.kamicommon.util.id.IdUtil;
+import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mson.Mson;
 import com.kamikazejam.kamicommon.util.mson.MsonEvent;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
@@ -48,7 +48,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
         YamlUtil.getYaml();
 
         // Setup IdUtil
-        IdUtil.setup();
+        IdUtilLocal.setup();
 
         // Setup RegistryType (Types for Commands)
         RegistryType.registerAll();
@@ -65,7 +65,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
         HandlerList.unregisterAll((Plugin) plugin);
 
         // Save IdUtil
-        IdUtil.saveCachefileDatas();
+        IdUtilLocal.saveCachefileDatas();
 
         Bukkit.getLogger().info("KamiCommon disabled");
     }
