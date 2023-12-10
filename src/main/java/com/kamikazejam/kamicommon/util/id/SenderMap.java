@@ -149,7 +149,6 @@ public final class SenderMap {
 	// UTIL
 	// -------------------------------------------- //
 
-	public static final List<SenderPresence> LOCAL_PRESENCES = ImmutableList.of(SenderPresence.LOCAL, SenderPresence.ONLINE, SenderPresence.ANY);
 	public static final List<SenderPresence> ONLINE_PRESENCES = ImmutableList.of(SenderPresence.ONLINE, SenderPresence.ANY);
 	public static final List<SenderPresence> OFFLINE_PRESENCES = ImmutableList.of(SenderPresence.OFFLINE, SenderPresence.ANY);
 
@@ -159,7 +158,6 @@ public final class SenderMap {
 	public static @NotNull List<@NotNull SenderPresence> getPresences(SenderPresence presence) {
 		if (presence == null) throw new NullPointerException("presence");
 
-		if (presence == SenderPresence.LOCAL) return LOCAL_PRESENCES;
 		else if (presence == SenderPresence.ONLINE) return ONLINE_PRESENCES;
 		else if (presence == SenderPresence.OFFLINE) return OFFLINE_PRESENCES;
 		else throw new IllegalArgumentException("SenderPresence.ANY is not supported. You must know if it is online or offline.");

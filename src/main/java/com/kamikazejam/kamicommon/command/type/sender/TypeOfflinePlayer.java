@@ -30,7 +30,7 @@ public class TypeOfflinePlayer extends TypeAbstract<OfflinePlayer> {
 
 	@Override
 	public Collection<String> getTabList(CommandSender commandSender, String s) {
-		return IdUtilLocal.getNames(SenderPresence.LOCAL, SenderType.PLAYER).stream()
+		return IdUtilLocal.getNames(SenderPresence.ONLINE, SenderType.PLAYER).stream()
 				.filter(key -> key.toLowerCase().startsWith(s.toLowerCase())).limit(20)
 				.collect(Collectors.toList());
 	}
