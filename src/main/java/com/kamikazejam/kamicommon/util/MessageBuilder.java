@@ -9,8 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * A utility class for sending building messages built from a config. <p>
@@ -22,6 +21,18 @@ import java.util.List;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class MessageBuilder {
     private final List<String> lines = new ArrayList<>();
+
+    public static MessageBuilder of(String message) {
+        return new MessageBuilder(message);
+    }
+
+    public static MessageBuilder of(List<String> lines) {
+        return new MessageBuilder(lines);
+    }
+
+    public static MessageBuilder of(String... lines) {
+        return new MessageBuilder(lines);
+    }
 
     public static MessageBuilder of(org.bukkit.configuration.ConfigurationSection config, String key) {
         return new MessageBuilder(config, key);
@@ -37,6 +48,31 @@ public class MessageBuilder {
 
     public static MessageBuilder of(ConfigurationSection section, String key) {
         return new MessageBuilder(section, key);
+    }
+
+
+    /**
+     * Creates a new MessageBuilder from a string
+     * @param message The message to send
+     */
+    public MessageBuilder(String message) {
+        this.lines.add(message);
+    }
+
+    /**
+     * Creates a new MessageBuilder from a list of strings
+     * @param lines The lines to send
+     */
+    public MessageBuilder(Collection<String> lines) {
+        this.lines.addAll(lines);
+    }
+
+    /**
+     * Creates a new MessageBuilder from a list of strings
+     * @param lines The lines to send
+     */
+    public MessageBuilder(String... lines) {
+        this.lines.addAll(Arrays.asList(lines));
     }
 
     /**
