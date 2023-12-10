@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.id.IdUtil;
+import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Contract;
@@ -28,7 +28,7 @@ public class MixinPlayed extends Mixin {
     // -------------------------------------------- //
 
     public boolean isOnline(Object senderObject) {
-        return IdUtil.isOnline(senderObject);
+        return IdUtilLocal.isOnline(senderObject);
     }
 
     public boolean isOffline(Object senderObject) {
@@ -38,7 +38,7 @@ public class MixinPlayed extends Mixin {
     public Long getFirstPlayed(Object senderObject) {
         if (KUtil.isNpc(senderObject)) return null;
 
-        UUID uuid = IdUtil.getUuid(senderObject);
+        UUID uuid = IdUtilLocal.getUuid(senderObject);
         if (uuid == null) return null;
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
@@ -55,7 +55,7 @@ public class MixinPlayed extends Mixin {
 
         if (KUtil.isNpc(senderObject)) return null;
 
-        UUID uuid = IdUtil.getUuid(senderObject);
+        UUID uuid = IdUtilLocal.getUuid(senderObject);
         if (uuid == null) return null;
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 

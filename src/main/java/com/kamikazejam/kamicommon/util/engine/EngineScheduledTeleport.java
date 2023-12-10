@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.engine;
 
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.id.IdUtil;
+import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import com.kamikazejam.kamicommon.util.teleport.ScheduledTeleport;
 import org.bukkit.entity.Entity;
@@ -91,7 +91,7 @@ public class EngineScheduledTeleport extends Engine {
 		if (KUtil.isntPlayer(player)) return;
 
 		// If there there is a ScheduledTeleport ...
-		ScheduledTeleport scheduledTeleport = teleporteeIdToScheduledTeleport.get(IdUtil.getId(player));
+		ScheduledTeleport scheduledTeleport = teleporteeIdToScheduledTeleport.get(IdUtilLocal.getId(player));
 		if (scheduledTeleport == null) return;
 
 		// ... unschedule it ...

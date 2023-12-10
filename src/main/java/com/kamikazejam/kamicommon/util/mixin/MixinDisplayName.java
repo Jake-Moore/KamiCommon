@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
-import com.kamikazejam.kamicommon.util.id.IdUtil;
+import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mson.Mson;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -34,21 +34,21 @@ public class MixinDisplayName extends Mixin {
     }
 
     public String getDisplayName(Object senderObject, Object watcherObject) {
-        String senderId = IdUtil.getId(senderObject);
+        String senderId = IdUtilLocal.getId(senderObject);
         if (senderId == null) return null;
 
         // Ret
         String ret = null;
 
         // Bukkit
-        Player player = IdUtil.getPlayer(senderObject);
+        Player player = IdUtilLocal.getPlayer(senderObject);
         if (player != null) {
             ret = player.getDisplayName();
         }
 
         // Fixed Name
         if (ret == null) {
-            ret = IdUtil.getName(senderObject);
+            ret = IdUtilLocal.getName(senderObject);
         }
 
         // Id Fallback

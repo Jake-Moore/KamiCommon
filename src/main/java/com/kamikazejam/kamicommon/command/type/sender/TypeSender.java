@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.command.type.sender;
 
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
-import com.kamikazejam.kamicommon.util.id.IdUtil;
+import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -23,7 +23,7 @@ public class TypeSender extends TypeAbstract<CommandSender> {
 
 	@Override
 	public CommandSender read(String str, CommandSender sender) throws KamiCommonException {
-		return IdUtil.getSender(str);
+		return IdUtilLocal.getSender(str);
 	}
 
 	@Override
