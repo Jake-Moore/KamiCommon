@@ -1,0 +1,35 @@
+name: Maven Deploy & Release
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Access to Publish a Release
+      packages: write # Access to Publish a Package
+
+    #--------------------------------------------------------------------------------------------
+    #           Build the Artifact and Publish to Luxious Repository
+    #--------------------------------------------------------------------------------------------
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    - name: Maven Settings
+      uses: s4u/maven-settings-action@v2.8.0
+      with:
+        servers: '[{"id": "luxious-public", "username": "${{ secrets.MAVEN_NAME }}", "password": "${{ secrets.MAVEN_SECRET }}"}, {"id": "all-spigot-nms", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}"}]'
+
+    - name: Maven Build
+      run: mvn -B package --file pom.xml
