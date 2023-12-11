@@ -253,7 +253,7 @@
         <dependency>
             <groupId>com.github.Jacxk</groupId>
             <artifactId>all-spigot-nms</artifactId>
-            <version>LATEST</version>
+            <version>v1.4</version>
             <scope>provided</scope>
         </dependency>
 
