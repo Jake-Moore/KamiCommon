@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon;
 
+import com.google.gson.JsonObject;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.modules.Module;
@@ -18,6 +19,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -261,5 +263,46 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
             return hasMythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs") != null;
         }
         return hasMythicMobs;
+    }
+
+    public interface ErrorPropertiesCallback {
+        void onFailure(String pluginName, String minVer);
+    }
+
+    // Used in combination with a properties.json file in another plugin's resources
+    //   which passes a JsonObject and a json key, along with a target plugin name for version validation
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean verifyPluginVersion(JsonObject o, String key, String pluginName, @Nullable ErrorPropertiesCallback callback) {
+        // Fetch properties.json version
+        String minVer = o.get(key).getAsString();
+        if (minVer == null || minVer.isEmpty()) {
+            getLogger().severe("Could not find " + pluginName + " version in properties.json");
+            return false;
+        }
+        int minVerInt = verToInt(minVer);
+
+        // Fetch target plugin version
+        JavaPlugin pl = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(pluginName);
+        if (pl == null) {
+            getLogger().severe("Could not load " + pluginName + " dependency! (Plugin Not Found!)");
+            return false;
+        }
+        int ver = verToInt(pl.getDescription().getVersion());
+
+        // Compare versions
+        if (ver < minVerInt) {
+            getLogger().severe(pluginName + " version is too old! (" + minVer + " or higher required)");
+            if (callback != null) { callback.onFailure(pluginName, minVer); }
+            return false;
+        }
+        getLogger().info(pluginName + " version " + pl.getDescription().getVersion() + " found, met requirement >= " + minVer);
+        return true;
+    }
+
+    public int verToInt(String ver) {
+        // Grab everything before the first dash, if there is one (1.6.1-pr1 -> 1.6.1) (1.6.2-SNAPSHOT -> 1.6.2)
+        ver = ver.split("-")[0];
+        // Remove everything that isn't a number (1.6.1 -> 161
+        return Integer.parseInt(ver.replaceAll("[^\\d]", ""));
     }
 }
