@@ -12,6 +12,7 @@ public class CitizensIntegration extends ModuleIntegration {
         super(plugin);
 
         // Call onCitizensLoaded if the plugin has already loaded (i.e. on reload or if depended)
+        //   Requires Citizens NPC registry to be loaded, so it's safe even if this code runs before Citizens
         if (Bukkit.getPluginManager().getPlugin("Citizens") != null && CitizensAPI.getNPCRegistry() != null) {
             getPlugin().getModuleManager().onCitizensLoaded();
         }

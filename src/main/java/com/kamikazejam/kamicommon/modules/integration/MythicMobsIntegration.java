@@ -11,6 +11,7 @@ public class MythicMobsIntegration extends ModuleIntegration {
 
         // Call onMythicMobsLoaded if the plugin has already loaded (i.e. on reload or if depended)
         if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+            getPlugin().getLogger().info("[MythicReloadedEvent] (STARTUP) Calling Modules ...");
             getPlugin().getModuleManager().onMythicMobsLoaded();
         }
     }
