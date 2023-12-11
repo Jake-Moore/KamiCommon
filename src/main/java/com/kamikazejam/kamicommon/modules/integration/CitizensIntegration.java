@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.modules.integration;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.CitizensEnableEvent;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import org.bukkit.Bukkit;
@@ -9,6 +10,11 @@ import org.bukkit.event.EventHandler;
 public class CitizensIntegration extends ModuleIntegration {
     public CitizensIntegration(KamiPlugin plugin) {
         super(plugin);
+
+        // Call onCitizensLoaded if the plugin has already loaded (i.e. on reload or if depended)
+        if (Bukkit.getPluginManager().getPlugin("Citizens") != null && CitizensAPI.getNPCRegistry() != null) {
+            getPlugin().getModuleManager().onCitizensLoaded();
+        }
     }
 
     @EventHandler
