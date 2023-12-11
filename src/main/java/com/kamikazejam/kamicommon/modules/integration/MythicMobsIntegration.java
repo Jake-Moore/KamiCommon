@@ -8,6 +8,11 @@ import org.bukkit.event.EventHandler;
 public class MythicMobsIntegration extends ModuleIntegration {
     public MythicMobsIntegration(KamiPlugin plugin) {
         super(plugin);
+
+        // Call onMythicMobsLoaded if the plugin has already loaded (i.e. on reload or if depended)
+        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+            getPlugin().getModuleManager().onMythicMobsLoaded();
+        }
     }
 
     @EventHandler
