@@ -121,10 +121,21 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
             moduleManager.unregister();
         }
 
+        onDisablePost();
         log("Disabled");
     }
 
+    /**
+     * Called First in JavaPlugin.onDisable()
+     */
     public abstract void onDisableInner();
+
+    /**
+     * Called after both onDisableInner and listeners, tasks, and disableables are unregistered<p>
+     * Also called after modules and commands are unregistered<p>
+     * You can use this method to cleanup databases or anything else that should come after module shutdowns
+     */
+    public void onDisablePost() {}
 
     /**
      * Can override if configs are stored in a subpackage of the jar
