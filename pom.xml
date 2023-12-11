@@ -4,7 +4,7 @@
 
     <groupId>com.kamikazejam</groupId>
     <artifactId>kamicommon</artifactId>
-    <version>2.2.1.0</version>
+    <version>2.2.1.1</version>
     <packaging>jar</packaging>
 
     <name>KamiCommon</name>
@@ -67,7 +67,7 @@
                                     <shadedPattern>com.kamikazejam.kamicommon.util</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>de.tr7zw</pattern>
+                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
                                     <shadedPattern>com.kamikazejam.kamicommon.nbt</shadedPattern>
                                 </relocation>
                                 <relocation>
