@@ -32,11 +32,8 @@ jobs:
       with:
         servers: '[{"id": "luxious-public", "username": "${{ secrets.MAVEN_NAME }}", "password": "${{ secrets.MAVEN_SECRET }}"}, {"id": "all-spigot-nms", "username": "jake-moore", "password": "${{ secrets.MY_TOKEN }}"}]'
 
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-
-    - name: Publish to Luxious Maven
-      run: mvn deploy
+    - name: Build & Publish to Luxious Maven
+      run: mvn -B deploy --file pom.xml
 
     #--------------------------------------------------------------------------------------------
     #           Create a Github Release
