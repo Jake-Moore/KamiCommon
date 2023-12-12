@@ -1,4 +1,4 @@
-name: Maven Deploy & Release
+name: Maven Build
 
 on:
   pull_request:

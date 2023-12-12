@@ -1,7 +1,5 @@
 package com.kamikazejam.kamicommon.util;
 
-import com.kamikazejam.kamicommon.nms.NmsManager;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +19,7 @@ public class StringUtil {
         String s = translateAlternateColorCodes(msg);
 
         // For 1.16+ translate hex color codes as well
-        if (NmsManager.getFormattedNmsDouble() >= 1.16) {
+        if (StringUtilBukkit.supportsHexCodes()) {
             Pattern hex = Pattern.compile("&(#[A-Fa-f0-9]{6})");
             Matcher matcher = hex.matcher(s);
             while (matcher.find()) {
