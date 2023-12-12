@@ -154,7 +154,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>24.0.1</version> <!-- Don't Update or it'll warn about using mutates in @Contract -->
+            <version>24.1.0</version> <!-- Don't Update or it'll warn about using mutates in @Contract -->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
@@ -275,7 +275,7 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>5.0.2</version>
+            <version>5.1.0</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -321,7 +321,7 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.3.5</version>
+            <version>5.5.1</version>
             <scope>provided</scope>
         </dependency>
 
