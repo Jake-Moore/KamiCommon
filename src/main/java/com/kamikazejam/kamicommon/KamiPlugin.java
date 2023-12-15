@@ -279,6 +279,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
             getLogger().severe("Could not find " + pluginName + " version in properties.json");
             return false;
         }
+        return verifyPluginVersion(minVer, pluginName, callback);
+    }
+
+    public boolean verifyPluginVersion(String minVer, String pluginName, @Nullable ErrorPropertiesCallback callback) {
         int minVerInt = verToInt(minVer);
 
         // Fetch target plugin version
