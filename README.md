@@ -15,7 +15,7 @@ Before you can use KamiCommon, you have to import it into your project.
 If you are developing an application outside of spigot, you can shade the jar using maven-shade-plugin and by removing the provided scope from the dependency.
 
 ### Plugin YML!!!
-Before you continue, if you're working on a spigot plugin make sure to add `KamiCommon` to your plugin.yml (or otherwise) in the `depend:` list
+Before you continue, if you're working on a spigot plugin make sure to add `KamiCommon` to your plugin.yml in the `depend:` list
 
 ### Import with Maven
 Add the following Repository to your pom.xml
@@ -86,14 +86,14 @@ builder = new IAItemBuilder("namespace:id");
    - This feature requires that each plugin repository using auto update have a configured GitHub action to publish a release for each version
    - Probably best to contact me if you're interested in using this feature with your own plugin
 - **Commands Library** for subcommand management (forked from the MassiveCore commands system)
-  - WIP (see MassiveCore development guide for now)
+  - WIP Documentatiin (see MassiveCore development guide for now)
 - **Config Management**
-  - Files (create classes extending these, and then create an instance to use)
-    - KamiConfig (for plugin configs)
+  - Java Classes (They work on their own, and you can extend if additional features are needed.)
+    - KamiConfig (for spigot plugin configs)
     - StandaloneConfig (for yaml configs outside of spigot)
   - Features
     - Support to save and get ItemStacks (uses spigot config serialization)
-    - Full integrated comments support (loads comments from defaults file, and preserves user-generated comments)
+    - Fully integrated comments support (loads comments from defaults file, and preserves unique user-generated comments)
     - Native support for creating custom configs and loading defaults from resources
 ```java
 // Example with KamiConfig 
@@ -108,11 +108,6 @@ public class Config extends KamiConfig {
         // You can also add defaults manually
         addDefaults();
         save();
-
-        // Casts to ItemStack will act normally if you use KamiConfig and provide a plugin object
-        // This config system supports environments without spigot classes like ItemStack, so at a base ConfigurationSection level
-        //   it cannot return ItemStack or standalone environments would not work, this is the compromise
-        ItemStack stack = (ItemStack) getItemStack("key");
     }
 
     private void addDefaults() {
@@ -143,8 +138,10 @@ config.get(key)
 config.put(key, value)
 ```
 - Version command
-   - If you are using a KamiCommand implementation, the `KamiSubCommands` constructor takes a boolean for version command
-     - When set to true, a sample Version subcommand will be added, and reads from the following file:
+   - Java Class: `KamiCommandVersion` 
+     - Written using internal commands structure (similar to MassiveCore commands)
+   - When you write your core plugin command, you will use `addChild(new KamiCommandVersion())` in its constructor to add this subcommand.
+     - Optionally: Use the internal method `VersionControl.sendDetails(getPlugin(), sender);` to trigger version details on your own. 
    - Requires a `version.json` inside your resources folder with the following keys (See below for a sample maven example, Tip: enable resource filtering)
 ```json
 {
