@@ -86,7 +86,7 @@ builder = new IAItemBuilder("namespace:id");
    - This feature requires that each plugin repository using auto update have a configured GitHub action to publish a release for each version
    - Probably best to contact me if you're interested in using this feature with your own plugin
 - **Commands Library** for subcommand management (forked from the MassiveCore commands system)
-  - WIP Documentatiin (see MassiveCore development guide for now)
+  - WIP Documentation (see MassiveCore development guide for now)
 - **Config Management**
   - Java Classes (They work on their own, and you can extend if additional features are needed.)
     - KamiConfig (for spigot plugin configs)
@@ -127,26 +127,53 @@ public class Config extends KamiConfig {
   - DiscordWebhook (for sending simple webhooks)
   - StringUtil (spigot-independant translation from & to §, and other useful string / string-list methods)
   - StringUtilP (spigot and PlaceholderAPI-dependant expansion of StringUtil. Includes .p(...) methods for parsing PAPI placeholders)
-- **Yaml Management** - YamlHandler and YamlHandlerStandalone (for using .yml files outside of spigot)
-  - Utilized internally by AbstractConfig
-``` java
-YamlHandler yaml = new YamlHandler(File configFile, String fileName);
-config = yaml.loadConfig(boolean addDefaults)
-yaml.save()
-config.save()
-config.get(key)
-config.put(key, value)
-```
-- Version command
+- **Version Command**
    - Java Class: `KamiCommandVersion` 
      - Written using internal commands structure (similar to MassiveCore commands)
    - When you write your core plugin command, you will use `addChild(new KamiCommandVersion())` in its constructor to add this subcommand.
      - Optionally: Use the internal method `VersionControl.sendDetails(getPlugin(), sender);` to trigger version details on your own. 
-   - Requires a `version.json` inside your resources folder with the following keys (See below for a sample maven example, Tip: enable resource filtering)
+   - Requires a `version.json` inside your resources folder with the following keys (See below for a sample examples)
+&nbsp;
+&nbsp;
+### Version Control Example: Using **Maven**
+`version.json` - new file in your resources folder
 ```json
 {
   "name": "${project.artifactId}",
   "version": "${project.version}",
   "date": "${maven.build.timestamp}"
+}
+```
+`pom.xml` - edit to include resource filtering (will replace details in `version.json` when compiled)
+```xml
+<!-- Required for version.json (maven-resources-plugin) -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-resources-plugin</artifactId>
+    <version>3.3.1</version>
+    <configuration>
+        <encoding>UTF-8</encoding>
+    </configuration>
+</plugin>
+```
+&nbsp;
+&nbsp;
+### Version Control Example: Using **Gradle**
+`version.json` - new file in your resources folder
+```json
+{
+  "name": "${name}",
+  "version": "${version}",
+  "date": "${date}"
+}
+```
+`build.gradle` - edit to include resource filtering (mimicking maven's plugin)
+```Groovy
+processResources {
+    // Process version file
+    // Use DateTimeFormatter ISO_INSTANT (KamiCommon requires this format for the version json)
+    filesMatching("**/version.json") {
+        expand([name: this.description, version: version, date: DateTimeFormatter.ISO_INSTANT.format(Instant.now())])
+    }
 }
 ```
