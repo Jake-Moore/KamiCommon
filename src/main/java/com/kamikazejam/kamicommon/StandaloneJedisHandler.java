@@ -3,7 +3,6 @@ package com.kamikazejam.kamicommon;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.bukkit.plugin.Plugin;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
@@ -96,10 +95,7 @@ public abstract class StandaloneJedisHandler {
     //  onMessage override also required
     @Getter
     public static abstract class PubSubListener extends JedisPubSub {
-        private final Plugin plugin;
-        public PubSubListener(Plugin plugin) {
-            this.plugin = plugin;
-        }
+        public PubSubListener() {}
 
         @Override
         public abstract void onMessage(String channelIn, String jsonString);
