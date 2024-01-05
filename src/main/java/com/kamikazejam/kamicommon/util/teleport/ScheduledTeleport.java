@@ -17,6 +17,7 @@ public class ScheduledTeleport implements Runnable {
     // -------------------------------------------- //
 
     private final String teleporteeId;
+    private final @Nullable String desc;
 
     private final @Nullable Destination destination;
     private final @Nullable MixinTeleport.TeleportCallback callback;
@@ -34,18 +35,20 @@ public class ScheduledTeleport implements Runnable {
     // CONSTRUCT
     // -------------------------------------------- //
 
-    public ScheduledTeleport(String teleporteeId, @NotNull Destination destination, int delaySeconds) {
+    public ScheduledTeleport(String teleporteeId, @NotNull Destination destination, @Nullable String desc, int delaySeconds) {
         this.teleporteeId = teleporteeId;
         this.destination = destination;
+        this.desc = desc;
         this.callback = null;
         this.delaySeconds = delaySeconds;
         this.dueMillis = 0;
     }
 
-    public ScheduledTeleport(String teleporteeId, @NotNull MixinTeleport.TeleportCallback callback, int delaySeconds) {
+    public ScheduledTeleport(String teleporteeId, @NotNull MixinTeleport.TeleportCallback callback, @Nullable String desc, int delaySeconds) {
         this.teleporteeId = teleporteeId;
         this.destination = null;
         this.callback = callback;
+        this.desc = desc;
         this.delaySeconds = delaySeconds;
         this.dueMillis = 0;
     }
@@ -73,11 +76,7 @@ public class ScheduledTeleport implements Runnable {
     public void run() {
         this.unschedule();
         try {
-            if (this.getDestination() != null) {
-                MixinTeleport.get().teleport(this.getTeleporteeId(), this.getDestination(), 0);
-            }else if (this.getCallback() != null) {
-                this.getCallback().run();
-            }
+            MixinTeleport.get().teleportInternal(this.getTeleporteeId(), this.getDestination(), this.getCallback(), this.getDesc(), 0);
         } catch (KamiCommonException e) {
             MsonMessenger.get().messageOne(this.getTeleporteeId(), e.getMessage());
         }
