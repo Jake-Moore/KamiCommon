@@ -18,9 +18,17 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class MixinTeleport extends Mixin {
+
+	public interface TeleportCallback {
+		void run();
+	}
+
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
 	// -------------------------------------------- //
@@ -95,19 +103,26 @@ public class MixinTeleport extends Mixin {
 	// -------------------------------------------- //
 
 	public void teleport(Object teleporteeObject, Destination destination, int delaySeconds) throws KamiCommonException {
+		this.teleportInternal(teleporteeObject, destination, null, null, delaySeconds);
+	}
+
+	public void teleport(Object teleporteeObject, TeleportCallback callback, int delaySeconds) throws KamiCommonException {
+		this.teleportInternal(teleporteeObject, null, callback, null, delaySeconds);
+	}
+	public void teleport(Object teleporteeObject, TeleportCallback callback, String desc, int delaySeconds) throws KamiCommonException {
+		this.teleportInternal(teleporteeObject, null, callback, desc, delaySeconds);
+	}
+
+	private void teleportInternal(Object teleporteeObject, @Nullable Destination destination, @Nullable TeleportCallback callback, @Nullable String desc, int delaySeconds) throws KamiCommonException {
 		String teleporteeId = IdUtilLocal.getId(teleporteeObject);
 		if (!IdUtilLocal.isPlayerId(teleporteeId))
 			throw new KamiCommonException().addMsg(Txt.parse("<white>%s <b>is not a player.", MixinDisplayName.get().getDisplayName(teleporteeId, IdUtilLocal.getConsole())));
 
-		PS ps;
-		try {
-			ps = destination.getPs(teleporteeId);
-		} catch (Exception e) {
-			throw new KamiCommonException().addMsg(e.getMessage());
-		}
-
-		String desc = destination.getDesc(teleporteeId);
 		if (delaySeconds > 0) {
+			if (desc == null && destination != null) {
+				desc = destination.getDesc(teleporteeId);
+			}
+
 			// With delay
 			if (desc != null && !desc.isEmpty()) {
 				MsonMessenger.get().msgOne(teleporteeId, "<i>Teleporting to <h>" + desc + " <i>in <h>" + delaySeconds + "s <i>unless you move.");
@@ -115,9 +130,22 @@ public class MixinTeleport extends Mixin {
 				MsonMessenger.get().msgOne(teleporteeId, "<i>Teleporting in <h>" + delaySeconds + "s <i>unless you move.");
 			}
 
-			new ScheduledTeleport(teleporteeId, destination, delaySeconds).schedule();
+			if (destination != null) {
+				new ScheduledTeleport(teleporteeId, destination, delaySeconds).schedule();
+			}else if (callback != null) {
+				new ScheduledTeleport(teleporteeId, callback, delaySeconds).schedule();
+			}
+
 		} else {
+			assert destination != null;
+
 			// Without delay AKA "now"/"at once"
+			PS ps;
+			try {
+				ps = destination.getPs(teleporteeId);
+			} catch (Exception e) {
+				throw new KamiCommonException().addMsg(e.getMessage());
+			}
 
 			// Run event
 			PlayerPSTeleportEvent event = new PlayerPSTeleportEvent(teleporteeId, MixinSenderPs.get().getSenderPs(teleporteeId), destination);

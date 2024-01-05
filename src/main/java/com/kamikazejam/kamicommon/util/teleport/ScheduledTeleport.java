@@ -5,6 +5,9 @@ import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.mixin.MixinTeleport;
 import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
@@ -15,15 +18,13 @@ public class ScheduledTeleport implements Runnable {
 
     private final String teleporteeId;
 
-    private final Destination destination;
+    private final @Nullable Destination destination;
+    private final @Nullable MixinTeleport.TeleportCallback callback;
 
     private final int delaySeconds;
 
+    @Setter
     private long dueMillis;
-
-    public void setDueMillis(long dueMillis) {
-        this.dueMillis = dueMillis;
-    }
 
     public boolean isDue(long now) {
         return now >= this.dueMillis;
@@ -33,9 +34,18 @@ public class ScheduledTeleport implements Runnable {
     // CONSTRUCT
     // -------------------------------------------- //
 
-    public ScheduledTeleport(String teleporteeId, Destination destination, int delaySeconds) {
+    public ScheduledTeleport(String teleporteeId, @NotNull Destination destination, int delaySeconds) {
         this.teleporteeId = teleporteeId;
         this.destination = destination;
+        this.callback = null;
+        this.delaySeconds = delaySeconds;
+        this.dueMillis = 0;
+    }
+
+    public ScheduledTeleport(String teleporteeId, @NotNull MixinTeleport.TeleportCallback callback, int delaySeconds) {
+        this.teleporteeId = teleporteeId;
+        this.destination = null;
+        this.callback = callback;
         this.delaySeconds = delaySeconds;
         this.dueMillis = 0;
     }
@@ -59,15 +69,17 @@ public class ScheduledTeleport implements Runnable {
     // -------------------------------------------- //
     // OVERRIDE
     // -------------------------------------------- //
-
     @Override
     public void run() {
         this.unschedule();
         try {
-            MixinTeleport.get().teleport(this.getTeleporteeId(), this.getDestination(), 0);
+            if (this.getDestination() != null) {
+                MixinTeleport.get().teleport(this.getTeleporteeId(), this.getDestination(), 0);
+            }else if (this.getCallback() != null) {
+                this.getCallback().run();
+            }
         } catch (KamiCommonException e) {
             MsonMessenger.get().messageOne(this.getTeleporteeId(), e.getMessage());
         }
     }
-
 }
