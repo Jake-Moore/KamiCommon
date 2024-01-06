@@ -6,9 +6,10 @@ import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.Color;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class DiscordWebhook {
     private boolean tts;
 
     private final List<EmbedObject> embeds = new ArrayList<>();
+    private final List<FileObject> files = new ArrayList<>();
 
     /**
      * Constructs a new DiscordWebhook instance
@@ -47,6 +49,14 @@ public class DiscordWebhook {
 
     public void addEmbed(EmbedObject embed) {
         this.embeds.add(embed);
+    }
+
+    public void addFileObject(FileObject file) {
+        this.files.add(file);
+    }
+
+    public void addTextFile(File file) {
+        this.files.add(new FileObject(file, file.getName(), "text/plain"));
     }
 
     public void execute() throws IOException {
@@ -143,21 +153,50 @@ public class DiscordWebhook {
             json.put("embeds", embedObjects.toArray());
         }
 
-        // System.out.println(json);
+        // Create a boundary for multipart content
+        String boundary = "*****";
 
         URL url = new URL(this.url);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.addRequestProperty("Content-Type", "application/json");
+        connection.addRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
         connection.addRequestProperty("User-Agent", "Java-DiscordWebhook-BY-Gelox_");
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
 
-        OutputStream stream = connection.getOutputStream();
-        stream.write(json.toString().getBytes());
-        stream.flush();
-        stream.close();
+        try (OutputStream outputStream = connection.getOutputStream();
+             PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), true)) {
 
-        connection.getInputStream().close(); //I'm not sure why, but it doesn't work without getting the InputStream
+            // Write JSON payload
+            writer.append("--").append(boundary).append("\r\n");
+            writer.append("Content-Disposition: form-data; name=\"payload_json\"\r\n\r\n");
+            writer.append(json.toString()).append("\r\n");
+
+            // Write files
+            for (FileObject file : files) {
+                writer.append("--").append(boundary).append("\r\n");
+                writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"")
+                        .append(file.getFileName()).append("\"\r\n");
+                writer.append("Content-Type: ").append(file.getContentType()).append("\r\n\r\n");
+                writer.flush();
+
+                try (InputStream fileInputStream = Files.newInputStream(file.getFile().toPath())) {
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                    outputStream.flush();
+                }
+
+                writer.append("\r\n");
+            }
+
+            writer.append("--").append(boundary).append("--\r\n");
+            writer.flush();
+        }
+
+        // Handle response (if needed)
+        connection.getInputStream().close(); // Close the input stream
         connection.disconnect();
     }
 
@@ -321,6 +360,19 @@ public class DiscordWebhook {
             private boolean isInline() {
                 return inline;
             }
+        }
+    }
+
+    @Getter
+    public static class FileObject {
+        private final File file;
+        private final String fileName;
+        private final String contentType;
+
+        public FileObject(File file, String fileName, String contentType) {
+            this.file = file;
+            this.fileName = fileName;
+            this.contentType = contentType;
         }
     }
 }
