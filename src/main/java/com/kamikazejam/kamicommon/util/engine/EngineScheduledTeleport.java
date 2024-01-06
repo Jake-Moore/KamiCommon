@@ -98,7 +98,11 @@ public class EngineScheduledTeleport extends Engine {
 		scheduledTeleport.unschedule();
 
 		// ... and inform the teleportee.
-		MsonMessenger.get().msgOne(scheduledTeleport.getTeleporteeId(), "<rose>Cancelled <i>teleport to <h>" + scheduledTeleport.getDestination().getDesc(scheduledTeleport.getTeleporteeId()) + "<i>.");
+		if (scheduledTeleport.getDesc() != null) {
+			MsonMessenger.get().msgOne(scheduledTeleport.getTeleporteeId(), "<rose>Cancelled <i>teleport to <h>" + scheduledTeleport.getDesc() + "<i>.");
+		}else {
+			MsonMessenger.get().msgOne(scheduledTeleport.getTeleporteeId(), "<rose>Cancelled <i>teleport.");
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
