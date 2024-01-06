@@ -11,7 +11,10 @@ import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
+import com.kamikazejam.kamicommon.util.engine.EngineScheduledTeleport;
+import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
+import com.kamikazejam.kamicommon.util.mixin.*;
 import com.kamikazejam.kamicommon.util.mson.Mson;
 import com.kamikazejam.kamicommon.util.mson.MsonEvent;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
@@ -35,6 +38,15 @@ public class KamiCommon extends KamiPlugin implements Listener {
         plugin = this;
         plugin.getServer().getPluginManager().registerEvents(new MenuManager(), plugin);
         getServer().getPluginManager().registerEvents(this, this);
+
+        // Activate Actives
+        EngineScheduledTeleport.get().setActive(this);
+        EngineTeleportMixinCause.get().setActive(this);
+        MixinPlayed.get().setActive(this);
+        MixinDisplayName.get().setActive(this);
+        MixinTeleport.get().setActive(this);
+        MixinSenderPs.get().setActive(this);
+        MixinWorld.get().setActive(this);
 
         // Schedule menu task to run every 1 second
         Bukkit.getScheduler().runTaskTimer(this, new MenuTask(), 0L, 20L);
@@ -61,6 +73,15 @@ public class KamiCommon extends KamiPlugin implements Listener {
 
     @Override
     public void onDisableInner() {
+        // Deactivate Actives
+        EngineScheduledTeleport.get().setActive(null);
+        EngineTeleportMixinCause.get().setActive(null);
+        MixinPlayed.get().setActive(null);
+        MixinDisplayName.get().setActive(null);
+        MixinTeleport.get().setActive(null);
+        MixinSenderPs.get().setActive(null);
+        MixinWorld.get().setActive(null);
+
         // Unregister all listeners
         HandlerList.unregisterAll((Plugin) plugin);
 
