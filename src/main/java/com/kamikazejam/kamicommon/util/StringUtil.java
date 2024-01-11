@@ -15,11 +15,11 @@ public class StringUtil {
     @SuppressWarnings("all")
     public static final char COLOR_CHAR = '\u00A7';
 
-    public static String t(String msg) {
+    public static String t(String msg, boolean forceTranslateHex) {
         String s = translateAlternateColorCodes(msg);
 
         // For 1.16+ translate hex color codes as well
-        if (StringUtilBukkit.supportsHexCodes()) {
+        if (forceTranslateHex || StringUtilBukkit.supportsHexCodes()) {
             Pattern hex = Pattern.compile("&(#[A-Fa-f0-9]{6})");
             Matcher matcher = hex.matcher(s);
             while (matcher.find()) {
@@ -33,6 +33,10 @@ public class StringUtil {
         }
 
         return s;
+    }
+
+    public static String t(String msg) {
+        return StringUtil.t(msg, false);
     }
 
     public static List<String> t(List<String> msgs) {
