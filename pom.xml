@@ -59,12 +59,12 @@
                                         <include>**</include>
                                     </includes>
                                 </filter>
-                                <filter>
-                                    <artifact>com.mysql:mysql-connector-j</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
+<!--                                <filter>-->
+<!--                                    <artifact>com.mysql:mysql-connector-j</artifact>-->
+<!--                                    <includes>-->
+<!--                                        <include>**</include>-->
+<!--                                    </includes>-->
+<!--                                </filter>-->
                                 <filter>
                                     <artifact>com.zaxxer:HikariCP</artifact>
                                     <includes>
