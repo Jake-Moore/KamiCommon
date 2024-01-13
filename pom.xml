@@ -59,6 +59,18 @@
                                         <include>**</include>
                                     </includes>
                                 </filter>
+                                <filter>
+                                    <artifact>com.mysql:mysql-connector-j</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.zaxxer:HikariCP</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
                             </filters>
 
                             <relocations>
@@ -309,7 +321,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>5.0.1</version>
+            <version>5.1.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
