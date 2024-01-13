@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.database;
 
+import com.mysql.cj.jdbc.MysqlDataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -19,6 +20,7 @@ public abstract class Database implements DatabaseListener {
 
         HikariConfig hikari = new HikariConfig();
         hikari.setDataSourceClassName("com.kamikazejam.kamicommon.mysql.cj.jdbc.MysqlDataSource");
+        MysqlDataSource s; // So that minimize jar includes this class
 
         hikari.addDataSourceProperty("serverName", address);
         hikari.addDataSourceProperty("port", port);
