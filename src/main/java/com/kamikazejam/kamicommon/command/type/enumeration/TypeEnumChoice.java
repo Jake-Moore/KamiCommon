@@ -39,6 +39,6 @@ public abstract class TypeEnumChoice<T extends Enum<T>> extends TypeAbstractChoi
 
     @Override
     public Collection<String> getTabList(CommandSender sender, String arg) {
-        return this.getAll().stream().map(g -> g.name().toLowerCase()).collect(Collectors.toList());
+        return this.getAll().stream().map(g -> g.name().toLowerCase()).limit(20).collect(Collectors.toList());
     }
 }
