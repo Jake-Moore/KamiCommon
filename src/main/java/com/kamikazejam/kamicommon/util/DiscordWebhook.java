@@ -59,11 +59,9 @@ public class DiscordWebhook {
         this.files.add(new FileObject(file, file.getName(), "text/plain"));
     }
 
-    public void execute() throws IOException {
-        if (this.content == null && this.embeds.isEmpty()) {
-            throw new IllegalArgumentException("Set content or add at least one EmbedObject");
-        }
 
+
+    public JSONObject buildJson() {
         JSONObject json = new JSONObject();
 
         json.put("content", this.content);
@@ -152,7 +150,41 @@ public class DiscordWebhook {
 
             json.put("embeds", embedObjects.toArray());
         }
+        return json;
+    }
 
+    public void execute() throws IOException {
+        if (this.content == null && this.embeds.isEmpty()) {
+            throw new IllegalArgumentException("Set content or add at least one EmbedObject");
+        }
+        JSONObject json = buildJson();
+
+        // If there are no files, then just send the json
+        if (files.isEmpty()) {
+            executeJson(json);
+        }else {
+            executeWithFiles(json);
+        }
+    }
+
+    private void executeJson(JSONObject json) throws IOException {
+        URL url = new URL(this.url);
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.addRequestProperty("Content-Type", "application/json");
+        connection.addRequestProperty("User-Agent", "Java-DiscordWebhook-BY-Gelox_");
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+
+        try (OutputStream outputStream = connection.getOutputStream()) {
+            outputStream.write(json.toString().getBytes(StandardCharsets.UTF_8));
+        }
+
+        // Handle response (if needed)
+        connection.getInputStream().close(); // Close the input stream
+        connection.disconnect();
+    }
+
+    private void executeWithFiles(JSONObject json) throws IOException {
         // Create a boundary for multipart content
         String boundary = "*****";
 
@@ -199,6 +231,9 @@ public class DiscordWebhook {
         connection.getInputStream().close(); // Close the input stream
         connection.disconnect();
     }
+
+
+
 
     public static class EmbedObject {
         @Getter
