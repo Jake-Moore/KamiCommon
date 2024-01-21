@@ -116,11 +116,14 @@ public class Config extends KamiConfig {
     }
 }
 ```
-- **Utility Classes (shaded)**
+- **Utility Classes (shaded & relocated)**
   - org.yaml.snakeyaml (latest)
   - org.json
   - redis.clients.jedis
   - org.apache.httpcomponents
+  - com.mysql (mysql-connector-j)
+  - com.google.code.gson
+  - com.zaxxer.hikari
   - [NBT-API](https://github.com/tr7zw/Item-NBT-API)
   - [XSeries](https://github.com/CryptoMorin/XSeries)
 - **Utility Classes (other)**
