@@ -35,10 +35,11 @@ public class ModuleConfig extends KamiConfig {
 
     public void loadDefaultConfig() {
         if (module != null) {
-            addDefault("enabled", module.isEnabledByDefault());
-            addDefault("options.modulePrefix", module.defaultPrefix());
-        } else {
-            this.set("enabled", false);
+            KamiConfig c = module.getPlugin().getModulesConfig();
+            String name = module.getName().replace(" ", "_");
+            c.addDefault("modules." + name + ".enabled", true);
+            c.addDefault("modules." + name + ".modulePrefix", module.defaultPrefix());
+            c.save();
         }
 
         this.save();
