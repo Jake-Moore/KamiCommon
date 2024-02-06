@@ -10,7 +10,9 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "SameReturnValue"})
 public abstract class PageBuilder<T extends Player> {
@@ -41,13 +43,20 @@ public abstract class PageBuilder<T extends Player> {
         }
     }
 
+    // List naturally sorted in increasing numerical order
     public List<Integer> getPlacedSlots(int page) {
         if (slotsOverride != null) { return slotsOverride; }
 
         int rows = getRows(page);
         List<Integer> slots = new ArrayList<>();
         for (int i = 1; i <= (rows-3); i++) {
-            slots.addAll(Arrays.asList((9 * i + 1), (9 * i + 2), (9 * i + 3), (9 * i + 4), (9 * i + 5), (9 * i + 6), (9 * i + 7)));
+            slots.add(9 * i + 1);
+            slots.add(9 * i + 2);
+            slots.add(9 * i + 3);
+            slots.add(9 * i + 4);
+            slots.add(9 * i + 5);
+            slots.add(9 * i + 6);
+            slots.add(9 * i + 7);
         }
         return slots;
     }
@@ -143,15 +152,16 @@ public abstract class PageBuilder<T extends Player> {
         addOtherIcons();
 
         // If there are no items to add, open the menu
-        if (!items.exists(page)) {
+        if (!items.pageExist(page)) {
             tryFill();
             return menu;
         }
 
         // Add all page items
         for (PageItem pageItem : items.getPage(page)) {
-            if (pageItem != null && firstEmpty(page) != -1) {
-                pageItem.addToMenu(menu, firstEmpty(page));
+            int s = firstEmpty(page);
+            if (pageItem != null && s != -1) {
+                pageItem.addToMenu(menu, s);
             }
         }
 
@@ -192,7 +202,7 @@ public abstract class PageBuilder<T extends Player> {
     public Collection<KamiMenuItem> supplyOtherIcons() { return new ArrayList<>(); }
 
     private int firstEmpty(int page) {
-        for (int i : getPlacedSlots(currentPage)) {
+        for (int i : getPlacedSlots(page)) {
             if (i >= menu.getSize()) {
                 return -1;
             }
@@ -202,5 +212,4 @@ public abstract class PageBuilder<T extends Player> {
         }
         return -1;
     }
-
 }
