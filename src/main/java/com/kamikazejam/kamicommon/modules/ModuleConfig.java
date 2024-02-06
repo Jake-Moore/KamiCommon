@@ -53,6 +53,10 @@ public class ModuleConfig extends KamiConfig {
         return null;
     }
 
+    public Module getRawModule() {
+        return module;
+    }
+
     public Location getLocation(String key) {
         World world = Bukkit.getWorld(getString(key + ".world"));
         if (world == null) {
