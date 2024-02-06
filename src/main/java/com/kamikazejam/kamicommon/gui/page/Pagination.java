@@ -37,17 +37,13 @@ public class Pagination<E> extends ArrayList<E> {
         return (int) Math.ceil((double) size() / (double) pageSize);
     }
 
-    public boolean exists(int page) {
-        try {
-            getPage(page);
-        } catch (IndexOutOfBoundsException e) {
-            return false;
-        }
-        return !(page < 0) && page <= totalPages();
-    }
 
+    /**
+     * @param page (0 indexed)
+     */
     public boolean pageExist(int page) {
-        return !(page < 0 || page >= totalPages());
+        // [0, totalPages-1] from 0 indexing
+        return page >= 0 && page < totalPages();
     }
 
     public boolean isNextPage(int page) {
