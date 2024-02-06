@@ -59,9 +59,9 @@ public abstract class PageBuilder<T extends Player> {
         return this.items;
     }
 
-    // Overridable
+    // Overridable (currentPage is 1 indexed, maxPages is 1 indexed)
     public @Nonnull String getMenuName(int currentPage, int maxPages) {
-        return getMenuName() + " " + (maxPages > 1 ? "(Page " + (currentPage + 1) + "/" + maxPages + ")" : "");
+        return getMenuName() + (maxPages > 1 ? " (Page " + (currentPage) + "/" + maxPages + ")" : "");
     }
 
     public abstract String getMenuName();
