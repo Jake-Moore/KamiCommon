@@ -10,10 +10,7 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "SameReturnValue"})
 public abstract class PageBuilder<T extends Player> {
@@ -115,6 +112,7 @@ public abstract class PageBuilder<T extends Player> {
     }
 
     public void openMenu(Player player, int page) {
+        // createMenu handles the currentPage variable
         createMenu(player, page).openMenu(player);
     }
 
@@ -159,6 +157,9 @@ public abstract class PageBuilder<T extends Player> {
 
         // Return the menu !
         tryFill();
+
+        // We make some assumptions, like that this menu object belongs to 1 player
+        menu.whenOpened((plr, v) -> this.currentPage = page);
         return menu;
     }
 

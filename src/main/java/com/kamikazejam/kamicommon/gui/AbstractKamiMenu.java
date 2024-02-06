@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,10 @@ import java.util.function.Predicate;
 @Getter @Setter
 @SuppressWarnings("unused")
 public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
+    public interface MenuOpenCallback {
+        void onOpen(Player player, InventoryView view);
+    }
+
 
     private final Set<String> ignoredClose = new HashSet<>();
     private final Map<MenuItem, MenuClickInfo> clickableItems = new ConcurrentHashMap<>();
@@ -32,6 +37,7 @@ public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
     private MenuUpdate updateHandler;
     private boolean clearBeforeUpdate = false;
     private boolean allowItemPickup;
+    private @Nullable MenuOpenCallback openCallback = null;
 
     public AbstractKamiMenu() {}
 
@@ -56,7 +62,11 @@ public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
             getIgnoredClose().add(player.getName());
         }
 
-        return player.openInventory(getInventory());
+        InventoryView view = player.openInventory(getInventory());
+        if (openCallback != null) {
+            openCallback.onOpen(player, view);
+        }
+        return view;
     }
 
     public int firstEmpty() {
@@ -137,4 +147,8 @@ public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
     }
 
     public abstract void setItem(int slot, IBuilder stack, Player forPlaceholders);
+
+    public void whenOpened(@Nullable MenuOpenCallback menuOpen) {
+        this.openCallback = menuOpen;
+    }
 }
