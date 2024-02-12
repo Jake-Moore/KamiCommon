@@ -3,11 +3,13 @@ package com.kamikazejam.kamicommon.modules;
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
+import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import lombok.Getter;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -98,9 +100,9 @@ public abstract class Module {
     public abstract String getName();
 
     /**
-     * @return The default logging prefix for this module (saved to config under options.modulePrefix)
+     * @return The default logging prefix for this module (saved under the KamiPlugin modulesConfig modulePrefix)
      */
-    public abstract String defaultPrefix();
+    public abstract @NotNull String defaultPrefix();
 
 
     // -------------------------------------------- //
@@ -268,8 +270,15 @@ public abstract class Module {
         }
     }
 
-    public final String getPrefix() {
-        return getConfig().getString("options.modulePrefix");
+    public final @NotNull String getPrefix() {
+        KamiConfig c = getPlugin().getModulesConfig();
+        String prefix = c.getString("modules." + getName() + ".modulePrefix", null);
+        if (prefix != null) { return prefix; }
+
+        String def = defaultPrefix();
+        c.setString("modules." + getName() + ".modulePrefix", def);
+        c.save();
+        return def;
     }
 
     /**

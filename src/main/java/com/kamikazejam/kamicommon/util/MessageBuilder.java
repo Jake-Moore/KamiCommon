@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -141,7 +142,10 @@ public class MessageBuilder {
      * @param value The string to replace it with
      * @return The MessageBuilder instance (for chaining)
      */
-    public MessageBuilder replace(String key, String value) {
+    public MessageBuilder replace(@NotNull String key, @NotNull String value) {
+        Preconditions.checkNotNull(key);
+        Preconditions.checkNotNull(value);
+
         List<String> newLines = new ArrayList<>();
         for (String line : this.lines) {
             newLines.add(line.replace(key, value));
