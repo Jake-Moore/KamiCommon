@@ -107,7 +107,7 @@ public class NmsManager {
     /**
      * Converts {@link #getFormattedNms()} into a double
      * For example 1.8.9 becomes 189, 1.16 becomes 1160, 1.16.3 becomes 1163
-     * @return The formatted version as a double for comparison
+     * @return The nms version formatted as a double. 4 digits (major[1]minor[2]patch[1]), i.e. 1_16_5 (1165) for v1_16_R3
      */
     public static double getFormattedNmsDouble() {
         if (formattedNmsDouble != -1) { return formattedNmsDouble; }
@@ -118,8 +118,15 @@ public class NmsManager {
 
         String s;
         if (num == 1) {
-            // In this case 1.16 becomes 1160
-            s = version.replaceAll("\\.", "0") + "0";
+            // In this case 1.16 becomes 1160 and 1.8 becomes 1080
+            String t = version.replaceAll("\\.", "");
+            if (t.length() == 2) {
+                // In the case of 1.8 -> 1080
+                s = version.replaceAll("\\.", "0") + "0";
+            }else {
+                // In the case of 1.16 -> 1160
+                s = t + "0";
+            }
         }else if (num == 2) {
             // In this case 1.16.3 becomes 1163
             s = version.replaceAll("\\.", "");
@@ -334,7 +341,7 @@ public class NmsManager {
         PlayerInventory playerInventory = player.getInventory();
 
         // If pre 1.9, we don't have an offhand slot
-        if (NmsManager.getFormattedNmsDouble() < 190) {
+        if (NmsManager.getFormattedNmsDouble() < 1090) {
             return playerInventory.getItemInHand();
         }else {
             return playerInventory.getItemInMainHand();
