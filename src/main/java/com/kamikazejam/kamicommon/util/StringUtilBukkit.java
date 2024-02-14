@@ -12,7 +12,7 @@ public class StringUtilBukkit {
                 Class.forName("org.bukkit.Bukkit");
 
                 // IFF we have bukkit access, then we can use the NmsManager to check the version
-                supportsHexCodes = NmsManager.getFormattedNmsDouble() >= 1.16;
+                supportsHexCodes = NmsManager.getFormattedNmsDouble() >= 1160;
 
             } catch (ClassNotFoundException ignored) {
                 supportsHexCodes = false;

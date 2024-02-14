@@ -44,7 +44,7 @@ public abstract class IBlockUtil {
     }
 
     void setMaterialData(Block b, MaterialData materialData, boolean lightUpdate, boolean physics) {
-        if (NmsManager.getFormattedNmsDouble() < 1.13) {
+        if (NmsManager.getFormattedNmsDouble() < 1130) {
             throw new UnsupportedOperationException("Didn't override .setMaterialData in BlockUtil");
         }
 
