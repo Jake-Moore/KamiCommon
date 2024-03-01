@@ -289,18 +289,15 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     }
 
     public boolean verifyPluginVersion(String minVer, String pluginName, @Nullable ErrorPropertiesCallback callback) {
-        int minVerInt = verToInt(minVer);
-
         // Fetch target plugin version
         JavaPlugin pl = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(pluginName);
         if (pl == null) {
             getLogger().severe("Could not load " + pluginName + " dependency! (Plugin Not Found!)");
             return false;
         }
-        int ver = verToInt(pl.getDescription().getVersion());
 
         // Compare versions
-        if (ver < minVerInt) {
+        if (compareVersions(minVer, pl.getDescription().getVersion())) {
             getLogger().severe(pluginName + " version is too old! (" + minVer + " or higher required)");
             if (callback != null) { callback.onFailure(pluginName, minVer); }
             return false;
@@ -309,10 +306,24 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         return true;
     }
 
-    public int verToInt(String ver) {
-        // Grab everything before the first dash, if there is one (1.6.1-pr1 -> 1.6.1) (1.6.2-SNAPSHOT -> 1.6.2)
-        ver = ver.split("-")[0];
-        // Remove everything that isn't a number (1.6.1 -> 161
-        return Integer.parseInt(ver.replaceAll("[^\\d]", ""));
+    /**
+     * Requires ver format to be int.int.int... (ints separated by periods)
+     * @return If currentVer satisfies minVer
+     */
+    public boolean compareVersions(String minVer, String currentVer) {
+        // Use major, minor, and patch version logic to compare
+        String[] minParts = minVer.split("\\.");
+        String[] curParts = currentVer.split("\\."); // May be of different length
+
+        // Compare versions in order of significance
+        for (int i = 0; i < minParts.length; i++) {
+            int min = Integer.parseInt(minParts[i]);
+            int cur = i < curParts.length ? Integer.parseInt(curParts[i]) : 0;
+            if (cur > min) { return true; }
+            if (cur < min) { return false; }
+        }
+
+        // If we have reached this point, the versions were equal
+        return true;
     }
 }
