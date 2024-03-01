@@ -4,16 +4,17 @@ package com.testing;
 public class test {
 
     public static void main(String[] args) {
-        assert compareVersions("1.0.0", "1.0.0") == true;
-        assert compareVersions("1.0.0", "1.0.1") == true;
-        assert compareVersions("1.0.0", "1.1.0") == true;
-        assert compareVersions("1.0.0", "2.0.0") == true;
-        assert compareVersions("1.0.0", "0.0.0") == false;
-        assert compareVersions("1.0.0", "2")     == true;
-        assert compareVersions("1.0.0", "2.0")   == true;
-        assert compareVersions("1.0.0", "2.0.0") == true;
-        assert compareVersions("4.3.5.14", "4.3.6.0") == true;
-        assert compareVersions("4.3.5.14", "4.3.6.1") == true;
+        assert compareVersions("1.0.0", "1.0.0")        == true;
+        assert compareVersions("1.0.0", "1.0.1")        == true;
+        assert compareVersions("1.0.0", "1.1.0")        == true;
+        assert compareVersions("1.0.0", "2.0.0")        == true;
+        assert compareVersions("1.0.0", "0.0.0")        == false;
+        assert compareVersions("1.0.0", "2")            == true;
+        assert compareVersions("1.0.0", "2.0")          == true;
+        assert compareVersions("1.0.0", "2.0.0")        == true;
+        assert compareVersions("4.3.5.14", "4.3.6.0")   == true;
+        assert compareVersions("4.3.5.14", "4.3.6.1")   == true;
+        assert compareVersions("2.2.3.6", "2.2.3.7")    == true;
 
         System.out.println("All tests passed!");
     }

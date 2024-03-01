@@ -297,7 +297,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         }
 
         // Compare versions
-        if (compareVersions(minVer, pl.getDescription().getVersion())) {
+        if (!compareVersions(minVer, pl.getDescription().getVersion())) {
             getLogger().severe(pluginName + " version is too old! (" + minVer + " or higher required)");
             if (callback != null) { callback.onFailure(pluginName, minVer); }
             return false;
