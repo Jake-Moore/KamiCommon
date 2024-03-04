@@ -780,7 +780,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	public List<String> applyPuzzler(List<String> args, CommandSender sender) {
 		args = this.applyConcatenating(args);
 		args = this.applySwapping(args, sender);
-		return args;
+		return new ArrayList<>(args);
 	}
 
 	public List<String> applyConcatenating(List<String> args) {

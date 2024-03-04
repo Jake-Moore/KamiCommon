@@ -3,6 +3,8 @@ package com.kamikazejam.kamicommon.util;
 import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,10 +20,11 @@ import java.util.*;
  * It will detect which one to use and the server owner can configure it as either. <p>
  * The secondary function of this class is to send messages translated, and with PAPI placeholders replaced
  */
-@Getter
+@Getter @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class MessageBuilder {
     private final List<String> lines = new ArrayList<>();
+    @Setter private boolean translateColor = true;
 
     public static MessageBuilder of(String message) {
         return new MessageBuilder(message);
@@ -184,7 +187,11 @@ public class MessageBuilder {
         if (sender instanceof Player) { send((Player) sender); return this; }
 
         for (String s : lines) {
-            sender.sendMessage(StringUtil.t(s));
+            if (translateColor) {
+                sender.sendMessage(StringUtil.t(s));
+            }else {
+                sender.sendMessage(s);
+            }
         }
         return this;
     }
