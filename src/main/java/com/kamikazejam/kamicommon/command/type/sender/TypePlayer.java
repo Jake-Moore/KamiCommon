@@ -1,9 +1,12 @@
 package com.kamikazejam.kamicommon.command.type.sender;
 
+import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -22,11 +25,18 @@ public class TypePlayer extends TypeAbstract<Player> {
 
 	@Override
 	public Player read(String str, CommandSender sender) throws KamiCommonException {
-		Player player = sender.getServer().getPlayer(str);
-		if (player == null) {
+		Player target = sender.getServer().getPlayer(str);
+		if (target == null) {
 			throw new KamiCommonException().addMsg("<b>No player matching \"<p>%s<b>\".", str);
 		}
-		return player;
+		@Nullable PremiumVanishIntegration integration = ((KamiCommon) KamiCommon.get()).getVanishIntegration();
+		if (integration != null && sender instanceof Player) {
+			Player viewer = (Player) sender;
+			if (!integration.canSee(viewer, target)) {
+				throw new KamiCommonException().addMsg("<b>No player matching \"<p>%s<b>\".", str);
+			}
+		}
+		return target;
 	}
 
 	@Override

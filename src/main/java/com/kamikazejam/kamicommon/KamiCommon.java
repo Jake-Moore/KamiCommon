@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.command.type.RegistryType;
+import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
 import com.kamikazejam.kamicommon.gui.MenuManager;
 import com.kamikazejam.kamicommon.gui.MenuTask;
 import com.kamikazejam.kamicommon.util.adapter.*;
@@ -18,17 +19,21 @@ import com.kamikazejam.kamicommon.util.mixin.*;
 import com.kamikazejam.kamicommon.util.mson.Mson;
 import com.kamikazejam.kamicommon.util.mson.MsonEvent;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Modifier;
 
+@Getter
 @SuppressWarnings("unused")
 public class KamiCommon extends KamiPlugin implements Listener {
     private static KamiCommon plugin;
+    private @Nullable PremiumVanishIntegration vanishIntegration = null;
 
     @Override
     public void onEnableInner(){
@@ -38,6 +43,11 @@ public class KamiCommon extends KamiPlugin implements Listener {
         plugin = this;
         plugin.getServer().getPluginManager().registerEvents(new MenuManager(), plugin);
         getServer().getPluginManager().registerEvents(this, this);
+
+        // Register Integrations
+        if (Bukkit.getPluginManager().isPluginEnabled("SuperVanish") || Bukkit.getPluginManager().isPluginEnabled("PremiumVanish")) {
+            vanishIntegration = new PremiumVanishIntegration(this);
+        }
 
         // Activate Actives
         EngineScheduledTeleport.get().setActive(this);
