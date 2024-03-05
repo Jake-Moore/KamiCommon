@@ -592,4 +592,18 @@ public class KUtil {
         return transform(items, null, null, limit, offset);
     }
 
+    public static void printStackTrace() {
+        try {
+            throw new Exception();
+        }catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+    public static void printStackTrace(String message) {
+        try {
+            throw new Exception(message);
+        }catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 }
