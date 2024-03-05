@@ -41,7 +41,16 @@ public class TypePlayer extends TypeAbstract<Player> {
 
 	@Override
 	public Collection<String> getTabList(CommandSender commandSender, String s) {
-		return commandSender.getServer().getOnlinePlayers().stream().map(Player::getName)
+		@Nullable PremiumVanishIntegration integration = ((KamiCommon) KamiCommon.get()).getVanishIntegration();
+
+		return commandSender.getServer().getOnlinePlayers().stream()
+				// Filter out vanished players that the sender cannot see
+				.filter(plr -> {
+					if (!(commandSender instanceof Player)) return true;
+					Player viewer = (Player) commandSender;
+					return integration == null || integration.canSee(viewer, plr);
+				})
+				.map(Player::getName)
 				.filter(key -> key.toLowerCase().startsWith(s.toLowerCase())).limit(20)
 				.collect(Collectors.toList());
 	}
