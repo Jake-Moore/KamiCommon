@@ -1028,6 +1028,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 			if (ex.hasMessages()) {
 				MsonMessenger.get().messageOne(sender, ex.getMessages());
 			}
+		} catch (Throwable other) {
+			other.printStackTrace();
 		} finally {
 			// Sender Sender - Cleanup
 			this.senderFieldsOuter(null);
