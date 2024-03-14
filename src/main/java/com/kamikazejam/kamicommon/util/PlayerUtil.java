@@ -158,4 +158,10 @@ public class PlayerUtil {
         return true;
     }
 
+    /**
+     * @return true IFF (player != null && player.isOnline() && player.isValid())
+     */
+    public static boolean isFullyValidPlayer(@Nullable Player player) {
+        return player != null && player.isOnline() && player.isValid();
+    }
 }
