@@ -7,6 +7,7 @@ import com.kamikazejam.kamicommon.command.type.RegistryType;
 import com.kamikazejam.kamicommon.gui.MenuManager;
 import com.kamikazejam.kamicommon.gui.MenuTask;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
+import com.kamikazejam.kamicommon.nms.NmsVersion;
 import com.kamikazejam.kamicommon.util.adapter.*;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
@@ -106,12 +107,8 @@ public class KamiCommon extends KamiPlugin implements Listener {
     }
 
 
-    private static Boolean isWineSpigot = null;
     public static boolean isWineSpigot() {
-        if (isWineSpigot == null) {
-            return isWineSpigot = Bukkit.getServer().getName().equals("WineSpigot");
-        }
-        return isWineSpigot;
+        return NmsVersion.isWineSpigot();
     }
 
 

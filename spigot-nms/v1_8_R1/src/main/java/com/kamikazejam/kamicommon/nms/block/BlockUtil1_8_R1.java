@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.nms.block;
 
-import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtil;
+import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtilPre1_13;
+import com.kamikazejam.kamicommon.util.data.MaterialData;
 import net.minecraft.server.v1_8_R1.BlockPosition;
 import net.minecraft.server.v1_8_R1.Chunk;
 import net.minecraft.server.v1_8_R1.IBlockData;
@@ -8,25 +9,37 @@ import net.minecraft.server.v1_8_R1.WorldServer;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 
-public class BlockUtil1_8_R1 extends IBlockUtil {
+@SuppressWarnings("deprecation")
+public class BlockUtil1_8_R1 extends IBlockUtilPre1_13 {
     @Override
-    public void setCombined(Block b, int combined, boolean lightUpdate, boolean physics) {
+    public void setBlockInternal(Block b, MaterialData data, boolean lightUpdate, boolean physics) {
+        // !!! We take physics as priority over light updates (physics == true --> light = true)
 
+        // 1. physics = true (light = ?)
+        if (physics) {
+            // Unfortunately we cannot handle light=false with physics=true in 1.8
+            b.setTypeIdAndData(data.getMaterial().getId(), data.getData(), true);
+            return;
+        }
+
+        // 2. physics = false && light = true
+        if (lightUpdate) {
+            // and we want light
+            b.setTypeIdAndData(data.getMaterial().getId(), data.getData(), false);
+            return;
+        }
+
+        // 3. physics = false && light = false
         WorldServer w = ((CraftWorld) b.getWorld()).getHandle();
         Chunk chunk = w.getChunkAt(b.getX() >> 4, b.getZ() >> 4);
         BlockPosition bp = new BlockPosition(b.getX(), b.getY(), b.getZ());
 
-        IBlockData ibd = net.minecraft.server.v1_8_R1.Block.getByCombinedId(combined);
-
-        if (lightUpdate) {
-            w.setTypeAndData(bp, ibd, (physics) ? 3 : 2); // applyPhysics = 3, 2 is none
-        }else {
-            try {
-                chunk.a(bp, ibd);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-            w.notify(bp);
+        IBlockData ibd = net.minecraft.server.v1_8_R1.Block.getByCombinedId(getCombined(data));
+        try {
+            chunk.a(bp, ibd);
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
+        w.notify(bp);
     }
 }

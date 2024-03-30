@@ -55,6 +55,25 @@ public class NmsVersion {
         return formattedNmsDouble;
     }
 
+    private static Boolean isWineSpigot = null;
+    public static boolean isWineSpigot() {
+        if (isWineSpigot == null) {
+            return isWineSpigot = Bukkit.getServer().getName().equals("WineSpigot");
+        }
+        return isWineSpigot;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -132,56 +151,7 @@ public class NmsVersion {
     }
 
     private static IBlockUtil getBlockUtilInternal() {
-        //TODO: Add new versions as they come out
-        switch(getNMSVersion()) {
-            case "v1_8_R1":
-                return new BlockUtil1_8_R1();
-            case "v1_8_R2":
-                return new BlockUtil1_8_R2();
-            case "v1_8_R3":
-                return new BlockUtil1_8_R3();
-            case "v1_9_R1":
-                return new BlockUtil1_9_R1();
-            case "v1_9_R2":
-                return new BlockUtil1_9_R2();
-            case "v1_10_R1":
-                return new BlockUtil1_10_R1();
-            case "v1_11_R1":
-                return new BlockUtil1_11_R1();
-            case "v1_12_R1":
-                return new BlockUtil1_12_R1();
-            case "v1_13_R1":
-                return new BlockUtil1_13_R1();
-            case "v1_13_R2":
-                return new BlockUtil1_13_R2();
-            case "v1_14_R1":
-                return new BlockUtil1_14_R1();
-            case "v1_15_R1":
-                return new BlockUtil1_15_R1();
-            case "v1_16_R1":
-                return new BlockUtil1_16_R1();
-            case "v1_16_R2":
-                return new BlockUtil1_16_R2();
-            case "v1_16_R3":
-                return new BlockUtil1_16_R3();
 
-            // I think this works, not sure
-            case "v1_17_R1":
-                return new BlockUtil1_17_R1();
-            case "v1_18_R1":
-                return new BlockUtil1_18_R1();
-            case "v1_18_R2":
-                return new BlockUtil1_18_R2();
-            case "v1_19_R1":
-                return new BlockUtil1_19_R1();
-            case "v1_19_R2":
-                return new BlockUtil1_19_R2();
-            case "v1_19_R3":
-                return new BlockUtil1_19_R3();
-            case "v1_20_R1":
-                return new BlockUtil1_20_R1();
-        }
-        throw new IllegalArgumentException(getNMSVersion() + " isn't a know version");
     }
 
 
