@@ -1,9 +1,9 @@
 plugins {
-    // Unique plugins for this project
+    // Unique plugins for this module
 }
 
 dependencies {
-    // Unique dependencies for this project
+    // Unique dependencies for this module
     api("org.apache.httpcomponents.client5:httpclient5:5.3.1")
 
     api(project(":generic-jar"))
