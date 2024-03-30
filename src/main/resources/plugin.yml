@@ -1,13 +1,1 @@
-name: KamiCommon
-version: ${project.version}
-main: com.kamikazejam.kamicommon.KamiCommon
-authors: [ KamikazeJAM ]
-softdepend:
-  - PlaceholderAPI
-  - ItemsAdder
-  - MythicMobs
-  - Citizens
-  - SuperVanish
-  - PremiumVanish
-description: KamikazeJAM's common library for Spigot and Standalone projects.
-api-version: 1.13
+# TODO
