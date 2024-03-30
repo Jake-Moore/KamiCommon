@@ -1,10 +1,10 @@
 plugins {
-    // Unique plugins for this project
+    // Unique plugins for this module
     id("io.papermc.paperweight.userdev")                                 // 1. add the Paperweight plugin
 }
 
 dependencies {
-    // Unique dependencies for this project
+    // Unique dependencies for this module
     paperweight.paperDevBundle("1.17.1-R0.1-SNAPSHOT")           // 2. add the dev bundle (contains all apis)
     compileOnly(project(":spigot-nms:api"))
 }

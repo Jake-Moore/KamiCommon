@@ -2,7 +2,6 @@ package com.kamikazejam.kamicommon.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,9 +16,6 @@ public abstract class Database implements DatabaseListener {
 
     public Database(String address, int port, String database, String user, String pass) {
         this.database = database;
-
-        Bukkit.getLogger();
-
 
         HikariConfig hikari = new HikariConfig();
         // Use this method so that maven minimize-jar keeps these classes

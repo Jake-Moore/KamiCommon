@@ -1,5 +1,5 @@
 dependencies {
-    // Unique dependencies for this project
+    // Unique dependencies for this module
     compileOnly("org.spigotmc:spigot-server:1.10.2-R0.1-SNAPSHOT")
     compileOnly(project(":spigot-nms:api"))
 }

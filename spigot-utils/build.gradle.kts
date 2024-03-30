@@ -1,9 +1,9 @@
 plugins {
-    // Unique plugins for this project
+    // Unique plugins for this module
 }
 
 repositories {
-    // Unique repos for this project
+    // Unique repos for this module
 }
 
 dependencies {

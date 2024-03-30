@@ -1,13 +1,13 @@
 plugins {
-    // Unique plugins for this project
+    // Unique plugins for this module
 }
 
 repositories {
-    // Unique repos for this project
+    // Unique repos for this module
 }
 
 dependencies {
-    // Unique dependencies for this project
+    // Unique dependencies for this module
     api("org.yaml:snakeyaml:2.2")
 
     // Lombok

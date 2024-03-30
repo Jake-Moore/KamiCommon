@@ -1,6 +1,6 @@
 
 dependencies {
-    // Unique dependencies for this project
+    // Unique dependencies for this module
     api(project(":spigot-nms:api"))
     api(project(":spigot-nms:v1_8_R3"))
     api(project(":spigot-nms:v1_16_R1"))

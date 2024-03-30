@@ -1,5 +1,5 @@
 plugins {
-    // Unique plugins for this project
+    // Unique plugins for this module
 }
 
 repositories {
@@ -9,17 +9,12 @@ repositories {
 }
 
 dependencies {
-    // Unique dependencies for this project
-    // api("com.zaxxer:HikariCP:5.1.0")
-
-    // compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    //compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
-}
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    // Unique dependencies for this module
+    api("com.zaxxer:HikariCP:5.1.0")
 }
 
 tasks.test {
     useJUnitPlatform()
 }
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.targetCompatibility = JavaVersion.VERSION_1_8
