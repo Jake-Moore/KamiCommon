@@ -1,6 +1,6 @@
 # Module Structure
 ## Spigot Development
-### [spigot-jar](https://github.com/Jake-Moore/KamiCommon/tree/master/spigot-jar)
+### [spigot-jar](../spigot-jar)
 - The primary module responsible for the spigot plugin jar.
 - Contains ALL of
   - [spigot-utils](#spigot-utils)
@@ -10,7 +10,7 @@
 - (⭐) Should **NOT** be shaded ❌
   - <span style="text-decoration:underline;">should be added to the server as a plugin</span>
 
-### [spigot-utils](https://github.com/Jake-Moore/KamiCommon/tree/master/spigot-utils)
+### [spigot-utils](../spigot-utils)
 - A **developer** jar file containing *some* of the standalone spigot APIs in KamiCommon
 - Contains ALL:
   - [spigot-nms](#spigot-nms)
@@ -20,7 +20,7 @@
 - (⭐) **CAN** be shaded
   - classes in this module may use the spigot-api, but do not require a plugin to back them
 
-### [spigot-nms](https://github.com/Jake-Moore/KamiCommon/tree/master/spigot-nms)
+### [spigot-nms](../spigot-nms)
 - A parent module responsible for nms utilities & implementations.
 - Wrapper classes (available in [spigot-jar](#spigot-jar)) should be used instead!
 - (⭐) Should **NOT** be shaded ❌
@@ -28,7 +28,7 @@
 
 
 ## Standalone Development
-### [standalone-jar](https://github.com/Jake-Moore/KamiCommon/tree/master/standalone-jar)
+### [standalone-jar](../standalone-jar)
 - A standalone jar file containing utilities that do not utilize the spigot-api
 - Contains ALL of
   - [standalone-utils](#standalone-utils)
@@ -38,7 +38,7 @@
   - jar does not function as a spigot plugin
   - meant to be integrated (shaded) into your project
 
-### [standalone-utils](https://github.com/Jake-Moore/KamiCommon/tree/master/standalone-utils)
+### [standalone-utils](../standalone-utils)
 - A jar file containing standalone utilities that do not require shaded dependencies
 - This is a **smaller** and **less feature complete** version of the full [standalone-jar](#standalone-jar)
 - (⭐) **CAN** be shaded
@@ -46,7 +46,7 @@
   - These classes do not require any backing, they are safe to shade
 
 ## Generic Development
-### [generic-jar](https://github.com/Jake-Moore/KamiCommon/tree/master/generic-jar)
+### [generic-jar](../generic-jar)
 - A jar file containing generic utility classes (with their shaded dependencies)
 - Placed in its own module so it can be included in both other -jar modules
 - (⭐) **CAN** be shaded
