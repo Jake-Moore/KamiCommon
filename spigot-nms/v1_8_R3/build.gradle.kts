@@ -1,6 +1,6 @@
 dependencies {
     // Unique dependencies for this module
-    compileOnly("net.techcable.tacospigot:server:1.8.8-R0.2-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-server:1.8.8-R0.2-SNAPSHOT")
     compileOnly(project(":spigot-nms:api"))
 }
 

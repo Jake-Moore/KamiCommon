@@ -8,10 +8,14 @@ public abstract class Provider<T> {
     private @Nullable T value = null;
     public final @NotNull T get() {
         if (value == null) {
-            value = provide(NmsVersion.getFormattedNmsDouble());
+            value = provide(NmsVersion.getFormattedNmsDouble(), NmsVersion.getNMSVersion());
         }
         return value;
     }
 
-    protected abstract @NotNull T provide(double formattedNmsDouble);
+    /**
+     * @param formattedNmsDouble Specified by {@link NmsVersion#getFormattedNmsDouble()}
+     * @param nmsVersion Specified by {@link NmsVersion#getNMSVersion()}
+     */
+    protected abstract @NotNull T provide(double formattedNmsDouble, String nmsVersion);
 }
