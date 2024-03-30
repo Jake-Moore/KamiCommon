@@ -1,3 +1,5 @@
+**SEE [README.md](./README.md) FOR API DOCUMENTATION**
+
 # Module Structure
 ## Spigot Development
 ### [spigot-jar](./spigot-jar)
