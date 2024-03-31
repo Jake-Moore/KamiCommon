@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.util.data;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.Data;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 @Data
@@ -33,5 +34,9 @@ public class MaterialData {
     @SuppressWarnings("deprecation")
     public org.bukkit.material.MaterialData toMaterialData() {
         return new org.bukkit.material.MaterialData(material, data);
+    }
+
+    public @NotNull XMaterial getXMaterialFromMaterial() {
+        return XMaterial.matchXMaterial(material);
     }
 }

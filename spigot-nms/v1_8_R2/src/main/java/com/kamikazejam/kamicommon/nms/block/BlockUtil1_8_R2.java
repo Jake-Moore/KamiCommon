@@ -17,7 +17,7 @@ public class BlockUtil1_8_R2 extends IBlockUtilPre1_13 {
 
         // 1. physics = true (light = ?)
         if (physics) {
-            // Unfortunately we cannot handle light=false with physics=true in 1.8
+            // Unfortunately we cannot handle light=false with physics=true
             block.setTypeIdAndData(data.getMaterial().getId(), data.getData(), true);
             return;
         }
