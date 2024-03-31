@@ -18,6 +18,10 @@ public class BlockUtil1_17_R1 extends IBlockUtil1_13 {
         CraftBlock craftBlock = (CraftBlock) b;
         craftBlock.setType(materialData.getMaterial(), physics);
 
+
+
+
+
         if (materialData.getData() == 0) { return; }
         @Nullable BlockData blockData = tryLeveled(craftBlock.getBlockData(), materialData);
         if (blockData != null) { craftBlock.setBlockData(blockData, physics); }

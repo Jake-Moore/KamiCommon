@@ -3,9 +3,8 @@ package com.kamikazejam.kamicommon.yaml.standalone;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.MappingNode;
-
-import javax.annotation.Nullable;
 
 @Getter
 @SuppressWarnings("unused")
