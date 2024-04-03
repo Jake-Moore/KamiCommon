@@ -27,5 +27,3 @@ tasks {                                             // 4. configure tasks (like 
 tasks.test {
     useJUnitPlatform()
 }
-java.sourceCompatibility = JavaVersion.VERSION_16
-java.targetCompatibility = JavaVersion.VERSION_16
