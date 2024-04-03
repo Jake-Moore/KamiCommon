@@ -1,10 +1,12 @@
 package com.kamikazejam.kamicommon.util;
 
-import javax.annotation.CheckForNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
 public class Preconditions {
-    public static <T> T checkNotNull(T reference) {
+    @SuppressWarnings("UnusedReturnValue")
+    public static @NotNull <T> T checkNotNull(@Nullable T reference) {
         if (reference == null) {
             throw new NullPointerException();
         } else {
@@ -12,7 +14,7 @@ public class Preconditions {
         }
     }
 
-    public static <T> T checkNotNull(@CheckForNull T reference, @CheckForNull Object errorMessage) {
+    public static @NotNull <T> T checkNotNull(@Nullable T reference, @Nullable Object errorMessage) {
         if (reference == null) {
             throw new NullPointerException(String.valueOf(errorMessage));
         } else {

@@ -1,45 +1,43 @@
 package com.kamikazejam.kamicommon.nms.block;
 
-import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtilPre1_13;
-import com.kamikazejam.kamicommon.util.data.MaterialData;
+import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtil;
+import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.Chunk;
 import net.minecraft.server.v1_8_R3.IBlockData;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"deprecation", "DuplicatedCode"})
-public class BlockUtil1_8_R3 extends IBlockUtilPre1_13 {
+public class BlockUtil1_8_R3 extends IBlockUtil {
     @Override
-    public void setBlockInternal(Block block, MaterialData data, boolean lightUpdate, boolean physics) {
-        // !!! We take physics as priority over light updates (physics == true --> light = true)
+    public void setBlock(@NotNull Block b, @NotNull XMaterial xMaterial, @NotNull PlaceType placeType) {
+        assert xMaterial.parseMaterial() != null;
 
-        // 1. physics = true (light = ?)
-        if (physics) {
-            // Unfortunately we cannot handle light=false with physics=true
-            block.setTypeIdAndData(data.getMaterial().getId(), data.getData(), true);
-            return;
+        if (placeType == PlaceType.BUKKIT) {
+            // physics = true, light = true
+            b.setTypeIdAndData(xMaterial.parseMaterial().getId(), xMaterial.getData(), true);
+
+        }else if (placeType == PlaceType.NO_PHYSICS) {
+            // physics = false, light = true
+            b.setTypeIdAndData(xMaterial.parseMaterial().getId(), xMaterial.getData(), false);
+
+        }else if (placeType == PlaceType.NMS) {
+            // physics = false, light = false
+            WorldServer w = ((CraftWorld) b.getWorld()).getHandle();
+            Chunk chunk = w.getChunkAt(b.getX() >> 4, b.getZ() >> 4);
+            BlockPosition bp = new BlockPosition(b.getX(), b.getY(), b.getZ());
+
+            IBlockData ibd = net.minecraft.server.v1_8_R3.Block.getByCombinedId(legacyGetCombined(xMaterial));
+            try {
+                chunk.a(bp, ibd);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            w.notify(bp);
         }
-
-        // 2. physics = false && light = true
-        if (lightUpdate) {
-            // and we want light
-            block.setTypeIdAndData(data.getMaterial().getId(), data.getData(), false);
-            return;
-        }
-
-        // 3. physics = false && light = false
-        WorldServer w = ((CraftWorld) block.getWorld()).getHandle();
-        Chunk chunk = w.getChunkAt(block.getX() >> 4, block.getZ() >> 4);
-        BlockPosition bp = new BlockPosition(block.getX(), block.getY(), block.getZ());
-
-        IBlockData ibd = net.minecraft.server.v1_8_R3.Block.getByCombinedId(getCombined(data));
-        try {
-            chunk.a(bp, ibd);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-        w.notify(bp);
     }
 }
