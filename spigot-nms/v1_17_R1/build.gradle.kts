@@ -7,6 +7,7 @@ dependencies {
     // Unique dependencies for this module
     paperweight.paperDevBundle("1.17.1-R0.1-SNAPSHOT")           // 2. add the dev bundle (contains all apis)
     compileOnly(project(":spigot-nms:api"))
+    compileOnly(project(":spigot-nms:v1_13_R1"))
 }
 
 java {                                              // 3. provision Java 17
