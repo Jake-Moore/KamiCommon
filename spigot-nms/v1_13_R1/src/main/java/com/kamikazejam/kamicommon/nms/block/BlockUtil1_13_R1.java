@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.nms.block;
 
 import com.kamikazejam.kamicommon.nms.Logger;
-import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtil1_13;
+import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtilPre1_13;
 import com.kamikazejam.kamicommon.util.data.MaterialData;
 import net.minecraft.server.v1_13_R1.BlockPosition;
 import net.minecraft.server.v1_13_R1.Chunk;
@@ -12,20 +12,13 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.craftbukkit.v1_13_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_13_R1.block.CraftBlock;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockUtil1_13_R1 extends IBlockUtil1_13 {
+public class BlockUtil1_13_R1 extends IBlockUtilPre1_13 {
     @Override
     public void setBlockInternal(Block b, MaterialData data, boolean lightUpdate, boolean physics) {
-        BlockData blockData = b.getBlockData();
-
-        CraftBlock cb = (CraftBlock) b;
-        CraftWorld cw = cb.getCraftWorld();
-        b.settype
-
-
         // !!! We take physics as priority over light updates (physics == true --> light = true)
+        BlockData blockData = b.getBlockData();
 
         // 1. physics = true (light = ?)
         if (physics) {
@@ -58,8 +51,9 @@ public class BlockUtil1_13_R1 extends IBlockUtil1_13 {
 
         IBlockData old = net.minecraft.server.v1_13_R1.Block.getByCombinedId(getCombined(b.getType().getId(), b.getData()));
         IBlockData ibd = net.minecraft.server.v1_13_R1.Block.getByCombinedId(getCombined(data));
+
         try {
-            chunk.a(bp, ibd);
+            chunk.a(bp, ibd, false); // physics = false
         } catch (Throwable t) {
             t.printStackTrace();
         }
