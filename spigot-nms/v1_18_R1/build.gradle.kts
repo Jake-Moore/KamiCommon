@@ -1,18 +1,29 @@
 plugins {
-    id("java")
-}
-
-repositories {
-    mavenCentral()
+    // Unique plugins for this module
+    id("io.papermc.paperweight.userdev")                                 // 1. add the Paperweight plugin
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    // Unique dependencies for this module
+    paperweight.paperDevBundle("1.18.1-R0.1-SNAPSHOT")           // 2. add the dev bundle (contains all apis)
+    compileOnly(project(":spigot-nms:api"))
+    compileOnly(project(":spigot-nms:v1_13_R1"))
+}
+
+java {                                              // 3. provision Java 17
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+tasks {                                             // 4. configure tasks (like reObf automatically)
+    assemble {
+        dependsOn(reobfJar)
+    }
+
+    reobfJar {
+        outputJar.set(layout.buildDirectory.file("libs/${project.description}-${project.version}.jar"))
+    }
 }
 
 tasks.test {
     useJUnitPlatform()
 }
-java.sourceCompatibility = JavaVersion.VERSION_17
-java.targetCompatibility = JavaVersion.VERSION_17

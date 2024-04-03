@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.nms.block;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtil;
+import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
 import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
 import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.Chunk;
@@ -12,7 +12,7 @@ import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"DuplicatedCode", "deprecation"})
-public class BlockUtil1_12_R1 extends IBlockUtil {
+public class BlockUtil1_12_R1 extends AbstractBlockUtil {
     @Override
     public void setBlock(@NotNull Block b, @NotNull XMaterial xMaterial, @NotNull PlaceType placeType) {
         assert xMaterial.parseMaterial() != null;

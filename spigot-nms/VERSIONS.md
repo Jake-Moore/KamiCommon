@@ -38,3 +38,11 @@
 < 1.17  = Java 8  
 1.17.x  = Java 16  
 1.18+  = Java 17
+
+
+## Component Versions
+PaperSpigot appears to have deprecated md5 components in 1.16  
+They remain available for now, but paper wants kyori components
+
+## HoverEvent Versions
+As of 1.16_R2, HoverEvent now takes a Content object rather than a BaseComponent[]

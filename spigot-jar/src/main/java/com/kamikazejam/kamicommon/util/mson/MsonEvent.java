@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.util.mson;
 
 import com.google.gson.JsonElement;
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.nms.NmsVersion;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import lombok.Getter;
@@ -162,7 +162,7 @@ public final class MsonEvent implements Serializable {
 		if (item == null) throw new NullPointerException("item");
 		item = getItemSanitizedForTooltip(item);
 
-		String value = NmsVersion.getItemText().getNbtStringTooltip(item);
+		String value = NmsAPI.getItemText().getNbtStringTooltip(item);
 		return MsonEvent.valueOf(MsonEventAction.SHOW_ITEM, value);
 	}
 

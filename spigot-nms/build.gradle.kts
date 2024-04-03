@@ -27,11 +27,16 @@ dependencies {
     api(project(":spigot-nms:v1_20_R2"))
     api(project(":spigot-nms:v1_20_R3"))
 
+    // Lombok
+    compileOnly(project.property("lombokDep") as String)
+    annotationProcessor(project.property("lombokDep") as String)
+    testAnnotationProcessor(project.property("lombokDep") as String)
+
     compileOnly(project.property("lowestSpigotDep") as String)
 }
 
 tasks.test {
     useJUnitPlatform()
 }
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17

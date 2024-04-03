@@ -1,12 +1,17 @@
 package com.kamikazejam.kamicommon.nms.provider;
 
-import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtil;
+import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
 import com.kamikazejam.kamicommon.nms.block.*;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockUtilProvider extends Provider<IBlockUtil> {
+/**
+ * !!! Gradle Compatability Requires this module to be set to Java16 !!!
+ * WE ARE BUILDING FOR Java 8, do not use any Java 9+ features
+ */
+@SuppressWarnings("EnhancedSwitchMigration")
+public class BlockUtilProvider extends Provider<AbstractBlockUtil> {
     @Override
-    protected @NotNull IBlockUtil provide(double ignored, String nmsVersion) {
+    protected @NotNull AbstractBlockUtil provide(double ignored, String nmsVersion) {
         //TODO: Add new versions as they come out
         switch(nmsVersion) {
             case "v1_8_R1":
@@ -59,7 +64,8 @@ public class BlockUtilProvider extends Provider<IBlockUtil> {
                 return new BlockUtil1_20_R2();
             case "v1_20_R3":
                 return new BlockUtil1_20_R3();
+            default:
+                throw new IllegalArgumentException(nmsVersion + " isn't a supported version!");
         }
-        throw new IllegalArgumentException(nmsVersion + " isn't a supported version!");
     }
 }

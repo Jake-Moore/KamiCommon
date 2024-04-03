@@ -1,0 +1,14 @@
+package com.kamikazejam.kamicommon.nms.mainhand;
+
+import com.kamikazejam.kamicommon.nms.abstraction.mainhand.AbstractMainHand;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class MainHand_1_8_R1 extends AbstractMainHand {
+    @Override
+    public @Nullable ItemStack getItemInMainHand(@NotNull PlayerInventory inventory) {
+        return inventory.getItemInHand();
+    }
+}
