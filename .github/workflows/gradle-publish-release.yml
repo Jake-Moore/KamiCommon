@@ -56,6 +56,7 @@ jobs:
     #--------------------------------------------------------------------------------------------
 
     - name: Create Release
+      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
       uses: ncipollo/release-action@v1
       with:
         artifacts: "standalone-utils/build/libs/*.jar,standalone-jar/build/libs/*.jar,spigot-utils/build/libs/*.jar,spigot-jar/build/libs/*.jar,generic-jar/build/libs/*.jar"
@@ -69,6 +70,7 @@ jobs:
 
     # Update the README.md Badge with the new version
     - name: Create Version Badge
+      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
