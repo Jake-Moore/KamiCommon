@@ -1,6 +1,6 @@
 dependencies {
     // Unique dependencies for this module
-    compileOnly("org.spigotmc:spigot-server:1.8.3-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-server:1.16.5-R0.1-SNAPSHOT")
     compileOnly(project(":spigot-nms:api"))
 }
 
