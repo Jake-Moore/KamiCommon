@@ -3,7 +3,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-var json = "org.json:json:20231013"
+var json = "org.json:json:20240303"
 var gson = "com.google.code.gson:gson:2.10.1"
 var commonsText = "org.apache.commons:commons-text:1.11.0"
 dependencies {

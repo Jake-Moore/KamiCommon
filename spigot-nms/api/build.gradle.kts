@@ -6,7 +6,7 @@ repositories {
     mavenCentral()
 }
 
-var xseries = "com.github.cryptomorin:XSeries:9.8.1"
+var xseries = "com.github.cryptomorin:XSeries:9.9.0"
 dependencies {
     api(project(":standalone-utils"))
     api(xseries); shadow(xseries)
