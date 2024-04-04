@@ -1,14 +1,15 @@
 plugins {
     // Unique plugins for this module
     id("com.github.johnrengelman.shadow")
+    id("maven-publish")
 }
 
 var httpclient = "org.apache.httpcomponents.client5:httpclient5:5.3.1"
 dependencies {
     // Unique dependencies for this module
     api(httpclient); shadow(httpclient)
-    api(project(":generic-jar"));
-    api(project(":spigot-utils"));
+    api(project(":generic-jar")); shadow(project(":generic-jar"))
+    api(project(":spigot-utils")); shadow(project(":spigot-utils"))
 
     compileOnly(project.property("lowestSpigotDep") as String)
 
@@ -31,6 +32,7 @@ tasks {
         dependsOn(shadowJar)
     }
     shadowJar {
+        archiveClassifier.set("")
         configurations = listOf(project.configurations.shadow.get())
 
         dependencies {
@@ -44,5 +46,26 @@ tasks {
     }
     test {
         useJUnitPlatform()
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            groupId = rootProject.group.toString() + "." + rootProject.name
+            artifactId = project.name
+            version = rootProject.version.toString()
+            from(components["java"])
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri("https://nexus.luxiouslabs.net/public")
+            credentials {
+                username = System.getenv("LUXIOUS_NEXUS_USER")
+                password = System.getenv("LUXIOUS_NEXUS_PASS")
+            }
+        }
     }
 }

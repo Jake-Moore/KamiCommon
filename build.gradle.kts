@@ -52,6 +52,14 @@ subprojects {
         // IntelliJ annotations
         api("org.jetbrains:annotations:24.1.0")
     }
+
+    // Configure Javadoc generation
+    tasks.withType<Javadoc> {
+        options {
+            encoding = "UTF-8"
+            charset("UTF-8")
+        }
+    }
 }
 
 // Disable root project build

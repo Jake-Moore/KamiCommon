@@ -25,9 +25,9 @@
 ### [spigot-nms](./spigot-nms)
 - A parent module responsible for nms utilities & implementations.
 - Wrapper classes (available in [spigot-jar](#spigot-jar)) should be used instead!
-- (⭐) Should **NOT** be shaded ❌
-    - <span style="text-decoration:underline;">Should not be used at all</span>, there are nms wrapper classes (like NmsManager) in [spigot-jar](#spigot-jar) that should be used instead
-
+- ❌ Not Available
+    - This module is not available on its own
+    - The quickest way to use this module is via [spigot-utils](#spigot-utils)
 
 ## Standalone Development
 ### [standalone-jar](./standalone-jar)
