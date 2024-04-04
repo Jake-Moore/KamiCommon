@@ -7,7 +7,7 @@ plugins { // needed for the subprojects section to work
 
 ext {
     set("projectName", rootProject.name)
-    set("lombokDep", "org.projectlombok:lombok:1.18.30")
+    set("lombokDep", "org.projectlombok:lombok:1.18.32")
 
     // reduced is just a re-zipped version of the original, without some conflicting libraries (gson)
     set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED")   // luxious nexus (public)
@@ -46,7 +46,7 @@ subprojects {
 
     dependencies {
         // junit
-        testImplementation(platform("org.junit:junit-bom:5.10.1"))
+        testImplementation(platform("org.junit:junit-bom:5.10.2"))
         testImplementation("org.junit.jupiter:junit-jupiter")
 
         // IntelliJ annotations
