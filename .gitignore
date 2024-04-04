@@ -108,3 +108,10 @@ buildNumber.properties
 
 # Common working directory
 run/
+
+# .gradle caches in any directory
+.gradle/caches
+**/.gradle
+**/build
+gradle
+
