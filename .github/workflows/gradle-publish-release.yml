@@ -35,7 +35,17 @@ jobs:
       with:
         gradle-version: '8.4'
 
+    - name: Extract Version from Gradle
+      id: extract_version
+      run: |
+        version=$(gradle properties -q | grep "^version:" | awk '{print $2}')
+        echo "::set-output name=version::$version"
+
+    - name: Display Version
+      run: echo "Version is ${{ steps.extract_version.outputs.version }}"
+
     - name: Build with Gradle 8.4
+      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
       env:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
@@ -44,33 +54,26 @@ jobs:
     #--------------------------------------------------------------------------------------------
     #           Create a Github Release
     #--------------------------------------------------------------------------------------------
-    # TODO FIX
 
-#    - name: Extract Maven Project Version
-#      run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-#      id: project
-#
-#    - name: Create Release
-#      uses: ncipollo/release-action@v1
-#      with:
-#        artifacts: "target/kamicommon-${{ steps.project.outputs.version }}.jar"
-#        allowUpdates: true
-#        removeArtifacts: true
-#        omitBodyDuringUpdate: true
-#        omitDraftDuringUpdate: true
-#        omitNameDuringUpdate: true
-#        omitPrereleaseDuringUpdate: true
-#        tag: "${{ steps.project.outputs.version }}"
-#
-#
-#
-#    # Update the README.md Badge with the new version
-#    - name: Create Version Badge
-#      uses: schneegans/dynamic-badges-action@v1.7.0
-#      with:
-#        auth: ${{ secrets.GIST_SECRET }}
-#        gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
-#        filename: test.json # Use test.svg if you want to use the SVG mode.
-#        label: Latest Release
-#        message: "${{ steps.project.outputs.version }}"
-#        color: blue
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "standalone-utils/build/libs/*.jar,standalone-jar/build/libs/*.jar,spigot-utils/build/libs/*.jar,spigot-jar/build/libs/*.jar,generic-jar/build/libs/*.jar"
+        allowUpdates: true
+        removeArtifacts: true
+        omitBodyDuringUpdate: true
+        omitDraftDuringUpdate: true
+        omitNameDuringUpdate: true
+        omitPrereleaseDuringUpdate: true
+        tag: "${{ steps.extract_version.outputs.version }}"
+
+    # Update the README.md Badge with the new version
+    - name: Create Version Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
+        filename: test.json # Use test.svg if you want to use the SVG mode.
+        label: Latest Release
+        message: "${{ steps.extract_version.outputs.version }}"
+        color: blue
