@@ -16,7 +16,7 @@ ext {
 
 allprojects {
     group = "com.kamikazejam"
-    version = "3.0.0.0-SNAPSHOT"
+    version = "3.0.0.0-pre"
     description = "KamikazeJAM's common library for Spigot and Standalone projects."
 
     repositories {
