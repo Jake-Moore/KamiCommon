@@ -51,6 +51,10 @@ jobs:
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
       run: gradle publish
 
+    - name: Prepare Spigot Jar
+      run: |
+        mv spigot-jar/build/libs/spigot-jar-${{ steps.extract_version.outputs.version }}.jar spigot-jar/build/libs/kamicommon-${{ steps.extract_version.outputs.version }}.jar
+
     #--------------------------------------------------------------------------------------------
     #           Create a Github Release
     #--------------------------------------------------------------------------------------------
