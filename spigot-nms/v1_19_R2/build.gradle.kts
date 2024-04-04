@@ -20,7 +20,7 @@ tasks {                                             // 4. configure tasks (like 
     }
 
     reobfJar {
-        outputJar.set(layout.buildDirectory.file("libs/${project.description}-${project.version}.jar"))
+        outputJar.set(layout.buildDirectory.file("libs/${project.name}-${project.version}.jar"))
     }
 }
 
