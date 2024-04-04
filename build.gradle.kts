@@ -54,6 +54,9 @@ subprojects {
     }
 }
 
+// Disable root project build
+tasks.jar.get().enabled = false
+
 tasks {
     processResources {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8
