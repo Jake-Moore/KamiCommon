@@ -1,24 +1,15 @@
 package com.kamikazejam.kamicommon;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.command.type.RegistryType;
 import com.kamikazejam.kamicommon.gui.MenuManager;
 import com.kamikazejam.kamicommon.gui.MenuTask;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
-import com.kamikazejam.kamicommon.util.adapter.*;
-import com.kamikazejam.kamicommon.util.collections.KamiList;
-import com.kamikazejam.kamicommon.util.collections.KamiMap;
-import com.kamikazejam.kamicommon.util.collections.KamiSet;
-import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
 import com.kamikazejam.kamicommon.util.engine.EngineScheduledTeleport;
 import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mixin.*;
-import com.kamikazejam.kamicommon.util.mson.Mson;
-import com.kamikazejam.kamicommon.util.mson.MsonEvent;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -27,8 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Modifier;
 
 @Getter
 @SuppressWarnings("unused")
@@ -71,7 +60,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
         YamlUtil.getYaml();
 
         // Setup IdUtil
-        IdUtilLocal.setup();
+        IdUtilLocal.setup(this);
 
         // Setup RegistryType (Types for Commands)
         RegistryType.registerAll();
@@ -113,28 +102,5 @@ public class KamiCommon extends KamiPlugin implements Listener {
 
 
 
-    public static final Gson gson = getKamiCommonGsonBuilder().create();
-    public static GsonBuilder getKamiCommonGsonBuilder() {
-        // Create
-        GsonBuilder ret = new GsonBuilder();
 
-        // Basic Behavior
-        ret.setPrettyPrinting();
-        ret.disableHtmlEscaping();
-        ret.excludeFieldsWithModifiers(Modifier.TRANSIENT);
-        ret.excludeFieldsWithModifiers(Modifier.STATIC);
-
-        // KamiCommon Containers
-        ret.registerTypeAdapter(KamiList.class, AdapterKamiList.get());
-        ret.registerTypeAdapter(KamiMap.class, AdapterKamiMap.get());
-        ret.registerTypeAdapter(KamiSet.class, AdapterKamiSet.get());
-        ret.registerTypeAdapter(KamiTreeSet.class, AdapterKamiTreeSet.get());
-
-        // Mson
-        ret.registerTypeAdapter(Mson.class, AdapterMson.get());
-        ret.registerTypeAdapter(MsonEvent.class, AdapterMsonEvent.get());
-
-        // Return
-        return ret;
-    }
 }

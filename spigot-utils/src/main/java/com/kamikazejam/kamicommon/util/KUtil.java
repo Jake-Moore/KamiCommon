@@ -1,13 +1,11 @@
 package com.kamikazejam.kamicommon.util;
 
-import com.kamikazejam.kamicommon.command.Lang;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
 import com.kamikazejam.kamicommon.util.comparator.ComparatorCaseInsensitive;
-import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
@@ -432,30 +430,10 @@ public class KUtil {
 
     @Contract("null, _ -> fail; !null, null -> fail")
     public static boolean hasPermission(Permissible permissible, String permission) {
-        return hasPermission(permissible, permission, false);
-    }
-
-    @Contract("null, _, _ -> fail; !null, null, _ -> fail")
-    public static boolean hasPermission(Permissible permissible, String permission, boolean verbose) {
         // Fail Fast
         if (permissible == null) throw new NullPointerException("permissible");
         if (permission == null) throw new NullPointerException("permission");
-
-        if (permissible.hasPermission(permission)) return true;
-
-        if (verbose && permissible instanceof CommandSender) {
-            CommandSender sender = (CommandSender) permissible;
-            String message = getPermissionDeniedMessage(permission);
-            MsonMessenger.get().messageOne(sender, message);
-        }
-
-        return false;
-    }
-
-    public static String getPermissionDeniedMessage(Object permission) {
-        String deniedFormat = Lang.PERM_DEFAULT_DENIED_FORMAT;
-        String action = Lang.PERM_DEFAULT_DESCRIPTION;
-        return Txt.parse(deniedFormat, action);
+        return permissible.hasPermission(permission);
     }
 
     // -------------------------------------------- //
@@ -608,4 +586,8 @@ public class KUtil {
             e.printStackTrace();
         }
     }
+
+
+
+
 }
