@@ -61,3 +61,12 @@ publishing {
         }
     }
 }
+
+tasks.processResources {
+    val props = mapOf("version" to rootProject.version)
+    inputs.properties(props)
+    filteringCharset = "UTF-8"
+    filesMatching("plugin.yml") {
+        expand(props)
+    }
+}

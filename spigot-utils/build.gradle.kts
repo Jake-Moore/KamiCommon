@@ -7,11 +7,13 @@ plugins {
 var json = "org.json:json:20240303"
 var gson = "com.google.code.gson:gson:2.10.1"
 var commonsText = "org.apache.commons:commons-text:1.11.0"
+var nbt = "de.tr7zw:item-nbt-api:2.12.3"
 dependencies {
     api(project(":spigot-nms")); shadow(project(":spigot-nms")) // which contains standalone-utils
     api(json); shadow(json)
     api(gson); shadow(gson)
     api(commonsText); shadow(commonsText) // primarily for LevenshteinDistance
+    api(nbt); shadow(nbt)
 
     compileOnly(project.property("lowestSpigotDep") as String)
     compileOnly("me.clip:placeholderapi:2.11.5") // TODO soft depend
@@ -42,10 +44,12 @@ tasks {
             include(dependency(json))
             include(dependency(gson))
             include(dependency(commonsText))
+            include(dependency(nbt))
         }
         relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
         relocate("org.json", "com.kamikazejam.kamicommon.json")
         relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
+        relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
 
         from(project(":spigot-nms").tasks.shadowJar.get().outputs)
     }
