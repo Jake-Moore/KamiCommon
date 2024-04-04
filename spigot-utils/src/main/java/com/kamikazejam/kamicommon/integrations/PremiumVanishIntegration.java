@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.integrations;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.KamiPlugin;
 import de.myzelyam.api.vanish.VanishAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class PremiumVanishIntegration implements Listener {
-    public PremiumVanishIntegration(KamiCommon plugin) {
+    public PremiumVanishIntegration(KamiPlugin plugin) {
         plugin.registerListener(this);
     }
 

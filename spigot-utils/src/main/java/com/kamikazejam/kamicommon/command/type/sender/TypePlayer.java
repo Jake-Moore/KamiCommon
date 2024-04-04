@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.command.type.sender;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.SpigotUtilProvider;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
@@ -29,7 +29,8 @@ public class TypePlayer extends TypeAbstract<Player> {
 		if (target == null) {
 			throw new KamiCommonException().addMsg("<b>No player matching \"<p>%s<b>\".", str);
 		}
-		@Nullable PremiumVanishIntegration integration = ((KamiCommon) KamiCommon.get()).getVanishIntegration();
+
+		@Nullable PremiumVanishIntegration integration = SpigotUtilProvider.getVanishIntegration();
 		if (integration != null && sender instanceof Player) {
 			Player viewer = (Player) sender;
 			if (!integration.canSee(viewer, target)) {
@@ -41,8 +42,7 @@ public class TypePlayer extends TypeAbstract<Player> {
 
 	@Override
 	public Collection<String> getTabList(CommandSender commandSender, String s) {
-		@Nullable PremiumVanishIntegration integration = ((KamiCommon) KamiCommon.get()).getVanishIntegration();
-
+		@Nullable PremiumVanishIntegration integration = SpigotUtilProvider.getVanishIntegration();
 		return commandSender.getServer().getOnlinePlayers().stream()
 				// Filter out vanished players that the sender cannot see
 				.filter(plr -> {

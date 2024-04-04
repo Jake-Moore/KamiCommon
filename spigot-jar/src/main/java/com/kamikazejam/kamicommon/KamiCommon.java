@@ -1,7 +1,5 @@
 package com.kamikazejam.kamicommon;
 
-import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
-import com.kamikazejam.kamicommon.command.type.RegistryType;
 import com.kamikazejam.kamicommon.gui.MenuManager;
 import com.kamikazejam.kamicommon.gui.MenuTask;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
@@ -17,13 +15,11 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 
 @Getter
 @SuppressWarnings("unused")
 public class KamiCommon extends KamiPlugin implements Listener {
     private static KamiCommon plugin;
-    private @Nullable PremiumVanishIntegration vanishIntegration = null;
 
     @Override
     public void onEnableInner(){
@@ -36,7 +32,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
 
         // Register Integrations
         if (Bukkit.getPluginManager().isPluginEnabled("SuperVanish") || Bukkit.getPluginManager().isPluginEnabled("PremiumVanish")) {
-            vanishIntegration = new PremiumVanishIntegration(this);
+            SpigotUtilProvider.setVanishIntegration(new PremiumVanishIntegration(this));
         }
 
         // Activate Actives
@@ -62,11 +58,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
         // Setup IdUtil
         IdUtilLocal.setup(this);
 
-        // Setup RegistryType (Types for Commands)
-        RegistryType.registerAll();
-
-        // Setup Commands
-        new KamiCommonCommandRegistration(this);
+        SpigotUtilProvider.setPlugin(this);
 
         getLogger().info("KamiCommon enabled in " + (System.currentTimeMillis() - start) + "ms");
     }

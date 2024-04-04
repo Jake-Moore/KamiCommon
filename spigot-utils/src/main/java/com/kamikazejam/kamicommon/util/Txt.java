@@ -21,8 +21,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.kamikazejam.kamicommon.util.mson.Mson.mson;
-
 @SuppressWarnings({"unused", "UnnecessaryUnicodeEscape"})
 public class Txt {
 
@@ -311,13 +309,13 @@ public class Txt {
     private final static int titleizeBalance = -1;
 
     public static @NotNull Mson titleize(Object obj) {
-        Mson title = mson(obj);
+        Mson title = Mson.mson(obj);
         if (title.getColor() == null) title = title.color(ChatColor.DARK_GREEN);
 
-        Mson center = mson(
-                mson(".[ ").color(ChatColor.GOLD),
+        Mson center = Mson.mson(
+                Mson.mson(".[ ").color(ChatColor.GOLD),
                 title,
-                mson(" ].").color(ChatColor.GOLD)
+                Mson.mson(" ].").color(ChatColor.GOLD)
         );
 
         int centerlen = center.length();
@@ -326,10 +324,10 @@ public class Txt {
         int eatRight = (centerlen - eatLeft) + titleizeBalance;
 
         if (eatLeft < pivot)
-            return mson(
-                    mson(titleizeLine.substring(0, pivot - eatLeft)).color(ChatColor.GOLD),
+            return Mson.mson(
+                    Mson.mson(titleizeLine.substring(0, pivot - eatLeft)).color(ChatColor.GOLD),
                     center,
-                    mson(titleizeLine.substring(pivot + eatRight)).color(ChatColor.GOLD)
+                    Mson.mson(titleizeLine.substring(pivot + eatRight)).color(ChatColor.GOLD)
             );
         else
             return center;
@@ -337,14 +335,14 @@ public class Txt {
 
     @Contract(" -> new")
     public static @NotNull Mson getMessageEmpty() {
-        return mson("Sorry, no pages available.").color(ChatColor.YELLOW);
+        return Mson.mson("Sorry, no pages available.").color(ChatColor.YELLOW);
     }
 
     public static @NotNull Mson getMessageInvalid(int size) {
         if (size == 0) {
             return getMessageEmpty();
         } else if (size == 1) {
-            return mson("Invalid, there is only one page.").color(ChatColor.RED);
+            return Mson.mson("Invalid, there is only one page.").color(ChatColor.RED);
         } else {
             return Mson.format("Invalid, page must be between 1 and %d.", size).color(ChatColor.RED);
         }
@@ -352,33 +350,33 @@ public class Txt {
 
     public static @NotNull Mson titleizeMson(Object obj, int pagecount, int pageHumanBased, @Nullable KamiCommand command, List<String> args) {
         if (command == null) {
-            return titleize(mson(
+            return titleize(Mson.mson(
                     obj,
                     Mson.SPACE,
-                    mson(pageHumanBased + "/" + pagecount).color(ChatColor.GOLD)
+                    Mson.mson(pageHumanBased + "/" + pagecount).color(ChatColor.GOLD)
             ));
         }
 
         // Math
-        Mson title = mson(obj, Mson.SPACE, "[<]", String.valueOf(pageHumanBased), "/", String.valueOf(pagecount), "[>]");
+        Mson title = Mson.mson(obj, Mson.SPACE, "[<]", String.valueOf(pageHumanBased), "/", String.valueOf(pagecount), "[>]");
         int centerlen = ".[ ".length() + ChatColor.stripColor(title.toPlain(false)).length() + " ].".length();
         int pivot = titleizeLine.length() / 2;
         int eatLeft = (centerlen / 2) - titleizeBalance;
         int eatRight = (centerlen - eatLeft) + titleizeBalance;
 
         // Mson
-        Mson centerMson = mson(
-                mson(".[ ").color(ChatColor.GOLD),
-                mson(obj, Mson.SPACE).color(ChatColor.DARK_GREEN),
+        Mson centerMson = Mson.mson(
+                Mson.mson(".[ ").color(ChatColor.GOLD),
+                Mson.mson(obj, Mson.SPACE).color(ChatColor.DARK_GREEN),
                 getFlipSection(pagecount, pageHumanBased, args, command),
-                mson(" ].").color(ChatColor.GOLD)
+                Mson.mson(" ].").color(ChatColor.GOLD)
         );
 
         if (eatLeft < pivot) {
-            return mson(
-                    mson(titleizeLine.substring(0, pivot - eatLeft)).color(ChatColor.GOLD),
+            return Mson.mson(
+                    Mson.mson(titleizeLine.substring(0, pivot - eatLeft)).color(ChatColor.GOLD),
                     centerMson,
-                    mson(titleizeLine.substring(pivot + eatRight)).color(ChatColor.GOLD)
+                    Mson.mson(titleizeLine.substring(pivot + eatRight)).color(ChatColor.GOLD)
             );
         } else {
             return centerMson;
@@ -451,10 +449,10 @@ public class Txt {
 
     private static @NotNull Mson getFlipSection(int pageCount, int pageHumanBased, List<String> args, KamiCommand command) {
         // Construct Mson
-        Mson start = mson(String.valueOf(pageHumanBased)).color(ChatColor.GOLD);
-        Mson backward = mson("[<] ").color(ChatColor.GRAY);
-        Mson forward = mson(" [>]").color(ChatColor.GRAY);
-        Mson end = mson(String.valueOf(pageCount)).color(ChatColor.GOLD);
+        Mson start = Mson.mson(String.valueOf(pageHumanBased)).color(ChatColor.GOLD);
+        Mson backward = Mson.mson("[<] ").color(ChatColor.GRAY);
+        Mson forward = Mson.mson(" [>]").color(ChatColor.GRAY);
+        Mson end = Mson.mson(String.valueOf(pageCount)).color(ChatColor.GOLD);
 
         // Set flip page backward commands
         if (pageHumanBased > 1) {
@@ -468,10 +466,10 @@ public class Txt {
             end = setFlipPageCommand(end, pageHumanBased, pageCount, args, command);
         }
 
-        return mson(
+        return Mson.mson(
                 backward,
                 start,
-                mson("/").color(ChatColor.GOLD),
+                Mson.mson("/").color(ChatColor.GOLD),
                 end,
                 forward
         );
