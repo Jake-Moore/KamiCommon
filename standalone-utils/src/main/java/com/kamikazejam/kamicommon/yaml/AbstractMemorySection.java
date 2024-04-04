@@ -3,12 +3,12 @@ package com.kamikazejam.kamicommon.yaml;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.nodes.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -17,7 +17,7 @@ import java.util.*;
 public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> {
     @Setter private boolean changed = false;
 
-    private final @Nonnull MappingNode node;
+    private final @NotNull MappingNode node;
     public AbstractMemorySection(@Nullable MappingNode node) {
         if (node == null) { node = AbstractYamlHandler.createNewMappingNode(); }
         this.node = node;

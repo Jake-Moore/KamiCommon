@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.util.collections;
 
-import com.kamikazejam.kamicommon.util.KUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -207,7 +206,7 @@ public class ContainerUtil {
             Object key = entry.getKey();
             Object after = entry.getValue();
             Object before = map.put(key, after);
-            return !KUtil.equals(after, before);
+            return !Objects.equals(after, before);
         }
 
         throw new IllegalArgumentException(container.getClass().getName() + " is not a container.");
@@ -266,5 +265,4 @@ public class ContainerUtil {
 
         return null;
     }
-
 }

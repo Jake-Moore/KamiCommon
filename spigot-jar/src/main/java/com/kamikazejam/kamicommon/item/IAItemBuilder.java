@@ -5,8 +5,7 @@ import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused"})
 public class IAItemBuilder extends IBuilder {

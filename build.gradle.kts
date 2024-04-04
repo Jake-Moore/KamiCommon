@@ -2,13 +2,15 @@ plugins { // needed for the subprojects section to work
     id("java")
     id("java-library")
     id("io.papermc.paperweight.userdev") version "1.5.12" apply false
+    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
 }
 
 ext {
     set("projectName", rootProject.name)
     set("lombokDep", "org.projectlombok:lombok:1.18.30")
 
-    set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-SNAPSHOT")   // luxious nexus (public)
+    // reduced is just a re-zipped version of the original, without some conflicting libraries (gson)
+    set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED")   // luxious nexus (public)
     set("latestSpigotDep", "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")          // spigotmc nexus
 }
 
@@ -25,6 +27,7 @@ allprojects {
         maven("https://maven.citizensnpcs.co/repo")
         maven("https://mvn.lumine.io/repository/maven-public/")
         maven("https://repo.maven.apache.org/maven2/")
+        maven("https://jitpack.io")
         gradlePluginPortal()
     }
 

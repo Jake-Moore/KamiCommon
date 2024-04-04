@@ -7,9 +7,9 @@ import com.kamikazejam.kamicommon.yaml.spigot.YamlConfiguration;
 import com.kamikazejam.kamicommon.yaml.spigot.YamlHandler;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;

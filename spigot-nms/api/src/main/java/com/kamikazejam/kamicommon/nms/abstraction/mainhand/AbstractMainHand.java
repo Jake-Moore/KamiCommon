@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.nms.abstraction.mainhand;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
@@ -12,4 +13,6 @@ public abstract class AbstractMainHand {
         return this.getItemInMainHand(player.getInventory());
     }
     public abstract @Nullable ItemStack getItemInMainHand(@NotNull PlayerInventory inventory);
+
+    public abstract boolean isOffHand(@NotNull PlayerInteractEntityEvent event);
 }

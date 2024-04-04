@@ -10,8 +10,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import static com.kamikazejam.kamicommon.util.mson.Mson.mson;
-
 @SuppressWarnings("unused")
 public class Parameter<T> {
 	// -------------------------------------------- //
@@ -203,11 +201,11 @@ public class Parameter<T> {
 		Mson ret;
 
 		if (this.isRequiredFor(sender)) {
-			ret = mson("<" + this.getName() + ">");
+			ret = Mson.mson("<" + this.getName() + ">");
 		} else {
 			String def = this.getDefaultDesc();
 			def = (def != null ? "=" + def : "");
-			ret = mson("[" + this.getName() + def + "]");
+			ret = Mson.mson("[" + this.getName() + def + "]");
 		}
 
 		if (this.hasDesc()) ret = ret.tooltip(Txt.upperCaseFirst(this.getDesc()));

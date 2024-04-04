@@ -4,10 +4,10 @@ import com.kamikazejam.kamicommon.configuration.config.AbstractConfig;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.*;
 
-import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

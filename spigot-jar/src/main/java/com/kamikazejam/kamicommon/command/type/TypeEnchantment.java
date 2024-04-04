@@ -1,11 +1,11 @@
 package com.kamikazejam.kamicommon.command.type;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
-import com.kamikazejam.kamicommon.util.nms.NMS_Methods;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +67,7 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 	);
 
 	public static @NotNull String enchantmentToKey(@NotNull Enchantment enchantment) {
-		return NMS_Methods.getNamespaced(enchantment);
+		return NmsAPI.getNamespaced(enchantment);
 	}
 
 	// -------------------------------------------- //
