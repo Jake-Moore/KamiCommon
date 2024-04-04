@@ -6,8 +6,7 @@ import com.kamikazejam.kamicommon.gui.interfaces.MenuClickPlayer;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @Getter @Setter

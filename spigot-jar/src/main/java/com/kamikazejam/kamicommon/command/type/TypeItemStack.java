@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.command.type;
 
-import com.kamikazejam.kamicommon.nms.NmsVersion;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
@@ -73,7 +73,7 @@ public class TypeItemStack extends TypeAbstract<ItemStack> {
 			throw new KamiCommonException().addMsg("<b>You must be a player to hold an item in your main hand.");
 
 		Player player = (Player) sender;
-		ItemStack ret = NmsVersion.getItemInMainHand(player);
+		ItemStack ret = NmsAPI.getItemInMainHand(player);
 		if (KUtil.isNothing(ret))
 			throw new KamiCommonException().addMsg("<b>You must hold an item in your main hand.");
 

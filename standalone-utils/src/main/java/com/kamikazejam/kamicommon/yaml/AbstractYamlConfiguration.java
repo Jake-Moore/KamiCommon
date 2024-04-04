@@ -1,9 +1,9 @@
 package com.kamikazejam.kamicommon.yaml;
 
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 
-import javax.annotation.Nullable;
 import java.util.Set;
 
 public interface AbstractYamlConfiguration {

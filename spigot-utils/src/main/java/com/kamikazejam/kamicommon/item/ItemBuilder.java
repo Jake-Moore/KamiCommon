@@ -4,8 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class ItemBuilder extends IBuilder {

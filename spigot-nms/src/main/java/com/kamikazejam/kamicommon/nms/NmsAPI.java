@@ -7,24 +7,25 @@ import com.kamikazejam.kamicommon.nms.abstraction.teleport.AbstractTeleporter;
 import com.kamikazejam.kamicommon.nms.provider.*;
 import lombok.Getter;
 import org.bukkit.ChatColor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.awt.Color;
 
-@Getter
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class NmsAPI {
     // ---------------------------------------------------------------------------------- //
     //                                    PROVIDERS                                       //
     // ---------------------------------------------------------------------------------- //
-    private static final ChatColorProvider chatColorProvider = new ChatColorProvider();
-    private static final BlockUtilProvider blockUtilProvider = new BlockUtilProvider();
-    private static final HoverEventProvider hoverEventProvider = new HoverEventProvider();
-    private static final ItemTextProvider itemTextProvider = new ItemTextProvider();
-    private static final TeleportProvider teleportProvider = new TeleportProvider();
-    private static final MainHandProvider mainHandProvider = new MainHandProvider();
+    @Getter private static final ChatColorProvider chatColorProvider = new ChatColorProvider();
+    @Getter private static final BlockUtilProvider blockUtilProvider = new BlockUtilProvider();
+    @Getter private static final HoverEventProvider hoverEventProvider = new HoverEventProvider();
+    @Getter private static final ItemTextProvider itemTextProvider = new ItemTextProvider();
+    @Getter private static final TeleportProvider teleportProvider = new TeleportProvider();
+    @Getter private static final MainHandProvider mainHandProvider = new MainHandProvider();
+    @Getter private static final EnchantIDProvider enchantIDProvider = new EnchantIDProvider();
 
 
 
@@ -40,5 +41,9 @@ public class NmsAPI {
     public static AbstractTeleporter getTeleporter() { return teleportProvider.get(); }
     public static @Nullable ItemStack getItemInMainHand(Player player) {
         return mainHandProvider.get().getItemInMainHand(player);
+    }
+
+    public static String getNamespaced(Enchantment enchantment) {
+        return enchantIDProvider.get().getNamespaced(enchantment);
     }
 }

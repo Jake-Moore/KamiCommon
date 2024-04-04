@@ -2,8 +2,8 @@ package com.kamikazejam.kamicommon.util.mson;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
-import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.command.KamiCommand;
+import com.kamikazejam.kamicommon.nms.Logger;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.adapter.AdapterLowercaseEnum;
@@ -858,7 +858,7 @@ public class Mson implements Serializable {
 					text = part.substring(latestColor.length() + 2);
 				} else text = part;
 			} else {
-				KamiCommon.get().getLogger().warning("No Match found parsing MSON");
+				Logger.warning("No Match found parsing MSON");
 				continue;
 			}
 
