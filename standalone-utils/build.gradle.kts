@@ -1,14 +1,12 @@
 plugins {
     // Unique plugins for this module
+    id("com.github.johnrengelman.shadow")
 }
 
-repositories {
-    // Unique repos for this module
-}
-
+var yaml = "org.yaml:snakeyaml:2.2"
 dependencies {
     // Unique dependencies for this module
-    api("org.yaml:snakeyaml:2.2")
+    api(yaml); shadow(yaml)
 
     // Lombok
     compileOnly(project.property("lombokDep") as String)
@@ -16,8 +14,21 @@ dependencies {
     testAnnotationProcessor(project.property("lombokDep") as String)
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks {
+    build {
+        dependsOn(shadowJar)
+    }
+    shadowJar {
+        dependencies {
+            include(dependency(yaml))
+        }
+
+        relocate("org.yaml.snakeyaml", "com.kamikazejam.kamicommon.snakeyaml")
+    }
+    test {
+        useJUnitPlatform()
+    }
 }
+
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
