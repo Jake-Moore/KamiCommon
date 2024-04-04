@@ -1,11 +1,19 @@
 package com.kamikazejam.kamicommon.util.id;
 
 import com.google.common.reflect.TypeToken;
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.kamikazejam.kamicommon.nms.Logger;
 import com.kamikazejam.kamicommon.util.DiskUtil;
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.Txt;
+import com.kamikazejam.kamicommon.util.adapter.AdapterKamiList;
+import com.kamikazejam.kamicommon.util.adapter.AdapterKamiMap;
+import com.kamikazejam.kamicommon.util.adapter.AdapterKamiSet;
+import com.kamikazejam.kamicommon.util.adapter.AdapterKamiTreeSet;
+import com.kamikazejam.kamicommon.util.collections.KamiList;
+import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
+import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
@@ -20,12 +28,15 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.io.File;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +65,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * <p>
  * Players are registered automatically.
  * Console is registered with imaginary and deterministic data values.
- * Non standard CommandSenders must be manually registered using the register method.
+ * Non-standard CommandSenders must be manually registered using the register method.
  */
 @SuppressWarnings({"SpellCheckingInspection", "unused", "ResultOfMethodCallIgnored"})
 public class IdUtilLocal implements Listener, Runnable {
@@ -80,10 +91,9 @@ public class IdUtilLocal implements Listener, Runnable {
 	// This is lock object is used when reading from and saving to this file.
 	// Useful since saving might happen async.
 	private final static Object CACHEFILE_LOCK = new Object();
-	public final static File CACHEFILE = new File(KamiCommon.get().getDataFolder(), "idnamecache.json");
-	public final static File CACHEFILE_TEMP = new File(KamiCommon.get().getDataFolder(), "idnamecache.json.temp");
-	public final static Type CACHEFILE_TYPE = new TypeToken<Set<IdData>>() {
-	}.getType();
+	public final static File CACHEFILE = new File(getDataFolder(), "idnamecache.json");
+	public final static File CACHEFILE_TEMP = new File(getDataFolder(), "idnamecache.json.temp");
+	public final static Type CACHEFILE_TYPE = new TypeToken<Set<IdData>>() {}.getType();
 
 	// -------------------------------------------- //
 	// DATA STORAGE
@@ -345,7 +355,7 @@ public class IdUtilLocal implements Listener, Runnable {
 	// It should only be called on plugin enable.
 
 	// FIXME deal with this
-	public static void setup() {
+	public static void setup(JavaPlugin plugin) {
 		// Time: Start
 		long start = System.currentTimeMillis();
 
@@ -357,23 +367,22 @@ public class IdUtilLocal implements Listener, Runnable {
 		maintainedIds.clear();
 		maintainedNames.clear();
 
-
 		// Load Datas
 		loadDatas();
 
 		// Since Console initially does not exist we schedule the register.
-		Bukkit.getScheduler().scheduleSyncDelayedTask(KamiCommon.get(), () -> register(getConsole()));
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> register(getConsole()));
 
 		// Cachefile
 		long ticks = 20 * 60; // 5min
-		Bukkit.getScheduler().runTaskTimerAsynchronously(KamiCommon.get(), get(), ticks, ticks);
+		Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, get(), ticks, ticks);
 
 		// Register Event Listeners
-		Bukkit.getPluginManager().registerEvents(get(), KamiCommon.get());
+		Bukkit.getPluginManager().registerEvents(get(), plugin);
 
 		// Time: End
 		long end = System.currentTimeMillis();
-		KamiCommon.get().getLogger().info(Txt.parse("<i>Setup of IdUtil took <h>%d<i>ms.", end - start));
+		Logger.info("Setup of IdUtil took " + (end - start) + "ms.");
 	}
 
 	// -------------------------------------------- //
@@ -832,22 +841,22 @@ public class IdUtilLocal implements Listener, Runnable {
 	// -------------------------------------------- //
 
 	public static void loadDatas() {
-		KamiCommon.get().getLogger().info(Txt.parse("<i>Loading Cachefile datas..."));
+		Logger.info("Loading Cachefile datas...");
 		for (IdData data : getCachefileDatas()) {
 			update(data.getId(), data.getName(), data.getMillis(), SenderPresence.OFFLINE);
 		}
 
-		KamiCommon.get().getLogger().info(Txt.parse("<i>Loading Onlineplayer datas..."));
+		Logger.info("Loading Onlineplayer datas...");
 		for (IdData data : getLocalPlayerDatas()) {
 			update(data.getId(), data.getName(), data.getMillis(), SenderPresence.ONLINE);
 		}
 
-		KamiCommon.get().getLogger().info(Txt.parse("<i>Loading Registry datas..."));
+		Logger.info("Loading Registry datas...");
 		for (String id : registryIdToSender.keySet()) {
 			update(id, id, SenderPresence.ONLINE);
 		}
 
-		KamiCommon.get().getLogger().info(Txt.parse("<i>Saving Cachefile..."));
+		Logger.info("Saving Cachefile...");
 		saveCachefileDatas();
 	}
 
@@ -857,7 +866,7 @@ public class IdUtilLocal implements Listener, Runnable {
 
 	public static void saveCachefileDatas() {
 		synchronized (CACHEFILE_LOCK) {
-			String content = KamiCommon.gson.toJson(datas, CACHEFILE_TYPE);
+			String content = gson.toJson(datas, CACHEFILE_TYPE);
 			DiskUtil.writeCatch(CACHEFILE_TEMP, content);
 			if (!CACHEFILE_TEMP.exists()) return;
 			CACHEFILE.delete();
@@ -873,7 +882,7 @@ public class IdUtilLocal implements Listener, Runnable {
 			content = content.trim();
 			if (content.isEmpty()) return new HashSet<>();
 
-			return KamiCommon.gson.fromJson(content, CACHEFILE_TYPE);
+			return gson.fromJson(content, CACHEFILE_TYPE);
 		}
 	}
 
@@ -907,4 +916,37 @@ public class IdUtilLocal implements Listener, Runnable {
 		return ret;
 	}
 
+
+	public static final Gson gson = getKamiCommonGsonBuilder().create();
+	public static GsonBuilder getKamiCommonGsonBuilder() {
+		// Create
+		GsonBuilder ret = new GsonBuilder();
+
+		// Basic Behavior
+		ret.setPrettyPrinting();
+		ret.disableHtmlEscaping();
+		ret.excludeFieldsWithModifiers(Modifier.TRANSIENT);
+		ret.excludeFieldsWithModifiers(Modifier.STATIC);
+
+		// KamiCommon Containers
+		ret.registerTypeAdapter(KamiList.class, AdapterKamiList.get());
+		ret.registerTypeAdapter(KamiMap.class, AdapterKamiMap.get());
+		ret.registerTypeAdapter(KamiSet.class, AdapterKamiSet.get());
+		ret.registerTypeAdapter(KamiTreeSet.class, AdapterKamiTreeSet.get());
+
+		// Return
+		return ret;
+	}
+
+	private static @NotNull File getDataFolder() {
+		Plugin plugin = Bukkit.getPluginManager().getPlugin("KamiCommon");
+		if (plugin != null) {
+			return plugin.getDataFolder();
+		}
+		Plugin any = Bukkit.getPluginManager().getPlugins()[0];
+		File plugins = any.getDataFolder().getParentFile();
+		File kamiCommon = new File(plugins, "KamiCommon");
+		assert kamiCommon.exists() || kamiCommon.mkdirs();
+		return kamiCommon;
+	}
 }
