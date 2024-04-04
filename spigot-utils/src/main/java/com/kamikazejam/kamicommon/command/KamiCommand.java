@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.command;
 
+import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.requirement.Requirement;
 import com.kamikazejam.kamicommon.command.requirement.RequirementAbstract;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
@@ -46,7 +47,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	 * @see KamiCommonCommandRegistration#updateRegistrations() <p>
 	 * In order for the command to be added to the server.
 	 */
-	public void registerCommand(Plugin plugin) {
+	public void registerCommand(KamiPlugin plugin) {
 		this.setActive(plugin);
 	}
 
@@ -82,15 +83,15 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		}
 	}
 
-	private Plugin activePlugin = null;
+	private KamiPlugin activePlugin = null;
 
 	@Override
-	public void setActivePlugin(Plugin activePlugin) {
+	public void setActivePlugin(KamiPlugin activePlugin) {
 		this.activePlugin = activePlugin;
 	}
 
 	@Override
-	public Plugin getActivePlugin() {
+	public KamiPlugin getActivePlugin() {
 		// Automatically fetch from parent if null.
 		if (this.activePlugin == null) {
 			if (parent != null && !Objects.equals(parent, this)) {
@@ -103,7 +104,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	}
 
 	@Override
-	public void setActive(Plugin plugin) {
+	public void setActive(KamiPlugin plugin) {
 		this.setActivePlugin(plugin);
 		this.setActive(plugin != null);
 	}

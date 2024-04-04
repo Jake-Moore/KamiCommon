@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.interfaces;
 
-import org.bukkit.plugin.Plugin;
+import com.kamikazejam.kamicommon.KamiPlugin;
 
 @SuppressWarnings("unused")
 public interface Active {
@@ -10,12 +10,12 @@ public interface Active {
     void setActive(boolean active);
 
     // Plugin
-    void setActivePlugin(Plugin plugin);
+    void setActivePlugin(KamiPlugin activePlugin);
 
-    Plugin getActivePlugin();
+    KamiPlugin getActivePlugin();
 
     // Combined Setter
     // Plugin is set first.
     // Boolean by null state.
-    void setActive(Plugin plugin);
+    void setActive(KamiPlugin plugin);
 }

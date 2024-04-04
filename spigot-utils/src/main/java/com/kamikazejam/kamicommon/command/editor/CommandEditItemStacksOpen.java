@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.command.editor;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.SpigotUtilProvider;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
@@ -33,7 +33,7 @@ public class CommandEditItemStacksOpen<O> extends CommandEditItemStacksAbstract<
 		this.addRequirements(RequirementIsPlayer.get());
 
 		// Listener
-		Bukkit.getPluginManager().registerEvents(this, KamiCommon.get());
+		Bukkit.getPluginManager().registerEvents(this, SpigotUtilProvider.getPlugin());
 	}
 
 	// -------------------------------------------- //

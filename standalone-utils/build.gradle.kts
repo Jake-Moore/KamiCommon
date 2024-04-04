@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     // Unique plugins for this module
     id("com.github.johnrengelman.shadow")

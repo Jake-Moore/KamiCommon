@@ -13,14 +13,6 @@ dependencies {
 
     compileOnly(project.property("lowestSpigotDep") as String)
 
-    // Spigot Libs (soft-depend)
-    compileOnly("com.github.LoneDev6:api-itemsadder:3.6.2-beta-r3")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.33-SNAPSHOT") {
-        exclude(group = "*", module = "*")
-    }
-    compileOnly("io.lumine:Mythic-Dist:5.6.1")
-    compileOnly("com.github.LeonMangler:SuperVanish:6.2.18-3")
-
     // Lombok
     compileOnly(project.property("lombokDep") as String)
     annotationProcessor(project.property("lombokDep") as String)

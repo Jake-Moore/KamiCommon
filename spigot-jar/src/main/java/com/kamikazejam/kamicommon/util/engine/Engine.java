@@ -14,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Set;
@@ -98,8 +97,8 @@ public abstract class Engine implements Active, Listener, Runnable {
     }
 
     @Override
-    public void setActivePlugin(Plugin plugin) {
-        this.setPluginSoft((KamiPlugin) plugin);
+    public void setActivePlugin(KamiPlugin plugin) {
+        this.setPluginSoft(plugin);
     }
 
     @Override
@@ -108,7 +107,7 @@ public abstract class Engine implements Active, Listener, Runnable {
     }
 
     @Override
-    public void setActive(Plugin plugin) {
+    public void setActive(KamiPlugin plugin) {
         this.setActivePlugin(plugin);
         this.setActive(plugin != null);
     }
