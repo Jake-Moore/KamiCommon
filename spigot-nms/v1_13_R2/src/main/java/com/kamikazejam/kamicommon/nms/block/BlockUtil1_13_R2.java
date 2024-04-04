@@ -1,0 +1,36 @@
+package com.kamikazejam.kamicommon.nms.block;
+
+import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtil1_13;
+import net.minecraft.server.v1_13_R2.BlockPosition;
+import net.minecraft.server.v1_13_R2.Chunk;
+import net.minecraft.server.v1_13_R2.IBlockData;
+import net.minecraft.server.v1_13_R2.WorldServer;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_13_R2.block.data.CraftBlockData;
+import org.jetbrains.annotations.NotNull;
+
+@SuppressWarnings("DuplicatedCode")
+public class BlockUtil1_13_R2 extends IBlockUtil1_13<IBlockData> {
+    @Override
+    public IBlockData getIBlockData(@NotNull BlockData blockData) {
+        return ((CraftBlockData) blockData).getState();
+    }
+
+    // physics = false, light = false
+    @Override
+    public void setNMS(@NotNull Block b, @NotNull IBlockData ibd) {
+        WorldServer w = ((CraftWorld) b.getWorld()).getHandle();
+        Chunk chunk = w.getChunkAt(b.getX() >> 4, b.getZ() >> 4);
+        BlockPosition bp = new BlockPosition(b.getX(), b.getY(), b.getZ());
+
+        IBlockData old = chunk.getType(bp);
+        try {
+            chunk.setType(bp, ibd, false);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        w.notify(bp, old, ibd, 3);
+    }
+}

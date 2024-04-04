@@ -3,6 +3,8 @@
 > 
 > The GitHub release may be different from the spigot release
 
+**SEE [STRUCTURE.md](./STRUCTURE.md) FOR GRADLE MODULE BREAKDOWN**
+
 # KamiCommon
 
 - A common library for my (KamikazeJAM) plugins.
