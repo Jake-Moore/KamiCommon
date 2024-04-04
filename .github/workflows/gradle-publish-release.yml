@@ -59,11 +59,11 @@ jobs:
     #           Create a Github Release
     #--------------------------------------------------------------------------------------------
 
-    - name: Create Release
+    - name: Create Release (Only Spigot Jar)
       if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "standalone-utils/build/libs/*.jar,standalone-jar/build/libs/*.jar,spigot-utils/build/libs/*.jar,spigot-jar/build/libs/*.jar,generic-jar/build/libs/*.jar"
+        artifacts: "spigot-jar/build/libs/*.jar"
         allowUpdates: true
         removeArtifacts: true
         omitBodyDuringUpdate: true
