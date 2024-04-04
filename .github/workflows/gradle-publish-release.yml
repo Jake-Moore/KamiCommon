@@ -36,7 +36,7 @@ jobs:
         gradle-version: '8.4'
 
     - name: Build with Gradle 8.4
-      run: gradle build
+      run: gradle publish
 
     #--------------------------------------------------------------------------------------------
     #           Create a Github Release

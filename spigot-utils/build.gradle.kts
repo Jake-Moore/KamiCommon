@@ -1,13 +1,14 @@
 plugins {
     // Unique plugins for this module
     id("com.github.johnrengelman.shadow")
+    id("maven-publish")
 }
 
 var json = "org.json:json:20240303"
 var gson = "com.google.code.gson:gson:2.10.1"
 var commonsText = "org.apache.commons:commons-text:1.11.0"
 dependencies {
-    api(project(":spigot-nms")) // which contains standalone-utils
+    api(project(":spigot-nms")); shadow(project(":spigot-nms")) // which contains standalone-utils
     api(json); shadow(json)
     api(gson); shadow(gson)
     api(commonsText); shadow(commonsText) // primarily for LevenshteinDistance
@@ -26,6 +27,7 @@ tasks {
         dependsOn(shadowJar)
     }
     shadowJar {
+        archiveClassifier.set("")
         configurations = listOf(project.configurations.shadow.get())
 
         dependencies {
@@ -41,5 +43,26 @@ tasks {
     }
     test {
         useJUnitPlatform()
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            groupId = rootProject.group.toString() + "." + rootProject.name
+            artifactId = project.name
+            version = rootProject.version.toString()
+            from(components["java"])
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri("https://nexus.luxiouslabs.net/public")
+            credentials {
+                username = System.getenv("LUXIOUS_NEXUS_USER")
+                password = System.getenv("LUXIOUS_NEXUS_PASS")
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ repositories {
 
 var xseries = "com.github.cryptomorin:XSeries:9.9.0"
 dependencies {
-    api(project(":standalone-utils"))
+    api(project(":standalone-utils")); shadow(project(":standalone-utils"))
     api(xseries); shadow(xseries)
 
     compileOnly(project.property("lowestSpigotDep") as String)
@@ -27,6 +27,7 @@ tasks {
         dependsOn(shadowJar)
     }
     shadowJar {
+        archiveClassifier.set("")
         configurations = listOf(project.configurations.shadow.get())
 
         dependencies {

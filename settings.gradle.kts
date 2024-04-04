@@ -1,4 +1,4 @@
-rootProject.name = "KamiCommon"
+rootProject.name = "kamicommon"
 include(":spigot-jar")
 include(":spigot-utils")
 include(":standalone-jar")
