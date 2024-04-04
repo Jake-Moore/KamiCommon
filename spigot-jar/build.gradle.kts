@@ -52,7 +52,7 @@ tasks {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            groupId = rootProject.group.toString() + "." + rootProject.name
+            groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
             from(components["java"])

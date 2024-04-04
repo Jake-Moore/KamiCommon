@@ -1,5 +1,6 @@
 plugins {
     id("com.github.johnrengelman.shadow")
+    id("maven-publish")
 }
 
 repositories {
@@ -43,3 +44,24 @@ tasks {
 }
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            groupId = rootProject.group.toString()
+            artifactId = project.name
+            version = rootProject.version.toString()
+            from(components["java"])
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri("https://nexus.luxiouslabs.net/public")
+            credentials {
+                username = System.getenv("LUXIOUS_NEXUS_USER")
+                password = System.getenv("LUXIOUS_NEXUS_PASS")
+            }
+        }
+    }
+}
