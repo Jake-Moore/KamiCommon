@@ -36,6 +36,7 @@ publishing {
             artifactId = project.name
             version = rootProject.version.toString()
             from(components["java"])
+            artifact(tasks.reobfJar.get().outputJar)
         }
     }
 
