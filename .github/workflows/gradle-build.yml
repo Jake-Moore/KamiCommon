@@ -36,4 +36,7 @@ jobs:
         gradle-version: '8.4'
 
     - name: Build with Gradle 8.4
+      env:
+        LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
+        LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
       run: gradle build
