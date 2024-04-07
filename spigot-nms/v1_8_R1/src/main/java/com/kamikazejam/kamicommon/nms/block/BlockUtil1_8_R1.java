@@ -1,8 +1,8 @@
 package com.kamikazejam.kamicommon.nms.block;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
 import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import net.minecraft.server.v1_8_R1.BlockPosition;
 import net.minecraft.server.v1_8_R1.Chunk;
 import net.minecraft.server.v1_8_R1.IBlockData;

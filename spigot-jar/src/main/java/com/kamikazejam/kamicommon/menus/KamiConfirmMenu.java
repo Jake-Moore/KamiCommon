@@ -1,12 +1,12 @@
 package com.kamikazejam.kamicommon.menus;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.gui.KamiMenuContainer;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClickPlayer;
 import com.kamikazejam.kamicommon.gui.items.KamiMenuItem;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

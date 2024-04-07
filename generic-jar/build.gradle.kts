@@ -2,8 +2,6 @@ plugins {
     // Unique plugins for this module
     id("com.github.johnrengelman.shadow")
     id("maven-publish")
-    id("java")
-    id("java-library")
 }
 
 repositories {

@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.item;
 
-import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
 import com.kamikazejam.kamicommon.util.StringUtilP;
 import com.kamikazejam.kamicommon.util.data.TriState;

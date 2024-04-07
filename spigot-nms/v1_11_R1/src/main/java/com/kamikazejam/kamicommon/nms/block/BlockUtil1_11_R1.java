@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.nms.block;
 
-import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
 import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
 import net.minecraft.server.v1_11_R1.BlockPosition;

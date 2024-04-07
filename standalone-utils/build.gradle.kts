@@ -2,19 +2,16 @@ plugins {
     // Unique plugins for this module
     id("com.github.johnrengelman.shadow")
     id("maven-publish")
-    id("java")
-    id("java-library")
 }
 
-var lombokDep = "org.projectlombok:lombok:1.18.32"
 dependencies {
     // Unique dependencies for this module
     implementation("org.yaml:snakeyaml:2.2")
 
     // Lombok
-    compileOnly(lombokDep)
-    annotationProcessor(lombokDep)
-    testAnnotationProcessor(lombokDep)
+    compileOnly(project.property("lombokDep") as String)
+    annotationProcessor(project.property("lombokDep") as String)
+    testAnnotationProcessor(project.property("lombokDep") as String)
 
     // IntelliJ annotations
     implementation("org.jetbrains:annotations:24.1.0")

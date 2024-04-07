@@ -1,9 +1,9 @@
 package com.kamikazejam.kamicommon.gui;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.gui.interfaces.*;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;

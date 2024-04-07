@@ -1,9 +1,9 @@
 package com.kamikazejam.kamicommon.gui;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.gui.interfaces.Menu;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClickInfo;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
