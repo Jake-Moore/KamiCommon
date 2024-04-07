@@ -44,6 +44,21 @@ jobs:
     - name: Display Version
       run: echo "Version is ${{ steps.extract_version.outputs.version }}"
 
+      # Update Download Link GIST
+    - name: Write Download Link Gist
+      # if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
+      env:
+        GIST_ID: 5dfd7c9bb8b81ae5867c81e9a77ee821
+        AUTH_KEY: ${{ secrets.GIST_SECRET }}
+        VERSION: ${{ steps.extract_version.outputs.version }}
+      run: |
+        CONTENT="https://github.com/Jake-Moore/KamiCommon/releases/download/$VERSION/kamicommon-$VERSION.jar"
+        curl -X PATCH \
+          -H "Authorization: token $AUTH_KEY" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/gists/$GIST_ID \
+          -d "{\"files\": {\"kamicommon.txt\": {\"content\": \"$CONTENT\"}}}"
+
     - name: Build with Gradle 8.4
       if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
       env:
