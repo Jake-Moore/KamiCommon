@@ -33,7 +33,7 @@ tasks {
 
         relocate("com.zaxxer.hikari", "com.kamikazejam.kamicommon.hikari")
         relocate("org.slf4j", "com.kamikazejam.kamicommon.slf4j") // part of the hikari jar
-        relocate("redis.clients", "com.kamikazejam.kamicommon.jedis")
+        relocate("redis.clients.jedis", "com.kamikazejam.kamicommon.redis")
         relocate("org.apache.commons.pool2", "com.kamikazejam.kamicommon.commons.pool2")
     }
     test {
