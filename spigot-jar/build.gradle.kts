@@ -24,9 +24,8 @@ dependencies {
 }
 
 tasks {
-    build {
-        dependsOn(shadowJar)
-    }
+    publish.get().dependsOn(build)
+    build.get().dependsOn(shadowJar)
     shadowJar {
         archiveClassifier.set("")
         configurations = listOf(project.configurations.shadow.get())

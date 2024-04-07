@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     // Unique dependencies for this module
-    implementation("org.yaml:snakeyaml:2.2")
+    shadow("org.yaml:snakeyaml:2.2")
 
     // Lombok
     compileOnly(project.property("lombokDep") as String)
@@ -14,15 +14,16 @@ dependencies {
     testAnnotationProcessor(project.property("lombokDep") as String)
 
     // IntelliJ annotations
-    implementation("org.jetbrains:annotations:24.1.0")
+    shadow("org.jetbrains:annotations:24.1.0")
 }
 
 tasks {
-    build {
-        dependsOn(shadowJar)
-    }
+    publish.get().dependsOn(build)
+    build.get().dependsOn(shadowJar)
     shadowJar {
         archiveClassifier.set("")
+        configurations = listOf(project.configurations.shadow.get())
+
         relocate("org.yaml.snakeyaml", "com.kamikazejam.kamicommon.snakeyaml")
     }
     test {

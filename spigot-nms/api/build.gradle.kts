@@ -8,10 +8,10 @@ repositories {
 }
 
 dependencies {
-    implementation(files(project(":standalone-utils")
+    shadow(files(project(":standalone-utils")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    implementation("com.github.cryptomorin:XSeries:9.10.0")
+    shadow("com.github.cryptomorin:XSeries:9.10.0")
 
     compileOnly(project.property("lowestSpigotDep") as String)
 
@@ -20,23 +20,18 @@ dependencies {
     annotationProcessor(project.property("lombokDep") as String)
     testAnnotationProcessor(project.property("lombokDep") as String)
 
-    testImplementation(platform("org.junit:junit-bom:5.10.2"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-
     // IntelliJ annotations
-    implementation("org.jetbrains:annotations:24.1.0")
+    shadow("org.jetbrains:annotations:24.1.0")
 }
 
 tasks {
-    build {
-        dependsOn(shadowJar)
-    }
+    publish.get().dependsOn(build)
+    build.get().dependsOn(shadowJar)
     shadowJar {
         archiveClassifier.set("")
+        configurations = listOf(project.configurations.shadow.get())
+
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
-    }
-    test {
-        useJUnitPlatform()
     }
 }
 java.sourceCompatibility = JavaVersion.VERSION_1_8

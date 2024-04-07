@@ -27,9 +27,7 @@ tasks {                                             // 4. configure tasks (like 
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
+
 
 publishing {
     publications {

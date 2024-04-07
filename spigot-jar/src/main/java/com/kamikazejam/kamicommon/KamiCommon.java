@@ -23,7 +23,6 @@ public class KamiCommon extends KamiPlugin implements Listener {
 
     @Override
     public void onEnableInner(){
-        long start = System.currentTimeMillis();
         getLogger().info("KamiCommon enabling...");
 
         plugin = this;
@@ -59,8 +58,6 @@ public class KamiCommon extends KamiPlugin implements Listener {
         IdUtilLocal.setup(this);
 
         SpigotUtilProvider.setPlugin(this);
-
-        getLogger().info("KamiCommon enabled in " + (System.currentTimeMillis() - start) + "ms");
     }
 
     @Override

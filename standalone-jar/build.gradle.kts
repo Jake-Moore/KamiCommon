@@ -5,19 +5,20 @@ plugins {
 }
 
 dependencies {
-    implementation(files(project(":generic-jar")
+    shadow(files(project(":generic-jar")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    implementation(files(project(":standalone-utils")
+    shadow(files(project(":standalone-utils")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
 }
 tasks {
-    build {
-        dependsOn(shadowJar)
-    }
+    publish.get().dependsOn(build)
+    build.get().dependsOn(shadowJar)
     shadowJar {
         archiveClassifier.set("")
+        configurations = listOf(project.configurations.shadow.get())
+
         from(project(":generic-jar").tasks.shadowJar.get().outputs)
         from(project(":standalone-utils").tasks.shadowJar.get().outputs)
     }

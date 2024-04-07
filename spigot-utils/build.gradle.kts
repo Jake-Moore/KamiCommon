@@ -4,18 +4,14 @@ plugins {
     id("maven-publish")
 }
 
-var json = "org.json:json:20240303"
-var gson = "com.google.code.gson:gson:2.10.1"
-var commonsText = "org.apache.commons:commons-text:1.11.0"
-var nbt = "de.tr7zw:item-nbt-api:2.12.3"
 dependencies {
-    implementation(files(project(":spigot-nms") // which contains standalone-utils
+    shadow(files(project(":spigot-nms") // which contains standalone-utils
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    implementation(json)
-    implementation(gson)
-    implementation(commonsText) // primarily for LevenshteinDistance
-    implementation(nbt)
+    shadow("org.json:json:20240303")
+    shadow("com.google.code.gson:gson:2.10.1")
+    shadow("org.apache.commons:commons-text:1.11.0") // primarily for LevenshteinDistance
+    shadow("de.tr7zw:item-nbt-api:2.12.3")
 
     compileOnly(project.property("lowestSpigotDep") as String)
     compileOnly("me.clip:placeholderapi:2.11.5") // TODO soft depend
@@ -35,11 +31,12 @@ dependencies {
 }
 
 tasks {
-    build {
-        dependsOn(shadowJar)
-    }
+    publish.get().dependsOn(build)
+    build.get().dependsOn(shadowJar)
     shadowJar {
         archiveClassifier.set("")
+        configurations = listOf(project.configurations.shadow.get())
+
         relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
         relocate("org.json", "com.kamikazejam.kamicommon.json")
         relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")

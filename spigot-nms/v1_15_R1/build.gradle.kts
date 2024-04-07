@@ -7,9 +7,7 @@ dependencies {
     compileOnly(project(":spigot-nms:v1_13_R1"))
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
+
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
 

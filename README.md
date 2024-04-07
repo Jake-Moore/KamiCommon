@@ -119,15 +119,14 @@ public class Config extends KamiConfig {
 }
 ```
 - **Utility Classes (shaded & relocated)**
-  - org.yaml.snakeyaml (latest)
-  - org.json
+  - org.yaml.snakeyaml (standalone-utils) [~335 KB]
+  - org.json (spigot-utils) [~78 KB]
   - redis.clients.jedis
-  - org.apache.httpcomponents
-  - com.mysql (mysql-connector-j)
-  - com.google.code.gson
-  - com.zaxxer.hikari
-  - [NBT-API](https://github.com/tr7zw/Item-NBT-API)
-  - [XSeries](https://github.com/CryptoMorin/XSeries)
+  - org.apache.httpcomponents.client5 (spigot-jar) [~861 KB]
+  - com.google.code.gson (spigot-utils) [~284 KB]
+  - com.zaxxer.hikari (generic-jar) [~162 KB]
+  - [NBT-API](https://github.com/tr7zw/Item-NBT-API) (spigot-utils) [~158 KB]
+  - [XSeries](https://github.com/CryptoMorin/XSeries) (spigot-nms) [~405 KB]
 - **Utility Classes (other)**
   - DiscordWebhook (for sending simple webhooks)
   - StringUtil (spigot-independant translation from & to §, and other useful string / string-list methods)
