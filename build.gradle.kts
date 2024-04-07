@@ -1,7 +1,7 @@
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
 
-var VERSION = "3.0.0.0-b11-SNAPSHOT"
+var VERSION = "3.0.0.0-b12-SNAPSHOT"
 
 plugins { // needed for the subprojects section to work
     id("java")
