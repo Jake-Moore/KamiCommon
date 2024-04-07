@@ -2,6 +2,8 @@ plugins {
     // Unique plugins for this module
     id("com.github.johnrengelman.shadow")
     id("maven-publish")
+    id("java")
+    id("java-library")
 }
 
 repositories {
@@ -10,22 +12,17 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }
 
-var hikari = "com.zaxxer:HikariCP:5.1.0"
 dependencies {
     // Unique dependencies for this module
-    api(hikari); shadow(hikari)
+    implementation("com.zaxxer:HikariCP:5.1.0")
 }
 
 tasks {
-    build {
-        dependsOn(shadowJar)
-    }
+    build.get().dependsOn("shadowJar")
     shadowJar {
         archiveClassifier.set("")
-        dependencies {
-            include(dependency(hikari))
-        }
         relocate("com.zaxxer.hikari", "com.kamikazejam.kamicommon.hikari")
+        relocate("org.slf4j", "com.kamikazejam.kamicommon.slf4j") // part of the hikari jar
     }
     test {
         useJUnitPlatform()
@@ -54,3 +51,11 @@ publishing {
         }
     }
 }
+
+// ONLY REQUIRED IF: you are using Solution 2 with the modified dependency
+tasks.register<Copy>("unpackShadow") {
+    dependsOn(tasks.shadowJar)
+    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
+    into(layout.buildDirectory.dir("unpacked-shadow"))
+}
+tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

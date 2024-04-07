@@ -5,8 +5,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":generic-jar")); shadow(project(":generic-jar"))
-    api(project(":standalone-utils")); shadow(project(":standalone-utils"))
+    implementation(files(project(":generic-jar")
+        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
+    )
+    implementation(files(project(":standalone-utils")
+        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
+    )
 }
 tasks {
     build {
@@ -16,8 +20,6 @@ tasks {
         archiveClassifier.set("")
         from(project(":generic-jar").tasks.shadowJar.get().outputs)
         from(project(":standalone-utils").tasks.shadowJar.get().outputs)
-
-        configurations = listOf(project.configurations.shadow.get())
     }
     test {
         useJUnitPlatform()

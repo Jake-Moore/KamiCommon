@@ -1,22 +1,34 @@
+import org.jetbrains.gradle.ext.settings
+import org.jetbrains.gradle.ext.taskTriggers
+
 plugins { // needed for the subprojects section to work
     id("java")
     id("java-library")
     id("io.papermc.paperweight.userdev") version "1.5.13" apply false
     id("com.github.johnrengelman.shadow") version "8.1.1" apply false
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.8"
+}
+
+idea.project.settings {
+    taskTriggers {
+        afterSync(tasks.getByPath(":standalone-utils:clean"), tasks.getByPath(":standalone-utils:build"))
+        afterSync(tasks.getByPath(":generic-jar:clean"), tasks.getByPath(":generic-jar:build"))
+    }
 }
 
 ext {
     set("projectName", rootProject.name)
     set("lombokDep", "org.projectlombok:lombok:1.18.32")
 
-    // reduced is just a re-zipped version of the original, without some conflicting libraries (gson)
-    set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED")   // luxious nexus (public)
+    // reduced is just a re-zipped version of the original, without some conflicting libraries
+    //  gson, org.json, com.yaml.snakeyaml
+    set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED")    // luxious nexus (public)
     set("latestSpigotDep", "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")          // spigotmc nexus
 }
 
 allprojects {
     group = "com.kamikazejam.kamicommon"
-    version = "3.0.0.0-pre-b8"
+    version = "3.0.0.0-b9-SNAPSHOT"
     description = "KamikazeJAM's common library for Spigot and Standalone projects."
 
     repositories {
@@ -48,9 +60,6 @@ subprojects {
         // junit
         testImplementation(platform("org.junit:junit-bom:5.10.2"))
         testImplementation("org.junit.jupiter:junit-jupiter")
-
-        // IntelliJ annotations
-        api("org.jetbrains:annotations:24.1.0")
     }
 
     // Configure Javadoc generation

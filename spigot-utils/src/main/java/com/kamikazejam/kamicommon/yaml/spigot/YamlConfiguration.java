@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.yaml.spigot;
 
+import com.kamikazejam.kamicommon.snakeyaml.nodes.MappingNode;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlConfiguration;
-import org.yaml.snakeyaml.nodes.MappingNode;
 
 import java.io.File;
 

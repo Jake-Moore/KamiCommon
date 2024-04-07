@@ -1,10 +1,10 @@
 package com.kamikazejam.kamicommon.yaml.spigot;
 
 import com.kamikazejam.kamicommon.configuration.config.AbstractConfig;
+import com.kamikazejam.kamicommon.snakeyaml.nodes.MappingNode;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.yaml.snakeyaml.nodes.MappingNode;
 
 import javax.annotation.Nonnull;
 import java.io.File;
