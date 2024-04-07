@@ -42,4 +42,4 @@ jobs:
       run: |
         chmod +x ./build.sh
         chmod +x ./gradlew
-        ./build.sh
+        ./build.sh gradle
