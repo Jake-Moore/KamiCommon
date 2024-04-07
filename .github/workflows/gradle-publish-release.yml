@@ -49,7 +49,7 @@ jobs:
       env:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
-      run: gradle publish
+      run: ./publish.sh
 
     - name: Prepare Spigot Jar
       run: |

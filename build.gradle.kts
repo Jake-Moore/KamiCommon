@@ -1,6 +1,8 @@
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
 
+var VERSION = "3.0.0.0-b10-SNAPSHOT"
+
 plugins { // needed for the subprojects section to work
     id("java")
     id("java-library")
@@ -28,14 +30,6 @@ tasks.getByName("clean").finalizedBy(tasks.getByName("refresh"))
 idea.project.settings {
     taskTriggers {
         afterSync(tasks.getByName("refresh"))
-        // beforeSync(":spigot-nms:api:clean", ":spigot-nms:api:build")
-        // afterSync(/*tasks.getByPath(":spigot-nms:clean"), */tasks.getByPath(":spigot-nms:build"))
-
-        // afterSync(tasks.getByPath(":standalone-utils:clean"), tasks.getByPath(":standalone-utils:build"))
-        // afterSync(tasks.getByPath(":generic-jar:clean"), tasks.getByPath(":generic-jar:build"))
-
-        // beforeSync(tasks.getByPath(":spigot-nms:api:clean"), tasks.getByPath(":spigot-nms:api:build"))
-        //afterSync(tasks.getByPath(":spigot-nms:clean"), tasks.getByPath(":spigot-nms:build"))
     }
 }
 
@@ -51,7 +45,7 @@ ext {
 
 allprojects {
     group = "com.kamikazejam.kamicommon"
-    version = "3.0.0.0-b9-SNAPSHOT"
+    version = VERSION
     description = "KamikazeJAM's common library for Spigot and Standalone projects."
 
     repositories {
