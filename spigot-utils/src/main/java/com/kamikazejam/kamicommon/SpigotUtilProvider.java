@@ -9,13 +9,21 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("unused")
 public class SpigotUtilProvider {
     private static KamiPlugin plugin = null;
     public static @NotNull KamiPlugin getPlugin() {
         Preconditions.checkNotNull(plugin, "SpigotUtilPluginProvider was not initialized!!!");
         return plugin;
     }
-    public static void setPlugin(@NotNull KamiPlugin plugin) {
+
+    /**
+     * @return true IFF the plugin was initialized, false if it was already initialized
+     */
+    public static boolean setPlugin(@NotNull KamiPlugin plugin) {
+        // Only initialize once
+        if (SpigotUtilProvider.plugin != null) { return false; }
+
         Preconditions.checkNotNull(plugin, "plugin");
         SpigotUtilProvider.plugin = plugin;
 
@@ -23,6 +31,7 @@ public class SpigotUtilProvider {
         RegistryType.registerAll();
         // Setup Commands
         new KamiCommonCommandRegistration(plugin);
+        return true;
     }
 
     @Setter private static @Nullable PremiumVanishIntegration vanishIntegration = null;

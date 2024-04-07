@@ -15,6 +15,11 @@ dependencies {
     // Both needed for jedis in :generic-jar to work properly
     shadow("org.json:json:20240303")
     shadow("com.google.code.gson:gson:2.10.1")
+
+    // Lombok
+    compileOnly(project.property("lombokDep") as String)
+    annotationProcessor(project.property("lombokDep") as String)
+    testAnnotationProcessor(project.property("lombokDep") as String)
 }
 tasks {
     publish.get().dependsOn(build)
