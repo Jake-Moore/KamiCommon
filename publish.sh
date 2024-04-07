@@ -12,11 +12,12 @@ echo "./gradlew :generic-jar:publish"
 echo "./gradlew :standalone-jar:publish"
 ./gradlew :standalone-jar:publish || exit 1
 
-echo "./gradlew :spigot-nms:api:publish"
-./gradlew :spigot-nms:api:publish || exit 1
+# Build these 3 for spigot-utils to have the latest changes
+echo "./gradlew :spigot-nms:api:build"
+./gradlew :spigot-nms:api:build || exit 1
 
-echo "./gradlew :spigot-nms:publish"
-./gradlew :spigot-nms:publish || exit 1
+echo "./gradlew :spigot-nms:build"
+./gradlew :spigot-nms:build || exit 1
 
 echo "./gradlew :spigot-utils:publish"
 ./gradlew :spigot-utils:publish || exit 1
