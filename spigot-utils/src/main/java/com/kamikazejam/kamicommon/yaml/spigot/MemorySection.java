@@ -2,13 +2,13 @@ package com.kamikazejam.kamicommon.yaml.spigot;
 
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
+import com.kamikazejam.kamicommon.snakeyaml.nodes.MappingNode;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.nodes.MappingNode;
 
 @Getter
 @SuppressWarnings("unused")

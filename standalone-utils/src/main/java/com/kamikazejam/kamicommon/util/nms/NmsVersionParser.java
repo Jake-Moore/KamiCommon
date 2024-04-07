@@ -61,6 +61,10 @@ public class NmsVersionParser {
                 return "1.19.4";
             case "v1_20_R1":
                 return "1.20.1";
+            case "v1_20_R2":
+                return "1.20.2";
+            case "v1_20_R3":
+                return "1.20.4";
         }
         throw new IllegalArgumentException(nms + " isn't a know version");
     }

@@ -2,32 +2,30 @@ plugins {
     // Unique plugins for this module
     id("com.github.johnrengelman.shadow")
     id("maven-publish")
+    id("java")
+    id("java-library")
 }
 
-var yaml = "org.yaml:snakeyaml:2.2"
+var lombokDep = "org.projectlombok:lombok:1.18.32"
 dependencies {
     // Unique dependencies for this module
-    api(yaml); shadow(yaml)
+    implementation("org.yaml:snakeyaml:2.2")
 
     // Lombok
-    compileOnly(project.property("lombokDep") as String)
-    annotationProcessor(project.property("lombokDep") as String)
-    testAnnotationProcessor(project.property("lombokDep") as String)
+    compileOnly(lombokDep)
+    annotationProcessor(lombokDep)
+    testAnnotationProcessor(lombokDep)
+
+    // IntelliJ annotations
+    implementation("org.jetbrains:annotations:24.1.0")
 }
 
 tasks {
     build {
         dependsOn(shadowJar)
     }
-    publish {
-        dependsOn(build)
-    }
     shadowJar {
         archiveClassifier.set("")
-        dependencies {
-            include(dependency(yaml))
-        }
-
         relocate("org.yaml.snakeyaml", "com.kamikazejam.kamicommon.snakeyaml")
     }
     test {
@@ -58,3 +56,11 @@ publishing {
         }
     }
 }
+
+// ONLY REQUIRED IF: you are using Solution 2 with the modified dependency
+tasks.register<Copy>("unpackShadow") {
+    dependsOn(tasks.shadowJar)
+    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
+    into(layout.buildDirectory.dir("unpacked-shadow"))
+}
+tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))
