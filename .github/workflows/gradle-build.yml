@@ -41,4 +41,5 @@ jobs:
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
       run: |
         chmod +x ./build.sh
+        chmod +x ./gradlew
         ./build.sh
