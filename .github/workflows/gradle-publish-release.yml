@@ -49,7 +49,9 @@ jobs:
       env:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
-      run: ./publish.sh
+      run: |
+        chmod +x ./build.sh
+        ./publish.sh
 
     - name: Prepare Spigot Jar
       if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"

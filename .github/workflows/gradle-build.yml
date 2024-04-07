@@ -39,4 +39,6 @@ jobs:
       env:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
-      run: ./build.sh
+      run: |
+        chmod +x ./build.sh
+        ./build.sh
