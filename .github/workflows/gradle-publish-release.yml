@@ -52,7 +52,7 @@ jobs:
       run: |
         chmod +x ./publish.sh
         chmod +x ./gradlew
-        ./publish.sh
+        ./publish.sh gradle
 
     - name: Prepare Spigot Jar
       if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
