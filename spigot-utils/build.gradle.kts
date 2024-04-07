@@ -8,7 +8,6 @@ dependencies {
     shadow(files(project(":spigot-nms") // which contains standalone-utils
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    shadow("org.json:json:20240303")
     shadow("com.google.code.gson:gson:2.10.1")
     shadow("org.apache.commons:commons-text:1.11.0") // primarily for LevenshteinDistance
     shadow("de.tr7zw:item-nbt-api:2.12.3")
@@ -38,7 +37,6 @@ tasks {
         configurations = listOf(project.configurations.shadow.get())
 
         relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
-        relocate("org.json", "com.kamikazejam.kamicommon.json")
         relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
         relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
         relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")

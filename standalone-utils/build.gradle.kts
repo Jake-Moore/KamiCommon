@@ -7,6 +7,7 @@ plugins {
 dependencies {
     // Unique dependencies for this module
     shadow("org.yaml:snakeyaml:2.2")
+    shadow("org.json:json:20240303")
 
     // Lombok
     compileOnly(project.property("lombokDep") as String)
@@ -25,6 +26,7 @@ tasks {
         configurations = listOf(project.configurations.shadow.get())
 
         relocate("org.yaml.snakeyaml", "com.kamikazejam.kamicommon.snakeyaml")
+        relocate("org.json", "com.kamikazejam.kamicommon.json")
     }
     test {
         useJUnitPlatform()
