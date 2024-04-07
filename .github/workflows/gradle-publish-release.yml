@@ -50,7 +50,7 @@ jobs:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
       run: |
-        chmod +x ./build.sh
+        chmod +x ./publish.sh
         ./publish.sh
 
     - name: Prepare Spigot Jar
