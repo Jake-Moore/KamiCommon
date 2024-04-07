@@ -26,6 +26,7 @@ dependencies {
 }
 
 tasks {
+    publish.get().dependsOn(build)
     build.get().dependsOn("shadowJar")
     shadowJar {
         archiveClassifier.set("")

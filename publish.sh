@@ -6,11 +6,11 @@ echo "./gradlew clean"
 echo "./gradlew :standalone-utils:publish"
 ./gradlew :standalone-utils:publish || exit 1
 
-echo "./gradlew :standalone-jar:publish"
-./gradlew :standalone-jar:publish || exit 1
-
 echo "./gradlew :generic-jar:publish"
 ./gradlew :generic-jar:publish || exit 1
+
+echo "./gradlew :standalone-jar:publish"
+./gradlew :standalone-jar:publish || exit 1
 
 echo "./gradlew :spigot-nms:api:publish"
 ./gradlew :spigot-nms:api:publish || exit 1
