@@ -12,15 +12,25 @@ repositories {
 
 dependencies {
     // Unique dependencies for this module
-    implementation("com.zaxxer:HikariCP:5.1.0")
+    shadow("com.zaxxer:HikariCP:5.1.0")
+    shadow("redis.clients:jedis:5.1.2")
+
+    // Lombok
+    compileOnly(project.property("lombokDep") as String)
+    annotationProcessor(project.property("lombokDep") as String)
+    testAnnotationProcessor(project.property("lombokDep") as String)
 }
 
 tasks {
     build.get().dependsOn("shadowJar")
     shadowJar {
         archiveClassifier.set("")
+        configurations = listOf(project.configurations.shadow.get())
+
         relocate("com.zaxxer.hikari", "com.kamikazejam.kamicommon.hikari")
         relocate("org.slf4j", "com.kamikazejam.kamicommon.slf4j") // part of the hikari jar
+        relocate("redis.clients", "com.kamikazejam.kamicommon.jedis")
+        relocate("com.google.gson", "com.kamikazejam.kamicommon.jedis.gson")
     }
     test {
         useJUnitPlatform()
