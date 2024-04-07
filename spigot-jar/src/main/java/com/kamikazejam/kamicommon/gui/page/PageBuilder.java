@@ -1,10 +1,10 @@
 package com.kamikazejam.kamicommon.gui.page;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.gui.KamiMenu;
 import com.kamikazejam.kamicommon.gui.items.KamiMenuItem;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;

@@ -9,11 +9,13 @@ var gson = "com.google.code.gson:gson:2.10.1"
 var commonsText = "org.apache.commons:commons-text:1.11.0"
 var nbt = "de.tr7zw:item-nbt-api:2.12.3"
 dependencies {
-    api(project(":spigot-nms")); shadow(project(":spigot-nms")) // which contains standalone-utils
-    api(json); shadow(json)
-    api(gson); shadow(gson)
-    api(commonsText); shadow(commonsText) // primarily for LevenshteinDistance
-    api(nbt); shadow(nbt)
+    implementation(files(project(":spigot-nms") // which contains standalone-utils
+        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
+    )
+    implementation(json)
+    implementation(gson)
+    implementation(commonsText) // primarily for LevenshteinDistance
+    implementation(nbt)
 
     compileOnly(project.property("lowestSpigotDep") as String)
     compileOnly("me.clip:placeholderapi:2.11.5") // TODO soft depend
@@ -30,9 +32,6 @@ dependencies {
     compileOnly(project.property("lombokDep") as String)
     annotationProcessor(project.property("lombokDep") as String)
     testAnnotationProcessor(project.property("lombokDep") as String)
-
-    // IntelliJ annotations
-    implementation("org.jetbrains:annotations:24.1.0")
 }
 
 tasks {
@@ -41,20 +40,12 @@ tasks {
     }
     shadowJar {
         archiveClassifier.set("")
-        configurations = listOf(project.configurations.shadow.get())
-
-        dependencies {
-            include(dependency(json))
-            include(dependency(gson))
-            include(dependency(commonsText))
-            include(dependency(nbt))
-        }
         relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
         relocate("org.json", "com.kamikazejam.kamicommon.json")
         relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
         relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
-
-        from(project(":spigot-nms").tasks.shadowJar.get().outputs)
+        relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")
+        // from(project(":spigot-nms").tasks.shadowJar.get().outputs)
     }
     test {
         useJUnitPlatform()
@@ -81,3 +72,11 @@ publishing {
         }
     }
 }
+
+// ONLY REQUIRED IF: you are using Solution 2 with the modified dependency
+tasks.register<Copy>("unpackShadow") {
+    dependsOn(tasks.shadowJar)
+    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
+    into(layout.buildDirectory.dir("unpacked-shadow"))
+}
+tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

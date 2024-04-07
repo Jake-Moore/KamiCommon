@@ -9,10 +9,33 @@ plugins { // needed for the subprojects section to work
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.8"
 }
 
+tasks.register("refresh") {
+    doLast {
+        val process = ProcessBuilder("./refresh.sh").start()
+        val inputStream = process.inputStream
+        inputStream.bufferedReader().useLines { lines ->
+            lines.forEach { println(it) }
+        }
+
+        process.waitFor()
+        if (process.exitValue() != 0) {
+            throw IllegalStateException("Failed to refresh: " + process.exitValue())
+        }
+    }
+}
+tasks.getByName("clean").finalizedBy(tasks.getByName("refresh"))
+
 idea.project.settings {
     taskTriggers {
-        afterSync(tasks.getByPath(":standalone-utils:clean"), tasks.getByPath(":standalone-utils:build"))
-        afterSync(tasks.getByPath(":generic-jar:clean"), tasks.getByPath(":generic-jar:build"))
+        afterSync(tasks.getByName("refresh"))
+        // beforeSync(":spigot-nms:api:clean", ":spigot-nms:api:build")
+        // afterSync(/*tasks.getByPath(":spigot-nms:clean"), */tasks.getByPath(":spigot-nms:build"))
+
+        // afterSync(tasks.getByPath(":standalone-utils:clean"), tasks.getByPath(":standalone-utils:build"))
+        // afterSync(tasks.getByPath(":generic-jar:clean"), tasks.getByPath(":generic-jar:build"))
+
+        // beforeSync(tasks.getByPath(":spigot-nms:api:clean"), tasks.getByPath(":spigot-nms:api:build"))
+        //afterSync(tasks.getByPath(":spigot-nms:clean"), tasks.getByPath(":spigot-nms:build"))
     }
 }
 

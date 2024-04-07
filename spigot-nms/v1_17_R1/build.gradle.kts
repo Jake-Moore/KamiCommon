@@ -7,7 +7,9 @@ plugins {
 dependencies {
     // Unique dependencies for this module
     paperweight.paperDevBundle("1.17.1-R0.1-SNAPSHOT")           // 2. add the dev bundle (contains all apis)
-    compileOnly(project(":spigot-nms:api"))
+    compileOnly(files(project(":spigot-nms:api")
+        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
+    )
     compileOnly(project(":spigot-nms:v1_13_R1"))
 }
 
@@ -19,7 +21,6 @@ tasks {                                             // 4. configure tasks (like 
     assemble {
         dependsOn(reobfJar)
     }
-
     reobfJar {
         outputJar.set(layout.buildDirectory.file("libs/${project.name}-${project.version}.jar"))
     }

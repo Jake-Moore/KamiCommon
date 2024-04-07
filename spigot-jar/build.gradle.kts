@@ -7,9 +7,13 @@ plugins {
 var httpclient = "org.apache.httpcomponents.client5:httpclient5:5.3.1"
 dependencies {
     // Unique dependencies for this module
-    api(httpclient); shadow(httpclient)
-    api(project(":generic-jar")); shadow(project(":generic-jar"))
-    api(project(":spigot-utils")); shadow(project(":spigot-utils"))
+    implementation(httpclient)
+    implementation(files(project(":generic-jar")
+        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
+    )
+    implementation(files(project(":spigot-utils")
+        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
+    )
 
     compileOnly(project.property("lowestSpigotDep") as String)
 
@@ -70,3 +74,12 @@ tasks.processResources {
         expand(props)
     }
 }
+
+
+// not required, but useful to see what's in the jar
+tasks.register<Copy>("unpackShadow") {
+    dependsOn(tasks.shadowJar)
+    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
+    into(layout.buildDirectory.dir("unpacked-shadow"))
+}
+tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))
