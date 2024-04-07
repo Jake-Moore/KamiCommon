@@ -1,8 +1,8 @@
 package com.kamikazejam.kamicommon.util;
 
+import com.kamikazejam.kamicommon.json.JSONObject;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.Color;
