@@ -1,7 +1,6 @@
 plugins {
     // Unique plugins for this module
     id("io.papermc.paperweight.userdev")                                 // 1. add the Paperweight plugin
-    id("maven-publish")
 }
 
 dependencies {
@@ -23,29 +22,5 @@ tasks {                                             // 4. configure tasks (like 
     }
     reobfJar {
         outputJar.set(layout.buildDirectory.file("libs/${project.name}-${project.version}.jar"))
-    }
-}
-
-
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            groupId = rootProject.group.toString()
-            artifactId = project.name
-            version = rootProject.version.toString()
-            from(components["java"])
-            artifact(tasks.reobfJar.get().outputJar)
-        }
-    }
-
-    repositories {
-        maven {
-            url = uri("https://nexus.luxiouslabs.net/public")
-            credentials {
-                username = System.getenv("LUXIOUS_NEXUS_USER")
-                password = System.getenv("LUXIOUS_NEXUS_PASS")
-            }
-        }
     }
 }
