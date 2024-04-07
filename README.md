@@ -144,6 +144,7 @@ public class Config extends KamiConfig {
   - org.apache.httpcomponents.client5 `(spigot-jar)` [~861 KB]
   - com.google.code.gson `(spigot-utils)` [~284 KB]
   - com.zaxxer.hikari `(generic-jar)` [~162 KB]
+  - com.mysql:mysql-connector-j `(generic-jar)` [~2.5 MB]
   - [NBT-API](https://github.com/tr7zw/Item-NBT-API) `(spigot-utils)` [~158 KB]
   - [XSeries](https://github.com/CryptoMorin/XSeries) `(spigot-nms)` [~405 KB]
   - ❗ Note: review [STRUCTURE.md](./STRUCTURE.md) for the module hierarchy
