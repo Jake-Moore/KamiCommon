@@ -12,8 +12,8 @@
     - Which contains [spigot-nms](#spigot-nms)
   - [generic-jar](#generic-jar)
 - 📄 Shaded Utilities
-  - org.json:json, com.google.code.gson:gson, org.apache.commons:commons-text, [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API) [via [spigot-utils](#spigot-utils)]
-  - org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
+  - com.google.code.gson:gson, org.apache.commons:commons-text, [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API) [via [spigot-utils](#spigot-utils)]
+  - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
   - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries) [via [spigot-nms](#spigot-nms)]
   - com.zaxxer:HikariCP, redis.clients:jedis [via [generic-jar](#generic-jar)]
 - (⭐) Should **NOT** be shaded ❌
@@ -32,7 +32,7 @@
   - org.apache.commons:commons-text
   - [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API)
   - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries) [via [spigot-nms](#spigot-nms)]
-  - org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
+  - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
 - (⭐) **CAN** be shaded
   - classes in this module may use the spigot-api, but do not require a plugin to back them
 
@@ -41,7 +41,7 @@
 - Wrapper classes (available in [spigot-jar](#spigot-jar)) should be used instead!
 - 📄 Shaded Utilities
   - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries)
-  - org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
+  - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
 - ❌ Not Available
     - This module is not available on its own
     - The quickest way to use this module is via [spigot-utils](#spigot-utils)
@@ -56,7 +56,7 @@
 - 📄 Shaded Utilities
   - org.json:json
   - com.google.code.gson:gson
-  - org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
+  - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
   - com.zaxxer:HikariCP, redis.clients:jedis [via [generic-jar](#generic-jar)]
 - (⭐) **SHOULD** be shaded ✅
   - jar does not function as a spigot plugin
@@ -67,6 +67,7 @@
 - This is a **smaller** and **less feature complete** version of the full [standalone-jar](#standalone-jar)
 - 📄 Shaded Utilities
   - org.yaml:snakeyaml
+  - org.json:json
 - (⭐) **CAN** be shaded
   - Developers should only use this if they are NOT using [standalone-jar](#standalone-jar)
   - These classes do not require any backing, they are safe to shade

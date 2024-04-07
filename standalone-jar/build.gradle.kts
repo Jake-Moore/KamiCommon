@@ -12,8 +12,7 @@ dependencies {
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
 
-    // Both needed for jedis in :generic-jar to work properly
-    shadow("org.json:json:20240303")
+    // org.json (standalone-utils) and google gson needed for for jedis (in :generic-jar) to work properly
     shadow("com.google.code.gson:gson:2.10.1")
 
     // Lombok
