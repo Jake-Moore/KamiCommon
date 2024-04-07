@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# Check if a command is provided
-if [ $# -eq 0 ]; then
-    echo "Usage: $0 <command>"
-    exit 1
+# Check if GITHUB_REPOSITORY is present to change the root command
+root_command="./gradlew"
+if [ -n "$GITHUB_REPOSITORY" ]; then
+  root_command="gradle"
 fi
-root_command="$1"
 
 echo "$root_command clean"
 "$root_command" clean || exit 1
