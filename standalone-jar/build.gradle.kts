@@ -11,6 +11,10 @@ dependencies {
     shadow(files(project(":standalone-utils")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
+
+    // Both needed for jedis in :generic-jar to work properly
+    shadow("org.json:json:20240303")
+    shadow("com.google.code.gson:gson:2.10.1")
 }
 tasks {
     publish.get().dependsOn(build)
@@ -19,8 +23,8 @@ tasks {
         archiveClassifier.set("")
         configurations = listOf(project.configurations.shadow.get())
 
-        from(project(":generic-jar").tasks.shadowJar.get().outputs)
-        from(project(":standalone-utils").tasks.shadowJar.get().outputs)
+        relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
+        relocate("org.json", "com.kamikazejam.kamicommon.json")
     }
     test {
         useJUnitPlatform()
