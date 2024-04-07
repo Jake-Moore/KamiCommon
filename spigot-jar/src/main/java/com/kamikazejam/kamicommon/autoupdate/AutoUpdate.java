@@ -8,6 +8,7 @@ import com.kamikazejam.kamicommon.gson.JsonObject;
 import com.kamikazejam.kamicommon.gson.JsonParser;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.data.Pair;
+import com.kamikazejam.kamicommon.util.data.SimpleStringCoder;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -27,7 +28,6 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Base64;
 
 //TODO remove any old .off files when it starts up
 /**
@@ -44,13 +44,13 @@ public class AutoUpdate implements Listener {
     //Access token of the KamiUpdates machine user (second account)
     //It can only see the empty repository for AutoUpdate, only seeing releases I put there
     //This is "encrypted" only to stop GitHub from automatically revoking it, I realize it's not anymore "secure"
-    private static final String tokenEnc = "~lo]7<qZ4=[Z^VoQLRZVJN[ZSp[R}R\\g[RoUoF7ZJZ5YtJqg[FLgHhn^ztIVJp6go=6RItKhNJZiOR6\\WJ[XMV4W}Y\\]m^HW{oIYPlpU~IYQ|<JhlF7\\mZLe4p6^";
+    private static final String tokenEnc = "6N5f9=4g7M7WURp[]J5QPNLQIRHXVpJRU=oV|{YRvFLVl9Yg4N[[|M~Y{JIirRnf8UqZ4UZYsZY^JF7\\9pY]|VISMRJVI|Ih{oIYPlpU~IYQ|<JhlF7\\mZLe4p6^";
 
     private static boolean debug = false;
     private static AutoUpdateListeners listeners = null;
 
     private static String getToken() {
-        return new SimpleStringCoder().CaesarCipherDecrypt(tokenEnc);
+        return SimpleStringCoder.CaesarCipherDecrypt(tokenEnc);
     }
 
     public static void update(JavaPlugin plugin) {
@@ -269,35 +269,6 @@ public class AutoUpdate implements Listener {
         if (hasBeenUpdated()) {
             // TODO this needs to use the correct plugin name
             player.sendMessage(StringUtil.t("&c&lThere is a new update for '" + KamiCommon.get().getName() + "'! This update will automatically load on the next restart."));
-        }
-    }
-
-
-
-    static class SimpleStringCoder {
-        public String caesarCipherEncrypt(String plain) {
-            String b64encoded = Base64.getEncoder().encodeToString(plain.getBytes());
-
-            // Reverse the string
-            String reverse = new StringBuffer(b64encoded).reverse().toString();
-
-            StringBuilder tmp = new StringBuilder();
-            final int OFFSET = 4;
-            for (int i = 0; i < reverse.length(); i++) {
-                tmp.append((char)(reverse.charAt(i) + OFFSET));
-            }
-            return tmp.toString();
-        }
-
-        public String CaesarCipherDecrypt(String secret) {
-            StringBuilder tmp = new StringBuilder();
-            final int OFFSET = 4;
-            for (int i = 0; i < secret.length(); i++) {
-                tmp.append((char)(secret.charAt(i) - OFFSET));
-            }
-
-            String reversed = new StringBuffer(tmp.toString()).reverse().toString();
-            return new String(Base64.getDecoder().decode(reversed));
         }
     }
 
