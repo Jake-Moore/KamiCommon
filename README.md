@@ -7,20 +7,20 @@
 
 # KamiCommon
 
-- A common library for my (KamikazeJAM) plugins.
-- This library aims to support all spigot versions (since 1.8.x), contact me if anything does not.
--  Contact Info (Discord): KamikazeJAM (kamikazejam)
-
+- A common library originally intended for Spigot plugin development, expanded for standalone use too.
+- The spigot portions of this library aim to support all versions (since 1.8.x), contact me if anything does not.
+  - Contact Info (Discord Username): `kamikazejam`
 
 ## Using the Common
-Before you can use KamiCommon, you have to import it into your project.  
-If you are developing an application outside of spigot, you can shade the jar using maven-shade-plugin and by removing the provided scope from the dependency.
+- Before you can use KamiCommon, you have to import it into your project as a dependency.  
+- If you are developing an application outside of spigot (what I call 'standalone' here), you can use the `maven-shade-plugin` and the `compile` scope for the dependency.
 
 ### Plugin YML!!!
-Before you continue, if you're working on a spigot plugin make sure to add `KamiCommon` to your plugin.yml in the `depend:` list
+Before you continue, if you're working on a spigot plugin (and not shading) make sure to add `KamiCommon` to your plugin.yml in the `depend:` list
 
-### Import with Maven
-Add the following Repository to your pom.xml
+### Repository Information
+Add the following Repository to your build file.
+#### Maven [pom.xml]:
 ```xml
 <repository>
   <id>luxious-public</id>
@@ -28,35 +28,53 @@ Add the following Repository to your pom.xml
   <url>https://nexus.luxiouslabs.net/public</url>
 </repository>
 ```
-Then add the following dependency  
-Replace `{VERSION}` with the version listed at the top of this page.
-```xml
-<dependency>
-  <groupId>com.kamikazejam</groupId>
-  <artifactId>kamicommon</artifactId>
-  <version>{VERSION}</version>
-  <scope>provided</scope>
-</dependency>
-```
-&nbsp;
-### Import with Gradle
+#### Gradle (kotlin) [build.gradle.kts]:
 ```kotlin
 maven {
     name = "luxiousPublic"
     url = uri("https://nexus.luxiouslabs.net/public")
 }
 ```
-Then add the following dependency  
-Replace `{VERSION}` with the version listed at the top of this page.
+#### Gradle (groovy) [build.gradle]:
+```groovy
+maven {
+  name "luxiousPublic"
+  url "https://nexus.luxiouslabs.net/public"
+}
+```
+
+### Dependency Information
+- **SEE [STRUCTURE.md](./STRUCTURE.md) FOR GRADLE MODULE BREAKDOWN**
+
+Add the following dependency to your build file.  
+Replace `{VERSION}` with the version listed at the top of this page.  
+Replace `{MODULE}` with the module you want to use (spigot-jar, standalone-jar, etc.)
+
+#### Maven Dependency [pom.xml]
+```xml
+<dependency>
+  <groupId>com.kamikazejam.kamicommon</groupId>
+  <artifactId>{MODULE}</artifactId>
+  <version>{VERSION}</version>
+  <scope>provided</scope> <!-- set to `compile` if shading a util or standalone jar -->
+</dependency>
+```
+
+#### Gradle Dependency (groovy) [build.gradle]
+```groovy
+implementation "com.kamikazejam.kamicommon:{MODULE}:{VERSION}"
+```
+
+#### Gradle Dependency (kotlin) [build.gradle.kts]
 ```kotlin
-compileOnly 'com.kamikazejam:kamicommon:{VERSION}'
+implementation("com.kamikazejam.kamicommon:{MODULE}:{VERSION}")
 ```
 
 &nbsp;
 &nbsp;
 
 ## Features
-- Easier inventory management with click callbacks
+- Easier inventory management with click callbacks `(spigot-jar)`
 ``` java
 String title = "test";
 int rows = 3, slot = 8;
@@ -66,7 +84,7 @@ menu.addMenuClick(itemstack, (plr, click) -> {
 }, slot);
 menu.openMenu(player);
 ```
-- ItemBuilders for easier item manipulation
+- ItemBuilders for easier item manipulation `(spigot-utils)`
 ``` java
 XMaterial material = XMaterial.CHEST;
 short damage = (short) 0;
@@ -84,15 +102,16 @@ builder.toItemStack();
 //   which adds support for namespacedids as the type
 builder = new IAItemBuilder("namespace:id");
 ```
-- **Auto Update** for plugins
+- **Auto Update** for plugins `(spigot-jar)`
    - This feature requires that each plugin repository using auto update have a configured GitHub action to publish a release for each version
    - Probably best to contact me if you're interested in using this feature with your own plugin
-- **Commands Library** for subcommand management (forked from the MassiveCore commands system)
+- **Commands Library** for subcommand management (forked from the MassiveCore commands system) `(spigot-utils)`
   - WIP Documentation (see MassiveCore development guide for now)
-- **Config Management**
+  - Remember to call `SpigotUtilProvider.setPlugin`
+- **Config Management** `(spigot-utils)` & `(standalone-utils)`
   - Java Classes (They work on their own, and you can extend if additional features are needed.)
-    - KamiConfig (for spigot plugin configs)
-    - StandaloneConfig (for yaml configs outside of spigot)
+    - KamiConfig `(spigot-utils)`
+    - StandaloneConfig `(standalone-utils)`
   - Features
     - Support to save and get ItemStacks (uses spigot config serialization)
     - Fully integrated comments support (loads comments from defaults file, and preserves unique user-generated comments)
@@ -119,19 +138,21 @@ public class Config extends KamiConfig {
 }
 ```
 - **Utility Classes (shaded & relocated)**
-  - org.yaml.snakeyaml (standalone-utils) [~335 KB]
-  - org.json (spigot-utils) [~78 KB]
-  - redis.clients.jedis
-  - org.apache.httpcomponents.client5 (spigot-jar) [~861 KB]
-  - com.google.code.gson (spigot-utils) [~284 KB]
-  - com.zaxxer.hikari (generic-jar) [~162 KB]
-  - [NBT-API](https://github.com/tr7zw/Item-NBT-API) (spigot-utils) [~158 KB]
-  - [XSeries](https://github.com/CryptoMorin/XSeries) (spigot-nms) [~405 KB]
+  - org.yaml.snakeyaml `(standalone-utils)` [~335 KB]
+  - org.json `(spigot-utils)` [~78 KB]
+  - redis.clients.jedis `(generic-jar)` [< 888 KB]
+  - org.apache.httpcomponents.client5 `(spigot-jar)` [~861 KB]
+  - com.google.code.gson `(spigot-utils)` [~284 KB]
+  - com.zaxxer.hikari `(generic-jar)` [~162 KB]
+  - [NBT-API](https://github.com/tr7zw/Item-NBT-API) `(spigot-utils)` [~158 KB]
+  - [XSeries](https://github.com/CryptoMorin/XSeries) `(spigot-nms)` [~405 KB]
+  - ❗ Note: review [STRUCTURE.md](./STRUCTURE.md) for the module hierarchy
+    - A lot of these libraries are also available in other modules (via shading)
 - **Utility Classes (other)**
-  - DiscordWebhook (for sending simple webhooks)
-  - StringUtil (spigot-independant translation from & to §, and other useful string / string-list methods)
-  - StringUtilP (spigot and PlaceholderAPI-dependant expansion of StringUtil. Includes .p(...) methods for parsing PAPI placeholders)
-- **Version Command**
+  - DiscordWebhook (for sending simple webhooks) `(standalone-jar)`
+  - StringUtil (spigot-independant translation from & to §, and other useful string / string-list methods) `(standalone-utils)`
+  - StringUtilP (spigot and PlaceholderAPI-dependant expansion of StringUtil. Includes .p(...) methods for parsing PAPI placeholders) `(spigot-utils)`
+- **Version Command** `(spigot-jar)`
    - Java Class: `KamiCommandVersion` 
      - Written using internal commands structure (similar to MassiveCore commands)
    - When you write your core plugin command, you will use `addChild(new KamiCommandVersion())` in its constructor to add this subcommand.
