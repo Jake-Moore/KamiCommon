@@ -51,6 +51,7 @@ jobs:
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
       run: |
         chmod +x ./publish.sh
+        chmod +x ./refresh.sh
         ./publish.sh gradle
 
     - name: Prepare Spigot Jar
