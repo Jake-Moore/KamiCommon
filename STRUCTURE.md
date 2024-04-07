@@ -9,6 +9,11 @@
     - Which contains [standalone-utils](#standalone-utils)
     - Which contains [spigot-nms](#spigot-nms)
   - [generic-jar](#generic-jar)
+- 📄 Shaded Utilities
+  - org.json:json, com.google.code.gson:gson, org.apache.commons:commons-text, [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API) [via [spigot-utils](#spigot-utils)]
+  - org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
+  - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries) [via [spigot-nms](#spigot-nms)]
+  - com.zaxxer:HikariCP, redis.clients:jedis [via [generic-jar](#generic-jar)]
 - (⭐) Should **NOT** be shaded ❌
   - <span style="text-decoration:underline;">should be added to the server as a plugin</span>
 
@@ -19,12 +24,22 @@
   - [standalone-utils](#standalone-utils)
 - Does not contain the shaded utilities the spigot-jar has
 - Meant for developers who want some of the small/frequently used classes, without loading all of the shaded utilities
+- 📄 Shaded Utilities
+  - org.json:json
+  - com.google.code.gson:gson
+  - org.apache.commons:commons-text
+  - [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API)
+  - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries) [via [spigot-nms](#spigot-nms)]
+  - org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
 - (⭐) **CAN** be shaded
   - classes in this module may use the spigot-api, but do not require a plugin to back them
 
 ### [spigot-nms](./spigot-nms)
 - A parent module responsible for nms utilities & implementations.
 - Wrapper classes (available in [spigot-jar](#spigot-jar)) should be used instead!
+- 📄 Shaded Utilities
+  - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries)
+  - org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
 - ❌ Not Available
     - This module is not available on its own
     - The quickest way to use this module is via [spigot-utils](#spigot-utils)
@@ -36,6 +51,11 @@
   - [standalone-utils](#standalone-utils)
   - [generic-jar](#generic-jar)
 - Meant for developers who want to use the config system or other utilities in a non-spigot environment
+- 📄 Shaded Utilities
+  - org.json:json
+  - com.google.code.gson:gson
+  - org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
+  - com.zaxxer:HikariCP, redis.clients:jedis [via [generic-jar](#generic-jar)]
 - (⭐) **SHOULD** be shaded ✅
   - jar does not function as a spigot plugin
   - meant to be integrated (shaded) into your project
@@ -43,6 +63,8 @@
 ### [standalone-utils](./standalone-utils)
 - A jar file containing standalone utilities that do not require shaded dependencies
 - This is a **smaller** and **less feature complete** version of the full [standalone-jar](#standalone-jar)
+- 📄 Shaded Utilities
+  - org.yaml:snakeyaml
 - (⭐) **CAN** be shaded
   - Developers should only use this if they are NOT using [standalone-jar](#standalone-jar)
   - These classes do not require any backing, they are safe to shade
@@ -51,6 +73,9 @@
 ### [generic-jar](./generic-jar)
 - A jar file containing generic utility classes (with their shaded dependencies)
 - Placed in its own module so it can be included in both other -jar modules
+- 📄 Shaded Utilities
+  - com.zaxxer:HikariCP
+  - redis.clients:jedis
 - (⭐) **CAN** be shaded
   - Also present in either [spigot-jar](#spigot-jar) or [standalone-jar](#standalone-jar)
 
