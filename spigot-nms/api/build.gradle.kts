@@ -11,7 +11,7 @@ dependencies {
     implementation(files(project(":standalone-utils")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    implementation("com.github.cryptomorin:XSeries:9.9.0")
+    implementation("com.github.cryptomorin:XSeries:9.10.0")
 
     compileOnly(project.property("lowestSpigotDep") as String)
 
