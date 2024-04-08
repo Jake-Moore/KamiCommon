@@ -15,8 +15,8 @@ public class StringUtilBukkit {
                 Class.forName("org.bukkit.Bukkit");
 
                 // IFF we have bukkit access, then we can use the NmsManager to check the version
-                String nms = getNMSVersion();
-                supportsHexCodes = NmsVersionParser.getFormattedNmsDouble(nms) >= 1160;
+                String mcVer = getMCVersion();
+                supportsHexCodes = NmsVersionParser.getFormattedNmsDouble(mcVer) >= 1160;
 
             } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
                 supportsHexCodes = false;
@@ -26,19 +26,20 @@ public class StringUtilBukkit {
     }
 
 
-    private static String nmsVersion = null;
+    private static String mcVersion = null;
     /**
-     * Normalizes the package name to the format used by the NMS classes.
-     * @return The nms version, Ex: "v1_8_R3" or "v1_19_R2"
+     * Returns the MC version of the server (i.e. 1.8.8 or 1.20.4) - via reflection
+     * @return The MC version, Ex: "1.8.8" or "1.20.4"
      */
-    private static String getNMSVersion() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        if (nmsVersion != null) { return nmsVersion; }
+    private static String getMCVersion() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        if (mcVersion != null) { return mcVersion; }
 
         Class<?> serverClass = Class.forName("org.bukkit.Bukkit");
         Method getServerMethod = serverClass.getDeclaredMethod("getServer");
         Object serverObject = getServerMethod.invoke(null);
-        String v = serverObject.getClass().getPackage().getName();
-        nmsVersion = NmsVersionParser.normalizePackage(v.substring(v.lastIndexOf('.') + 1));
-        return nmsVersion;
+        Method getBukkitVersionMethod = serverObject.getClass().getDeclaredMethod("getBukkitVersion");
+        String bukkitVer = (String) getBukkitVersionMethod.invoke(serverObject);
+        mcVersion = bukkitVer.split("-")[0]; // i.e. 1.20.4 or 1.8.8
+        return mcVersion;
     }
 }
