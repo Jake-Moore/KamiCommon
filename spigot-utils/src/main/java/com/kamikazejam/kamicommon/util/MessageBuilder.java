@@ -225,10 +225,7 @@ public class MessageBuilder {
      * @return The MessageBuilder instance (for chaining)
      */
     public MessageBuilder send(@Nonnull Player player) {
-        for (String s : lines) {
-            player.sendMessage(StringUtilP.p(player, s));
-        }
-        return this;
+        return this.send((CommandSender) player);
     }
 
     /**
