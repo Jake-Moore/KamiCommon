@@ -28,6 +28,7 @@ import java.util.List;
 public class MessageBuilder {
     private final List<String> lines = new ArrayList<>();
     @Setter private boolean translateColor = true;
+    @Setter private boolean translatePAPI = true;
 
     public static MessageBuilder of(String message) {
         return new MessageBuilder(message);
@@ -190,11 +191,9 @@ public class MessageBuilder {
         if (sender instanceof Player) { send((Player) sender); return this; }
 
         for (String s : lines) {
-            if (translateColor) {
-                sender.sendMessage(StringUtil.t(s));
-            }else {
-                sender.sendMessage(s);
-            }
+            s = (translatePAPI) ? StringUtilP.justP(null, s) : s;
+            s = (translateColor) ? StringUtil.t(s) : s;
+            sender.sendMessage(s);
         }
         return this;
     }
@@ -225,7 +224,12 @@ public class MessageBuilder {
      * @return The MessageBuilder instance (for chaining)
      */
     public MessageBuilder send(@Nonnull Player player) {
-        return this.send((CommandSender) player);
+        for (String s : lines) {
+            s = (translatePAPI) ? StringUtilP.justP(player, s) : s;
+            s = (translateColor) ? StringUtil.t(s) : s;
+            player.sendMessage(s);
+        }
+        return this;
     }
 
     /**
