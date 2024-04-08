@@ -29,4 +29,7 @@ public class StringUtilP extends StringUtil {
         return strings;
     }
 
+    public static String justP(@Nullable OfflinePlayer player, String s) {
+        return PlaceholderAPI.setPlaceholders(player, s);
+    }
 }
