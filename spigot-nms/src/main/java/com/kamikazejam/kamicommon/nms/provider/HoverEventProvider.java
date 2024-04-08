@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HoverEventProvider extends Provider<AbstractHoverEvent> {
     @Override
-    protected @NotNull AbstractHoverEvent provide(double nmsDouble, String ignored) {
+    protected @NotNull AbstractHoverEvent provide(double ver) {
         // up to 1.16.1 uses BaseComponent[] as the second parameter of HoverEvent
-        if (nmsDouble <= 1161) {
+        if (ver <= 1161) {
             return new HoverEvent_1_8_R1();
         }else {
             return new HoverEvent_1_16_R2();

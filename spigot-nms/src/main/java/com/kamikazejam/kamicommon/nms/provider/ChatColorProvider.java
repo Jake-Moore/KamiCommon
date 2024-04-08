@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ChatColorProvider extends Provider<IChatColorNMS> {
     @Override
-    protected @NotNull IChatColorNMS provide(double formattedNmsDouble, String ignored) {
+    protected @NotNull IChatColorNMS provide(double ver) {
         // If we are 1.16.2+ we can use the getColor() method introduced when hex codes were added
-        if (formattedNmsDouble >= 1162) {
+        if (ver >= 1162) {
             return new ChatColor1_16_R2();
         }
         // Otherwise we have to approximate
