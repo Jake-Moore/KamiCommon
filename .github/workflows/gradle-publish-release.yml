@@ -39,7 +39,7 @@ jobs:
       id: extract_version
       run: |
         version=$(gradle properties -q | grep "^version:" | awk '{print $2}')
-        echo "::set-output name=version::$version"
+        echo "version=$version" >> $GITHUB_OUTPUT
 
     - name: Display Version
       run: echo "Version is ${{ steps.extract_version.outputs.version }}"
