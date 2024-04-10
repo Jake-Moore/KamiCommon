@@ -311,6 +311,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
      * @return If currentVer satisfies minVer
      */
     public boolean compareVersions(String minVer, String currentVer) {
+        // Cut off any suffixes (e.g. "-SNAPSHOT")
+        minVer = minVer.split("-")[0];
+        currentVer = currentVer.split("-")[0];
+
         // Use major, minor, and patch version logic to compare
         String[] minParts = minVer.split("\\.");
         String[] curParts = currentVer.split("\\."); // May be of different length
