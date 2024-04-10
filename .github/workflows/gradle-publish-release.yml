@@ -63,7 +63,7 @@ jobs:
     #           Create a Github Release
     #--------------------------------------------------------------------------------------------
 
-    - name: Create Release (Only Spigot Jar)
+    - name: Create Release (Spigot Jar + Module Jars)
       if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
       uses: ncipollo/release-action@v1
       with:
