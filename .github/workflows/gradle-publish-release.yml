@@ -67,7 +67,7 @@ jobs:
       if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "spigot-jar/build/libs/*.jar"
+        artifacts: "spigot-jar/build/libs/*.jar, spigot-utils/build/libs/*.jar, standalone-jar/build/libs/*.jar, standalone-utils/build/libs/*.jar, generic-jar/build/libs/*.jar"
         allowUpdates: true
         removeArtifacts: true
         omitBodyDuringUpdate: true
