@@ -9,7 +9,7 @@ dependencies {
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
     shadow("com.google.code.gson:gson:2.10.1")
-    shadow("org.apache.commons:commons-text:1.11.0") // primarily for LevenshteinDistance
+    shadow("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
     shadow("de.tr7zw:item-nbt-api:2.12.3")
 
     compileOnly(project.property("lowestSpigotDep") as String)
