@@ -6,7 +6,7 @@ var VERSION = "3.0.0.1"
 plugins { // needed for the subprojects section to work
     id("java")
     id("java-library")
-    id("io.papermc.paperweight.userdev") version "1.5.13" apply false
+    id("io.papermc.paperweight.userdev") version "1.5.15" apply false
     id("com.github.johnrengelman.shadow") version "8.1.1" apply false
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.8"
 }
