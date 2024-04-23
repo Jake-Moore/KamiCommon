@@ -40,7 +40,7 @@ ext {
     // reduced is just a re-zipped version of the original, without some conflicting libraries
     //  gson, org.json, com.yaml.snakeyaml
     set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED")    // luxious nexus (public)
-    set("latestSpigotDep", "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")          // spigotmc nexus
+    set("latestSpigotDep", "org.spigotmc:spigot-api:1.20.5-R0.1-SNAPSHOT")          // spigotmc nexus
 }
 
 allprojects {
