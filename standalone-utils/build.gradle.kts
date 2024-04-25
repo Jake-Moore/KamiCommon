@@ -4,10 +4,13 @@ plugins {
     id("maven-publish")
 }
 
+var snakeYaml = "org.yaml:snakeyaml:2.2"
+var json = "org.json:json:20240303"
 dependencies {
     // Unique dependencies for this module
-    shadow("org.yaml:snakeyaml:2.2")
-    shadow("org.json:json:20240303")
+    shadow(snakeYaml); testImplementation(snakeYaml)
+    shadow(json); testImplementation(json)
+    testImplementation("org.jetbrains:annotations:24.1.0")
 
     // Lombok
     compileOnly(project.property("lombokDep") as String)

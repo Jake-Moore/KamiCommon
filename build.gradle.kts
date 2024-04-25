@@ -1,7 +1,7 @@
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
 
-var VERSION = "3.0.0.1"
+var VERSION = "3.0.0.2"
 
 plugins { // needed for the subprojects section to work
     id("java")
@@ -12,18 +12,18 @@ plugins { // needed for the subprojects section to work
 }
 
 tasks.register("refresh") {
-    doLast {
-        val process = ProcessBuilder("./refresh.sh").start()
-        val inputStream = process.inputStream
-        inputStream.bufferedReader().useLines { lines ->
-            lines.forEach { println(it) }
-        }
-
-        process.waitFor()
-        if (process.exitValue() != 0) {
-            throw IllegalStateException("Failed to refresh: " + process.exitValue())
-        }
-    }
+//    doLast {
+//        val process = ProcessBuilder("./refresh.sh").start()
+//        val inputStream = process.inputStream
+//        inputStream.bufferedReader().useLines { lines ->
+//            lines.forEach { println(it) }
+//        }
+//
+//        process.waitFor()
+//        if (process.exitValue() != 0) {
+//            throw IllegalStateException("Failed to refresh: " + process.exitValue())
+//        }
+//    }
 }
 tasks.getByName("clean").finalizedBy(tasks.getByName("refresh"))
 

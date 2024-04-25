@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Check if GITHUB_REPOSITORY is present to change the root command
 root_command="./gradlew"
 if [ -n "$GITHUB_REPOSITORY" ]; then
