@@ -3,7 +3,7 @@ package com.kamikazejam.kamicommon;
 import com.google.gson.JsonObject;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
-import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
+import com.kamikazejam.kamicommon.configuration.config.KamiConfigExt;
 import com.kamikazejam.kamicommon.modules.Module;
 import com.kamikazejam.kamicommon.modules.ModuleManager;
 import com.kamikazejam.kamicommon.modules.integration.CitizensIntegration;
@@ -41,7 +41,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     private String logPrefixColored = null;
     private String logPrefixPlain = null;
     @Getter ModuleManager moduleManager;
-    @Getter KamiConfig modulesConfig;
+    @Getter KamiConfigExt modulesConfig;
 
 
     // -------------------------------------------- //
@@ -76,7 +76,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         log("=== ENABLE START ===");
 
         // Create the Modules Config
-        this.modulesConfig = new KamiConfig(this, new File(getDataFolder(), "modules.yml"), false);
+        this.modulesConfig = new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"), false);
 
         // Create the Module Manager
         this.moduleManager = new ModuleManager(this);

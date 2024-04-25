@@ -1,7 +1,8 @@
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
+import java.util.*
 
-var VERSION = "3.0.0.2"
+var VERSION = "3.0.0.3"
 
 plugins { // needed for the subprojects section to work
     id("java")
@@ -14,7 +15,7 @@ plugins { // needed for the subprojects section to work
 tasks.register("refresh") {
     doLast {
         // Skip on windows until I fix this
-        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+        if (System.getProperty("os.name").lowercase(Locale.getDefault()).contains("windows")) {
             println("Skipping refresh on Windows OS.")
             return@doLast
         }
