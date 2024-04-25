@@ -12,18 +12,24 @@ plugins { // needed for the subprojects section to work
 }
 
 tasks.register("refresh") {
-//    doLast {
-//        val process = ProcessBuilder("./refresh.sh").start()
-//        val inputStream = process.inputStream
-//        inputStream.bufferedReader().useLines { lines ->
-//            lines.forEach { println(it) }
-//        }
-//
-//        process.waitFor()
-//        if (process.exitValue() != 0) {
-//            throw IllegalStateException("Failed to refresh: " + process.exitValue())
-//        }
-//    }
+    doLast {
+        // Skip on windows until I fix this
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            println("Skipping refresh on Windows OS.")
+            return@doLast
+        }
+
+        val process = ProcessBuilder("./refresh.sh").start()
+        val inputStream = process.inputStream
+        inputStream.bufferedReader().useLines { lines ->
+            lines.forEach { println(it) }
+        }
+
+        process.waitFor()
+        if (process.exitValue() != 0) {
+            throw IllegalStateException("Failed to refresh: " + process.exitValue())
+        }
+    }
 }
 tasks.getByName("clean").finalizedBy(tasks.getByName("refresh"))
 
