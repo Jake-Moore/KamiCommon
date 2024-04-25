@@ -4,6 +4,7 @@ import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
+import com.kamikazejam.kamicommon.configuration.config.KamiConfigExt;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import lombok.Getter;
@@ -271,7 +272,7 @@ public abstract class Module {
     }
 
     public final @NotNull String getPrefix() {
-        KamiConfig c = getPlugin().getModulesConfig();
+        KamiConfigExt c = getPlugin().getModulesConfig();
         String prefix = c.getString("modules." + getName() + ".modulePrefix", null);
         if (prefix != null) { return prefix; }
 

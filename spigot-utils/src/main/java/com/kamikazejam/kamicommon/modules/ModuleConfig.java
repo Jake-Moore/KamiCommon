@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.modules;
 
 import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
+import com.kamikazejam.kamicommon.configuration.config.KamiConfigExt;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,7 +11,7 @@ import java.io.File;
 import java.io.InputStream;
 
 @SuppressWarnings("unused")
-public class ModuleConfig extends KamiConfig {
+public class ModuleConfig extends KamiConfigExt {
     private final Module module;
 
     // Filename is in form: "moduleYmlPath + <module>.yml"
@@ -35,7 +36,7 @@ public class ModuleConfig extends KamiConfig {
 
     public void loadDefaultConfig() {
         if (module != null) {
-            KamiConfig c = module.getPlugin().getModulesConfig();
+            KamiConfigExt c = module.getPlugin().getModulesConfig();
             String name = module.getName().replace(" ", "_");
             c.addDefault("modules." + name + ".enabled", true);
             c.addDefault("modules." + name + ".modulePrefix", module.defaultPrefix());
