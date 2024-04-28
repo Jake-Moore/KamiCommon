@@ -35,7 +35,7 @@ public class CmdNmsTest extends KamiCommand {
     public void perform() {
         Player player = (Player) sender;
         player.sendMessage(StringUtil.t("&7NMS Version: &f" + NmsVersion.getMCVersion() + " &7(&f" + NmsVersion.getFormattedNmsInteger() + "&7)"));
-        player.sendMessage(StringUtil.t("&WineSpigot?: &7" + NmsVersion.isWineSpigot()));
+        player.sendMessage(StringUtil.t("  &7WineSpigot?: &f" + NmsVersion.isWineSpigot()));
 
         // Chat Color Provider Test
         player.sendMessage(StringUtil.t("&7Testing ChatColorProvider..."));
@@ -83,6 +83,6 @@ public class CmdNmsTest extends KamiCommand {
         player.sendMessage(StringUtil.t("&7Testing EnchantIDProvider..."));
         player.sendMessage(StringUtil.t("    &7Success: " + NmsAPI.getNamespaced(Enchantment.DAMAGE_ALL)));
 
-        player.sendMessage(StringUtil.t("&aALl Tests Passed!"));
+        player.sendMessage(StringUtil.t("&aALL TESTS PASSED!"));
     }
 }
