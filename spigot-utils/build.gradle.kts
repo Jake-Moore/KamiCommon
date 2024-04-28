@@ -1,6 +1,6 @@
 plugins {
     // Unique plugins for this module
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
     id("maven-publish")
 }
 
@@ -40,10 +40,6 @@ tasks {
         relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
         relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
         relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")
-        // from(project(":spigot-nms").tasks.shadowJar.get().outputs)
-    }
-    test {
-        useJUnitPlatform()
     }
 }
 
@@ -66,6 +62,10 @@ publishing {
             }
         }
     }
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 // ONLY REQUIRED IF: you are using Solution 2 with the modified dependency

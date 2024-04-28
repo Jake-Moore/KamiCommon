@@ -1,5 +1,5 @@
 plugins {
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
 }
 
 dependencies {
@@ -31,6 +31,7 @@ dependencies {
     shadow(project(":spigot-nms:v1_20_R1"))
     shadow(project(":spigot-nms:v1_20_R2"))
     shadow(project(":spigot-nms:v1_20_R3"))
+    shadow(project(":spigot-nms:v1_20_CB"))
 
     // Lombok
     compileOnly(project.property("lombokDep") as String)
@@ -69,8 +70,10 @@ tasks {
         from(project(":spigot-nms:v1_20_R3").tasks.getByName("reobfJar").outputs)
     }
 }
-java.sourceCompatibility = JavaVersion.VERSION_17
-java.targetCompatibility = JavaVersion.VERSION_17
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
 
 // ONLY REQUIRED IF: you are using Solution 2 with the modified dependency
 tasks.register<Copy>("unpackShadow") {

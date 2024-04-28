@@ -2,25 +2,27 @@ import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
 import java.util.*
 
-var VERSION = "3.0.0.3"
+@Suppress("PropertyName")
+var VERSION = "3.0.1.0"
 
 plugins { // needed for the subprojects section to work
     id("java")
     id("java-library")
-    id("io.papermc.paperweight.userdev") version "1.5.15" apply false
-    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
+    id("io.papermc.paperweight.userdev") version "1.6.2" apply false
+    id("io.github.goooler.shadow") version "8.1.7" apply false
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.8"
 }
 
 tasks.register("refresh") {
     doLast {
-        // Skip on windows until I fix this
+        val process: Process
         if (System.getProperty("os.name").lowercase(Locale.getDefault()).contains("windows")) {
-            println("Skipping refresh on Windows OS.")
-            return@doLast
+            // Use git bash's sh on Windows
+            process = ProcessBuilder("sh", "./refresh.sh").start()
+        }else {
+            process = ProcessBuilder("./refresh.sh").start()
         }
 
-        val process = ProcessBuilder("./refresh.sh").start()
         val inputStream = process.inputStream
         inputStream.bufferedReader().useLines { lines ->
             lines.forEach { println(it) }
@@ -47,7 +49,6 @@ ext {
     // reduced is just a re-zipped version of the original, without some conflicting libraries
     //  gson, org.json, com.yaml.snakeyaml
     set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED")    // luxious nexus (public)
-    set("latestSpigotDep", "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")          // spigotmc nexus
 }
 
 allprojects {
@@ -79,12 +80,6 @@ allprojects {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "java-library")
-
-    dependencies {
-        // junit
-        testImplementation(platform("org.junit:junit-bom:5.10.2"))
-        testImplementation("org.junit.jupiter:junit-jupiter")
-    }
 
     // Configure Javadoc generation
     tasks.withType<Javadoc> {

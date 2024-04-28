@@ -1,8 +1,7 @@
 package com.kamikazejam.kamicommon.nms;
 
 import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
-import com.kamikazejam.kamicommon.nms.abstraction.hoveritem.AbstractHoverEvent;
-import com.kamikazejam.kamicommon.nms.abstraction.hoveritem.AbstractItemText;
+import com.kamikazejam.kamicommon.nms.abstraction.itemtext.AbstractItemTextPre_1_17;
 import com.kamikazejam.kamicommon.nms.abstraction.teleport.AbstractTeleporter;
 import com.kamikazejam.kamicommon.nms.provider.*;
 import lombok.Getter;
@@ -21,8 +20,7 @@ public class NmsAPI {
     // ---------------------------------------------------------------------------------- //
     @Getter private static final ChatColorProvider chatColorProvider = new ChatColorProvider();
     @Getter private static final BlockUtilProvider blockUtilProvider = new BlockUtilProvider();
-    @Getter private static final HoverEventProvider hoverEventProvider = new HoverEventProvider();
-    @Getter private static final ItemTextProvider itemTextProvider = new ItemTextProvider();
+    @Getter private static final ItemTextProviderPre_1_17 itemTextProviderPre_1_17 = new ItemTextProviderPre_1_17();
     @Getter private static final TeleportProvider teleportProvider = new TeleportProvider();
     @Getter private static final MainHandProvider mainHandProvider = new MainHandProvider();
     @Getter private static final EnchantIDProvider enchantIDProvider = new EnchantIDProvider();
@@ -36,8 +34,7 @@ public class NmsAPI {
         return chatColorProvider.get().getColor(chatColor);
     }
     public static AbstractBlockUtil getBlockUtil() { return blockUtilProvider.get(); }
-    public static AbstractHoverEvent getHoverEvent() { return hoverEventProvider.get(); }
-    public static AbstractItemText getItemText() { return itemTextProvider.get(); }
+    public static AbstractItemTextPre_1_17 getItemText() { return itemTextProviderPre_1_17.get(); }
     public static AbstractTeleporter getTeleporter() { return teleportProvider.get(); }
     public static @Nullable ItemStack getItemInMainHand(Player player) {
         return mainHandProvider.get().getItemInMainHand(player);
