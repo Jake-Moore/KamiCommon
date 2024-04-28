@@ -16,7 +16,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.5") // TODO soft depend
 
     // Spigot Libs (soft-depend)
-    compileOnly("com.github.LoneDev6:api-itemsadder:3.6.2-beta-r3")
+    compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
     compileOnly("net.citizensnpcs:citizens-main:2.0.33-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
