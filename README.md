@@ -6,10 +6,10 @@
 **SEE [STRUCTURE.md](./STRUCTURE.md) FOR GRADLE MODULE BREAKDOWN**
 
 # KamiCommon
-
 - A common library originally intended for Spigot plugin development, expanded for standalone use too.
 - The spigot portions of this library aim to support all versions (since 1.8.x), contact me if anything does not.
   - **Note:** it is assumed that anyone running 1.17+ will be using **Paper**, not plain Spigot
+  - **Note:** Must use at least Java 11 (even for older versions like 1.8)
   - Contact Info (Discord Username): `kamikazejam`
 
 ## Using the Common

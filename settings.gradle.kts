@@ -53,3 +53,6 @@ include("spigot-nms:v1_20_R2")
 findProject(":spigot-nms:v1_20_R2")?.name = "v1_20_R2"
 include("spigot-nms:v1_20_R3")
 findProject(":spigot-nms:v1_20_R3")?.name = "v1_20_R3"
+include("spigot-nms:v1_20_CB")
+findProject(":spigot-nms:v1_20_CB")?.name = "v1_20_CB"
+

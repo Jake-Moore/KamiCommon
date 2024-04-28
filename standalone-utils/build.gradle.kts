@@ -1,6 +1,6 @@
 plugins {
     // Unique plugins for this module
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
     id("maven-publish")
 }
 
@@ -31,13 +31,10 @@ tasks {
         relocate("org.yaml.snakeyaml", "com.kamikazejam.kamicommon.snakeyaml")
         relocate("org.json", "com.kamikazejam.kamicommon.json")
     }
-    test {
-        useJUnitPlatform()
-    }
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_11
+java.targetCompatibility = JavaVersion.VERSION_11
 
 publishing {
     publications {

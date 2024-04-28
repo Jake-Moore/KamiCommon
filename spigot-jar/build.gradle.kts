@@ -1,6 +1,6 @@
 plugins {
     // Unique plugins for this module
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
     id("maven-publish")
 }
 
@@ -28,6 +28,7 @@ tasks {
     build.get().dependsOn(shadowJar)
     shadowJar {
         archiveClassifier.set("")
+        // archiveFileName.set("${rootProject.name}-${project.version}.jar") // messes up publishing
         configurations = listOf(project.configurations.shadow.get())
 
         dependencies {
@@ -39,8 +40,13 @@ tasks {
         from(project(":spigot-utils").tasks.shadowJar.get().outputs)
 
     }
-    test {
-        useJUnitPlatform()
+    jar {
+        // Starting with 1.20.5 Paper we can choose not to reobf the jar, leaving it mojang mapped
+        //  we forfeit spigot compatability, but it will natively work on paper
+        // The following manifest attribute notifies paper that this jar need not be deobfuscated
+        manifest {
+            attributes["paperweight-mappings-namespace"] = "mojang+yarn"
+        }
     }
 }
 

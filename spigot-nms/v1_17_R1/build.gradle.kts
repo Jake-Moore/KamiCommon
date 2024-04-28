@@ -10,6 +10,10 @@ dependencies {
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
     compileOnly(project(":spigot-nms:v1_13_R1"))
+    // Lombok
+    compileOnly(project.property("lombokDep") as String)
+    annotationProcessor(project.property("lombokDep") as String)
+    testAnnotationProcessor(project.property("lombokDep") as String)
 }
 
 java {                                              // 3. provision Java 17

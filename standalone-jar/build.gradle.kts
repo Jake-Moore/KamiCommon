@@ -1,6 +1,6 @@
 plugins {
     // Unique plugins for this module
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
     id("maven-publish")
 }
 
@@ -29,9 +29,6 @@ tasks {
 
         relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
         relocate("org.json", "com.kamikazejam.kamicommon.json")
-    }
-    test {
-        useJUnitPlatform()
     }
 }
 publishing {

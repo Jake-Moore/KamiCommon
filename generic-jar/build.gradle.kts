@@ -1,6 +1,6 @@
 plugins {
     // Unique plugins for this module
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
     id("maven-publish")
 }
 
@@ -39,12 +39,9 @@ tasks {
         relocate("org.apache.commons.pool2", "com.kamikazejam.kamicommon.commons.pool2")
         relocate("com.mysql", "com.kamikazejam.kamicommon.mysql")
     }
-    test {
-        useJUnitPlatform()
-    }
 }
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_11
+java.targetCompatibility = JavaVersion.VERSION_11
 
 publishing {
     publications {

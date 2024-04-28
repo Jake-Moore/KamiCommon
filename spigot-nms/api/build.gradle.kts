@@ -1,5 +1,5 @@
 plugins {
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
 }
 
 repositories {
@@ -32,8 +32,8 @@ tasks {
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
     }
 }
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_11
+java.targetCompatibility = JavaVersion.VERSION_11
 
 // ONLY REQUIRED IF: you are using Solution 2 with the modified dependency
 tasks.register<Copy>("unpackShadow") {
