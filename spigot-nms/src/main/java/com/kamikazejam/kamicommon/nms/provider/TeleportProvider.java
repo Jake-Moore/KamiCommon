@@ -63,6 +63,8 @@ public class TeleportProvider extends Provider<AbstractTeleporter> {
             return new Teleporter1_20_R2();
         }else if (ver <= f("1.20.4")) {
             return new Teleporter1_20_R3();
+        }else if (ver <= f("1.20.5")) {
+            return new Teleporter1_20_CB();
         }
         // TODO fix once cb relocation is removed
         throw new IllegalArgumentException("Version not supported (too new?): " + ver);
