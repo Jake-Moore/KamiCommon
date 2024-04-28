@@ -16,7 +16,7 @@ public class StringUtilBukkit {
 
                 // IFF we have bukkit access, then we can use the NmsManager to check the version
                 String mcVer = getMCVersion();
-                supportsHexCodes = NmsVersionParser.getFormattedNmsDouble(mcVer) >= 1160;
+                supportsHexCodes = NmsVersionParser.getFormattedNmsInteger(mcVer) >= 1160;
 
             } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
                 supportsHexCodes = false;

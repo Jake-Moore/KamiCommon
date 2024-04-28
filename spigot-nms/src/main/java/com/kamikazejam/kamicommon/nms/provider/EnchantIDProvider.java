@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class EnchantIDProvider extends Provider<AbstractEnchantID> {
     @Override
-    protected @NotNull AbstractEnchantID provide(double ver) {
+    protected @NotNull AbstractEnchantID provide(int ver) {
         // up to 1.16.1 uses BaseComponent[] as the second parameter of HoverEvent
         if (ver < 1130) {
             return new EnchantID_1_8_R1();

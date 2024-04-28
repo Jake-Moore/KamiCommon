@@ -109,7 +109,7 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 		if (rawNames != null) raws.addAll(rawNames);
 
 		// If after 1.13, we have access to namespaced keys
-		if (NmsVersion.getFormattedNmsDouble() >= 1130) {
+		if (NmsVersion.getFormattedNmsInteger() >= 1130) {
 			raws.add(enchantmentToKey(enchantment));
 		}
 

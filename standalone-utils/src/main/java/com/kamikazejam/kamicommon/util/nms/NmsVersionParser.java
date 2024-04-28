@@ -9,7 +9,7 @@ public class NmsVersionParser {
      * @param mcVer The MC version string (i.e. "1.20.4" or "1.8.8")
      * @return The nms version formatted as a double. 4 digits (major[1]minor[2]patch[1])
      */
-    public static double getFormattedNmsDouble(String mcVer) {
+    public static int getFormattedNmsInteger(String mcVer) {
         // Remove all . characters
         long num = mcVer.chars().filter(ch -> ch == '.').count();
 
@@ -31,6 +31,6 @@ public class NmsVersionParser {
             throw new IllegalArgumentException("Unknown version format: " + mcVer + " (expected a.b.c or a.b)");
         }
 
-        return Double.parseDouble(s);
+        return Integer.parseInt(s);
     }
 }

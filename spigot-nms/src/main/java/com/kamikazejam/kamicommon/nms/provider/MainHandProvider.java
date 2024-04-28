@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MainHandProvider extends Provider<AbstractMainHand> {
     @Override
-    protected @NotNull AbstractMainHand provide(double ver) {
+    protected @NotNull AbstractMainHand provide(int ver) {
         if (ver <= 1090) {
             return new MainHand_1_8_R1();
         }

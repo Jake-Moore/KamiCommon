@@ -1,17 +1,21 @@
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+
 plugins {
     // Unique plugins for this module
     id("io.github.goooler.shadow")
     id("maven-publish")
 }
 
-var httpclient = "org.apache.httpcomponents.client5:httpclient5:5.3.1"
+var httpclient = "org.apache.httpcomponents.client5:httpclient5:5.4-alpha2"
+var httpcore = "org.apache.httpcomponents.core5:httpcore5:5.3-alpha2"
 dependencies {
     // Unique dependencies for this module
-    implementation(httpclient)
-    implementation(files(project(":generic-jar")
+    shadow(httpclient); shadow(httpcore)
+    shadow(files(project(":generic-jar")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    implementation(files(project(":spigot-utils")
+    shadow(files(project(":spigot-utils")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
 
@@ -31,10 +35,8 @@ tasks {
         // archiveFileName.set("${rootProject.name}-${project.version}.jar") // messes up publishing
         configurations = listOf(project.configurations.shadow.get())
 
-        dependencies {
-            include(dependency(httpclient))
-        }
         relocate("org.apache.hc.client5", "com.kamikazejam.kamicommon.hc.client5")
+        relocate("org.apache.hc.core5", "com.kamikazejam.kamicommon.hc.core5")
 
         from(project(":generic-jar").tasks.shadowJar.get().outputs)
         from(project(":spigot-utils").tasks.shadowJar.get().outputs)
@@ -46,6 +48,22 @@ tasks {
         // The following manifest attribute notifies paper that this jar need not be deobfuscated
         manifest {
             attributes["paperweight-mappings-namespace"] = "mojang+yarn"
+        }
+    }
+    processResources {
+        filteringCharset = Charsets.UTF_8.name()
+        val props = mapOf(
+            "name" to rootProject.name,
+            "version" to rootProject.version,
+            "description" to rootProject.description,
+            "date" to DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+        )
+        inputs.properties(props)
+        filesMatching("plugin.yml") {
+            expand(props)
+        }
+        filesMatching("**/version.json") {
+            expand(props)
         }
     }
 }
