@@ -60,12 +60,12 @@ public class CmdNmsTest extends KamiCommand {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(StringUtil.t("&c&lTest Item"));
         item.setItemMeta(meta);
-        Action clickCmd = new Action("<1>", "ClickCmd").setClickRunCommand("help");
-        Action clickSug = new Action("<2>", "ClickSug").setClickSuggestCommand("help");
-        Action clickUrl = new Action("<3>", "ClickUrl").setClickOpenURL("https://google.com");
-        Action hoverText = new Action("<4>", "HoverText").setHoverText(StringUtil.t("&bThis is hover text"));
-        Action hoverItem = new Action("<5>", "HoverItem").setHoverItem(item);
-        Action combined = new Action("<6>", "Combined").setClickSuggestCommand("help").setHoverText(StringUtil.t("&bThis is hover text"));
+        Action clickCmd = new Action("<1>", "&aClickCmd").setClickRunCommand("/help");
+        Action clickSug = new Action("<2>", "&bClickSug").setClickSuggestCommand("help");
+        Action clickUrl = new Action("<3>", "&cClickUrl").setClickOpenURL("https://google.com");
+        Action hoverText = new Action("<4>", "&dHoverText").setHoverText(StringUtil.t("&bThis is hover text"));
+        Action hoverItem = new Action("<5>", "&eHoverItem").setHoverItem(item);
+        Action combined = new Action("<6>", "&fCombined").setClickSuggestCommand("help").setHoverText(StringUtil.t("&bThis is hover text"));
         String message = "Test: <1> <2> <3> <4> <5> <6>";
         NmsAPI.getMessageManager().processAndSend(player, message, clickCmd, clickSug, clickUrl, hoverText, hoverItem, combined);
 

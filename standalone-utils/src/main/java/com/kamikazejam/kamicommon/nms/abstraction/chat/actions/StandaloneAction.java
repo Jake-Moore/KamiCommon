@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.nms.abstraction.chat.actions;
 
 import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.data.ANSI;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -24,9 +25,13 @@ public class StandaloneAction {
 
 
     /**
-     * @param command The command the player runs, when clicked
+     * @param command The command the player runs, when clicked (STARTS WITH '/')
      */
     public StandaloneAction setClickRunCommand(String command) {
+        if (!command.startsWith("/")) {
+            command = "/" + command;
+            System.out.println(ANSI.RED + "StandaloneAction: Command does not start with '/'. Attempting to fix." + ANSI.RESET);
+        }
         this.click = new ClickCmd(command);
         return this;
     }
