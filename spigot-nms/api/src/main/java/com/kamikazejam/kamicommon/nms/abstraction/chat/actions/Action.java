@@ -18,7 +18,7 @@ public class Action extends StandaloneAction {
     }
 
     /**
-     * @param command The command the player runs, when clicked
+     * @param command The command the player runs, when clicked (STARTS WITH '/')
      */
     @Override
     public Action setClickRunCommand(String command) {
