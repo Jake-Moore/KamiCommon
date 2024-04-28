@@ -13,7 +13,7 @@ repositories {
 dependencies {
     // Unique dependencies for this module
     shadow("com.zaxxer:HikariCP:5.1.0")
-    shadow("com.mysql:mysql-connector-j:8.3.0")
+    shadow("com.mysql:mysql-connector-j:8.3.0") // comes with google.protobuf
     shadow("redis.clients:jedis:5.1.2") {
         // jedis requires both of these, so any other -jar modules need to include them
         exclude(group = "com.google.code.gson", module = "gson")
@@ -38,6 +38,7 @@ tasks {
         relocate("redis.clients.jedis", "com.kamikazejam.kamicommon.redis")
         relocate("org.apache.commons.pool2", "com.kamikazejam.kamicommon.commons.pool2")
         relocate("com.mysql", "com.kamikazejam.kamicommon.mysql")
+        relocate("com.google.protobuf", "com.kamikazejam.kamicommon.google.protobuf")
     }
 }
 java.sourceCompatibility = JavaVersion.VERSION_11

@@ -16,4 +16,38 @@ public class Action extends StandaloneAction {
         this.hover = new HoverItem(item);
         return this;
     }
+
+    /**
+     * @param command The command the player runs, when clicked
+     */
+    @Override
+    public Action setClickRunCommand(String command) {
+        super.setClickRunCommand(command);
+        return this;
+    }
+    /**
+     * @param suggestion The command/text to suggest to the player, when clicked
+     */
+    @Override
+    public Action setClickSuggestCommand(String suggestion) {
+        super.setClickSuggestCommand(suggestion);
+        return this;
+    }
+    /**
+     * @param url The url to open, when clicked
+     */
+    @Override
+    public Action setClickOpenURL(String url) {
+        super.setClickOpenURL(url);
+        return this;
+    }
+
+    /**
+     * @param text The text to show when hovering
+     */
+    @Override
+    public Action setHoverText(String text) {
+        super.setHoverText(text);
+        return this;
+    }
 }

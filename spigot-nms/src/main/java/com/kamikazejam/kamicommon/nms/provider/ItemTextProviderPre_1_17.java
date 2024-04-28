@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ItemTextProviderPre_1_17 extends Provider<AbstractItemTextPre_1_17> {
     @Override
-    protected @NotNull AbstractItemTextPre_1_17 provide(double ver) {
+    protected @NotNull AbstractItemTextPre_1_17 provide(int ver) {
         if (ver < f("1.8")) {
             throw new IllegalArgumentException("Version not supported (< 1.8): " + ver);
         }

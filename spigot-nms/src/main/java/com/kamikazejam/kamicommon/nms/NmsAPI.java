@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.nms;
 
 import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
+import com.kamikazejam.kamicommon.nms.abstraction.chat.AbstractMessageManager;
 import com.kamikazejam.kamicommon.nms.abstraction.itemtext.AbstractItemTextPre_1_17;
 import com.kamikazejam.kamicommon.nms.abstraction.teleport.AbstractTeleporter;
 import com.kamikazejam.kamicommon.nms.provider.*;
@@ -24,6 +25,7 @@ public class NmsAPI {
     @Getter private static final TeleportProvider teleportProvider = new TeleportProvider();
     @Getter private static final MainHandProvider mainHandProvider = new MainHandProvider();
     @Getter private static final EnchantIDProvider enchantIDProvider = new EnchantIDProvider();
+    @Getter private static final MessageManagerProvider messageManagerProvider = new MessageManagerProvider();
 
 
 
@@ -36,6 +38,7 @@ public class NmsAPI {
     public static AbstractBlockUtil getBlockUtil() { return blockUtilProvider.get(); }
     public static AbstractItemTextPre_1_17 getItemText() { return itemTextProviderPre_1_17.get(); }
     public static AbstractTeleporter getTeleporter() { return teleportProvider.get(); }
+    public static AbstractMessageManager getMessageManager() { return messageManagerProvider.get(); }
     public static @Nullable ItemStack getItemInMainHand(Player player) {
         return mainHandProvider.get().getItemInMainHand(player);
     }

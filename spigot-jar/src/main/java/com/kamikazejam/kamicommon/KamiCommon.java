@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon;
 
+import com.kamikazejam.kamicommon.command.internal.KamiCommonCommand;
 import com.kamikazejam.kamicommon.gui.MenuManager;
 import com.kamikazejam.kamicommon.gui.MenuTask;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
@@ -20,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @SuppressWarnings("unused")
 public class KamiCommon extends KamiPlugin implements Listener {
     private static KamiCommon plugin;
+    private final KamiCommonCommand command = new KamiCommonCommand();
 
     @Override
     public void onEnableInner(){
@@ -58,6 +60,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
         IdUtilLocal.setup(this);
 
         SpigotUtilProvider.setPlugin(this);
+        command.registerCommand(this);
     }
 
     @Override
@@ -77,6 +80,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
         // Save IdUtil
         IdUtilLocal.saveCachefileDatas();
 
+        command.unregisterCommand();
         Bukkit.getLogger().info("KamiCommon disabled");
     }
 

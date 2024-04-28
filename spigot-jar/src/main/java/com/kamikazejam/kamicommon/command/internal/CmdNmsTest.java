@@ -1,0 +1,88 @@
+package com.kamikazejam.kamicommon.command.internal;
+
+import com.kamikazejam.kamicommon.command.KamiCommand;
+import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
+import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.NmsVersion;
+import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
+import com.kamikazejam.kamicommon.nms.abstraction.chat.actions.Action;
+import com.kamikazejam.kamicommon.nms.provider.BlockUtilProvider;
+import com.kamikazejam.kamicommon.nms.provider.ChatColorProvider;
+import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.awt.Color;
+
+@SuppressWarnings("SpellCheckingInspection")
+public class CmdNmsTest extends KamiCommand {
+    public CmdNmsTest() {
+        addAliases("nmstest");
+
+        addRequirements(RequirementHasPerm.get("kamicommon.command.nmstest"));
+        addRequirements(RequirementIsPlayer.get());
+    }
+
+    @Override
+    public void perform() {
+        Player player = (Player) sender;
+        player.sendMessage(StringUtil.t("&7NMS Version: &f" + NmsVersion.getMCVersion() + " &7(&f" + NmsVersion.getFormattedNmsInteger() + "&7)"));
+        player.sendMessage(StringUtil.t("&WineSpigot?: &7" + NmsVersion.isWineSpigot()));
+
+        // Chat Color Provider Test
+        player.sendMessage(StringUtil.t("&7Testing ChatColorProvider..."));
+        ChatColorProvider ccProvider = NmsAPI.getChatColorProvider();
+        Color jColor = ccProvider.get().getColor(ChatColor.AQUA);
+        player.sendMessage(StringUtil.t("    &7Success"));
+
+        // Block Util Provider Test
+        player.sendMessage(StringUtil.t("&7Testing BlockUtilProvider..."));
+        BlockUtilProvider buProvider = NmsAPI.getBlockUtilProvider();
+        Block block = Bukkit.getWorlds().get(0).getBlockAt(0, 0, 0);
+        Material oldType = block.getType();
+        buProvider.get().setBlockSuperFast(block, XMaterial.IRON_BLOCK, PlaceType.BUKKIT);
+        buProvider.get().setBlockSuperFast(block, XMaterial.DIAMOND_BLOCK, PlaceType.NO_PHYSICS);
+        buProvider.get().setBlockSuperFast(block, XMaterial.EMERALD_BLOCK, PlaceType.NMS);
+        block.setType(oldType);
+        player.sendMessage(StringUtil.t("    &7Success"));
+
+        // MessageManager Test
+        player.sendMessage(StringUtil.t("&7Testing MessageManager..."));
+        ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(StringUtil.t("&c&lTest Item"));
+        item.setItemMeta(meta);
+        Action clickCmd = new Action("<1>", "ClickCmd").setClickRunCommand("help");
+        Action clickSug = new Action("<2>", "ClickSug").setClickSuggestCommand("help");
+        Action clickUrl = new Action("<3>", "ClickUrl").setClickOpenURL("https://google.com");
+        Action hoverText = new Action("<4>", "HoverText").setHoverText(StringUtil.t("&bThis is hover text"));
+        Action hoverItem = new Action("<5>", "HoverItem").setHoverItem(item);
+        Action combined = new Action("<6>", "Combined").setClickSuggestCommand("help").setHoverText(StringUtil.t("&bThis is hover text"));
+        String message = "Test: <1> <2> <3> <4> <5> <6>";
+        NmsAPI.getMessageManager().processAndSend(player, message, clickCmd, clickSug, clickUrl, hoverText, hoverItem, combined);
+
+        // Teleport Provider Test
+        player.sendMessage(StringUtil.t("&7Testing TeleportProvider..."));
+        NmsAPI.getTeleporter().teleportWithoutEvent(player, player.getLocation().clone().add(0, 0.5, 0));
+        player.sendMessage(StringUtil.t("    &7Success"));
+
+        // Main Hand Provider
+        player.sendMessage(StringUtil.t("&7Testing MainHandProvider..."));
+        ItemStack stack = NmsAPI.getItemInMainHand(player);
+        player.sendMessage(StringUtil.t("    &7Success: " + (stack == null ? "AIR" : stack.getType().name())));
+
+        // Enchant ID Provider
+        player.sendMessage(StringUtil.t("&7Testing EnchantIDProvider..."));
+        player.sendMessage(StringUtil.t("    &7Success: " + NmsAPI.getNamespaced(Enchantment.DAMAGE_ALL)));
+
+        player.sendMessage(StringUtil.t("&aALl Tests Passed!"));
+    }
+}

@@ -94,7 +94,7 @@ public abstract class IBuilder {
 
         // Unbreakable
         if (unbreakable != TriState.NOT_SET) {
-            if (NmsVersion.getFormattedNmsDouble() >= 1100) {
+            if (NmsVersion.getFormattedNmsInteger() >= 1100) {
                 try {
                     Method setUnbreakable = meta.getClass().getDeclaredMethod("setUnbreakable", boolean.class);
                     setUnbreakable.setAccessible(true);

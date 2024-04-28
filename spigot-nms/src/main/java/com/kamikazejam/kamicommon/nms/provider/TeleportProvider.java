@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TeleportProvider extends Provider<AbstractTeleporter> {
     @Override
-    protected @NotNull AbstractTeleporter provide(double ver) {
+    protected @NotNull AbstractTeleporter provide(int ver) {
         if (ver < f("1.8")) {
             throw new IllegalArgumentException("Version not supported (< 1.8): " + ver);
         }

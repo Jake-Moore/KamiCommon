@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockUtilProvider extends Provider<AbstractBlockUtil> {
     @Override
-    protected @NotNull AbstractBlockUtil provide(double ver) {
+    protected @NotNull AbstractBlockUtil provide(int ver) {
         if (ver < f("1.8")) {
             throw new IllegalArgumentException("Version not supported (< 1.8): " + ver);
         }

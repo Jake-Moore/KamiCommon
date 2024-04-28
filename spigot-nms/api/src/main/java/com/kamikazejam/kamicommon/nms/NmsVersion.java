@@ -22,16 +22,16 @@ public class NmsVersion {
         return mcVersion;
     }
 
-    private static double formattedNmsDouble = -1;
+    private static int formattedNms = -1;
     /**
      * Converts {@link #getMCVersion()} into a double (4 digits)
      * For example 1.8.9 becomes 1089, 1.16 becomes 1160, 1.16.3 becomes 1163
      * @return The nms version formatted as a double. 4 digits (major[1]minor[2]patch[1]), i.e. 1_16_5 (1165) for v1_16_R3
      */
-    public static double getFormattedNmsDouble() {
-        if (formattedNmsDouble != -1) { return formattedNmsDouble; }
-        formattedNmsDouble = NmsVersionParser.getFormattedNmsDouble(getMCVersion());
-        return formattedNmsDouble;
+    public static int getFormattedNmsInteger() {
+        if (formattedNms != -1) { return formattedNms; }
+        formattedNms = NmsVersionParser.getFormattedNmsInteger(getMCVersion());
+        return formattedNms;
     }
 
     private static Boolean isWineSpigot = null;
