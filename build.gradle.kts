@@ -18,7 +18,8 @@ tasks.register("refresh") {
         val process: Process
         if (System.getProperty("os.name").lowercase(Locale.getDefault()).contains("windows")) {
             // Use git bash's sh on Windows
-            process = ProcessBuilder("sh", "./refresh.sh").start()
+            // process = ProcessBuilder("sh", "./refresh.sh").start()
+            return@doLast
         }else {
             process = ProcessBuilder("./refresh.sh").start()
         }
