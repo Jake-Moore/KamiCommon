@@ -13,7 +13,7 @@ repositories {
 dependencies {
     // Unique dependencies for this module
     shadow("com.zaxxer:HikariCP:5.1.0")
-    shadow("com.mysql:mysql-connector-j:8.3.0") // comes with google.protobuf
+    shadow("com.mysql:mysql-connector-j:8.4.0") // comes with google.protobuf
     shadow("redis.clients:jedis:5.1.2") {
         // jedis requires both of these, so any other -jar modules need to include them
         exclude(group = "com.google.code.gson", module = "gson")
