@@ -1,14 +1,12 @@
-import org.jetbrains.gradle.ext.settings
-import org.jetbrains.gradle.ext.taskTriggers
 import java.util.*
 
 @Suppress("PropertyName")
-var VERSION = "3.0.1.0"
+var VERSION = "3.0.1.1-SNAPSHOT"
 
 plugins { // needed for the subprojects section to work
     id("java")
     id("java-library")
-    id("io.papermc.paperweight.userdev") version "1.6.2" apply false
+    id("io.papermc.paperweight.userdev") version "1.7.0" apply false
     id("io.github.goooler.shadow") version "8.1.7" apply false
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.8"
 }
@@ -37,11 +35,11 @@ tasks.register("refresh") {
 }
 tasks.getByName("clean").finalizedBy(tasks.getByName("refresh"))
 
-idea.project.settings {
-    taskTriggers {
-        afterSync(tasks.getByName("refresh"))
-    }
-}
+//idea.project.settings {
+//    taskTriggers {
+//        afterSync(tasks.getByName("refresh"))
+//    }
+//}
 
 ext {
     set("projectName", rootProject.name)
@@ -73,21 +71,15 @@ allprojects {
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
     }
-    tasks.withType<Javadoc> {
-        options.encoding = Charsets.UTF_8.name()
-    }
 }
 
 subprojects {
     apply(plugin = "java")
     apply(plugin = "java-library")
 
-    // Configure Javadoc generation
-    tasks.withType<Javadoc> {
-        options {
-            encoding = "UTF-8"
-            charset("UTF-8")
-        }
+    // Provision Java 17 all subprojects (new modules have version 21 configured)
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 

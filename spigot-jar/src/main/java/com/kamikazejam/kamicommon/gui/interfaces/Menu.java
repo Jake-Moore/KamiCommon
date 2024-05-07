@@ -118,4 +118,5 @@ public interface Menu extends InventoryHolder {
 
     void setAllowItemPickup(boolean itemPickup);
 
+    void closeAll();
 }

@@ -1,13 +1,12 @@
 package com.kamikazejam.kamicommon.item;
 
-import com.kamikazejam.kamicommon.xseries.XMaterial;
-import com.kamikazejam.kamicommon.nms.NmsVersion;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.StringUtilP;
 import com.kamikazejam.kamicommon.util.data.TriState;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -17,38 +16,57 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
 
-@SuppressWarnings({"unused", "UnusedReturnValue", "deprecation"})
+@Getter
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class IBuilder {
 
-    ItemStack base = null;
-    XMaterial material = XMaterial.AIR;
-    int amount = 1;
-    short damage = 0;
-    String name = " ";
-    @Getter
-    List<String> lore = new ArrayList<>();
-    TriState unbreakable = TriState.NOT_SET;
-    final List<ItemFlag> itemFlags = new ArrayList<>();
-    final Map<Enchantment, Integer> enchantments = new HashMap<>();
-    boolean addGlow = false;
+    @Setter private @Nullable ItemStack base = null;
+    private @NotNull XMaterial material = XMaterial.AIR;
 
-    @Setter String skullOwner = null; // player name
-    int slot;
+    private int amount = 1;
+    private short damage = 0;
+
+    // Name & Lore can be null if base is set
+    private @Nullable String name = " ";
+    private @Nullable List<String> lore = new ArrayList<>();
+
+    private @NotNull TriState unbreakable = TriState.NOT_SET;
+    private final @NotNull List<ItemFlag> itemFlags = new ArrayList<>();
+    private final @NotNull Map<Enchantment, Integer> enchantments = new HashMap<>();
+    private boolean addGlow = false;
+
+    @Setter
+    private @Nullable String skullOwner = null; // player name
 
     public IBuilder() {}
 
     public IBuilder(ConfigurationSection section) {
-        loadConfigItem(section, null);
+        loadConfigItem(section, null, true);
     }
-    
     public IBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
-        loadConfigItem(section, offlinePlayer);
+        loadConfigItem(section, offlinePlayer, true);
+    }
+    public IBuilder(@NotNull XMaterial material, ConfigurationSection section) {
+        this.material = material;
+        loadConfigItem(section, null, false);
+    }
+    public IBuilder(@NotNull XMaterial material, ConfigurationSection section, OfflinePlayer offlinePlayer) {
+        this.material = material;
+        loadConfigItem(section, offlinePlayer, false);
+    }
+    public IBuilder(@Nullable ItemStack base, ConfigurationSection section) {
+        this.base = base;
+        loadConfigItem(section, null, false);
+    }
+    public IBuilder(@Nullable ItemStack base, ConfigurationSection section, OfflinePlayer offlinePlayer) {
+        this.base = base;
+        loadConfigItem(section, offlinePlayer, false);
     }
 
     /**
@@ -63,6 +81,15 @@ public abstract class IBuilder {
      * @param player The player to build the item for (for placeholders)
      */
     public ItemStack build(@Nullable Player player) {
+        return this.build(player, 0);
+    }
+
+    /**
+     * @return The item the builder has been building
+     * @param player The player to build the item for (for placeholders)
+     * @param materialIndex The index of the material to use in the materials list
+     */
+    public ItemStack build(@Nullable Player player, int materialIndex) {
         if (material == XMaterial.AIR && base == null) { return new ItemStack(Material.AIR); }
 
         final ItemStack itemStack;
@@ -83,8 +110,7 @@ public abstract class IBuilder {
         if (meta == null) { return itemStack; }
 
         // Skull Meta
-        if (skullOwner != null && meta instanceof SkullMeta) {
-            SkullMeta skullMeta = (SkullMeta) meta;
+        if (skullOwner != null && meta instanceof SkullMeta skullMeta) {
             skullMeta.setOwner(skullOwner);
         }
 
@@ -94,26 +120,7 @@ public abstract class IBuilder {
 
         // Unbreakable
         if (unbreakable != TriState.NOT_SET) {
-            if (NmsVersion.getFormattedNmsInteger() >= 1100) {
-                try {
-                    Method setUnbreakable = meta.getClass().getDeclaredMethod("setUnbreakable", boolean.class);
-                    setUnbreakable.setAccessible(true);
-                    setUnbreakable.invoke(meta, unbreakable.toBoolean());
-                }catch (Exception e) {
-                    e.printStackTrace();
-                    Bukkit.getLogger().severe("[KamiCommon IBuilder] Error setting unbreakable tag.");
-                }
-
-            }else {
-                try {
-                    Object o = meta.getClass().getDeclaredMethod("spigot").invoke(meta);
-                    Method setUnbreakable = o.getClass().getDeclaredMethod("setUnbreakable", boolean.class);
-                    setUnbreakable.setAccessible(true);
-                    setUnbreakable.invoke(o, unbreakable.toBoolean());
-                }catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
+            meta = NmsAPI.getItemEditor().setUnbreakable(meta, unbreakable.toBoolean());
             meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         }
 
@@ -140,20 +147,16 @@ public abstract class IBuilder {
         itemStack.setItemMeta(meta);
         return itemStack;
     }
-    
-    public void loadConfigItem(ConfigurationSection config) {
-        loadConfigItem(config, null);
-    }
 
-    public void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
-        String mat = config.getString("material", config.getString("type"));
-        if (mat != null) {
-            if (XMaterial.matchXMaterial(mat).orElse(XMaterial.AIR).equals(XMaterial.PLAYER_HEAD)) {
-                loadPlayerHead(config, offlinePlayer);
-                return;
-            }
+    /**
+     * @param config The configuration section to load data from
+     * @param offlinePlayer The player to use as the skull owner
+     */
+    private void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer, boolean loadMaterial) {
+        if (offlinePlayer != null) {
+            this.skullOwner = offlinePlayer.getName();
         }
-        loadBasicItem(config);
+        loadBasicItem(config, loadMaterial);
     }
 
     public IBuilder(XMaterial m) {
@@ -177,6 +180,8 @@ public abstract class IBuilder {
     }
 
     public IBuilder(int id, int amount) { this(id, amount, (short) 0); }
+
+    @SuppressWarnings("deprecation")
     public IBuilder(int id, int amount, short damage) {
         if (amount > 64) { amount = 64; }
         XMaterial.matchXMaterial(id, (byte) damage).ifPresent(xMaterial -> material = xMaterial);
@@ -184,7 +189,7 @@ public abstract class IBuilder {
         this.damage = damage;
     }
 
-    public IBuilder(XMaterial material, int amount, short damage) {
+    public IBuilder(@NotNull XMaterial material, int amount, short damage) {
         if (amount > 64) { amount = 64; }
         assert material.parseMaterial() != null;
         this.material = material;
@@ -192,12 +197,11 @@ public abstract class IBuilder {
         this.damage = damage;
     }
 
-    public IBuilder(ItemStack is) {
+    public IBuilder(@NotNull ItemStack is) {
         this(is, true);
     }
 
-    public IBuilder(ItemStack is, boolean clone) {
-        if (is == null) { return; }
+    public IBuilder(@NotNull ItemStack is, boolean clone) {
         // Erase default name and lore, so that the base isn't overwritten
         this.name = null;
         this.lore = null;
@@ -208,11 +212,6 @@ public abstract class IBuilder {
 
     public IBuilder setUnbreakable(boolean b) {
         unbreakable = TriState.byBoolean(b);
-        return this;
-    }
-
-    public IBuilder setSlot(int slot) {
-        this.slot = slot;
         return this;
     }
 
@@ -246,6 +245,7 @@ public abstract class IBuilder {
     }
 
     public IBuilder replaceName(String find, String replacement) {
+        assert name != null;
         name = name.replaceAll(Pattern.quote(find), replacement);
         return this;
     }
@@ -258,6 +258,7 @@ public abstract class IBuilder {
      */
     public IBuilder replaceLoreLine(String find, List<String> replacement) {
         final List<String> newLore = new ArrayList<>();
+        assert lore != null;
         for (String s : lore) {
             if (ChatColor.stripColor(s).contains(ChatColor.stripColor(find))) {
                 newLore.addAll(replacement);
@@ -271,6 +272,7 @@ public abstract class IBuilder {
 
     public IBuilder replaceLore(String find, String replacement) {
         final List<String> newLore = new ArrayList<>();
+        assert lore != null;
         for (String s : lore) {
             if (s.contains(find)) {
                 newLore.add(s.replaceAll(Pattern.quote(find), replacement));
@@ -337,6 +339,7 @@ public abstract class IBuilder {
     }
 
     public IBuilder addLoreLines(List<String> lines) {
+        if (lore == null) { lore = new ArrayList<>(); }
         lore.addAll(lines);
         return this;
     }
@@ -353,34 +356,46 @@ public abstract class IBuilder {
     public ItemStack toItemStack() { return build(); }
     public ItemStack toItemStack(Player player) { return build(player); }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    boolean loadMaterial(ConfigurationSection section) {
+        if (section.isString("material")) {
+            this.material = parseMaterial(section.getString("material"));
+            return true;
+        }
+        if (section.isString("type")) {
+            this.material = parseMaterial(section.getString("type"));
+            return true;
+        }
+        return false;
+    }
+    public @NotNull XMaterial parseMaterial(String mat) throws IllegalArgumentException {
+        return XMaterial.matchXMaterial(mat).orElseThrow(() -> new IllegalArgumentException("Invalid material: " + mat));
+    }
 
+    public abstract void loadBasicItem(ConfigurationSection config, boolean loadMaterial);
 
-
-
-
-
-
-
-
-    public abstract void loadBasicItem(ConfigurationSection config);
-
-    public abstract void loadPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer);
-
-    /**
-     * @return A clone of this item `new IBuilder(this.is)`
-     */
     public abstract IBuilder clone();
 
     public IBuilder loadClone(IBuilder builder) {
+        // Basics
+        builder.setMaterial(material);
+        builder.setAmount(amount);
+        builder.setDurability(damage);
+
+        // Meta
         builder.name = name;
-        builder.lore.addAll(lore);
+        builder.lore = new ArrayList<>();
+        if (lore != null) { builder.lore.addAll(lore); }
+
+        // Additional Flags
         builder.unbreakable = unbreakable;
         builder.itemFlags.addAll(itemFlags);
         builder.enchantments.putAll(enchantments);
         builder.addGlow = addGlow;
         builder.skullOwner = skullOwner;
-        builder.slot = slot;
-        builder.base = base.clone();
+        if (base != null) {
+            builder.base = base.clone();
+        }
         return builder;
     }
 }

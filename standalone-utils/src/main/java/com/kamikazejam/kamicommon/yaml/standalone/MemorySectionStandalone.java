@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.yaml.standalone;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.MappingNode;
 
@@ -14,10 +15,9 @@ public class MemorySectionStandalone extends MemorySectionMethods<MemorySectionS
     }
 
     @Override
-    public MemorySectionStandalone getConfigurationSection(String key) {
+    public @NotNull MemorySectionStandalone getConfigurationSection(String key) {
         Object o = get(key);
-        if (o instanceof MappingNode) {
-            MappingNode m = (MappingNode) o;
+        if (o instanceof MappingNode m) {
             return new MemorySectionStandalone(m);
         }
         return new MemorySectionStandalone(AbstractYamlHandler.createNewMappingNode());

@@ -41,6 +41,10 @@ dependencies {
     compileOnly(project.property("lowestSpigotDep") as String)
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
 tasks {
     build.get().dependsOn(shadowJar)
     shadowJar {
@@ -69,10 +73,6 @@ tasks {
         from(project(":spigot-nms:v1_20_R2").tasks.getByName("reobfJar").outputs)
         from(project(":spigot-nms:v1_20_R3").tasks.getByName("reobfJar").outputs)
     }
-}
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 // ONLY REQUIRED IF: you are using Solution 2 with the modified dependency

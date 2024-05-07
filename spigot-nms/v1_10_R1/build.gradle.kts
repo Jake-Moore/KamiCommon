@@ -5,7 +5,3 @@ dependencies {
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
 }
-
-
-java.sourceCompatibility = JavaVersion.VERSION_11
-java.targetCompatibility = JavaVersion.VERSION_11

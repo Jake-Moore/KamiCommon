@@ -8,6 +8,7 @@ import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
@@ -18,10 +19,9 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
     }
 
     @Override
-    public MemorySection getConfigurationSection(String key) {
+    public @NotNull MemorySection getConfigurationSection(String key) {
         Object o = get(key);
-        if (o instanceof MappingNode) {
-            MappingNode m = (MappingNode) o;
+        if (o instanceof MappingNode m) {
             return new MemorySection(m);
         }
         return new MemorySection(AbstractYamlHandler.createNewMappingNode());
@@ -32,14 +32,12 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
     @Override
     public void put(String key, Object value) {
         // ItemStacks
-        if (value instanceof ItemStack) {
-            ItemStack stack = (ItemStack) value;
+        if (value instanceof ItemStack stack) {
             setItemStack(key, stack); return;
         }
 
         // ItemBuilders
-        if (value instanceof IBuilder) {
-            IBuilder builder = (IBuilder) value;
+        if (value instanceof IBuilder builder) {
             setItemBuilder(key, builder); return;
         }
 
@@ -51,8 +49,7 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         Object o = super.get(key);
 
         // Check ItemStack logic
-        if (o instanceof String) {
-            String s = (String) o;
+        if (o instanceof String s) {
             ItemStack stack = parseItemStackData(s);
             if (stack != null) { return stack; }
         }

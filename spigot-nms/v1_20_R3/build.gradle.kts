@@ -12,11 +12,7 @@ dependencies {
     compileOnly(project(":spigot-nms:v1_13_R1"))
 }
 
-java {                                              // 3. provision Java 17
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
-
-tasks {                                             // 4. configure tasks (like reObf automatically)
+tasks {                                                                 // 4. configure tasks (like reObf automatically)
     assemble {
         dependsOn(reobfJar)
     }

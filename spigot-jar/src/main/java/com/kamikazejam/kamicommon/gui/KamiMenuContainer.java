@@ -56,25 +56,16 @@ public class KamiMenuContainer {
 
         ConfigurationSection icons = section.getConfigurationSection("icons");
         ConfigurationSection pagedIcons = section.getConfigurationSection("pagedIcons");
-        if (icons != null) {
-            // Load the MenuItems
-            for (String key : icons.getKeys(false)) {
-                KamiMenuItem item = new KamiMenuItem(icons, key);
-                menuItemMap.put(key, item);
-            }
+        // Load the MenuItems
+        for (String key : icons.getKeys(false)) {
+            KamiMenuItem item = new KamiMenuItem(icons, key);
+            menuItemMap.put(key, item);
         }
 
-        if (pagedIcons != null) {
-            // Load the MenuItems
-            for (String key : pagedIcons.getKeys(false)) {
-                KamiMenuItem item = new KamiMenuItem(pagedIcons, key);
-                pagedItemMap.put(key, item);
-            }
-        }
-
-        // Error only if no icons or pagedIcons section found
-        if (icons == null && pagedIcons == null) {
-            throw new IllegalArgumentException("No icons or pagedIcons section found!!!");
+        // Load the MenuItems
+        for (String key : pagedIcons.getKeys(false)) {
+            KamiMenuItem item = new KamiMenuItem(pagedIcons, key);
+            pagedItemMap.put(key, item);
         }
     }
 
@@ -140,7 +131,7 @@ public class KamiMenuContainer {
      * Use if you have established pagedIcons or added paged icons / anticipate pages in this menu
      */
     public KamiMenu createKamiMenu(Player player, int page) {
-        PageBuilder<Player> builder = new PageBuilder<Player>() {
+        PageBuilder<Player> builder = new PageBuilder<>() {
             @Override
             public String getMenuName() { return title; }
             @Override

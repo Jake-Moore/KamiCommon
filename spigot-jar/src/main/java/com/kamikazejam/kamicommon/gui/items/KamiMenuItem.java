@@ -4,6 +4,7 @@ import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejam.kamicommon.gui.page.PageItem;
 import com.kamikazejam.kamicommon.item.IAItemBuilder;
 import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
@@ -19,6 +20,7 @@ public class KamiMenuItem extends PageItem {
 
     private boolean enabled;
     private List<Integer> slots;
+    private final @NotNull List<XMaterial> materialCycle = new ArrayList<>();
 
     // For like KamiMenuItem(config, "menus.menu1")
     public KamiMenuItem(ConfigurationSection section, String key) {
@@ -27,7 +29,6 @@ public class KamiMenuItem extends PageItem {
     public KamiMenuItem(ConfigurationSection section, String key, OfflinePlayer player) {
         this(section.getConfigurationSection(key));
     }
-
 
     // For calls like KamiMenuItem(config.getConfigurationSection("menus.menu1"))
     public KamiMenuItem(ConfigurationSection section) {
@@ -38,11 +39,8 @@ public class KamiMenuItem extends PageItem {
      * @param player Only required for PLAYER_HEAD ItemStacks, player is used as the skullOwner
      */
     public KamiMenuItem(ConfigurationSection section, @Nullable OfflinePlayer player) {
-        super(new IAItemBuilder(section, player), (MenuClick) null); // Null safe for player arg
+        super((MenuClick) null); // Null safe for player arg
         enabled = section.getBoolean("enabled", true);
-
-        boolean hideAttributes = section.getBoolean("hideAttributes", true);
-        if (hideAttributes) { iBuilder.hideAttributes(); }
 
         slots = new ArrayList<>();
         if (section.isInt("slot")) {
@@ -54,6 +52,16 @@ public class KamiMenuItem extends PageItem {
         }else if (section.isInt("slots")) {
             slots.add(section.getInt("slots"));
         }
+
+        // Load the IBuilders
+        loadIBuilders(section, player);
+
+        // Apply additional settings
+        if (section.isSet("materialCycleTicks")) {
+            this.setLoopTicks(section.getInt("materialCycleTicks"));
+        }
+        boolean hideAttributes = section.getBoolean("hideAttributes", true);
+        if (hideAttributes) { iBuilders.forEach(IBuilder::hideAttributes); }
     }
 
     public KamiMenuItem(boolean enabled, IBuilder builder, List<Integer> slots) {
@@ -76,7 +84,13 @@ public class KamiMenuItem extends PageItem {
 
     @Override
     public KamiMenuItem setIBuilder(@NotNull IBuilder iBuilder) {
-        this.iBuilder = iBuilder;
+        super.setIBuilder(iBuilder);
+        return this;
+    }
+
+    @Override
+    public KamiMenuItem addIBuilder(IBuilder iBuilder) {
+        super.addIBuilder(iBuilder);
         return this;
     }
 
@@ -96,6 +110,20 @@ public class KamiMenuItem extends PageItem {
     public KamiMenuItem setMenuClick(MenuClick menuClick) {
         this.menuClick = menuClick;
         return this;
+    }
+
+    private void loadIBuilders(ConfigurationSection section, @Nullable OfflinePlayer player) {
+        // Method1: Try to Load multiple materials/types
+        boolean m = section.isList("materials");
+        boolean t = section.isList("types");
+        if (m || t) {
+            List<String> mats = (m) ? section.getStringList("materials") : section.getStringList("types");
+            mats.forEach(mat -> iBuilders.add(new IAItemBuilder(mat, section, player)));
+            return;
+        }
+
+        // Method2: Default to single item logic
+        this.iBuilders.add(new IAItemBuilder(section, player));
     }
 }
 
