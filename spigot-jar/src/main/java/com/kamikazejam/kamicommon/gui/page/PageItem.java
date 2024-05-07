@@ -7,6 +7,7 @@ import com.kamikazejam.kamicommon.item.IBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -88,18 +89,18 @@ public class PageItem {
 
         // 3. Rotating IBuilders
         this.addMenuClick(menu, iBuilders.get(bIndex), slot);
-        bIndex++; if (bIndex >= iBuilders.size()) { bIndex = 0; }
         // Configure the update handler to update the gear icon
         menu.setUpdateHandler(() -> {
-            if (!KamiCommon.get().isEnabled()) { menu.closeAll(); return; }
-            menu.addUpdateHandlerSubTask(new MenuUpdateTask() {
-                @Override
-                public void onUpdate(MenuTicked menu) {
-                    updateMenuClick(menu, iBuilders.get(bIndex), slot);
-                }
-                @Override
-                public int getLoopTicks() { return loopTicks; }
-            });
+            if (!KamiCommon.get().isEnabled()) { menu.closeAll(); }
+        });
+        menu.addUpdateHandlerSubTask(new MenuUpdateTask() {
+            @Override
+            public void onUpdate(MenuTicked menu) {
+                bIndex++; if (bIndex >= iBuilders.size()) { bIndex = 0; }
+                updateMenuClick(menu, iBuilders.get(bIndex), slot);
+            }
+            @Override
+            public int getLoopTicks() { return loopTicks; }
         });
 
         // 4. Return the menu
