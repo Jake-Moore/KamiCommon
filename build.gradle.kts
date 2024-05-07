@@ -1,7 +1,7 @@
 import java.util.*
 
 @Suppress("PropertyName")
-var VERSION = "3.0.1.1-SNAPSHOT"
+var VERSION = "3.0.1.1"
 
 plugins { // needed for the subprojects section to work
     id("java")

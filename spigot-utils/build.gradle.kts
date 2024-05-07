@@ -10,7 +10,7 @@ dependencies {
     )
     shadow("com.google.code.gson:gson:2.10.1")
     shadow("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
-    shadow("de.tr7zw:item-nbt-api:2.12.3")
+    shadow("de.tr7zw:item-nbt-api:2.12.4")
 
     compileOnly(project.property("lowestSpigotDep") as String)
     compileOnly("me.clip:placeholderapi:2.11.5") // TODO soft depend
