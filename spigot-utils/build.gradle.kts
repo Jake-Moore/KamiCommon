@@ -43,6 +43,10 @@ tasks {
     }
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
@@ -62,10 +66,6 @@ publishing {
             }
         }
     }
-}
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 // ONLY REQUIRED IF: you are using Solution 2 with the modified dependency

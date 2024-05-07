@@ -5,25 +5,24 @@ import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @Getter @Setter
 @SuppressWarnings("unused")
-public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
+public abstract class AbstractKamiMenu extends MenuHolder implements MenuTicked {
     public interface MenuOpenCallback {
         void onOpen(Player player, InventoryView view);
     }
@@ -35,6 +34,7 @@ public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
     private Consumer<InventoryCloseEvent> closeHandler;
     private Consumer<InventoryCloseEvent> instantCloseHandler;
     private MenuUpdate updateHandler;
+    @Getter private final List<MenuUpdateTask> updateSubTasks = new ArrayList<>();
     private boolean clearBeforeUpdate = false;
     private boolean allowItemPickup;
     private @Nullable MenuOpenCallback openCallback = null;
@@ -142,6 +142,12 @@ public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
     }
 
     @Override
+    public void addUpdateHandlerSubTask(MenuUpdateTask subTask) {
+        this.updateSubTasks.add(subTask);
+        MenuTask.getAutoUpdateInventories().add(this);
+    }
+
+    @Override
     public void setClearBeforeUpdate(boolean b) {
         this.clearBeforeUpdate = b;
     }
@@ -150,5 +156,30 @@ public abstract class AbstractKamiMenu extends MenuHolder implements Menu {
 
     public void whenOpened(@Nullable MenuOpenCallback menuOpen) {
         this.openCallback = menuOpen;
+    }
+
+    @Override
+    public void clear() {
+        getInventory().clear();
+        getClickableItems().clear();
+    }
+
+    @Override
+    public void update() {
+        MenuUpdate menuUpdate = getUpdateHandler();
+
+        if (menuUpdate != null) {
+            if (isClearBeforeUpdate()) { clear(); }
+            menuUpdate.onUpdate();
+        }
+    }
+
+    @Override
+    public void closeAll() {
+        @Nullable Inventory inv = this.inventory;
+        if (inv == null) { return; }
+        for (HumanEntity viewer : inv.getViewers()) {
+            viewer.closeInventory();
+        }
     }
 }

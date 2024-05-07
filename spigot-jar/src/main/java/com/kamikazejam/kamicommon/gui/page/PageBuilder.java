@@ -135,7 +135,6 @@ public abstract class PageBuilder<T extends Player> {
             menu.addMenuClick(getPreviousIcon(), (plr, type) -> {
                 menu.getIgnoredClose().add(plr.getName());
                 openMenu(plr, (page - 1));
-                // member.playSound(XSound.UI_BUTTON_CLICK, 1, 2);
             }, getPreviousSlot());
         }
 
@@ -144,28 +143,23 @@ public abstract class PageBuilder<T extends Player> {
             menu.addMenuClick(getNextPage(), (plr, type) -> {
                 menu.getIgnoredClose().add(plr.getName());
                 openMenu(plr, (page + 1));
-                // member.playSound(XSound.UI_BUTTON_CLICK, 1, 2);
             }, getNextSlot());
         }
 
-        // Add other icons
+        // Add other icons (lower priority than page items)
         addOtherIcons();
 
-        // If there are no items to add, open the menu
-        if (!items.pageExist(page)) {
-            tryFill();
-            return menu;
-        }
-
         // Add all page items
-        for (PageItem pageItem : items.getPage(page)) {
-            int s = firstEmpty(page);
-            if (pageItem != null && s != -1) {
-                pageItem.addToMenu(menu, s);
+        if (items.pageExist(page)) {
+            for (PageItem pageItem : items.getPage(page)) {
+                int s = firstEmpty(page);
+                if (pageItem != null && s != -1) {
+                    pageItem.addToMenu(menu, s);
+                }
             }
         }
 
-        // Return the menu !
+        // Fill empty slots
         tryFill();
 
         // We make some assumptions, like that this menu object belongs to 1 player

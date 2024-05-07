@@ -4,6 +4,7 @@ import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSectionStandalone
 import com.kamikazejam.kamicommon.yaml.standalone.MemorySectionStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlConfigurationStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlHandlerStandalone;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -137,7 +138,7 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
     // Methods to get values
     @Override public Object get(String key) { return getYamlConfiguration().get(key); }
     @Override public Object get(String key, Object def) { return getYamlConfiguration().get(key, def); }
-    @Override public MemorySectionStandalone getConfigurationSection(String key) { return getYamlConfiguration().getConfigurationSection(key); }
+    @Override public @NotNull MemorySectionStandalone getConfigurationSection(String key) { return getYamlConfiguration().getConfigurationSection(key); }
 
     @Override public String getString(String key) { return getYamlConfiguration().getString(key); }
     @Override public String getString(String key, String def) { return getYamlConfiguration().getString(key, def); }

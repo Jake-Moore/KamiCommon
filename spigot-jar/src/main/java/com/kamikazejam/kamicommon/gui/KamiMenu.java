@@ -20,22 +20,6 @@ public class KamiMenu extends AbstractKamiMenu {
     }
 
     @Override
-    public void clear() {
-        getInventory().clear();
-        getClickableItems().clear();
-    }
-
-    @Override
-    public void update() {
-        MenuUpdate menuUpdate = getUpdateHandler();
-
-        if (menuUpdate != null) {
-            if (isClearBeforeUpdate()) { clear(); }
-            menuUpdate.onUpdate();
-        }
-    }
-
-    @Override
     public void setItem(int slot, ItemStack stack) {
         addMenuClick(stack, (MenuClick) null, slot);
     }

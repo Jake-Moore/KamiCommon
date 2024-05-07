@@ -13,5 +13,7 @@ public class KamiCommonCommand extends KamiCommand {
         addChild(new KamiCommandVersion());
         addChild(new CmdNmsVersion());
         addChild(new CmdNmsTest());
+        addChild(new CmdOpenGUI());
+        addChild(new CmdReload());
     }
 }

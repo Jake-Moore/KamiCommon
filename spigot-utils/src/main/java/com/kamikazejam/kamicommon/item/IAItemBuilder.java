@@ -7,14 +7,27 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unused", "UnreachableCode"})
 public class IAItemBuilder extends IBuilder {
 
+    private IAItemBuilder() {} // Private for Clone
     public IAItemBuilder(ConfigurationSection section) {
         super(section);
     }
     public IAItemBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
         super(section, offlinePlayer);
+    }
+    public IAItemBuilder(XMaterial mat, ConfigurationSection section) {
+        super(mat, section);
+    }
+    public IAItemBuilder(XMaterial mat, ConfigurationSection section, OfflinePlayer offlinePlayer) {
+        super(mat, section, offlinePlayer);
+    }
+    public IAItemBuilder(ItemStack base, ConfigurationSection section) {
+        super(base, section);
+    }
+    public IAItemBuilder(ItemStack base, ConfigurationSection section, OfflinePlayer offlinePlayer) {
+        super(base, section, offlinePlayer);
     }
     public IAItemBuilder(XMaterial m) {
         super(m);
@@ -46,49 +59,62 @@ public class IAItemBuilder extends IBuilder {
     public IAItemBuilder(ItemStack is, boolean clone) {
         super(is, clone);
     }
-
     public IAItemBuilder(String namespacedID) {
         this(namespacedID, 1);
     }
-
     public IAItemBuilder(String namespacedID, int amount) {
-        super((ItemStack) null);
-
         CustomStack stack = CustomStack.getInstance(namespacedID);
-        this.base = stack.getItemStack();
+        this.setBase(stack.getItemStack());
+    }
+
+    public IAItemBuilder(String matOrNamespacedID, ConfigurationSection section) {
+        this(matOrNamespacedID, section, null);
+    }
+    public IAItemBuilder(String matOrNamespacedID, ConfigurationSection section, @Nullable OfflinePlayer player) {
+        // Empty super constructor, all data will be loaded here
+        super();
+        if (player != null) {
+            this.setSkullOwner(player.getName());
+        }
+
+        try {
+            // Try the string as a Material
+            this.setMaterial(parseMaterial(matOrNamespacedID));
+        }catch (IllegalArgumentException ignored) {
+            // Try the string as a namespacedID
+            CustomStack stack = CustomStack.getInstance(matOrNamespacedID);
+            if (stack == null) {
+                throw new IllegalArgumentException("Invalid material or namespacedID: " + matOrNamespacedID);
+            }
+            this.setBase(stack.getItemStack());
+        }
+        this.loadBasicItem(section, false);
     }
 
     @Override
-    public void loadBasicItem(ConfigurationSection config) {
-        this.damage = (short) config.getInt("damage", 0);
-        this.amount = config.getInt("amount", 1);
-
-        this.name = config.getString("name");
-        this.lore = config.getStringList("lore");
-
-        String mat = config.getString("material", config.getString("type", null));
-        if (mat == null) { return; }
-        
-        CustomStack customStack = CustomStack.getInstance(mat);
-        ItemStack item;
-        if (customStack != null) {
-            this.base = customStack.getItemStack();
-        }else {
-            this.material = XMaterial.matchXMaterial(mat).orElseThrow(() -> new IllegalArgumentException("Invalid material: " + config.getString("material", config.getString("type"))));
+    public void loadBasicItem(ConfigurationSection config, boolean loadMaterial) {
+        // Load the material
+        if (loadMaterial && !this.loadMaterial(config)) {
+            @Nullable String id = config.getString("material", config.getString("type", null));
+            if (id == null) {
+                throw new IllegalStateException("No materials/namespacedIDs found in config.");
+            }
+            CustomStack stack = CustomStack.getInstance(id);
+            if (stack == null) {
+                throw new IllegalStateException("Invalid CustomStack namespacedID: " + id);
+            }
+            this.setBase(stack.getItemStack());
         }
-    }
 
-    @Override
-    public void loadPlayerHead(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer) {
-        loadBasicItem(config);
-        // Set the skull owner if it's not null
-        if (offlinePlayer != null) {
-            this.skullOwner = offlinePlayer.getName();
-        }
+        // Load basic values from config
+        this.setAmount(config.getInt("amount", 1));
+        this.setDurability(config.getInt("damage", 0));
+        this.setName(config.getString("name"));
+        this.setLore(config.getStringList("lore"));
     }
 
     @Override
     public IBuilder clone() {
-        return loadClone(new IAItemBuilder(this.material, this.amount, this.damage));
+        return loadClone(new IAItemBuilder());
     }
 }

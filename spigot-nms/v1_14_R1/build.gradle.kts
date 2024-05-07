@@ -6,9 +6,3 @@ dependencies {
     )
     compileOnly(project(":spigot-nms:v1_13_R1"))
 }
-
-
-java.sourceCompatibility = JavaVersion.VERSION_11
-java.targetCompatibility = JavaVersion.VERSION_11
-
-

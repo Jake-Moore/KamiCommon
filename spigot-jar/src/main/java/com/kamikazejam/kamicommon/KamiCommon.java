@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon;
 
 import com.kamikazejam.kamicommon.command.internal.KamiCommonCommand;
+import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
 import com.kamikazejam.kamicommon.gui.MenuManager;
 import com.kamikazejam.kamicommon.gui.MenuTask;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
@@ -15,7 +16,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 
 @Getter
 @SuppressWarnings("unused")
@@ -45,8 +48,8 @@ public class KamiCommon extends KamiPlugin implements Listener {
         MixinSenderPs.get().setActive(this);
         MixinWorld.get().setActive(this);
 
-        // Schedule menu task to run every 1 second
-        Bukkit.getScheduler().runTaskTimer(this, new MenuTask(), 0L, 20L);
+        // Schedule menu task to run every 1 tick
+        Bukkit.getScheduler().runTaskTimer(this, new MenuTask(), 0L, 1L); // Every tick
 
         if (isWineSpigot()) {
             getLogger().info("WineSpigot (1.8.8) detected!");
@@ -84,7 +87,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
         Bukkit.getLogger().info("KamiCommon disabled");
     }
 
-    public static JavaPlugin get() {
+    public static KamiCommon get() {
         return plugin;
     }
 
@@ -93,7 +96,11 @@ public class KamiCommon extends KamiPlugin implements Listener {
         return NmsVersion.isWineSpigot();
     }
 
-
-
-
+    private KamiConfig kamiConfig = null;
+    public @NotNull KamiConfig getKamiConfig() {
+        if (kamiConfig == null) {
+            kamiConfig = new KamiConfig(this, new File(getDataFolder(), "config.yml"), true);
+        }
+        return kamiConfig;
+    }
 }

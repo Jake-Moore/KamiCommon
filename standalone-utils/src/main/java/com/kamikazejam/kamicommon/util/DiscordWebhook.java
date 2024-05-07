@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.Color;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -153,7 +155,7 @@ public class DiscordWebhook {
         return json;
     }
 
-    public void execute() throws IOException {
+    public void execute() throws IOException, URISyntaxException {
         if (this.content == null && this.embeds.isEmpty()) {
             throw new IllegalArgumentException("Set content or add at least one EmbedObject");
         }
@@ -167,8 +169,8 @@ public class DiscordWebhook {
         }
     }
 
-    private void executeJson(JSONObject json) throws IOException {
-        URL url = new URL(this.url);
+    private void executeJson(JSONObject json) throws IOException, URISyntaxException {
+        URL url = new URI(this.url).toURL();
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.addRequestProperty("Content-Type", "application/json");
         connection.addRequestProperty("User-Agent", "Java-DiscordWebhook-BY-Gelox_");
@@ -184,11 +186,11 @@ public class DiscordWebhook {
         connection.disconnect();
     }
 
-    private void executeWithFiles(JSONObject json) throws IOException {
+    private void executeWithFiles(JSONObject json) throws IOException, URISyntaxException {
         // Create a boundary for multipart content
         String boundary = "*****";
 
-        URL url = new URL(this.url);
+        URL url = new URI(this.url).toURL();
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.addRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
         connection.addRequestProperty("User-Agent", "Java-DiscordWebhook-BY-Gelox_");

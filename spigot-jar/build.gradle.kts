@@ -68,6 +68,10 @@ tasks {
     }
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {

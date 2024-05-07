@@ -32,8 +32,7 @@ tasks {
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
     }
 }
-java.sourceCompatibility = JavaVersion.VERSION_11
-java.targetCompatibility = JavaVersion.VERSION_11
+
 
 // ONLY REQUIRED IF: you are using Solution 2 with the modified dependency
 tasks.register<Copy>("unpackShadow") {

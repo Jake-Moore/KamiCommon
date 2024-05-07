@@ -1,5 +1,7 @@
 package com.kamikazejam.kamicommon.yaml.base;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +33,7 @@ public interface ConfigurationMethods<T extends ConfigurationMethods<?>> {
     void setFloat(String key, float value);
 
 
-    T getConfigurationSection(String key);
+    @NotNull T getConfigurationSection(String key);
     String getString(String key);
     String getString(String key, String def);
     boolean isString(String key);
