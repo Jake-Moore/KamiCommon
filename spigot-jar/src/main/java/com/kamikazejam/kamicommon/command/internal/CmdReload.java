@@ -15,6 +15,6 @@ public class CmdReload extends KamiCommand {
     public void perform() {
         KamiCommon.get().reloadConfig();
         KamiCommon.get().getKamiConfig().reload();
-        sender.sendMessage(StringUtil.t("&c[KamiCommon] Reloaded."));
+        sender.sendMessage(StringUtil.t("&a[KamiCommon] Reloaded."));
     }
 }
