@@ -7,7 +7,6 @@ import com.kamikazejam.kamicommon.item.IBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.List;
 public class PageItem {
 
     public final List<IBuilder> iBuilders = new ArrayList<>();
-    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) private int bIndex = 0;
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) private int bIndex = 0; // iBuilder index
     private int loopTicks = 20; // Default to 1 second
 
     // Only one should ever be set

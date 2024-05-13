@@ -4,7 +4,6 @@ import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejam.kamicommon.gui.page.PageItem;
 import com.kamikazejam.kamicommon.item.IAItemBuilder;
 import com.kamikazejam.kamicommon.item.IBuilder;
-import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
@@ -20,7 +19,6 @@ public class KamiMenuItem extends PageItem {
 
     private boolean enabled;
     private List<Integer> slots;
-    private final @NotNull List<XMaterial> materialCycle = new ArrayList<>();
 
     // For like KamiMenuItem(config, "menus.menu1")
     public KamiMenuItem(ConfigurationSection section, String key) {
@@ -57,8 +55,8 @@ public class KamiMenuItem extends PageItem {
         loadIBuilders(section, player);
 
         // Apply additional settings
-        if (section.isSet("materialCycleTicks")) {
-            this.setLoopTicks(section.getInt("materialCycleTicks"));
+        if (section.isSet("typeCycleTicks")) {
+            this.setLoopTicks(section.getInt("typeCycleTicks"));
         }
         boolean hideAttributes = section.getBoolean("hideAttributes", true);
         if (hideAttributes) { iBuilders.forEach(IBuilder::hideAttributes); }
@@ -113,11 +111,18 @@ public class KamiMenuItem extends PageItem {
     }
 
     private void loadIBuilders(ConfigurationSection section, @Nullable OfflinePlayer player) {
-        // Method1: Try to Load multiple materials/types
-        boolean m = section.isList("materials");
-        boolean t = section.isList("types");
-        if (m || t) {
-            List<String> mats = (m) ? section.getStringList("materials") : section.getStringList("types");
+        // Method1: Try to Load multiple materials/types (from any of the 4 allowed keys)
+        boolean m1 = section.isList("materials");
+        boolean m2 = section.isList("material");
+        if (m1 || m2) {
+            List<String> mats = (m1) ? section.getStringList("materials") : section.getStringList("material");
+            mats.forEach(mat -> iBuilders.add(new IAItemBuilder(mat, section, player)));
+            return;
+        }
+        boolean t1 = section.isList("types");
+        boolean t2 = section.isList("type");
+        if (t1 || t2) {
+            List<String> mats = (t1) ? section.getStringList("types") : section.getStringList("type");
             mats.forEach(mat -> iBuilders.add(new IAItemBuilder(mat, section, player)));
             return;
         }

@@ -8,6 +8,8 @@ import com.kamikazejam.kamicommon.gui.page.PageBuilder;
 import com.kamikazejam.kamicommon.gui.page.PageItem;
 import com.kamikazejam.kamicommon.item.IAItemBuilder;
 import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.util.StringUtilP;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -47,11 +49,17 @@ public class KamiMenuContainer {
         if (rows < 1) { throw new IllegalArgumentException("Invalid rows: " + rows); }
 
         // Load the Filler item
-        boolean fillerEnabled = section.getBoolean("filler.enabled", false);
-        if (fillerEnabled) {
-            fillerItem = new KamiMenuItem(section.getConfigurationSection("filler"));
+        if (section.isConfigurationSection("filler")) {
+            if (section.isSet("filler.enabled") && !section.getBoolean("filler.enabled", false)) {
+                // Case 1. `filler.enabled` set to false (use no filler)
+                fillerItem = null;
+            }else {
+                // Case 2. `filler.enabled` is unset or true (use the provided filler)
+                fillerItem = new KamiMenuItem(section.getConfigurationSection("filler"));
+            }
         }else {
-            fillerItem = null;
+            // Case 3. `filler` section not provided, use the default
+            fillerItem = defaultFiller;
         }
 
         ConfigurationSection icons = section.getConfigurationSection("icons");
@@ -133,7 +141,7 @@ public class KamiMenuContainer {
     public KamiMenu createKamiMenu(Player player, int page) {
         PageBuilder<Player> builder = new PageBuilder<>() {
             @Override
-            public String getMenuName() { return title; }
+            public String getMenuName() { return StringUtilP.justP(player, title); }
             @Override
             public int getRows(int page) { return rows; }
 
@@ -276,4 +284,13 @@ public class KamiMenuContainer {
     public KamiMenuContainer setPlayerHeadOwner(String key, String playerName) {
         return modifyItem(key, item -> item.getIBuilder().setSkullOwner(playerName));
     }
+
+    // Configure the default filler icon
+    public static KamiMenuItem defaultFiller = new KamiMenuItem(
+            true,
+            new IAItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
+                    .setName("&7")
+                    .setLore(),
+            -1
+    );
 }
