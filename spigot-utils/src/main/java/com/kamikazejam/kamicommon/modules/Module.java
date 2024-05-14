@@ -3,7 +3,6 @@ package com.kamikazejam.kamicommon.modules;
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
-import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.config.KamiConfigExt;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
@@ -126,9 +125,11 @@ public abstract class Module {
             @Nullable String moduleYmlPath = getPlugin().getModuleYmlPath();
             if (moduleYmlPath == null) {
                 moduleConfig = new ModuleConfig(this, getConfigName());
+                moduleConfig.setStrictKeys(true);
             }else {
                 if (!moduleYmlPath.endsWith("/")) { moduleYmlPath += "/"; }
                 moduleConfig = new ModuleConfig(this, moduleYmlPath + getConfigName());
+                moduleConfig.setStrictKeys(true);
             }
         }
         return moduleConfig;
