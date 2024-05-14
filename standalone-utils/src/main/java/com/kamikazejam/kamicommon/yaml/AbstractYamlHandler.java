@@ -1,21 +1,22 @@
 package com.kamikazejam.kamicommon.yaml;
 
 import com.kamikazejam.kamicommon.configuration.config.AbstractConfig;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.nodes.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
@@ -41,14 +42,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
     public abstract T newConfig(MappingNode node, File configFile);
     public abstract MemorySectionMethods<?> newMemorySection(MappingNode node);
 
-
-
-
-    public T loadConfig(boolean addDefaults) {
-        return loadConfig(addDefaults, null);
-    }
-
-    public T loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream) {
+    public T loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream, boolean strictKeys) {
         try {
             if (!configFile.exists()) {
                 if (!configFile.getParentFile().exists()) {
@@ -66,7 +60,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
             config = newConfig((MappingNode) (YamlUtil.getYaml()).compose(reader), configFile);
 
             if (addDefaults) {
-                config = addDefaults(stream);
+                config = addDefaults(stream, strictKeys);
             }
 
             config.save();
@@ -92,7 +86,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
     }
 
     private static final DecimalFormat DF_THOUSANDS = new DecimalFormat("#,###");
-    private T addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) {
+    private T addDefaults(@Nullable Supplier<InputStream> defStreamSupplier, boolean strictKeys) {
         // Use passed arg unless it's null, then grab the IS from the plugin
         InputStream defConfigStream = getIS(defStreamSupplier);
 
@@ -107,9 +101,14 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
         Reader reader = new InputStreamReader(defConfigStream, StandardCharsets.UTF_8);
 
         MemorySectionMethods<?> defConfig = newMemorySection((MappingNode) (YamlUtil.getYaml()).compose(reader));
+        Set<String> defKeys = defConfig.getKeys(true);
+
+        if (strictKeys) {
+            applyStrictKeys(defConfig, defKeys);
+        }
 
         boolean needsNewKeys = false;
-        for (String key : defConfig.getKeys(true)) {
+        for (String key : defKeys) {
             if (!config.contains(key)) { needsNewKeys = true; break; }
         }
 
@@ -163,11 +162,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
 
     @SuppressWarnings("SameParameterValue")
     private String repeat(String s, int times) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < times; i++) {
-            sb.append(s);
-        }
-        return sb.toString();
+        return StringUtil.repeat(s, times);
     }
 
     private boolean isInteger(String s) {
@@ -215,8 +210,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
         }
 
         private static void processYAMLNode(Node node, @Nullable List<String> keysWithValues, List<NodePair> allKeyNodes, String parentKey) {
-            if (node instanceof MappingNode) {
-                MappingNode mappingNode = (MappingNode) node;
+            if (node instanceof MappingNode mappingNode) {
 
                 for (int i = 0; i < mappingNode.getValue().size(); i++) {
                     NodeTuple tuple = mappingNode.getValue().get(i);
@@ -275,14 +269,71 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
     }
 
 
-    public static class NodePair {
-        public final String key;
-        public final ScalarNode scalarNode;
-        public final boolean terminatesInValue;
-        public NodePair(String key, ScalarNode scalarNode, boolean terminatesInValue) {
-            this.key = key;
-            this.scalarNode = scalarNode;
-            this.terminatesInValue = terminatesInValue;
+    public record NodePair(String key, ScalarNode scalarNode, boolean terminatesInValue) { }
+
+
+    // TODO optimize this with skips (i.e. if a section is marked as exempt, we should intelligently skip all child keys)
+    //   at the loop level
+    private void applyStrictKeys(MemorySectionMethods<?> defConfig, Set<String> defKeys) {
+        Set<String> configKeys = config.getKeys(true);
+
+        // Compile the keep keys set
+        Set<String> keepKeys = new HashSet<>();
+        loop1: for (String key : configKeys) {
+            // Check if this key is covered by a parent key
+            for (String k : keepKeys) {
+                if (key.startsWith(k + ".")) { continue loop1; }
+            }
+
+            @Nullable Set<String> comments1 = getBlockComments(config.getNodeTuple(key));
+            @Nullable Set<String> comments2 = getBlockComments(defConfig.getNodeTuple(key));
+            boolean exempt = isExempt(comments1, comments2);
+            if (!exempt) { continue; }
+
+            // Remove any subkeys of this one (more detailed keys covered by this one)
+            Set<String> toRemove = new HashSet<>();
+            keepKeys.forEach(k -> {
+                if (k.startsWith(key + ".")) { toRemove.add(k); }
+            });
+            keepKeys.removeAll(toRemove);
+
+            // Add this key to the keepKeys set
+            keepKeys.add(key);
         }
+
+        // Check config for stale keys to remove
+        for (String key : configKeys) {
+            if (defKeys.contains(key)) { continue; }
+
+            boolean exempt = false;
+            for (String k : keepKeys) {
+                if (key.startsWith(k)) { exempt = true; break; }
+            }
+            if (exempt) { continue; }
+            config.internalPut(key, null);
+        }
+    }
+
+    private @Nullable Set<String> getBlockComments(@Nullable NodeTuple tuple) {
+        if (tuple == null) { return null; }
+        if (!(tuple.getKeyNode() instanceof ScalarNode scalarNode)) { return null; }
+
+        @Nullable List<CommentLine> comments = scalarNode.getBlockComments();
+        if (comments == null || comments.isEmpty()) { return null; }
+
+        return comments.stream().map(CommentLine::getValue).collect(Collectors.toSet());
+    }
+    private boolean isExempt(@Nullable Set<String> comments1, @Nullable Set<String> comments2) {
+        if (comments1 != null) {
+            for (String comment : comments1) {
+                if (comment.contains("@keep")) { return true; }
+            }
+        }
+        if (comments2 != null) {
+            for (String comment : comments2) {
+                if (comment.contains("@keep")) { return true; }
+            }
+        }
+        return false;
     }
 }

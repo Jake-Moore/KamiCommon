@@ -99,7 +99,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
     private KamiConfig kamiConfig = null;
     public @NotNull KamiConfig getKamiConfig() {
         if (kamiConfig == null) {
-            kamiConfig = new KamiConfig(this, new File(getDataFolder(), "config.yml"), true);
+            kamiConfig = new KamiConfig(this, new File(getDataFolder(), "config.yml"), true, true);
         }
         return kamiConfig;
     }

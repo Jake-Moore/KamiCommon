@@ -42,6 +42,11 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         this(plugin, file, addDefaults, null);
     }
 
+    public KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, boolean strictKeys) {
+        this(plugin, file, addDefaults, null);
+        this.setStrictKeys(strictKeys);
+    }
+
     public KamiConfig(@Nonnull JavaPlugin plugin, File file, Supplier<InputStream> defaultSupplier) {
         this(plugin, file, true, defaultSupplier);
     }
@@ -55,14 +60,14 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         ensureFile();
 
         this.yamlHandler = new YamlHandler(this, plugin, file);
-        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
+        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier, this.isStrictKeys());
         save();
     }
 
     @Override
     public void reload() {
         try {
-            config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
+            config = yamlHandler.loadConfig(addDefaults, defaultSupplier, this.isStrictKeys());
             save();
         }catch (Exception e) {
             e.printStackTrace();
