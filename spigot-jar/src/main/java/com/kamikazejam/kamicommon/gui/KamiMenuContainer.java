@@ -248,6 +248,10 @@ public class KamiMenuContainer {
         pagedItemMap.put(key, item);
         return this;
     }
+    public KamiMenuContainer addPagedIcon(String key, IBuilder item) {
+        pagedItemMap.put(key, new KamiMenuItem(true, item, -1));
+        return this;
+    }
     public KamiMenuContainer addPagedIcon(String key, IBuilder item, int slot) {
         pagedItemMap.put(key, new KamiMenuItem(true, item, slot));
         return this;
