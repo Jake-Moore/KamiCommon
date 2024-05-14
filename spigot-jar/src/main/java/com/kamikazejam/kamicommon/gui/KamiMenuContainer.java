@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class KamiMenuContainer {
     private String title;
-    private int rows;
+    private int rows; // Accepted Values: [-1, 1, 2, 3, 4, 5, 6], or [-1, 4, 5, 6] for paginated menus
     @Nullable private KamiMenuItem fillerItem = null;
 
     private final Map<String, KamiMenuItem> menuItemMap = new HashMap<>();
@@ -46,7 +46,7 @@ public class KamiMenuContainer {
     public KamiMenuContainer(ConfigurationSection section) {
         title = section.getString("title", section.getString("name", " "));
         rows = section.getInt("rows", -1);
-        if (rows < 1) { throw new IllegalArgumentException("Invalid rows: " + rows); }
+        if (rows < -1 || rows == 0 || rows > 6) { throw new IllegalArgumentException("Invalid rows: " + rows); }
 
         // Load the Filler item
         if (section.isConfigurationSection("filler")) {
@@ -142,10 +142,12 @@ public class KamiMenuContainer {
         PageBuilder<Player> builder = new PageBuilder<>() {
             @Override
             public String getMenuName() { return StringUtilP.justP(player, title); }
+
             @Override
-            public int getRows(int page) { return rows; }
-
-
+            public int getFixedSize() {
+                // if rows=-1 then it will try to adapt to the number of items
+                return rows;
+            }
 
             @Override
             public Collection<? extends PageItem> getItems() {
