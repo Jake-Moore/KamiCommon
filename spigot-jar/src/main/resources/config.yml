@@ -1,1 +1,6 @@
-verboseLogging: false
+verboseLogging: false # Test in line comment
+this:
+  is:
+    a:
+      nested:
+        property: value
