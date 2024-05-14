@@ -109,7 +109,11 @@ public abstract class PageBuilder<T extends Player> {
     }
 
     public int getRows(int page) {
-        return getFixedSize() == -1 ? getLinesFilled(page) : getFixedSize();
+        int rows = getFixedSize() == -1 ? getLinesFilled(page) : getFixedSize();
+        if (rows < 1 || rows > 6) {
+            throw new IllegalArgumentException("Invalid rows: " + rows);
+        }
+        return rows;
     }
 
     public IBuilder getFillerItem() {
