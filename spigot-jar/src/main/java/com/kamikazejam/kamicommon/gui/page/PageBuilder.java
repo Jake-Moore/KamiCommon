@@ -132,7 +132,7 @@ public abstract class PageBuilder<T extends Player> {
     // page 0 indexed
     public KamiMenu createMenu(Player player, int page) {
         String title = getMenuName(page + 1, this.items.totalPages());
-        this.menu = new KamiMenu(title, getRows(page));
+        this.menu = new KamiMenu(title, getRows(page), this);
 
         // Add previous icon
         if (page > 0) {

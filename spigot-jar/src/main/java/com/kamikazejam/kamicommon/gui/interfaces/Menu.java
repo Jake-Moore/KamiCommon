@@ -39,6 +39,12 @@ public interface Menu extends InventoryHolder {
         addMenuClick(builder.toItemStack(), click, slot);
     }
 
+    void addMenuClick(ItemStack stack, MenuClickPlayerPage click, int slot);
+
+    default void addMenuClick(IBuilder builder, MenuClickPlayerPage click, int slot) {
+        addMenuClick(builder.toItemStack(), click, slot);
+    }
+
     default void addSpecialMenuClick(IBuilder builder, MenuClickInfo click, int slot) {
         addSpecialMenuClick(builder.toItemStack(), click, slot);
     }
@@ -70,6 +76,8 @@ public interface Menu extends InventoryHolder {
     void addMenuClick(IBuilder builder, MenuClick click, int slot, Player forPlaceholders);
 
     void addMenuClick(IBuilder builder, MenuClickPlayer click, int slot, Player forPlaceholders);
+
+    void addMenuClick(IBuilder builder, MenuClickPlayerPage click, int slot, Player forPlaceholders);
 
     void setUpdateHandler(MenuUpdate update);
 

@@ -1,22 +1,34 @@
 package com.kamikazejam.kamicommon.gui;
 
 import com.kamikazejam.kamicommon.gui.interfaces.*;
+import com.kamikazejam.kamicommon.gui.page.PageBuilder;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
+@Getter
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class KamiMenu extends AbstractKamiMenu {
+    private @Nullable PageBuilder<?> parent = null;
 
     public KamiMenu(String name, int lines) {
-        super(name, lines);
+        this(name, lines, null);
     }
-
     public KamiMenu(String name, InventoryType type) {
+        this(name, type, null);
+    }
+    public KamiMenu(String name, int lines, @Nullable PageBuilder<?> parent) {
+        super(name, lines);
+        this.parent = parent;
+    }
+    public KamiMenu(String name, InventoryType type, @Nullable PageBuilder<?> parent) {
         super(name, type);
+        this.parent = parent;
     }
 
     @Override
@@ -42,6 +54,11 @@ public class KamiMenu extends AbstractKamiMenu {
     @Override
     public void addMenuClick(ItemStack stack, MenuClickPlayer click, int slot) {
         addSpecialMenuClick(stack, new MenuClickPlayerTransform(click), slot);
+    }
+
+    @Override
+    public void addMenuClick(ItemStack stack, MenuClickPlayerPage click, int slot) {
+        addSpecialMenuClick(stack, new MenuClickPlayerPageTransform(click), slot);
     }
 
     @Override

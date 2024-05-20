@@ -6,6 +6,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 @SuppressWarnings("unused")
 public interface MenuClickInfo {
 
-    void onItemClickMember(Player player, InventoryClickEvent event);
+    void onItemClickMember(Player player, InventoryClickEvent event, int page);
 
 }

@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.menus;
 import com.kamikazejam.kamicommon.gui.KamiMenuContainer;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClickPlayer;
+import com.kamikazejam.kamicommon.gui.interfaces.MenuClickPlayerPage;
 import com.kamikazejam.kamicommon.gui.items.KamiMenuItem;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
@@ -95,12 +96,20 @@ public class KamiConfirmMenu {
         container.addMenuClick("confirm", click);
         return this;
     }
+    public KamiConfirmMenu setConfirmCallback(MenuClickPlayerPage click) {
+        container.addMenuClick("confirm", click);
+        return this;
+    }
 
     public KamiConfirmMenu setDenyCallback(MenuClick denyCallback) {
         container.addMenuClick("deny", denyCallback);
         return this;
     }
     public KamiConfirmMenu setDenyCallback(MenuClickPlayer denyCallback) {
+        container.addMenuClick("deny", denyCallback);
+        return this;
+    }
+    public KamiConfirmMenu setDenyCallback(MenuClickPlayerPage denyCallback) {
         container.addMenuClick("deny", denyCallback);
         return this;
     }
