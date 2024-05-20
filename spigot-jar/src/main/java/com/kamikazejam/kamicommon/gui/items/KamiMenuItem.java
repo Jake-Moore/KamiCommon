@@ -148,7 +148,6 @@ public class KamiMenuItem extends PageItem {
         }
     }
 
-    @Override
     public List<Integer> getSlots(PageBuilder<?> pageBuilder) {
         if (slots != null) {
             return slots.get(pageBuilder);

@@ -14,7 +14,7 @@ import java.util.List;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @Getter @Setter
-public abstract class PageItem {
+public class PageItem {
 
     public final List<IBuilder> iBuilders = new ArrayList<>();
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) private int bIndex = 0; // iBuilder index
@@ -165,6 +165,4 @@ public abstract class PageItem {
     public IBuilder getIBuilder() {
         return iBuilders.getFirst();
     }
-
-    public abstract List<Integer> getSlots(PageBuilder<?> pageBuilder);
 }
