@@ -13,10 +13,10 @@ public class MenuClickTransform implements MenuClickInfo {
     }
 
     @Override
-    public void onItemClickMember(Player player, InventoryClickEvent event) {
+    public void onItemClickMember(Player player, InventoryClickEvent event, int page) {
         if (click != null) {
             player.playSound(player.getLocation(), XSound.UI_BUTTON_CLICK.parseSound(), 1, 2);
-            click.onItemClick(event.getClick());
+            click.onClick(event.getClick());
         }
     }
 }

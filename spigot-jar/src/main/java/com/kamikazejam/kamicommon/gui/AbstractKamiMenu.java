@@ -136,6 +136,11 @@ public abstract class AbstractKamiMenu extends MenuHolder implements MenuTicked 
     }
 
     @Override
+    public void addMenuClick(IBuilder builder, MenuClickPlayerPage click, int slot, Player forPlaceholders) {
+        addMenuClick(builder.toItemStack(forPlaceholders), click, slot);
+    }
+
+    @Override
     public void setUpdateHandler(MenuUpdate updateHandler) {
         this.updateHandler = updateHandler;
         MenuTask.getAutoUpdateInventories().add(this);

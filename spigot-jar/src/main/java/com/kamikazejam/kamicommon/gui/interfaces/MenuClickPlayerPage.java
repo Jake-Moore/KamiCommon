@@ -4,6 +4,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
 @SuppressWarnings("unused")
-public interface MenuClickPlayer {
-    void onPlayerClick(Player player, ClickType clickType);
+public interface MenuClickPlayerPage {
+    void onPlayerPageClick(Player player, ClickType clickType, int page);
 }

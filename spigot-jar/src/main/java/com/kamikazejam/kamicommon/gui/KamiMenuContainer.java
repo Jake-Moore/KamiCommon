@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.gui;
 import com.kamikazejam.kamicommon.KamiCommon;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClickPlayer;
+import com.kamikazejam.kamicommon.gui.interfaces.MenuClickPlayerPage;
 import com.kamikazejam.kamicommon.gui.items.KamiMenuItem;
 import com.kamikazejam.kamicommon.gui.page.PageBuilder;
 import com.kamikazejam.kamicommon.gui.page.PageItem;
@@ -121,6 +122,10 @@ public class KamiMenuContainer {
     }
 
     public KamiMenuContainer addMenuClick(String key, MenuClickPlayer click) {
+        return modifyItem(key, item -> item.setMenuClick(click));
+    }
+
+    public KamiMenuContainer addMenuClick(String key, MenuClickPlayerPage click) {
         return modifyItem(key, item -> item.setMenuClick(click));
     }
 

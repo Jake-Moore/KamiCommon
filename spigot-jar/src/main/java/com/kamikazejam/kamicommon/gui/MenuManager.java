@@ -21,17 +21,15 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-@SuppressWarnings({"ConstantValue", "deprecation"})
 public class MenuManager implements Listener {
 
     @EventHandler
     public void onClickMenu(InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player)) { return; }
-        if (!(e.getInventory().getHolder() instanceof Menu)) { return; }
+        if (!(e.getWhoClicked() instanceof Player player)) { return; }
+        if (!(e.getInventory().getHolder() instanceof Menu menu)) { return; }
         e.setCancelled(true);
 
-        Player player = (Player) e.getWhoClicked();
-        Menu menu = (Menu) e.getInventory().getHolder();
+        int page = (menu instanceof KamiMenu kMenu && kMenu.getParent() != null) ? kMenu.getParent().getCurrentPage() : 0;
 
         // handle the click handler before the item click handlers
         Predicate<InventoryClickEvent> consumer = menu.getClickHandler();
@@ -53,7 +51,7 @@ public class MenuManager implements Listener {
 
             boolean sameItems = compareItemStacks(current, menuItem.getItem());
             if (menuItem.getSlot() == e.getSlot() && sameItems && (e.getClickedInventory() == null || e.getClickedInventory().getType() != InventoryType.PLAYER)) {
-                click.onItemClickMember(player, e);
+                click.onItemClickMember(player, e, page);
                 return;
             }
         }
@@ -63,11 +61,9 @@ public class MenuManager implements Listener {
     public void onCloseMenu(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
 
-        if (!(e.getInventory().getHolder() instanceof Menu)) {
+        if (!(e.getInventory().getHolder() instanceof Menu menu)) {
             return;
         }
-
-        Menu menu = (Menu) e.getInventory().getHolder();
 
         Consumer<InventoryCloseEvent> close = menu.getCloseHandler();
         if (close != null) {
@@ -89,9 +85,8 @@ public class MenuManager implements Listener {
     @EventHandler
     public void onPickup(PlayerPickupItemEvent e) {
         if(e.getPlayer().getOpenInventory() == null) { return; }
-        if (!(e.getPlayer().getInventory().getHolder() instanceof Menu)) { return; }
+        if (!(e.getPlayer().getInventory().getHolder() instanceof Menu menu)) { return; }
 
-        Menu menu = (Menu) e.getPlayer().getInventory().getHolder();
         if (!menu.allowItemPickup()) {
             e.setCancelled(true);
         }

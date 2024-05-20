@@ -23,6 +23,7 @@ public class PageItem {
     // Only one should ever be set
     public @Nullable MenuClick menuClick = null;
     public @Nullable MenuClickPlayer menuClickPlayer = null;
+    public @Nullable MenuClickPlayerPage menuClickPlayerPage = null;
 
     // Up to the developer to supply additional builders before use
     public PageItem(@Nullable MenuClick menuClick) {
@@ -31,6 +32,10 @@ public class PageItem {
     // Up to the developer to supply additional builders before use
     public PageItem(@Nullable MenuClickPlayer menuClickPlayer) {
         this.menuClickPlayer = menuClickPlayer;
+    }
+    // Up to the developer to supply additional builders before use
+    public PageItem(@Nullable MenuClickPlayerPage menuClickPlayerPage) {
+        this.menuClickPlayerPage = menuClickPlayerPage;
     }
 
     public PageItem(IBuilder iBuilder, @Nullable MenuClick menuClick) {
@@ -41,6 +46,11 @@ public class PageItem {
         this.iBuilders.add(iBuilder);
         this.menuClickPlayer = menuClickPlayer;
     }
+    public PageItem(IBuilder iBuilder, @Nullable MenuClickPlayerPage menuClickPlayerPage) {
+        this.iBuilders.add(iBuilder);
+        this.menuClickPlayerPage = menuClickPlayerPage;
+    }
+
     public PageItem(List<IBuilder> iBuilders, @Nullable MenuClick menuClick) {
         this.iBuilders.addAll(iBuilders);
         this.menuClick = menuClick;
@@ -48,6 +58,10 @@ public class PageItem {
     public PageItem(List<IBuilder> iBuilders, @Nullable MenuClickPlayer menuClickPlayer) {
         this.iBuilders.addAll(iBuilders);
         this.menuClickPlayer = menuClickPlayer;
+    }
+    public PageItem(List<IBuilder> iBuilders, @Nullable MenuClickPlayerPage menuClickPlayerPage) {
+        this.iBuilders.addAll(iBuilders);
+        this.menuClickPlayerPage = menuClickPlayerPage;
     }
 
     public PageItem setIBuilder(IBuilder iBuilder) {
@@ -64,12 +78,21 @@ public class PageItem {
     public PageItem setMenuClick(MenuClick menuClick) {
         this.menuClick = menuClick;
         this.menuClickPlayer = null;
+        this.menuClickPlayerPage = null;
         return this;
     }
 
     public PageItem setMenuClick(MenuClickPlayer menuClickPlayer) {
         this.menuClickPlayer = menuClickPlayer;
         this.menuClick = null;
+        this.menuClickPlayerPage = null;
+        return this;
+    }
+
+    public PageItem setMenuClick(MenuClickPlayerPage menuClickPlayerPage) {
+        this.menuClickPlayerPage = menuClickPlayerPage;
+        this.menuClick = null;
+        this.menuClickPlayer = null;
         return this;
     }
 
@@ -107,9 +130,9 @@ public class PageItem {
     }
 
     private void addMenuClick(Menu menu, IBuilder iBuilder, int slot) {
-        // 1. no click events defined
-        if (menuClickPlayer == null && menuClick == null) {
-            menu.setItem(slot, iBuilder);
+        // 1. Click defined
+        if (menuClick != null) {
+            menu.addMenuClick(iBuilder, menuClick, slot);
             return;
         }
         // 2. Player Click defined
@@ -117,8 +140,14 @@ public class PageItem {
             menu.addMenuClick(iBuilder, menuClickPlayer, slot);
             return;
         }
-        // 3. Regular Click defined
-        menu.addMenuClick(iBuilder, menuClick, slot);
+        // 3. Player Page Click defined
+        if (menuClickPlayerPage != null) {
+            menu.addMenuClick(iBuilder, menuClickPlayerPage, slot);
+            return;
+        }
+
+        // 4. no click events defined
+        menu.setItem(slot, iBuilder);
     }
 
     private void updateMenuClick(MenuTicked menu, IBuilder iBuilder, int slot) {
