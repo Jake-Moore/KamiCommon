@@ -190,7 +190,7 @@ public abstract class PageBuilder<T extends Player> {
             if (!item.isEnabled()) { continue; }
 
             // Set the item
-            for (int slot : item.getSlots()) {
+            for (int slot : item.getSlots(this)) {
                 if (slot < 0 || slot >= totalSlots) { continue; }
                 item.addToMenu(menu, slot);
             }

@@ -1,10 +1,15 @@
 package com.kamikazejam.kamicommon.gui.items;
 
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
+import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
+import com.kamikazejam.kamicommon.gui.items.slots.LastRowItemSlot;
+import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
+import com.kamikazejam.kamicommon.gui.page.PageBuilder;
 import com.kamikazejam.kamicommon.gui.page.PageItem;
 import com.kamikazejam.kamicommon.item.IAItemBuilder;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +23,7 @@ import java.util.List;
 public class KamiMenuItem extends PageItem {
 
     private boolean enabled;
-    private List<Integer> slots;
+    @Getter(AccessLevel.NONE) private @Nullable ItemSlot slots = null;
 
     // For like KamiMenuItem(config, "menus.menu1")
     public KamiMenuItem(ConfigurationSection section, String key) {
@@ -40,16 +45,7 @@ public class KamiMenuItem extends PageItem {
         super((MenuClick) null); // Null safe for player arg
         enabled = section.getBoolean("enabled", true);
 
-        slots = new ArrayList<>();
-        if (section.isInt("slot")) {
-            slots.add(section.getInt("slot"));
-        }else if (section.isList("slot")) {
-            slots.addAll(section.getIntegerList("slot"));
-        }else if (section.isList("slots")) {
-            slots.addAll(section.getIntegerList("slots"));
-        }else if (section.isInt("slots")) {
-            slots.add(section.getInt("slots"));
-        }
+        loadSlots(section);
 
         // Load the IBuilders
         loadIBuilders(section, player);
@@ -65,14 +61,13 @@ public class KamiMenuItem extends PageItem {
     public KamiMenuItem(boolean enabled, IBuilder builder, List<Integer> slots) {
         super(builder, (MenuClick) null);
         this.enabled = enabled;
-        this.slots = slots;
+        this.slots = new StaticItemSlot(slots);
     }
 
     public KamiMenuItem(boolean enabled, IBuilder builder, int slot) {
         super(builder, (MenuClick) null);
         this.enabled = enabled;
-        this.slots = new ArrayList<>();
-        this.slots.add(slot);
+        this.slots = new StaticItemSlot(slot);
     }
 
     public KamiMenuItem setEnabled(boolean enabled) {
@@ -93,16 +88,14 @@ public class KamiMenuItem extends PageItem {
     }
 
     public KamiMenuItem setSlot(int slot) {
-        this.slots = new ArrayList<>();
-        this.slots.add(slot);
+        this.slots = new StaticItemSlot(slot);
         return this;
     }
 
     public KamiMenuItem setSlots(List<Integer> slots) {
-        this.slots = slots;
+        this.slots = new StaticItemSlot(slots);
         return this;
     }
-
 
     @Override
     public KamiMenuItem setMenuClick(MenuClick menuClick) {
@@ -129,6 +122,38 @@ public class KamiMenuItem extends PageItem {
 
         // Method2: Default to single item logic
         this.iBuilders.add(new IAItemBuilder(section, player));
+    }
+
+    private void loadSlots(ConfigurationSection section) {
+        this.slots = null;
+        // Load Static Slots (if found)
+        List<Integer> staticSlots = new ArrayList<>();
+        if (section.isInt("slot")) {
+            staticSlots.add(section.getInt("slot"));
+        }else if (section.isList("slot")) {
+            staticSlots.addAll(section.getIntegerList("slot"));
+        }else if (section.isList("slots")) {
+            staticSlots.addAll(section.getIntegerList("slots"));
+        }else if (section.isInt("slots")) {
+            staticSlots.add(section.getInt("slots"));
+        }
+        if (!staticSlots.isEmpty()) {
+            this.slots = new StaticItemSlot(staticSlots);
+            return;
+        }
+
+        // Try to load a relative slot
+        if (section.isInt("slotInLastRow")) {
+            this.slots = new LastRowItemSlot(section.getInt("slotInLastRow"));
+        }
+    }
+
+    @Override
+    public List<Integer> getSlots(PageBuilder<?> pageBuilder) {
+        if (slots != null) {
+            return slots.get(pageBuilder);
+        }
+        return List.of();
     }
 }
 
