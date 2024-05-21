@@ -275,10 +275,16 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
     // TODO optimize this with skips (i.e. if a section is marked as exempt, we should intelligently skip all child keys)
     //   at the loop level
     private void applyStrictKeys(MemorySectionMethods<?> defConfig, Set<String> defKeys) {
+        // WIP - not sure if this is a good idea
+        //   Disabled for now (can't think of a good way to do this)
+
+        /*
         Set<String> configKeys = config.getKeys(true);
 
         // Compile the keep keys set
         Set<String> keepKeys = new HashSet<>();
+        System.out.println("Searching Keys for @keep Comments...");
+        System.out.println(Arrays.toString(configKeys.toArray()));
         loop1: for (String key : configKeys) {
             // Check if this key is covered by a parent key
             for (String k : keepKeys) {
@@ -289,6 +295,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
             @Nullable Set<String> comments2 = getBlockComments(defConfig.getNodeTuple(key));
             boolean exempt = isExempt(comments1, comments2);
             if (!exempt) { continue; }
+            System.out.println("\tFound Key: " + key);
 
             // Remove any subkeys of this one (more detailed keys covered by this one)
             Set<String> toRemove = new HashSet<>();
@@ -301,6 +308,8 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
             keepKeys.add(key);
         }
 
+        System.out.println("keepKeys: " + Arrays.toString(keepKeys.toArray()));
+
         // Check config for stale keys to remove
         for (String key : configKeys) {
             if (defKeys.contains(key)) { continue; }
@@ -310,8 +319,10 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
                 if (key.startsWith(k)) { exempt = true; break; }
             }
             if (exempt) { continue; }
+            System.out.println("Removing stale key: " + key);
             config.internalPut(key, null);
         }
+        */
     }
 
     private @Nullable Set<String> getBlockComments(@Nullable NodeTuple tuple) {
