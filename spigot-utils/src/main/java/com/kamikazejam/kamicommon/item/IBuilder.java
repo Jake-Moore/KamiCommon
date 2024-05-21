@@ -359,17 +359,27 @@ public abstract class IBuilder {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean loadMaterial(ConfigurationSection section) {
         if (section.isString("material")) {
-            this.material = parseMaterial(section.getString("material"));
-            return true;
+            @Nullable XMaterial mat = parseMaterial(section.getString("material"));
+            if (mat != null) {
+                this.material = mat;
+                return true;
+            }
         }
         if (section.isString("type")) {
-            this.material = parseMaterial(section.getString("type"));
-            return true;
+            @Nullable XMaterial mat = parseMaterial(section.getString("type"));
+            if (mat != null) {
+                this.material = mat;
+                return true;
+            }
         }
         return false;
     }
-    public @NotNull XMaterial parseMaterial(String mat) throws IllegalArgumentException {
-        return XMaterial.matchXMaterial(mat).orElseThrow(() -> new IllegalArgumentException("Invalid material: " + mat));
+
+    /**
+     * Nullable because the material string may be another IBuilder format (like ItemsAdder namespacedID)
+     */
+    public @Nullable XMaterial parseMaterial(String mat) {
+        return XMaterial.matchXMaterial(mat).orElse(null);
     }
 
     public abstract void loadBasicItem(ConfigurationSection config, boolean loadMaterial);
