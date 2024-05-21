@@ -13,7 +13,7 @@ dependencies {
     shadow("de.tr7zw:item-nbt-api:2.12.4")
 
     compileOnly(project.property("lowestSpigotDep") as String)
-    compileOnly("me.clip:placeholderapi:2.11.5") // TODO soft depend
+    compileOnly("me.clip:placeholderapi:2.11.6") // TODO soft depend
 
     // Spigot Libs (soft-depend)
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
