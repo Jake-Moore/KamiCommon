@@ -20,6 +20,9 @@ dependencies {
         exclude(group = "org.json", module = "json")
     }
 
+    // RabbitMQ amqp-client
+    shadow("com.rabbitmq:amqp-client:5.21.0")
+
     // Lombok
     compileOnly(project.property("lombokDep") as String)
     annotationProcessor(project.property("lombokDep") as String)
@@ -39,6 +42,7 @@ tasks {
         relocate("org.apache.commons.pool2", "com.kamikazejam.kamicommon.commons.pool2")
         relocate("com.mysql", "com.kamikazejam.kamicommon.mysql")
         relocate("com.google.protobuf", "com.kamikazejam.kamicommon.google.protobuf")
+        relocate("com.rabbitmq", "com.kamikazejam.kamicommon.rabbitmq")
     }
 }
 
