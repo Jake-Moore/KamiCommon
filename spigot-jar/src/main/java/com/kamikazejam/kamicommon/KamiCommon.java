@@ -83,6 +83,7 @@ public class KamiCommon extends KamiPlugin implements Listener {
         // Save IdUtil
         IdUtilLocal.saveCachefileDatas();
 
+
         command.unregisterCommand();
         Bukkit.getLogger().info("KamiCommon disabled");
     }
