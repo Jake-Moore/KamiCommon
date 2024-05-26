@@ -8,12 +8,12 @@ dependencies {
     shadow(files(project(":spigot-nms") // which contains standalone-utils
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    shadow("com.google.code.gson:gson:2.10.1")
+    shadow("com.google.code.gson:gson:2.11.0")
     shadow("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
     shadow("de.tr7zw:item-nbt-api:2.12.4")
 
     compileOnly(project.property("lowestSpigotDep") as String)
-    compileOnly("me.clip:placeholderapi:2.11.5") // TODO soft depend
+    compileOnly("me.clip:placeholderapi:2.11.6") // TODO soft depend
 
     // Spigot Libs (soft-depend)
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
