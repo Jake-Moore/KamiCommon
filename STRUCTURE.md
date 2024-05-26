@@ -15,7 +15,7 @@
   - com.google.code.gson:gson, org.apache.commons:commons-text, [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API) [via [spigot-utils](#spigot-utils)]
   - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
   - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries) [via [spigot-nms](#spigot-nms)]
-  - com.zaxxer:HikariCP, com.mysql:mysql-connector-j, redis.clients:jedis [via [generic-jar](#generic-jar)]
+  - com.zaxxer:HikariCP, com.mysql:mysql-connector-j, redis.clients:jedis, com.rabbitmq:amqp-client [via [generic-jar](#generic-jar)]
 - (⭐) Should **NOT** be shaded ❌
   - <span style="text-decoration:underline;">should be added to the server as a plugin</span>
 
@@ -80,6 +80,7 @@
   - com.zaxxer:HikariCP
   - com.mysql:mysql-connector-j
   - redis.clients:jedis
+  - com.rabbitmq:amqp-client
 - (⭐) **CAN** be shaded
   - Also present in either [spigot-jar](#spigot-jar) or [standalone-jar](#standalone-jar)
 
