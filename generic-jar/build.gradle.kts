@@ -22,6 +22,7 @@ dependencies {
 
     // RabbitMQ amqp-client
     shadow("com.rabbitmq:amqp-client:5.21.0")
+    compileOnly("org.jetbrains:annotations:24.1.0")
 
     // Lombok
     compileOnly(project.property("lombokDep") as String)
