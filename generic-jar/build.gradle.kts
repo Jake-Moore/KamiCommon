@@ -10,7 +10,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }
 
-val slf4jVersion = "1.7.36" // For RabbitMQ
+val slf4jVersion = "2.0.13" // For RabbitMQ
 dependencies {
     // Unique dependencies for this module
     shadow("com.zaxxer:HikariCP:5.1.0")
