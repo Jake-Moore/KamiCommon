@@ -10,6 +10,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }
 
+val slf4jVersion = "1.7.36" // For RabbitMQ
 dependencies {
     // Unique dependencies for this module
     shadow("com.zaxxer:HikariCP:5.1.0")
@@ -23,6 +24,11 @@ dependencies {
     // RabbitMQ amqp-client
     shadow("com.rabbitmq:amqp-client:5.21.0")
     compileOnly("org.jetbrains:annotations:24.1.0")
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    shadow("org.slf4j:slf4j-api:$slf4jVersion")
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+    shadow("org.slf4j:slf4j-simple:$slf4jVersion")
 
     // Lombok
     compileOnly(project.property("lombokDep") as String)
@@ -44,6 +50,7 @@ tasks {
         relocate("com.mysql", "com.kamikazejam.kamicommon.mysql")
         relocate("com.google.protobuf", "com.kamikazejam.kamicommon.google.protobuf")
         relocate("com.rabbitmq", "com.kamikazejam.kamicommon.rabbitmq")
+        relocate("org.slf4j", "com.kamikazejam.kamicommon.slf4j")
     }
 }
 
