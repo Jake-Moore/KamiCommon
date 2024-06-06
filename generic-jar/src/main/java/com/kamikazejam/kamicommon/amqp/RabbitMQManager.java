@@ -163,13 +163,25 @@ class RabbitMQManager {
      * @param TTL_MS the time-to-live of the queue (in milliseconds)
      */
     public void declareQueue(@NotNull String queueName, long TTL_MS) {
+        this.declareQueue(queueName, true, false, false, TTL_MS);
+    }
+
+    /**
+     * Declares a queue with a specified TTL (iff not declared already)
+     * @param queueName the name of the queue to declare
+     * @param durable whether the queue should survive a broker restart
+     * @param exclusive whether the queue should be exclusive to the connection
+     * @param autoDelete whether the queue should be auto-deleted when no longer in use
+     * @param TTL_MS the time-to-live of the queue (in milliseconds)
+     */
+    public void declareQueue(@NotNull String queueName, boolean durable, boolean exclusive, boolean autoDelete, long TTL_MS) {
         // Avoid unnecessary re-declarations that cost time
         if (declaredQueues.contains(queueName)) { return; }
 
         try {
             Map<String, Object> args = new HashMap<>();
             args.put("x-message-ttl", TTL_MS); // TTL is time before auto-delete in the queue
-            getChannel().queueDeclare(queueName, false, false, false, args);
+            getChannel().queueDeclare(queueName, durable, exclusive, autoDelete, args);
             declaredQueues.add(queueName);
         } catch (IOException e) {
             throw new RuntimeException(e);
