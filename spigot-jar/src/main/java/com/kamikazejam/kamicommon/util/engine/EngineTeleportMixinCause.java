@@ -1,7 +1,8 @@
 package com.kamikazejam.kamicommon.util.engine;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -29,12 +30,9 @@ public class EngineTeleportMixinCause extends Engine {
     // FIELDS
     // -------------------------------------------- //
 
+    @Setter
     @Getter
     private boolean mixinCausedTeleportIncoming = false;
-
-    public void setMixinCausedTeleportIncoming(boolean mixinCausedTeleportIncoming) {
-        this.mixinCausedTeleportIncoming = mixinCausedTeleportIncoming;
-    }
 
     private final Set<PlayerTeleportEvent> mixinCausedTeleportEvents = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -55,6 +53,6 @@ public class EngineTeleportMixinCause extends Engine {
         if (!mixinCausedTeleportIncoming) return;
         mixinCausedTeleportIncoming = false;
         mixinCausedTeleportEvents.add(event);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(KamiCommon.get(), () -> mixinCausedTeleportEvents.remove(event));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(PluginSource.get(), () -> mixinCausedTeleportEvents.remove(event));
     }
 }

@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.gui.page;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.gui.MenuItem;
 import com.kamikazejam.kamicommon.gui.interfaces.*;
 import com.kamikazejam.kamicommon.item.IBuilder;
@@ -113,7 +113,7 @@ public class PageItem {
         this.addMenuClick(menu, iBuilders.get(bIndex), slot);
         // Configure the update handler to update the gear icon
         menu.setUpdateHandler(() -> {
-            if (!KamiCommon.get().isEnabled()) { menu.closeAll(); }
+            if (!PluginSource.get().isEnabled()) { menu.closeAll(); }
         });
         menu.addUpdateHandlerSubTask(new MenuUpdateTask() {
             @Override

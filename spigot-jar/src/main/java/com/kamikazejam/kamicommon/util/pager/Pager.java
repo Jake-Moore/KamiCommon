@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.pager;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.mson.Mson;
@@ -309,7 +309,7 @@ public class Pager<T> {
 	}
 
 	public void messageAsync() {
-		Bukkit.getScheduler().runTaskAsynchronously(KamiCommon.get(), this::message);
+		Bukkit.getScheduler().runTaskAsynchronously(PluginSource.get(), this::message);
 	}
 
 }

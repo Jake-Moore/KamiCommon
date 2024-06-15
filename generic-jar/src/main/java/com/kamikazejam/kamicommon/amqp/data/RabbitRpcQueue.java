@@ -17,7 +17,7 @@ public class RabbitRpcQueue {
      * @param queueStem The stem for the queue names
      */
     public RabbitRpcQueue(@NotNull String queueStem) {
-        this.clientBound = queueStem + "-client";
-        this.serverBound = queueStem + "-server";
+        this.clientBound = "RPC_client_" + queueStem;
+        this.serverBound = "RPC_server_" + queueStem;
     }
 }
