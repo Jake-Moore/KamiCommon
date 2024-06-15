@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon;
 
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.command.type.RegistryType;
+import com.kamikazejam.kamicommon.integrations.PlaceholderAPIIntegration;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import lombok.Setter;
@@ -44,5 +45,17 @@ public class SpigotUtilProvider {
             vanishIntegration = new PremiumVanishIntegration(getPlugin());
         }
         return vanishIntegration;
+    }
+
+    @Setter private static @Nullable PlaceholderAPIIntegration papiIntegration = null;
+    private static Boolean papiAPI = null;
+    public static @Nullable PlaceholderAPIIntegration getPlaceholderIntegration() {
+        if (papiAPI == null) {
+            papiAPI = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
+        }
+        if (papiAPI && papiIntegration == null) {
+            papiIntegration = new PlaceholderAPIIntegration(getPlugin());
+        }
+        return papiIntegration;
     }
 }
