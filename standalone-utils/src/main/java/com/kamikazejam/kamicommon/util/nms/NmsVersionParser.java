@@ -25,12 +25,27 @@ public class NmsVersionParser {
                 s = t + "0";
             }
         }else if (num == 2) {
-            // In this case 1.16.3 becomes 1163
-            s = mcVer.replaceAll("\\.", "");
+            // In this case 1.16.3 becomes 1163, 1.8.8 becomes 1088
+            String[] parts = mcVer.split("\\.");
+            if (parts[1].length() == 1) {
+                // In the case of 1.8.8 -> 1088
+                s = parts[0] + "0" + parts[1] + parts[2];
+            }else {
+                // In the case of 1.16.3 -> 1163
+                s = parts[0] + parts[1] + parts[2];
+            }
         }else {
             throw new IllegalArgumentException("Unknown version format: " + mcVer + " (expected a.b.c or a.b)");
         }
 
         return Integer.parseInt(s);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getFormattedNmsInteger("1.8"));      // 1080
+        System.out.println(getFormattedNmsInteger("1.8.8"));    // 1088
+        System.out.println(getFormattedNmsInteger("1.16"));     // 1160
+        System.out.println(getFormattedNmsInteger("1.16.3"));   // 1163
+        System.out.println(getFormattedNmsInteger("1.20.4"));   // 1204
     }
 }
