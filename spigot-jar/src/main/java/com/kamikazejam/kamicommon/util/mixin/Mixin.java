@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
@@ -174,7 +174,7 @@ public class Mixin extends Engine {
 
     @Override
     public void setActive(boolean active) {
-        boolean verbose = KamiCommon.get().getConfig().getBoolean("verboseLogging", false);
+        boolean verbose = PluginSource.get().getConfig().getBoolean("verboseLogging", false);
         this.setActiveVerbose(active, verbose);
     }
 

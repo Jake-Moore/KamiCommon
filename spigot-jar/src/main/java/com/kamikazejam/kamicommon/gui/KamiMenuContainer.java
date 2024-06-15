@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.gui;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClickPlayer;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClickPlayerPage;
@@ -175,7 +175,7 @@ public class KamiMenuContainer {
 
     private KamiMenuContainer modifyItem(String key, Consumer<KamiMenuItem> consumer) {
         if (!isValidKey(key)) {
-            KamiCommon.get().getLogger().warning("[KamiMenuContainer] Could not find icon key: " + key);
+            PluginSource.warning("[KamiMenuContainer] Could not find icon key: " + key);
             return this;
         }
         KamiMenuItem menuItem = menuItemMap.get(key);
@@ -198,7 +198,7 @@ public class KamiMenuContainer {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean validateKey(String key) {
         if (!isValidKey(key)) {
-            KamiCommon.get().getLogger().warning("[KamiMenuContainer] Could not find icon key: " + key);
+            PluginSource.warning("[KamiMenuContainer] Could not find icon key: " + key);
             return false;
         }
         return true;

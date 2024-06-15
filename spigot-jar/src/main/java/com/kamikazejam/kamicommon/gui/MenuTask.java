@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.gui;
 
 import com.google.common.collect.Sets;
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.gui.interfaces.Menu;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuTicked;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuUpdateTask;
@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * This task is called every tick by {@link KamiCommon#onEnableInner()}
+ * This task is called every tick by {@link PluginSource}
  */
 public class MenuTask implements Runnable {
 

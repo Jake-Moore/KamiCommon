@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.autoupdate;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.configuration.ConfigHelper;
 import com.kamikazejam.kamicommon.gson.JsonArray;
 import com.kamikazejam.kamicommon.gson.JsonElement;
@@ -28,6 +28,9 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 //TODO remove any old .off files when it starts up
 /**
@@ -39,7 +42,7 @@ import java.nio.file.StandardCopyOption;
  */
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class AutoUpdate implements Listener {
-    private static boolean updated = false;
+    private static final Set<String> updatedPlugins = new HashSet<>();
     private static final String BASE_URL = "https://api.github.com/repos/KamiUpdates/AutoUpdate/releases/tags/";
     //Access token of the KamiUpdates machine user (second account)
     //It can only see the empty repository for AutoUpdate, only seeing releases I put there
@@ -75,8 +78,8 @@ public class AutoUpdate implements Listener {
         grabLatest(plugin, debugMessages);
     }
 
-    public static boolean hasBeenUpdated() {
-        return updated;
+    public static boolean hasPluginUpdates() {
+        return !updatedPlugins.isEmpty();
     }
 
     private static void grabLatest(JavaPlugin plugin, boolean debugMessages) {
@@ -98,8 +101,9 @@ public class AutoUpdate implements Listener {
                 }
                 if (debug) { plugin.getLogger().info("[AutoUpdate] Grabbed " + projectName + "'s Download Url: " + urlData.getB().get("url").getAsString()); }
 
-                updated = updateFile(urlData, plugin);
+                boolean updated = updateFile(urlData, plugin);
                 if (!updated) { return; }
+                updatedPlugins.add(plugin.getName());
                 plugin.getLogger().info(StringUtil.t("[AutoUpdate] &aUpdate successfully downloaded, it will be effective next restart!"));
             }catch (IOException e) {
                 e.printStackTrace();
@@ -207,7 +211,7 @@ public class AutoUpdate implements Listener {
             int latestAssetId = jsonObject.get("id").getAsInt();
             String updatedTimestamp = (dataJson.has("updated_at") ? dataJson.get("updated_at").getAsString() : dataJson.get("created_at").getAsString());
 
-            File kamicommon = KamiCommon.get().getDataFolder();
+            File kamicommon = PluginSource.get().getDataFolder();
             FileConfiguration data = ConfigHelper.createConfig(plugin, kamicommon, "updater.yml");
 
             if (data.contains(plugin.getName())) {
@@ -266,10 +270,10 @@ public class AutoUpdate implements Listener {
     }
 
     public static void notify(Player player) {
-        if (hasBeenUpdated()) {
-            // TODO this needs to use the correct plugin name
-            player.sendMessage(StringUtil.t("&c&lThere is a new update for '" + KamiCommon.get().getName() + "'! This update will automatically load on the next restart."));
-        }
+        if (!hasPluginUpdates()) { return; }
+
+        String names = Arrays.toString(updatedPlugins.toArray());
+        player.sendMessage(StringUtil.t("&c&lThere are new updates for '" + names + "'! These updates should automatically load on the next restart."));
     }
 
 

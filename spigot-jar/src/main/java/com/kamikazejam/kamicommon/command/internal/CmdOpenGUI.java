@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.command.internal;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
@@ -25,16 +25,14 @@ public class CmdOpenGUI extends KamiCommand {
     public void perform() throws KamiCommonException {
         Player player = (Player) sender;
         String guiKey = readArg();
-        KamiMenuContainer menu = new KamiMenuContainer(KamiCommon.get().getKamiConfig(), guiKey);
+        KamiMenuContainer menu = new KamiMenuContainer(PluginSource.getKamiConfig(), guiKey);
         for (String key : menu.getMenuItemMap().keySet()) {
-            menu.addMenuClick(key, (p, c) -> {
-                p.sendMessage(StringUtil.t("&7Menu Item Click (&f" + c.name() + "&7) on &f" + key));
-            });
+            menu.addMenuClick(key, (p, c) ->
+                    p.sendMessage(StringUtil.t("&7Menu Item Click (&f" + c.name() + "&7) on &f" + key)));
         }
         for (String key : menu.getPagedItemMap().keySet()) {
-            menu.addMenuClick(key, (p, c) -> {
-                p.sendMessage(StringUtil.t("&7Page Item Click (&f" + c.name() + "&7) on &f" + key));
-            });
+            menu.addMenuClick(key, (p, c) ->
+                    p.sendMessage(StringUtil.t("&7Page Item Click (&f" + c.name() + "&7) on &f" + key)));
         }
         menu.openMenu(player);
     }

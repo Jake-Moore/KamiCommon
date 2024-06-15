@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.gui;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.gui.interfaces.Menu;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClickInfo;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
@@ -70,7 +70,7 @@ public class MenuManager implements Listener {
             if (menu.getIgnoredClose().contains(p.getName())) {
                 menu.getIgnoredClose().remove(p.getName());
             } else {
-                Bukkit.getScheduler().runTaskLater(KamiCommon.get(), () -> close.accept(e), 1);
+                Bukkit.getScheduler().runTaskLater(PluginSource.get(), () -> close.accept(e), 1);
             }
         }
 

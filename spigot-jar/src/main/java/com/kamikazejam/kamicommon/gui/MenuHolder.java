@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.gui;
 
-import com.kamikazejam.kamicommon.KamiCommon;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,7 +46,7 @@ public class MenuHolder implements InventoryHolder {
             }
 
             if (invName.length() > 32) {
-                KamiCommon.get().getLogger().warning("Inventory name is too long! (" + invName.length() + " > 32)");
+                PluginSource.warning("Inventory name is too long! (" + invName.length() + " > 32)");
             }
         }
         return this.inventory;

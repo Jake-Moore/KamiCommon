@@ -19,13 +19,14 @@ class AutoUpdateListeners implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player.hasPermission("kamicommon.autoupdate.manage") && AutoUpdate.hasBeenUpdated()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    AutoUpdate.notify(player);
-                }
-            }.runTaskLater(plugin, 40L);
-        }
+        if (!player.hasPermission("kamicommon.autoupdate.manage") || !AutoUpdate.hasPluginUpdates()) { return; }
+
+        // Schedule a chat notification
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                AutoUpdate.notify(player);
+            }
+        }.runTaskLater(plugin, 40L);
     }
 }
