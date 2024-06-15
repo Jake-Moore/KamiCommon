@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.util;
 
-import me.clip.placeholderapi.PlaceholderAPI;
+import com.kamikazejam.kamicommon.SpigotUtilProvider;
+import com.kamikazejam.kamicommon.integrations.PlaceholderAPIIntegration;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,8 +14,8 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class StringUtilP extends StringUtil {
     public static String p(@Nullable OfflinePlayer player, String s) {
-        s = PlaceholderAPI.setPlaceholders(player, s);
-        return t(s);
+        // Replace PAPI placeholders and then translate
+        return t(justP(player, s));
     }
 
     public static List<String> p(@Nullable OfflinePlayer player, List<String> msg) {
@@ -30,6 +31,12 @@ public class StringUtilP extends StringUtil {
     }
 
     public static String justP(@Nullable OfflinePlayer player, String s) {
-        return PlaceholderAPI.setPlaceholders(player, s);
+        @Nullable PlaceholderAPIIntegration papi = SpigotUtilProvider.getPlaceholderIntegration();
+        if (papi != null) {
+            return papi.setPlaceholders(player, s);
+        }else {
+            SpigotUtilProvider.getPlugin().getLogger().warning("PlaceholderAPI not found! This may cause issues with placeholders!");
+            return s;
+        }
     }
 }
