@@ -30,7 +30,7 @@ public class PluginSource {
      */
     @SuppressWarnings("UnusedReturnValue")
     public static boolean onEnable(@NotNull KamiPlugin plugin) {
-        if (pluginSource != null) { return false; }
+        if (enabled) { return false; }
         pluginSource = plugin;
         enabled = true;
 
