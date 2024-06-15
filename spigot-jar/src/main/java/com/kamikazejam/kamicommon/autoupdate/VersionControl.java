@@ -88,7 +88,7 @@ public class VersionControl {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bBuild date: " + formatDate(buildDate)));
             }
 
-            if (AutoUpdate.hasBeenUpdated()) {
+            if (AutoUpdate.hasPluginUpdates()) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bA new version of the plugin is queued for next restart!"));
             }
         }
