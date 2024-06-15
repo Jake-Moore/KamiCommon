@@ -32,23 +32,11 @@ public class IAItemBuilder extends IBuilder {
     public IAItemBuilder(XMaterial m) {
         super(m);
     }
-    public IAItemBuilder(int id) {
-        super(id);
-    }
-    public IAItemBuilder(int id, short damage) {
-        super(id, damage);
-    }
     public IAItemBuilder(XMaterial m, short damage) {
         super(m, damage);
     }
-    public IAItemBuilder(int id, int amount) {
-        super(id, amount);
-    }
     public IAItemBuilder(XMaterial m, int amount) {
         super(m, amount);
-    }
-    public IAItemBuilder(int id, int amount, short damage) {
-        super(id, amount, damage);
     }
     public IAItemBuilder(XMaterial material, int amount, short damage) {
         super(material, amount, damage);

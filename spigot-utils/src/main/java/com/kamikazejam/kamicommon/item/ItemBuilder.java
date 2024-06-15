@@ -37,23 +37,11 @@ public class ItemBuilder extends IBuilder {
     public ItemBuilder(XMaterial m) {
         super(m);
     }
-    public ItemBuilder(int id) {
-        super(id);
-    }
-    public ItemBuilder(int id, short damage) {
-        super(id, damage);
-    }
     public ItemBuilder(XMaterial m, short damage) {
         super(m, damage);
     }
-    public ItemBuilder(int id, int amount) {
-        super(id, amount);
-    }
     public ItemBuilder(XMaterial m, int amount) {
         super(m, amount);
-    }
-    public ItemBuilder(int id, int amount, short damage) {
-        super(id, amount, damage);
     }
     public ItemBuilder(XMaterial material, int amount, short damage) {
         super(material, amount, damage);

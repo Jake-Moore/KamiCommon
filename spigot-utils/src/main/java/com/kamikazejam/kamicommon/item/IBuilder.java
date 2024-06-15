@@ -163,30 +163,12 @@ public abstract class IBuilder {
         this(m, 1);
     }
 
-    public IBuilder(int id) {
-        this(id, 1);
-    }
-
-    public IBuilder(int id, short damage) {
-        this(id, 1, damage);
-    }
-
     public IBuilder(XMaterial m, short damage) {
         this(m, 1, damage);
     }
 
     public IBuilder(XMaterial m, int amount) {
         this(m, amount, (short) 0);
-    }
-
-    public IBuilder(int id, int amount) { this(id, amount, (short) 0); }
-
-    @SuppressWarnings("deprecation")
-    public IBuilder(int id, int amount, short damage) {
-        if (amount > 64) { amount = 64; }
-        XMaterial.matchXMaterial(id, (byte) damage).ifPresent(xMaterial -> material = xMaterial);
-        this.amount = amount;
-        this.damage = damage;
     }
 
     public IBuilder(@NotNull XMaterial material, int amount, short damage) {
