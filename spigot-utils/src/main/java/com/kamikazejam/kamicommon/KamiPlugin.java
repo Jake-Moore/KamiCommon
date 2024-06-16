@@ -20,6 +20,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -41,7 +42,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     private String logPrefixColored = null;
     private String logPrefixPlain = null;
     @Getter ModuleManager moduleManager;
-    @Getter KamiConfigExt modulesConfig;
+    private KamiConfigExt modulesConfig = null;
 
 
     // -------------------------------------------- //
@@ -74,9 +75,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     public boolean onEnablePre() {
         this.enableTime = System.currentTimeMillis();
         log("=== ENABLE START ===");
-
-        // Create the Modules Config
-        this.modulesConfig = new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"), false);
 
         // Create the Module Manager
         this.moduleManager = new ModuleManager(this);
@@ -329,5 +327,14 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
 
         // If we have reached this point, the versions were equal
         return true;
+    }
+
+    public @NotNull KamiConfigExt getModulesConfig() {
+        // Create on-demand, since creating the KamiConfig will create the file too
+        if (modulesConfig == null) {
+            // Create the Modules Config
+            this.modulesConfig = new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"), false);
+        }
+        return modulesConfig;
     }
 }
