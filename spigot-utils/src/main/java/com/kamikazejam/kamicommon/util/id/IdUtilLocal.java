@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.util.id;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.SpigotUtilProvider;
 import com.kamikazejam.kamicommon.nms.Logger;
 import com.kamikazejam.kamicommon.util.DiskUtil;
@@ -353,7 +354,11 @@ public class IdUtilLocal implements Listener, Runnable {
 	// It should only be called on plugin enable.
 
 	// FIXME deal with this
-	public static void setup(JavaPlugin plugin) {
+	public static void setup(KamiPlugin plugin) {
+		if (!SpigotUtilProvider.isSet()) {
+			SpigotUtilProvider.setPlugin(plugin);
+		}
+
 		// Time: Start
 		long start = System.currentTimeMillis();
 
