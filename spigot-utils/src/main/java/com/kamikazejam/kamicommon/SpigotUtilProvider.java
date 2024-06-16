@@ -18,6 +18,10 @@ public class SpigotUtilProvider {
         return plugin;
     }
 
+    public static boolean isSet() {
+        return plugin != null;
+    }
+
     /**
      * @return true IFF the plugin was initialized, false if it was already initialized
      */
