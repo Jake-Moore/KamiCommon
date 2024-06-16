@@ -34,6 +34,9 @@ public class PluginSource {
         pluginSource = plugin;
         enabled = true;
 
+        // Provide SpigotUtils with this plugin as well
+        SpigotUtilProvider.setPlugin(plugin);
+
         // Register all KamiCommon info needing a plugin
         plugin.getServer().getPluginManager().registerEvents(new MenuManager(), plugin);
 
@@ -64,9 +67,6 @@ public class PluginSource {
 
         // Setup IdUtil
         IdUtilLocal.setup(plugin);
-
-        // Provide SpigotUtils with this plugin as well
-        SpigotUtilProvider.setPlugin(plugin);
 
         // Register the KamiCommon command
         command.registerCommand(plugin);
