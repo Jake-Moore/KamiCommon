@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.util.id;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kamikazejam.kamicommon.SpigotUtilProvider;
 import com.kamikazejam.kamicommon.nms.Logger;
 import com.kamikazejam.kamicommon.util.DiskUtil;
 import com.kamikazejam.kamicommon.util.KUtil;
@@ -28,7 +29,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -91,8 +91,6 @@ public class IdUtilLocal implements Listener, Runnable {
 	// This is lock object is used when reading from and saving to this file.
 	// Useful since saving might happen async.
 	private final static Object CACHEFILE_LOCK = new Object();
-	public final static File CACHEFILE = new File(getDataFolder(), "idnamecache.json");
-	public final static File CACHEFILE_TEMP = new File(getDataFolder(), "idnamecache.json.temp");
 	public final static Type CACHEFILE_TYPE = new TypeToken<Set<IdData>>() {}.getType();
 
 	// -------------------------------------------- //
@@ -863,9 +861,25 @@ public class IdUtilLocal implements Listener, Runnable {
 	// -------------------------------------------- //
 	// CACHEFILE DATAS
 	// -------------------------------------------- //
+	private static @Nullable File cacheFile = null;
+	public static @NotNull File getCacheFile() {
+		if (cacheFile == null) {
+			cacheFile = new File(getDataFolder(), "idnamecache.json");
+		}
+		return cacheFile;
+	}
+	private static @Nullable File cacheFileTemp = null;
+	public static @NotNull File getCacheFileTemp() {
+		if (cacheFileTemp == null) {
+			cacheFileTemp = new File(getDataFolder(), "idnamecache.json.temp");
+		}
+		return cacheFileTemp;
+	}
 
 	public static void saveCachefileDatas() {
 		synchronized (CACHEFILE_LOCK) {
+			File CACHEFILE = getCacheFile();
+			File CACHEFILE_TEMP = getCacheFileTemp();
 			String content = gson.toJson(datas, CACHEFILE_TYPE);
 			DiskUtil.writeCatch(CACHEFILE_TEMP, content);
 			if (!CACHEFILE_TEMP.exists()) return;
@@ -876,6 +890,7 @@ public class IdUtilLocal implements Listener, Runnable {
 
 	public static Set<IdData> getCachefileDatas() {
 		synchronized (CACHEFILE_LOCK) {
+			File CACHEFILE = getCacheFile();
 			String content = DiskUtil.readCatch(CACHEFILE);
 
 			if (content == null) return new HashSet<>();
@@ -939,14 +954,6 @@ public class IdUtilLocal implements Listener, Runnable {
 	}
 
 	private static @NotNull File getDataFolder() {
-		Plugin plugin = Bukkit.getPluginManager().getPlugin("KamiCommon");
-		if (plugin != null) {
-			return plugin.getDataFolder();
-		}
-		Plugin any = Bukkit.getPluginManager().getPlugins()[0];
-		File plugins = any.getDataFolder().getParentFile();
-		File kamiCommon = new File(plugins, "KamiCommon");
-		assert kamiCommon.exists() || kamiCommon.mkdirs();
-		return kamiCommon;
+		return SpigotUtilProvider.getPlugin().getDataFolder();
 	}
 }
