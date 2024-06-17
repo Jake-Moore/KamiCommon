@@ -1,7 +1,7 @@
 import java.util.*
 
 @Suppress("PropertyName")
-var VERSION = "3.0.3.1"
+var VERSION = "3.0.3.2"
 
 plugins { // needed for the subprojects section to work
     id("java")
@@ -56,12 +56,13 @@ allprojects {
     description = "KamikazeJAM's common library for Spigot and Standalone projects."
 
     repositories {
+        mavenLocal()
         mavenCentral()
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://nexus.luxiouslabs.net/public")
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://maven.citizensnpcs.co/repo")
-        maven("https://mvn.lumine.io/repository/maven-public/")
+//        maven("https://mvn.lumine.io/repository/maven-public/") // bugged repo
         maven("https://repo.maven.apache.org/maven2/")
         maven("https://jitpack.io")
         gradlePluginPortal()
