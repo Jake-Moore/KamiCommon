@@ -5,9 +5,9 @@ plugins {
 
 dependencies {
     // Unique dependencies for this module
-    paperweight.paperDevBundle("1.20.6-R0.1-SNAPSHOT")           // 2. add the dev bundle (contains all apis)
-    // Confirmed working for 1.20.5 and 1.20.6
-    
+    paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")                    // 2. add the dev bundle (contains all apis)
+    // Confirmed working for 1.21
+
     compileOnly(files(project(":spigot-nms:api")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
@@ -15,7 +15,7 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))   // 3. Need Java 21 for 1.20.5+
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))           // 3. Need Java 21 for 1.20.5+
 }
 
 // Starting with 1.20.5 Paper we can choose not to reobf the jar, leaving it mojang mapped

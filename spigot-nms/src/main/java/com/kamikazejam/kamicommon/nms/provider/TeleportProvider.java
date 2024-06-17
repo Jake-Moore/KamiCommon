@@ -63,8 +63,11 @@ public class TeleportProvider extends Provider<AbstractTeleporter> {
             return new Teleporter1_20_R2();
         }else if (ver <= f("1.20.4")) {
             return new Teleporter1_20_R3();
+        }else if (ver <= f("1.20.6")) {
+            // Confirmed for 1.20.5 and 1.20.6
+            return new Teleporter1_20_CB();
         }
-        // With the mojang-mapped paper nms now, we might be good to use this version indefinitely
-        return new Teleporter1_20_CB();
+        // Confirmed for 1.21
+        return new Teleporter1_21_R1();
     }
 }

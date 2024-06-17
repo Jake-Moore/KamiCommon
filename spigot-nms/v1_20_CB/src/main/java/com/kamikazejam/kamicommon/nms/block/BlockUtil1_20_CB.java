@@ -11,6 +11,9 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Working for: 1.20.5, 1.20.6, 1.21
+ */
 public class BlockUtil1_20_CB extends IBlockUtil1_13<BlockState> {
     @Override
     public BlockState getIBlockData(@NotNull BlockData blockData) {

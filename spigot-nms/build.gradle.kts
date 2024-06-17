@@ -32,6 +32,7 @@ dependencies {
     shadow(project(":spigot-nms:v1_20_R2"))
     shadow(project(":spigot-nms:v1_20_R3"))
     shadow(project(":spigot-nms:v1_20_CB"))
+    shadow(project(":spigot-nms:v1_21_R1"))
 
     // Lombok
     compileOnly(project.property("lombokDep") as String)
