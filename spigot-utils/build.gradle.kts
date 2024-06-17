@@ -20,7 +20,7 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
-    compileOnly(files(project.layout.projectDirectory.dir("lib/Mythic-Dist-5.6.2.jar")))
+    compileOnly("io.lumine:Mythic-Dist:5.6.2")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.18-3")
 
     // Lombok
