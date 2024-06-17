@@ -62,7 +62,12 @@ allprojects {
         maven("https://nexus.luxiouslabs.net/public")
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://maven.citizensnpcs.co/repo")
-//        maven("https://mvn.lumine.io/repository/maven-public/") // bugged repo
+        maven("https://mvn.lumine.io/repository/maven-public/") {
+            content {
+                includeGroup("io.lumine")
+                excludeGroup("org.jetbrains")
+            }
+        }
         maven("https://repo.maven.apache.org/maven2/")
         maven("https://jitpack.io")
         gradlePluginPortal()
