@@ -54,17 +54,10 @@ public class ItemBuilder extends IBuilder {
     }
 
     @Override
-    public void loadBasicItem(ConfigurationSection config, boolean loadMaterial) {
-        // Load the material
-        if (loadMaterial && !this.loadMaterial(config)) {
-            throw new IllegalStateException("No materials found in config.");
-        }
-
-        // Load basic values from config
-        this.setAmount(config.getInt("amount", 1));
-        this.setDurability(config.getInt("damage", 0));
-        this.setName(config.getString("name"));
-        this.setLore(config.getStringList("lore"));
+    public void loadTypes(ConfigurationSection config) {
+        // Require Loading a XMaterial
+        if (this.loadXMaterial(config)) { return; }
+        throw new IllegalStateException("No materials found in config.");
     }
 
     @Override
