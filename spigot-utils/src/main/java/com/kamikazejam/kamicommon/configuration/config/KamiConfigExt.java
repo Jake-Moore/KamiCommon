@@ -29,8 +29,18 @@ public class KamiConfigExt extends KamiConfig {
     }
 
     @Override
+    public String getString(String key) {
+        return this.getString(key, null);
+    }
+
+    @Override
     public String getString(String key, String def) {
         return this.applyThisPlaceholders(super.getString(key, def));
+    }
+
+    @Override
+    public List<String> getStringList(String key) {
+        return this.getStringList(key, null);
     }
 
     @Override
