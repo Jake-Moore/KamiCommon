@@ -142,7 +142,7 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
             return new ScalarNode(Tag.BOOL, value.toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
         }
         // Numbers also need to be different
-        if (getBigDecimal(value.toString()) != null) {
+        if (parseBigDecimal(value.toString()) != null) {
             if (value.toString().contains(".")) {
                 return new ScalarNode(Tag.FLOAT, value.toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
             }else {
@@ -154,7 +154,7 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
     }
 
     @Nullable
-    protected BigDecimal getBigDecimal(String s) {
+    protected BigDecimal parseBigDecimal(String s) {
         // If it's any of the following, remove the last character
         String l = s.toLowerCase();
         try { return new BigDecimal(s);

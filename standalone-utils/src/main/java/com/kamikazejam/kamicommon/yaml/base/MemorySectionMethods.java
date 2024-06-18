@@ -169,7 +169,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public byte getByte(String key, byte def) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return def;
         }
@@ -180,7 +180,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public boolean isByte(String key) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return false;
         }
@@ -193,7 +193,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public short getShort(String key, short def) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return def;
         }
@@ -204,7 +204,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public boolean isShort(String key) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return false;
         }
@@ -217,7 +217,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public int getInt(String key, int def) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return def;
         }
@@ -228,7 +228,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public boolean isInt(String key) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return false;
         }
@@ -241,7 +241,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public long getLong(String key, long def) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return def;
         }
@@ -252,7 +252,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public boolean isLong(String key) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return false;
         }
@@ -265,7 +265,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public float getFloat(String key, float def) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return def;
         }
@@ -276,7 +276,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public boolean isFloat(String key) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return false;
         }
@@ -289,7 +289,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public double getDouble(String key, double def) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return def;
         }
@@ -300,22 +300,26 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public boolean isDouble(String key) {
-        BigDecimal bd = getNumberAt(key);
+        BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return false;
         }
         return (Math.abs(bd.doubleValue()) <= Double.MAX_VALUE && Math.abs(bd.doubleValue()) >= Double.MIN_VALUE);
     }
 
-    private @Nullable BigDecimal getNumberAt(String key) {
+    public BigDecimal getBigDecimal(String key) {
+        return getBigDecimal(key, null);
+    }
+    public BigDecimal getBigDecimal(String key, BigDecimal def) {
         String s = getString(key);
         if (s == null) {
             return null;
         }
-
-        return getBigDecimal(s);
+        return parseBigDecimal(s);
     }
-
+    public boolean isNumber(String key) {
+        return getBigDecimal(key, null) != null;
+    }
 
     public List<?> getList(String key) {
         return getList(key, null);
