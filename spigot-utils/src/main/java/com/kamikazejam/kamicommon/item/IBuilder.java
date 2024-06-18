@@ -2,15 +2,18 @@ package com.kamikazejam.kamicommon.item;
 
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.StringUtilP;
+import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.util.data.TriState;
+import com.kamikazejam.kamicommon.xseries.XEnchantment;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import de.tr7zw.changeme.nbtapi.NBT;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -38,7 +41,8 @@ public abstract class IBuilder {
 
     private @NotNull TriState unbreakable = TriState.NOT_SET;
     private final @NotNull List<ItemFlag> itemFlags = new ArrayList<>();
-    private final @NotNull Map<Enchantment, Integer> enchantments = new HashMap<>();
+    private final @NotNull Map<XEnchantment, Integer> enchantments = new HashMap<>();
+    private final @NotNull Map<String, Pair<NbtType, Object>> nbtData = new HashMap<>();
     private boolean addGlow = false;
 
     @Setter
@@ -133,18 +137,30 @@ public abstract class IBuilder {
 
         // Glow
         if (addGlow) {
-            meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+            meta.addEnchant(XEnchantment.INFINITY.getEnchant(), 1, true);
             if (!meta.getItemFlags().contains(ItemFlag.HIDE_ENCHANTS)) { meta.addItemFlags(ItemFlag.HIDE_ENCHANTS); }
         }
 
         // Enchantments
         if (!enchantments.isEmpty()) {
-            for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-                meta.addEnchant(entry.getKey(), entry.getValue(), true);
+            for (Map.Entry<XEnchantment, Integer> entry : enchantments.entrySet()) {
+                meta.addEnchant(entry.getKey().getEnchant(), entry.getValue(), true);
             }
         }
 
+        // Apply meta
         itemStack.setItemMeta(meta);
+
+        // Load NBT
+        if (!nbtData.isEmpty()) {
+            NBT.modify(itemStack, nbt -> {
+                for (Map.Entry<String, Pair<NbtType, Object>> entry : nbtData.entrySet()) {
+                    String nbtKey = entry.getKey();
+                    Pair<NbtType, Object> pair = entry.getValue();
+                    pair.getA().write(nbt, nbtKey, pair.getB());
+                }
+            });
+        }
         return itemStack;
     }
 
@@ -152,11 +168,53 @@ public abstract class IBuilder {
      * @param config The configuration section to load data from
      * @param offlinePlayer The player to use as the skull owner
      */
-    private void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer, boolean loadMaterial) {
+    final void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer, boolean loadMaterial) {
         if (offlinePlayer != null) {
             this.skullOwner = offlinePlayer.getName();
         }
-        loadBasicItem(config, loadMaterial);
+        if (loadMaterial) {
+            loadTypes(config);
+        }
+
+        // Load basic values from config
+        this.setAmount(config.getInt("amount", 1));
+        this.setDurability(config.getInt("damage", 0));
+        this.setName(config.getString("name"));
+        this.setLore(config.getStringList("lore"));
+        // Load Enchantments
+        this.loadEnchantments(config);
+
+        // Load NBT
+        this.loadNBT(config);
+    }
+
+    final void loadEnchantments(ConfigurationSection config) {
+        this.enchantments.clear();
+        if (!config.isConfigurationSection("enchantments")) { return; }
+
+        // Load the sub-keys
+        for (String key : config.getConfigurationSection("enchantments").getKeys(false)) {
+            XEnchantment enchant = XEnchantment.matchXEnchantment(key).orElseThrow();
+            int level = config.getInt("enchantments." + key);
+            if (level <= 0) {
+                throw new IllegalArgumentException("Invalid enchantment level: " + level);
+            }
+            this.enchantments.put(enchant, level);
+        }
+    }
+
+    final void loadNBT(ConfigurationSection config) {
+        this.nbtData.clear();
+        if (!config.isConfigurationSection("nbt")) { return; }
+        ConfigurationSection section = config.getConfigurationSection("nbt");
+
+        // Load the sub-keys
+        for (String key : section.getKeys(false)) {
+            String nbtKey = section.getString(key + ".key");
+            NbtType type = NbtType.fromName(section.getString(key + ".type"));
+            Object value = type.readConf(section, key + ".value");
+            this.nbtData.put(nbtKey, Pair.of(type, value));
+        }
     }
 
     public IBuilder(XMaterial m) {
@@ -296,17 +354,17 @@ public abstract class IBuilder {
         return this;
     }
 
-    public IBuilder removeEnchantment(Enchantment enchant) {
+    public IBuilder removeEnchantment(XEnchantment enchant) {
         this.enchantments.remove(enchant);
         return this;
     }
 
-    public IBuilder addEnchant(Enchantment enchant, int level) {
+    public IBuilder addEnchant(XEnchantment enchant, int level) {
         this.enchantments.put(enchant, level);
         return this;
     }
 
-    public IBuilder addEnchantments(Map<Enchantment, Integer> enchantments) {
+    public IBuilder addEnchantments(Map<XEnchantment, Integer> enchantments) {
         this.enchantments.putAll(enchantments);
         return this;
     }
@@ -339,7 +397,7 @@ public abstract class IBuilder {
     public ItemStack toItemStack(Player player) { return build(player); }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    boolean loadMaterial(ConfigurationSection section) {
+    final boolean loadXMaterial(ConfigurationSection section) {
         if (section.isString("material")) {
             @Nullable XMaterial mat = parseMaterial(section.getString("material"));
             if (mat != null) {
@@ -364,7 +422,7 @@ public abstract class IBuilder {
         return XMaterial.matchXMaterial(mat).orElse(null);
     }
 
-    public abstract void loadBasicItem(ConfigurationSection config, boolean loadMaterial);
+    public abstract void loadTypes(ConfigurationSection config);
 
     public abstract IBuilder clone();
 

@@ -76,29 +76,24 @@ public class IAItemBuilder extends IBuilder {
             }
             this.setBase(stack.getItemStack());
         }
-        this.loadBasicItem(section, false);
+        this.loadConfigItem(section, player, false);
     }
 
     @Override
-    public void loadBasicItem(ConfigurationSection config, boolean loadMaterial) {
-        // Load the material
-        if (loadMaterial && !this.loadMaterial(config)) {
-            @Nullable String id = config.getString("material", config.getString("type", null));
-            if (id == null) {
-                throw new IllegalStateException("No materials/namespacedIDs found in config.");
-            }
-            CustomStack stack = CustomStack.getInstance(id);
-            if (stack == null) {
-                throw new IllegalStateException("Invalid CustomStack namespacedID: " + id);
-            }
-            this.setBase(stack.getItemStack());
-        }
+    public void loadTypes(ConfigurationSection config) {
+        // Try Loading an XMaterial
+        if (this.loadXMaterial(config)) { return; }
 
-        // Load basic values from config
-        this.setAmount(config.getInt("amount", 1));
-        this.setDurability(config.getInt("damage", 0));
-        this.setName(config.getString("name"));
-        this.setLore(config.getStringList("lore"));
+        // Try Loading a CustomStack
+        @Nullable String id = config.getString("material", config.getString("type", null));
+        if (id == null) {
+            throw new IllegalStateException("No materials/namespacedIDs found in config.");
+        }
+        CustomStack stack = CustomStack.getInstance(id);
+        if (stack == null) {
+            throw new IllegalStateException("Invalid CustomStack namespacedID: " + id);
+        }
+        this.setBase(stack.getItemStack());
     }
 
     @Override
