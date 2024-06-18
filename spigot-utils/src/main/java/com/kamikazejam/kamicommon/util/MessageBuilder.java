@@ -5,6 +5,7 @@ import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -240,5 +241,22 @@ public class MessageBuilder {
     public MessageBuilder send(@Nonnull Player... players) {
         for (Player p : players) { send(p); }
         return this;
+    }
+
+    /**
+     * Sends the message to all Online Players
+     * @param consoleToo If true, the message will also be sent to the console
+     */
+    public MessageBuilder sendAll(boolean consoleToo) {
+        for (Player p : Bukkit.getOnlinePlayers()) { send(p); }
+        if (consoleToo) { send(Bukkit.getConsoleSender()); }
+        return this;
+    }
+
+    /**
+     * Sends the message to all Online Players (and console)
+     */
+    public MessageBuilder sendAll() {
+        return sendAll(true);
     }
 }
