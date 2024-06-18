@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -192,6 +193,10 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     @Override public float getFloat(String key) { return getYamlConfiguration().getFloat(key); }
     @Override public float getFloat(String key, float def) { return getYamlConfiguration().getFloat(key, def); }
     @Override public boolean isFloat(String key) { return getYamlConfiguration().isFloat(key); }
+
+    @Override public BigDecimal getBigDecimal(String key) { return getYamlConfiguration().getBigDecimal(key); }
+    @Override public BigDecimal getBigDecimal(String key, BigDecimal def) { return getYamlConfiguration().getBigDecimal(key, def); }
+    @Override public boolean isNumber(String key) { return getYamlConfiguration().isNumber(key); }
 
     /**
      * Returns the keys of the config

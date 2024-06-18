@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.yaml.base;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -71,6 +72,9 @@ public interface ConfigurationMethods<T extends ConfigurationMethods<?>> {
     boolean isConfigurationSection(String key);
     boolean contains(String key);
     boolean isSet(String key);
+    BigDecimal getBigDecimal(String key);
+    BigDecimal getBigDecimal(String key, BigDecimal def);
+    boolean isNumber(String key);
 
     void addDefault(String key, Object o);
 
