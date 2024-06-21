@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.nms.mainhand;
 
 import com.kamikazejam.kamicommon.nms.abstraction.mainhand.AbstractMainHand;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -17,5 +18,10 @@ public class MainHand_1_8_R1 extends AbstractMainHand {
     public boolean isOffHand(@NotNull PlayerInteractEntityEvent event) {
         // No offhand in 1.8
         return false;
+    }
+
+    @Override
+    public void setItemInMainHand(@NotNull Player player, @Nullable ItemStack itemStack) {
+        player.setItemInHand(itemStack);
     }
 }
