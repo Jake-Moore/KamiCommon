@@ -45,6 +45,9 @@ public class NmsAPI {
     public static @Nullable ItemStack getItemInMainHand(Player player) {
         return mainHandProvider.get().getItemInMainHand(player);
     }
+    public static void setItemInMainHand(Player player, @Nullable ItemStack itemStack) {
+        mainHandProvider.get().setItemInMainHand(player, itemStack);
+    }
 
     public static String getNamespaced(Enchantment enchantment) {
         return enchantIDProvider.get().getNamespaced(enchantment);

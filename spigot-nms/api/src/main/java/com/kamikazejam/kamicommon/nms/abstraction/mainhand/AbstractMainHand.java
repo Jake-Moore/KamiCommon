@@ -15,4 +15,6 @@ public abstract class AbstractMainHand {
     public abstract @Nullable ItemStack getItemInMainHand(@NotNull PlayerInventory inventory);
 
     public abstract boolean isOffHand(@NotNull PlayerInteractEntityEvent event);
+
+    public abstract void setItemInMainHand(@NotNull Player player, @Nullable ItemStack item);
 }
