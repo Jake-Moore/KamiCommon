@@ -8,7 +8,7 @@ plugins {
 }
 
 var httpclient = "org.apache.httpcomponents.client5:httpclient5:5.4-alpha2"
-var httpcore = "org.apache.httpcomponents.core5:httpcore5:5.3-alpha2"
+var httpcore = "org.apache.httpcomponents.core5:httpcore5:5.3-beta1"
 dependencies {
     // Unique dependencies for this module
     shadow(httpclient); shadow(httpcore)
