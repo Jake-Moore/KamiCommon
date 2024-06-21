@@ -43,7 +43,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     private String logPrefixPlain = null;
     @Getter ModuleManager moduleManager;
     private KamiConfigExt modulesConfig = null;
-
+    private KamiConfigExt config;
 
     // -------------------------------------------- //
     // ENABLE
@@ -79,6 +79,9 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         // Create the Module Manager
         this.moduleManager = new ModuleManager(this);
 
+        // Load the Config
+        this.config = new KamiConfigExt(this, new File(getDataFolder(), "config.yml"), true);
+
         // Listener
         Bukkit.getPluginManager().registerEvents(this, this);
 
@@ -101,6 +104,15 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
 
         long ms = System.currentTimeMillis() - this.enableTime;
         log(Txt.parse("=== ENABLE <g>COMPLETE <i>(Took <h>" + ms + "ms<i>) ==="));
+    }
+
+    public KamiConfigExt getKamiConfig() { return config; }
+    public void reloadKamiConfig() { config.reload(); }
+
+    @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+        reloadKamiConfig();
     }
 
     @Override
