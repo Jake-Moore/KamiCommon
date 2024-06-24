@@ -96,10 +96,23 @@ public class TimeUtil {
         cal.set(Calendar.MINUTE, minute);
         cal.set(Calendar.SECOND, second);
 
-        // Jump forward a day if this 24-hour time has passed today
-        if (cal.getTime().before(new Date())) {
-            cal.add(Calendar.DATE, 1);
+        // Find the earliest time, start by backing up a bit (timezones can be weird)
+        cal.add(Calendar.DAY_OF_MONTH, -2);
+
+        // Loop until we have a time in the future
+        while (cal.getTime().before(new Date())) {
+            cal.add(Calendar.DAY_OF_MONTH, 1);
         }
         return cal.getTime();
+    }
+    private static final SimpleDateFormat DF_FULL = new SimpleDateFormat("MMM dd yyyy hh:mm aa zzz");
+
+    public static void main(String[] args) {
+        String time = "19:00";
+        String tz = "America/Los_Angeles";
+        final SimpleDateFormat df = new SimpleDateFormat("MMM dd yyyy hh:mm aa zzz");
+
+        Date date = getDateBy24HourTime(time, TimeZone.getTimeZone(tz));
+        System.out.println(df.format(date));
     }
 }
