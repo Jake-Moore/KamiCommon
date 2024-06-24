@@ -1,6 +1,9 @@
 package com.kamikazejam.kamicommon.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -59,5 +62,50 @@ public class TimeUtil {
 
             return df.format(new Date(seconds*1000L));
         }
+    }
+
+    /**
+     * @param clockTime A 24-hour time string formatted like "HH:mm" or "HH:mm:ss"
+     * @return a Date object representing that time of day in the nearest future
+     */
+    public static @NotNull Date getDateBy24HourTime(String clockTime) throws IllegalArgumentException {
+        String[] split = clockTime.split(":");
+        if (split.length < 2) {
+            throw new IllegalArgumentException("Invalid time format");
+        }
+
+        int hour = Integer.parseInt(split[0]);
+        int minute = Integer.parseInt(split[1]);
+        int second = split.length > 2 ? Integer.parseInt(split[2]) : 0;
+
+        return getDateBy24HourTime(hour, minute, second);
+    }
+
+    /**
+     * @param hour The 24-hour time hour [0, 23]
+     * @param minute The minute, [0, 59]
+     * @return a Date object representing that time of day in the nearest future
+     */
+    public static @NotNull Date getDateBy24HourTime(int hour, int minute) {
+        return getDateBy24HourTime(hour, minute, 0);
+    }
+
+    /**
+     * @param hour The 24-hour time hour [0, 23]
+     * @param minute The minute, [0, 59]
+     * @param second The second, [0, 59]
+     * @return a Date object representing that time of day in the nearest future
+     */
+    public static @NotNull Date getDateBy24HourTime(int hour, int minute, int second) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.SECOND, second);
+
+        // Jump forward a day if this 24-hour time has passed today
+        if (cal.getTime().before(new Date())) {
+            cal.add(Calendar.DATE, 1);
+        }
+        return cal.getTime();
     }
 }
