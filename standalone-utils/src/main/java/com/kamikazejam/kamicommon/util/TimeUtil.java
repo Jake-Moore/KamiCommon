@@ -66,38 +66,32 @@ public class TimeUtil {
 
     /**
      * @param clockTime A 24-hour time string formatted like "HH:mm" or "HH:mm:ss"
+     * @param timeZone The time zone to use
      * @return a Date object representing that time of day in the nearest future
      */
-    public static @NotNull Date getDateBy24HourTime(String clockTime) throws IllegalArgumentException {
+    public static @NotNull Date getDateBy24HourTime(String clockTime, TimeZone timeZone) throws IllegalArgumentException {
         String[] split = clockTime.split(":");
         if (split.length < 2) {
-            throw new IllegalArgumentException("Invalid time format");
+            throw new IllegalArgumentException("Invalid time format: " + clockTime + " (expected HH:mm:ss or HH:mm)");
         }
 
         int hour = Integer.parseInt(split[0]);
         int minute = Integer.parseInt(split[1]);
         int second = split.length > 2 ? Integer.parseInt(split[2]) : 0;
 
-        return getDateBy24HourTime(hour, minute, second);
-    }
-
-    /**
-     * @param hour The 24-hour time hour [0, 23]
-     * @param minute The minute, [0, 59]
-     * @return a Date object representing that time of day in the nearest future
-     */
-    public static @NotNull Date getDateBy24HourTime(int hour, int minute) {
-        return getDateBy24HourTime(hour, minute, 0);
+        return getDateBy24HourTime(hour, minute, second, timeZone);
     }
 
     /**
      * @param hour The 24-hour time hour [0, 23]
      * @param minute The minute, [0, 59]
      * @param second The second, [0, 59]
+     * @param timeZone The time zone to use
      * @return a Date object representing that time of day in the nearest future
      */
-    public static @NotNull Date getDateBy24HourTime(int hour, int minute, int second) {
+    public static @NotNull Date getDateBy24HourTime(int hour, int minute, int second, TimeZone timeZone) {
         Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(timeZone);
         cal.set(Calendar.HOUR_OF_DAY, hour);
         cal.set(Calendar.MINUTE, minute);
         cal.set(Calendar.SECOND, second);
