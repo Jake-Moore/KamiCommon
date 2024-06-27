@@ -11,14 +11,6 @@ dependencies {
     shadow(snakeYaml); testImplementation(snakeYaml)
     shadow(json); testImplementation(json)
     testImplementation("org.jetbrains:annotations:24.1.0")
-
-    // Lombok
-    compileOnly(project.property("lombokDep") as String)
-    annotationProcessor(project.property("lombokDep") as String)
-    testAnnotationProcessor(project.property("lombokDep") as String)
-
-    // IntelliJ annotations
-    shadow("org.jetbrains:annotations:24.1.0")
 }
 
 tasks {

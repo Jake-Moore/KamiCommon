@@ -34,11 +34,6 @@ dependencies {
     shadow(project(":spigot-nms:v1_20_CB"))
     shadow(project(":spigot-nms:v1_21_R1"))
 
-    // Lombok
-    compileOnly(project.property("lombokDep") as String)
-    annotationProcessor(project.property("lombokDep") as String)
-    testAnnotationProcessor(project.property("lombokDep") as String)
-
     compileOnly(project.property("lowestSpigotDep") as String)
 }
 

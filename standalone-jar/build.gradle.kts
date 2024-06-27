@@ -14,11 +14,6 @@ dependencies {
 
     // org.json (standalone-utils) and google gson needed for for jedis (in :generic-jar) to work properly
     shadow("com.google.code.gson:gson:2.11.0")
-
-    // Lombok
-    compileOnly(project.property("lombokDep") as String)
-    annotationProcessor(project.property("lombokDep") as String)
-    testAnnotationProcessor(project.property("lombokDep") as String)
 }
 tasks {
     publish.get().dependsOn(build)
@@ -29,6 +24,7 @@ tasks {
 
         relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
         relocate("org.json", "com.kamikazejam.kamicommon.json")
+        relocate("com.google.errorprone", "com.kamikazejam.kamicommon.errorprone")
     }
 }
 publishing {

@@ -1,7 +1,7 @@
 import java.util.*
 
 @Suppress("PropertyName")
-var VERSION = "3.0.3.9"
+var VERSION = "3.0.4.0"
 
 plugins { // needed for the subprojects section to work
     id("java")
@@ -86,6 +86,16 @@ subprojects {
     // Provision Java 17 all subprojects (new modules have version 21 configured)
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    }
+
+    dependencies {
+        // Lombok
+        compileOnly(project.property("lombokDep") as String)
+        annotationProcessor(project.property("lombokDep") as String)
+        testAnnotationProcessor(project.property("lombokDep") as String)
+
+        // IntelliJ annotations
+        compileOnly("org.jetbrains:annotations:24.1.0")
     }
 }
 

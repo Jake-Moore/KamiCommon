@@ -13,14 +13,6 @@ dependencies {
     shadow("com.github.cryptomorin:XSeries:11.0.0")
 
     compileOnly(project.property("lowestSpigotDep") as String)
-
-    // Lombok
-    compileOnly(project.property("lombokDep") as String)
-    annotationProcessor(project.property("lombokDep") as String)
-    testAnnotationProcessor(project.property("lombokDep") as String)
-
-    // IntelliJ annotations
-    shadow("org.jetbrains:annotations:24.1.0")
 }
 
 tasks {
