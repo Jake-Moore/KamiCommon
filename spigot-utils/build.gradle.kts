@@ -22,11 +22,6 @@ dependencies {
     }
     compileOnly("io.lumine:Mythic-Dist:5.6.2")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.18-3")
-
-    // Lombok
-    compileOnly(project.property("lombokDep") as String)
-    annotationProcessor(project.property("lombokDep") as String)
-    testAnnotationProcessor(project.property("lombokDep") as String)
 }
 
 tasks {
@@ -40,6 +35,7 @@ tasks {
         relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
         relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
         relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")
+        relocate("com.google.errorprone", "com.kamikazejam.kamicommon.errorprone")
     }
 }
 

@@ -20,11 +20,6 @@ dependencies {
     )
 
     compileOnly(project.property("lowestSpigotDep") as String)
-
-    // Lombok
-    compileOnly(project.property("lombokDep") as String)
-    annotationProcessor(project.property("lombokDep") as String)
-    testAnnotationProcessor(project.property("lombokDep") as String)
 }
 
 tasks {

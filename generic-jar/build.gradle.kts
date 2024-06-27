@@ -23,17 +23,11 @@ dependencies {
 
     // RabbitMQ amqp-client
     shadow("com.rabbitmq:amqp-client:5.21.0")
-    compileOnly("org.jetbrains:annotations:24.1.0")
 
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     shadow("org.slf4j:slf4j-api:$slf4jVersion")
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
     shadow("org.slf4j:slf4j-simple:$slf4jVersion")
-
-    // Lombok
-    compileOnly(project.property("lombokDep") as String)
-    annotationProcessor(project.property("lombokDep") as String)
-    testAnnotationProcessor(project.property("lombokDep") as String)
 }
 
 tasks {
