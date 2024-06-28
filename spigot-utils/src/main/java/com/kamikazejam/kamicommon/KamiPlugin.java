@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     // -------------------------------------------- //
     // FIELDS
@@ -43,7 +43,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     private String logPrefixPlain = null;
     @Getter ModuleManager moduleManager;
     private KamiConfigExt modulesConfig = null;
-    private KamiConfigExt config;
+    private @Nullable KamiConfigExt config = null;
 
     // -------------------------------------------- //
     // ENABLE
@@ -80,7 +80,9 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         this.moduleManager = new ModuleManager(this);
 
         // Load the Config
-        this.config = new KamiConfigExt(this, new File(getDataFolder(), "config.yml"), true);
+        if (loadKamiConfig()) {
+            this.getKamiConfig();
+        }
 
         // Listener
         Bukkit.getPluginManager().registerEvents(this, this);
@@ -89,6 +91,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     }
 
     public abstract void onEnableInner();
+
+    public boolean loadKamiConfig() {
+        return true;
+    }
 
     public void onEnablePost() {
         // Register module integrations
@@ -106,8 +112,15 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         log(Txt.parse("=== ENABLE <g>COMPLETE <i>(Took <h>" + ms + "ms<i>) ==="));
     }
 
-    public KamiConfigExt getKamiConfig() { return config; }
-    public void reloadKamiConfig() { config.reload(); }
+    public @NotNull KamiConfigExt getKamiConfig() {
+        if (config == null) {
+            this.config = new KamiConfigExt(this, new File(getDataFolder(), "config.yml"), true);
+        }
+        return config;
+    }
+    public void reloadKamiConfig() {
+        getKamiConfig().reload();
+    }
 
     @Override
     public void reloadConfig() {
