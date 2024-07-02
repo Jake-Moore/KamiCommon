@@ -7,7 +7,7 @@ plugins { // needed for the subprojects section to work
     id("java")
     id("java-library")
     id("io.papermc.paperweight.userdev") version "1.7.1" apply false
-    id("io.github.goooler.shadow") version "8.1.7" apply false
+    id("io.github.goooler.shadow") version "8.1.8" apply false
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.8"
 }
 
