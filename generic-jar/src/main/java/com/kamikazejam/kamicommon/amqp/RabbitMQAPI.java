@@ -125,11 +125,12 @@ public class RabbitMQAPI {
     // ---------------------------------------------------------------------------------------------------------------- //
     /**
      * Register a standard consumer (default to auto-acknowledgement)
-     * @param exchangeName the name of the exchange
+     * @param queueName the name of the queue
+     * @param exchange the callback to consume messages
      * @param callback the callback to consume messages
      */
-    public void registerFanConsumer(@NotNull String exchangeName, @NotNull String exchange, @NotNull RabbitServerCallback callback) {
-        this.registerFanConsumer(exchangeName, exchange, callback, true);
+    public void registerFanConsumer(@NotNull String queueName, @NotNull String exchange, @NotNull RabbitServerCallback callback) {
+        this.registerFanConsumer(queueName, exchange, callback, true);
     }
 
     /**
