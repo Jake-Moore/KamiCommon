@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.amqp;
 import com.kamikazejam.kamicommon.amqp.data.RabbitRpcConsumer;
 import com.kamikazejam.kamicommon.amqp.data.RabbitStdConsumer;
 import com.rabbitmq.client.*;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,10 +34,11 @@ class RabbitMQManager {
     private final Map<String, CompletableFuture<String>> rpcPendingRequests = new ConcurrentHashMap<>();
 
     // Queue Information
-    private final Set<String> declaredQueues = new HashSet<>();                     // cache of declared queues
-    private final Map<String, RabbitStdConsumer> stdConsumers = new HashMap<>();    // cache of standard consumers
-    private final Set<String> rpcClientResponseQueues = new HashSet<>();            // cache of client queues for RPC responses
-    private final Map<String, RabbitRpcConsumer> rpcConsumers = new HashMap<>();    // cache of server RPC consumers
+    private final Set<String> declaredQueues = new HashSet<>();                         // cache of declared queues
+    private final Map<String, BuiltinExchangeType> declaredExchanges = new HashMap<>(); // cache of declared exchanges
+    private final Map<String, RabbitStdConsumer> stdConsumers = new HashMap<>();        // cache of standard consumers
+    private final Set<String> rpcClientResponseQueues = new HashSet<>();                // cache of client queues for RPC responses
+    private final Map<String, RabbitRpcConsumer> rpcConsumers = new HashMap<>();        // cache of server RPC consumers
 
     public RabbitMQManager(String url) {
         factory = new ConnectionFactory();
@@ -149,6 +151,13 @@ class RabbitMQManager {
         }
     }
 
+    public boolean isQueueDeclared(@NotNull String queueName) {
+        return declaredQueues.contains(queueName);
+    }
+    public boolean isExchangeDeclared(@NotNull String exchange) {
+        return declaredExchanges.containsKey(exchange);
+    }
+
     /**
      * Declares a queue with a default TTL of 60 seconds (iff not declared already)
      * @param queueName the name of the queue to declare
@@ -176,13 +185,37 @@ class RabbitMQManager {
      */
     public void declareQueue(@NotNull String queueName, boolean durable, boolean exclusive, boolean autoDelete, long TTL_MS) {
         // Avoid unnecessary re-declarations that cost time
-        if (declaredQueues.contains(queueName)) { return; }
+        if (isQueueDeclared(queueName)) { return; }
 
         try {
             Map<String, Object> args = new HashMap<>();
             args.put("x-message-ttl", TTL_MS); // TTL is time before auto-delete in the queue
             getChannel().queueDeclare(queueName, durable, exclusive, autoDelete, args);
             declaredQueues.add(queueName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Declares an exchange with a provided name and type (iff not declared already)
+     * Allows re-declaration of the same exchange name with the same type (does nothing)
+     * @param exchange the name of the queue to declare
+     */
+    public void declareExchange(@NotNull String exchange, BuiltinExchangeType type) {
+        // Avoid unnecessary re-declarations that cost time
+        if (isExchangeDeclared(exchange)) {
+            BuiltinExchangeType existing = declaredExchanges.get(exchange);
+            if (!Objects.equals(existing, type)) {
+                throw new IllegalStateException("Exchange " + exchange + " is already registered as type: " + existing.getType() + ", cannot register as: " + type.getType());
+            }
+            // Ignore a re-declaration of the same type
+            return;
+        }
+
+        try {
+            getChannel().exchangeDeclare(exchange, type.getType());
+            declaredExchanges.put(exchange, type);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -269,5 +302,34 @@ class RabbitMQManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------- //
+    // --------------------------------------------- FANOUT METHODS --------------------------------------------------- //
+    // ---------------------------------------------------------------------------------------------------------------- //
+    public void publishFanout(@NotNull String exchange, @NotNull String message) {
+        this.publishFanout(exchange, null, message);
+    }
+    public void publishFanout(@NotNull String exchange, @Nullable AMQP.BasicProperties props, @NotNull String message) {
+        // basicPublish(String exchange, String routingKey, AMQP.BasicProperties props, byte[] body)
+        try {
+            declareExchange(exchange, BuiltinExchangeType.FANOUT);
+            getChannel().basicPublish(exchange, "", props, message.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Declares a queue with a specified TTL (iff not declared already)
+     * !! Assumes the exchange is already declared !!
+     * @throws IllegalStateException if the exchange is already declared!
+     * @param queueName the name of the queue to declare
+     */
+    @SneakyThrows
+    public void declareFanQueue(@NotNull String queueName, @NotNull String exchange) throws IllegalStateException {
+        this.declareQueue(queueName); // May throw IllegalStateException
+        // Bind this queue to the exchange (assumed to be a FANOUT exchange)
+        getChannel().queueBind(queueName, exchange, "");
     }
 }

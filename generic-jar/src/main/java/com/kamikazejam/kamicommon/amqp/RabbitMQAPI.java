@@ -6,6 +6,7 @@ import com.kamikazejam.kamicommon.amqp.data.RabbitRpcConsumer;
 import com.kamikazejam.kamicommon.amqp.data.RabbitRpcQueue;
 import com.kamikazejam.kamicommon.amqp.data.RabbitStdConsumer;
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.BuiltinExchangeType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -117,5 +118,54 @@ public class RabbitMQAPI {
 
         // Register the consumer
         manager.addConsumer(new RabbitRpcConsumer(this, queue.getServerBound(), callback));
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------- //
+    // --------------------------------------------- FANOUT METHODS --------------------------------------------------- //
+    // ---------------------------------------------------------------------------------------------------------------- //
+    /**
+     * Register a standard consumer (default to auto-acknowledgement)
+     * @param exchangeName the name of the exchange
+     * @param callback the callback to consume messages
+     */
+    public void registerFanConsumer(@NotNull String exchangeName, @NotNull String exchange, @NotNull RabbitServerCallback callback) {
+        this.registerFanConsumer(exchangeName, exchange, callback, true);
+    }
+
+    /**
+     * Register a standard consumer
+     * @param queueName the name of the queue
+     * @param callback the callback to consume messages
+     * @param autoAck if messages should be auto-acknowledged
+     */
+    public void registerFanConsumer(@NotNull String queueName, @NotNull String exchange, @NotNull RabbitServerCallback callback, boolean autoAck) {
+        manager.declareExchange(exchange, BuiltinExchangeType.FANOUT);
+        // FANOUT only distributes to separate queues, if we receive the same queue, throw error to let developer know
+        if (manager.isQueueDeclared(queueName)) {
+            throw new IllegalArgumentException("Cannot declare multiple FANOUT consumer queues, queue name already taken: " + queueName + " with exchange: " + exchange);
+        }
+        manager.declareFanQueue(queueName, exchange);
+        manager.addConsumer(new RabbitStdConsumer(queueName, callback, autoAck));
+    }
+
+    /**
+     * Publish a message to a queue - does NOT listen for a response
+     * @param exchangeName the name of the exchange to publish to
+     * @param message the message to publish
+     */
+    public void publishFanout(@NotNull String exchangeName, @NotNull String message) {
+        manager.declareExchange(exchangeName, BuiltinExchangeType.FANOUT);
+        manager.publishFanout(exchangeName, message);
+    }
+
+    /**
+     * Publish a message to a queue (with properties) - does NOT listen for a response
+     * @param exchangeName the name of the queue
+     * @param props additional message properties
+     * @param message the message to publish
+     */
+    public void publishFanout(@NotNull String exchangeName, @NotNull AMQP.BasicProperties props, @NotNull String message) {
+        manager.declareExchange(exchangeName, BuiltinExchangeType.FANOUT);
+        manager.publishFanout(exchangeName, props, message);
     }
 }
