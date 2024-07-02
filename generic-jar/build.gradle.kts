@@ -23,6 +23,7 @@ dependencies {
 
     // RabbitMQ amqp-client
     shadow("com.rabbitmq:amqp-client:5.21.0")
+    testImplementation("com.rabbitmq:amqp-client:5.21.0")
 
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     shadow("org.slf4j:slf4j-api:$slf4jVersion")
