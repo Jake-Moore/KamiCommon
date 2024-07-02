@@ -10,7 +10,7 @@ dependencies {
     shadow(files(project(":standalone-utils")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    shadow("com.github.cryptomorin:XSeries:11.0.0")
+    shadow("com.github.cryptomorin:XSeries:11.2.0")
 
     compileOnly(project.property("lowestSpigotDep") as String)
 }
