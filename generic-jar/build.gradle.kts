@@ -29,6 +29,17 @@ dependencies {
     shadow("org.slf4j:slf4j-api:$slf4jVersion")
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
     shadow("org.slf4j:slf4j-simple:$slf4jVersion")
+
+    // Lettuce Core
+    shadow("io.lettuce:lettuce-core:6.3.2.RELEASE")
+    // For the redis system to deserialize messages
+    shadow("com.fasterxml.jackson.core:jackson-databind:2.17.1")
+    shadow("com.fasterxml.jackson.core:jackson-annotations:2.17.1")
+
+    // Tests
+    testImplementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
+    testImplementation("com.fasterxml.jackson.core:jackson-annotations:2.17.1")
 }
 
 tasks {
@@ -46,6 +57,8 @@ tasks {
         relocate("com.google.protobuf", "com.kamikazejam.kamicommon.google.protobuf")
         relocate("com.rabbitmq", "com.kamikazejam.kamicommon.rabbitmq")
         relocate("org.slf4j", "com.kamikazejam.kamicommon.slf4j")
+        // don't relocate jackson
+        relocate("io.lettuce.core", "com.kamikazejam.kamicommon.lettuce.core")
     }
 }
 

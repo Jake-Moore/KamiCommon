@@ -40,7 +40,7 @@ class RabbitMQManager {
     private final Set<String> rpcClientResponseQueues = new HashSet<>();                // cache of client queues for RPC responses
     private final Map<String, RabbitRpcConsumer> rpcConsumers = new HashMap<>();        // cache of server RPC consumers
 
-    public RabbitMQManager(String url) {
+    RabbitMQManager(String url) {
         factory = new ConnectionFactory();
         factory.setAutomaticRecoveryEnabled(true);
         factory.setNetworkRecoveryInterval(5000);

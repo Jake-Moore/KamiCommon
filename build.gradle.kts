@@ -1,7 +1,7 @@
 import java.util.*
 
 @Suppress("PropertyName")
-var VERSION = "3.0.4.2"
+var VERSION = "3.0.4.3"
 
 plugins { // needed for the subprojects section to work
     id("java")
@@ -92,6 +92,7 @@ subprojects {
         // Lombok
         compileOnly(project.property("lombokDep") as String)
         annotationProcessor(project.property("lombokDep") as String)
+        testImplementation(project.property("lombokDep") as String)
         testAnnotationProcessor(project.property("lombokDep") as String)
 
         // IntelliJ annotations
