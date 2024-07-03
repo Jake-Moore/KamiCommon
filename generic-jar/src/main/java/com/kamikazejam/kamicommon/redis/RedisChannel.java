@@ -19,7 +19,7 @@ public class RedisChannel<T> {
      * Add a callback for this channel (for listening to messages)
      * @return true if the callback was successfully added
      */
-    public boolean addCallback(@NotNull RedisChannelCallback<T> callback) {
+    public boolean subscribe(@NotNull RedisChannelCallback<T> callback) {
         return manager.subscribe(channel, clazz, callback);
     }
 
