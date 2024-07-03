@@ -1,7 +1,9 @@
 package com.kamikazejam.kamicommon.redis;
 
+import io.lettuce.core.api.sync.RedisCommands;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class RedisAPI {
     private final @NotNull RedisManager manager;
 
@@ -25,5 +27,9 @@ public class RedisAPI {
 
     public <T> @NotNull RedisChannel<T> registerChannel(@NotNull String channel, @NotNull Class<T> clazz) {
         return new RedisChannel<>(manager, channel, clazz);
+    }
+
+    public RedisCommands<String, String> getCmds() {
+        return manager.getRedis().sync();
     }
 }
