@@ -3,6 +3,9 @@
 # Module Structure
 - Modules Available as Dependencies: [spigot-jar](#spigot-jar), [spigot-utils](#spigot-utils), [standalone-jar](#standalone-jar), [standalone-utils](#standalone-utils), [generic-jar](#generic-jar)
 
+## Module Hierarchy
+![ScreenShot](/docs/screenshots/structure-flow.png)
+
 ## Spigot Development
 ### [spigot-jar](./spigot-jar)
 - The primary module responsible for the spigot plugin jar.
