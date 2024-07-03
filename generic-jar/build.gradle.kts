@@ -15,11 +15,6 @@ dependencies {
     // Unique dependencies for this module
     shadow("com.zaxxer:HikariCP:5.1.0")
     shadow("com.mysql:mysql-connector-j:8.4.0") // comes with google.protobuf
-    shadow("redis.clients:jedis:5.2.0-SNAPSHOT") {
-        // jedis requires both of these, so any other -jar modules need to include them
-        exclude(group = "com.google.code.gson", module = "gson")
-        exclude(group = "org.json", module = "json")
-    }
 
     // RabbitMQ amqp-client
     shadow("com.rabbitmq:amqp-client:5.21.0")
@@ -30,7 +25,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
     shadow("org.slf4j:slf4j-simple:$slf4jVersion")
 
-    // Lettuce Core
+    // Lettuce Core (Redis)
     shadow("io.lettuce:lettuce-core:6.3.2.RELEASE")
     // For the redis system to deserialize messages
     shadow("com.fasterxml.jackson.core:jackson-databind:2.17.1")
