@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.redis;
 
+import com.kamikazejam.kamicommon.redis.util.RedisState;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -42,5 +43,12 @@ public class RedisAPI {
     }
     public StatefulRedisConnection<String, String> getConnection() {
         return manager.getRedis();
+    }
+
+    public RedisState getState() {
+        return manager.getState();
+    }
+    public boolean isConnected() {
+        return getState().isEnabled() && getState().isConnected();
     }
 }
