@@ -17,8 +17,8 @@ public class TestRedis {
 
         MyObject myObject = new MyObject("Test", 123);
 
-        RedisChannel<MyObject> channel = api.registerChannel("test_channel", MyObject.class);
-        channel.subscribe((my) -> {
+        RedisChannel<MyObject> channel = api.registerChannel(MyObject.class, "test_channel");
+        channel.subscribe((c, my) -> {
             System.out.println("Received: " + JacksonUtil.serialize(my));
             System.out.println("\tName: "  + my.getName());
             System.out.println("\tCount: " + my.getCount());

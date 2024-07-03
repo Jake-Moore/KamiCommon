@@ -27,8 +27,11 @@ public class RedisAPI {
         manager.shutdown();
     }
 
-    public <T> @NotNull RedisChannel<T> registerChannel(@NotNull String channel, @NotNull Class<T> clazz) {
+    public <T> @NotNull RedisChannel<T> registerChannel(@NotNull Class<T> clazz, @NotNull String channel) {
         return new RedisChannel<>(manager, channel, clazz);
+    }
+    public <T> @NotNull RedisMultiChannel<T> registerMultiChannel(@NotNull Class<T> clazz, @NotNull String... channels) {
+        return new RedisMultiChannel<>(manager, clazz, channels);
     }
 
     public RedisCommands<String, String> getCmdsSync() {
