@@ -16,6 +16,9 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A manager for Redis connections and consumers (channel listeners)
  * Package-Private for use only by {@link RedisConnector} within {@link RedisAPI} instances.
@@ -32,6 +35,7 @@ class RedisManager implements Service {
     private StatefulRedisConnection<String, String> redis = null;
     private StatefulRedisPubSubConnection<String, String> redisPubSub = null;
     private RedisMonitor redisMonitor = null;
+    private final List<String> subscribedChannels = new ArrayList<>();
 
     RedisManager(@NotNull RedisConf conf, @Nullable LoggerService logger) {
         this.conf = conf;
@@ -68,6 +72,13 @@ class RedisManager implements Service {
             logger.warn("RedisManager.shutdown() called while service is not running!");
             return true;
         }
+
+        // Unsubscribe from all channels
+        if (reactive != null) {
+            reactive.unsubscribe(subscribedChannels.toArray(new String[0])).subscribe();
+        }
+        reactive = null;
+        subscribedChannels.clear();
 
         // Disconnect from Redis
         boolean redis = this.disconnect();
@@ -140,9 +151,14 @@ class RedisManager implements Service {
     // ------------------------------------------------- //
     //               RedisManager Methods                //
     // ------------------------------------------------- //
+    private RedisPubSubReactiveCommands<String, String> reactive = null;
     <T> boolean subscribe(@NotNull String channel, @NotNull Class<T> clazz, @NotNull RedisChannelCallback<T> callback) {
         try {
-            RedisPubSubReactiveCommands<String, String> reactive = redisPubSub.reactive();
+            // Ensure we have a valid reactive connection
+            if (reactive == null) {
+                reactive = redisPubSub.reactive();
+            }
+
             // Subscribe to the channel
             reactive.subscribe(channel).subscribe();
             // Register an Observer
@@ -155,6 +171,7 @@ class RedisManager implements Service {
                         callback.onMessage(message);
                     }).subscribe();
 
+            subscribedChannels.add(channel);
             return true;
         } catch (Exception ex) {
             logger.info(ex, "Error subscribing");
