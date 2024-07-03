@@ -152,26 +152,27 @@ class RedisManager implements Service {
     //               RedisManager Methods                //
     // ------------------------------------------------- //
     private RedisPubSubReactiveCommands<String, String> reactive = null;
-    <T> boolean subscribe(@NotNull String channel, @NotNull Class<T> clazz, @NotNull RedisChannelCallback<T> callback) {
+    <T> boolean subscribe(@NotNull RedisChannelCallback<T> callback, @NotNull Class<T> clazz, @NotNull String... channels) {
         try {
             // Ensure we have a valid reactive connection
             if (reactive == null) {
                 reactive = redisPubSub.reactive();
             }
+            final List<String> channelList = List.of(channels);
 
             // Subscribe to the channel
-            reactive.subscribe(channel).subscribe();
+            reactive.subscribe(channels).subscribe();
             // Register an Observer
             reactive.observeChannels()
-                    // Listen to our channel only
-                    .filter(pm -> pm.getChannel().equals(channel))
+                    // Listen to our channels only
+                    .filter(pm -> channelList.contains(pm.getChannel()))
                     // Deserialize the message and call the callback
                     .doOnNext(pm -> {
                         T message = JacksonUtil.deserialize(clazz, pm.getMessage());
-                        callback.onMessage(message);
+                        callback.onMessage(pm.getChannel(), message);
                     }).subscribe();
 
-            subscribedChannels.add(channel);
+            subscribedChannels.addAll(channelList);
             return true;
         } catch (Exception ex) {
             logger.info(ex, "Error subscribing");

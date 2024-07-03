@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class RedisChannel<T> {
     private final @NotNull RedisManager manager;
     private final @NotNull String channel;
-    private final @NotNull  Class<T> clazz;
+    private final @NotNull Class<T> clazz;
     RedisChannel(@NotNull RedisManager manager, @NotNull String channel, @NotNull Class<T> clazz) {
         this.manager = manager;
         this.channel = channel;
@@ -20,7 +20,7 @@ public class RedisChannel<T> {
      * @return true if the callback was successfully added
      */
     public boolean subscribe(@NotNull RedisChannelCallback<T> callback) {
-        return manager.subscribe(channel, clazz, callback);
+        return manager.subscribe(callback, clazz, channel);
     }
 
     public void publishSync(@NotNull T message) {
