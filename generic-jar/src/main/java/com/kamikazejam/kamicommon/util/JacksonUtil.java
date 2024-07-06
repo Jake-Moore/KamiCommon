@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.util;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import lombok.SneakyThrows;
@@ -39,8 +40,8 @@ public class JacksonUtil {
         return getMapper().writeValueAsString(o);
     }
 
-    @SneakyThrows @Contract("_, !null -> !null")
-    public static <X> @Nullable X deserialize(Class<X> clazz, @Nullable String json) {
+    @Contract("_, !null -> !null")
+    public static <X> @Nullable X deserialize(Class<X> clazz, @Nullable String json) throws JacksonException {
         if (json == null) { return null; }
         return getMapper().readValue(json, clazz);
     }
