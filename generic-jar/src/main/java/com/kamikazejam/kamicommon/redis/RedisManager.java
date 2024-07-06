@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.redis;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.kamikazejam.kamicommon.redis.callback.RedisChannelCallback;
 import com.kamikazejam.kamicommon.redis.logger.DefaultRedisLogger;
 import com.kamikazejam.kamicommon.redis.util.RedisConf;
@@ -15,6 +16,8 @@ import io.lettuce.core.pubsub.api.reactive.RedisPubSubReactiveCommands;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.List;
  */
 @Getter @SuppressWarnings("unused")
 class RedisManager implements Service {
+    private static final Logger log = LoggerFactory.getLogger(RedisManager.class);
     private final @NotNull RedisState state = new RedisState();
     private final @NotNull RedisConf conf;
     private final @NotNull LoggerService logger;
@@ -173,7 +177,12 @@ class RedisManager implements Service {
                         try {
                             T message = JacksonUtil.deserialize(clazz, pm.getMessage());
                             callback.onMessage(pm.getChannel(), message);
-                        }catch (Throwable t) {
+                        } catch (JsonParseException e) {
+                            logger.error("DeserializationError (" + clazz.getSimpleName() + ") - channel: " + pm.getChannel() + " message: " + pm.getMessage());
+                            if (logger.isDebug()) {
+                                e.printStackTrace();
+                            }
+                        } catch (Throwable t) {
                             logger.error(t, "DeserializationError - channel: " + pm.getChannel() + " message: " + pm.getMessage());
                         }
                     }).subscribe();
