@@ -154,6 +154,8 @@ class RedisManager implements Service {
     private RedisPubSubReactiveCommands<String, String> reactive = null;
     <T> boolean subscribe(@NotNull RedisChannelCallback<T> callback, @NotNull Class<T> clazz, @NotNull String... channels) {
         try {
+            logger.info("Subscribing to channels: " + String.join(", ", channels));
+
             // Ensure we have a valid reactive connection
             if (reactive == null) {
                 reactive = redisPubSub.reactive();
@@ -168,8 +170,12 @@ class RedisManager implements Service {
                     .filter(pm -> channelList.contains(pm.getChannel()))
                     // Deserialize the message and call the callback
                     .doOnNext(pm -> {
-                        T message = JacksonUtil.deserialize(clazz, pm.getMessage());
-                        callback.onMessage(pm.getChannel(), message);
+                        try {
+                            T message = JacksonUtil.deserialize(clazz, pm.getMessage());
+                            callback.onMessage(pm.getChannel(), message);
+                        }catch (Throwable t) {
+                            logger.error(t, "DeserializationError - channel: " + pm.getChannel() + " message: " + pm.getMessage());
+                        }
                     }).subscribe();
 
             subscribedChannels.addAll(channelList);

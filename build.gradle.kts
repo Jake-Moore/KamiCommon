@@ -1,7 +1,7 @@
 import java.util.*
 
 @Suppress("PropertyName")
-var VERSION = "3.1.0.6"
+var VERSION = "3.1.0.7"
 
 plugins { // needed for the subprojects section to work
     id("java")
@@ -42,9 +42,6 @@ tasks.getByName("clean").finalizedBy(tasks.getByName("refresh"))
 //}
 
 ext {
-    set("projectName", rootProject.name)
-    set("lombokDep", "org.projectlombok:lombok:1.18.32")
-
     // reduced is just a re-zipped version of the original, without some conflicting libraries
     //  gson, org.json, com.yaml.snakeyaml
     set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED")    // luxious nexus (public)
@@ -90,10 +87,10 @@ subprojects {
 
     dependencies {
         // Lombok
-        compileOnly(project.property("lombokDep") as String)
-        annotationProcessor(project.property("lombokDep") as String)
-        testImplementation(project.property("lombokDep") as String)
-        testAnnotationProcessor(project.property("lombokDep") as String)
+        compileOnly("org.projectlombok:lombok:1.18.32")
+        annotationProcessor("org.projectlombok:lombok:1.18.32")
+        testImplementation("org.projectlombok:lombok:1.18.32")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 
         // IntelliJ annotations
         compileOnly("org.jetbrains:annotations:24.1.0")

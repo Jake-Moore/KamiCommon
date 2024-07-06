@@ -54,11 +54,6 @@ jobs:
         chmod +x ./refresh.sh
         ./publish.sh gradle
 
-    - name: Prepare Spigot Jar
-      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
-      run: |
-        mv spigot-jar/build/libs/spigot-jar-${{ steps.extract_version.outputs.version }}.jar spigot-jar/build/libs/KamiCommon-${{ steps.extract_version.outputs.version }}.jar
-
     #--------------------------------------------------------------------------------------------
     #           Create a Github Release
     #--------------------------------------------------------------------------------------------

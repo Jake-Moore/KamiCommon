@@ -26,6 +26,7 @@ tasks {
     publish.get().dependsOn(build)
     build.get().dependsOn(shadowJar)
     shadowJar {
+        archiveBaseName.set("KamiCommon")
         archiveClassifier.set("")
         // archiveFileName.set("${rootProject.name}-${project.version}.jar") // messes up publishing
         configurations = listOf(project.configurations.shadow.get())
@@ -44,6 +45,7 @@ tasks {
         manifest {
             attributes["paperweight-mappings-namespace"] = "mojang+yarn"
         }
+        archiveBaseName.set("KamiCommon")
     }
     processResources {
         filteringCharset = Charsets.UTF_8.name()
