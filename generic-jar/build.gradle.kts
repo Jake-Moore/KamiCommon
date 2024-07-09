@@ -31,12 +31,12 @@ dependencies {
 
     // For the redis system to deserialize messages (2,244 KB)
     shadow("com.fasterxml.jackson.core:jackson-databind:2.17.1")
-    shadow("com.fasterxml.jackson.core:jackson-annotations:2.17.1")
+    shadow("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
 
     // Tests
     testImplementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
     testImplementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
-    testImplementation("com.fasterxml.jackson.core:jackson-annotations:2.17.1")
+    testImplementation("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
 }
 
 tasks {
