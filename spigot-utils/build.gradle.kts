@@ -23,7 +23,7 @@ dependencies {
         exclude(group = "*", module = "*")
     }
     compileOnly("io.lumine:Mythic-Dist:5.6.2")
-    compileOnly("com.github.LeonMangler:SuperVanish:6.2.18-3")
+    compileOnly("com.github.LeonMangler:SuperVanish:6.2.19")
 }
 
 tasks {
