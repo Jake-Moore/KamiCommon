@@ -141,7 +141,6 @@ public class Config extends KamiConfig {
 - **Utility Classes (shaded & relocated)**
   - org.yaml.snakeyaml `(standalone-utils)` [~335 KB]
   - org.json `(spigot-utils)` [~78 KB]
-  - redis.clients.jedis `(generic-jar)` [< 888 KB]
   - org.apache.httpcomponents.client5 `(spigot-jar)` [~861 KB]
   - com.google.code.gson `(spigot-utils)` [~284 KB]
   - com.zaxxer.hikari `(generic-jar)` [~162 KB]

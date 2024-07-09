@@ -5,9 +5,11 @@ plugins {
 }
 
 dependencies {
-    shadow(files(project(":spigot-nms") // which contains standalone-utils
+    // Submodules are compile-only since they are included in the shadowJar task configuration: from(...)
+    compileOnly(files(project(":spigot-nms") // which contains standalone-utils
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
+
     shadow("com.google.code.gson:gson:2.11.0")
     shadow("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
     shadow("de.tr7zw:item-nbt-api:2.13.0")
@@ -36,6 +38,8 @@ tasks {
         relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
         relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")
         relocate("com.google.errorprone", "com.kamikazejam.kamicommon.errorprone")
+
+        from(project(":spigot-nms").tasks.shadowJar.get().outputs)
     }
 }
 

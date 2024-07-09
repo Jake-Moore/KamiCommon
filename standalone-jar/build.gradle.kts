@@ -5,10 +5,11 @@ plugins {
 }
 
 dependencies {
-    shadow(files(project(":generic-jar")
+    // Submodules are compile-only since they are included in the shadowJar task configuration: from(...)
+    compileOnly(files(project(":generic-jar")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    shadow(files(project(":standalone-utils")
+    compileOnly(files(project(":standalone-utils")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
 
@@ -25,6 +26,9 @@ tasks {
         relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
         relocate("org.json", "com.kamikazejam.kamicommon.json")
         relocate("com.google.errorprone", "com.kamikazejam.kamicommon.errorprone")
+
+        from(project(":generic-jar").tasks.shadowJar.get().outputs)
+        from(project(":standalone-utils").tasks.shadowJar.get().outputs)
     }
 }
 publishing {
