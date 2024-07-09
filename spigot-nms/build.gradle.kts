@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     // Unique dependencies for this module
-    shadow(files(project(":spigot-nms:api")
+    compileOnly(files(project(":spigot-nms:api")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
     shadow(project(":spigot-nms:v1_8_R1"))
@@ -22,15 +22,18 @@ dependencies {
     shadow(project(":spigot-nms:v1_16_R1"))
     shadow(project(":spigot-nms:v1_16_R2"))
     shadow(project(":spigot-nms:v1_16_R3"))
-    shadow(project(":spigot-nms:v1_17_R1"))
-    shadow(project(":spigot-nms:v1_18_R1"))
-    shadow(project(":spigot-nms:v1_18_R2"))
-    shadow(project(":spigot-nms:v1_19_R1"))
-    shadow(project(":spigot-nms:v1_19_R2"))
-    shadow(project(":spigot-nms:v1_19_R3"))
-    shadow(project(":spigot-nms:v1_20_R1"))
-    shadow(project(":spigot-nms:v1_20_R2"))
-    shadow(project(":spigot-nms:v1_20_R3"))
+    // These are compileOnly so that we can include the reobfJar outputs
+    compileOnly(project(":spigot-nms:v1_17_R1"))
+    compileOnly(project(":spigot-nms:v1_18_R1"))
+    compileOnly(project(":spigot-nms:v1_18_R2"))
+    compileOnly(project(":spigot-nms:v1_19_R1"))
+    compileOnly(project(":spigot-nms:v1_19_R2"))
+    compileOnly(project(":spigot-nms:v1_19_R3"))
+    compileOnly(project(":spigot-nms:v1_20_R1"))
+    compileOnly(project(":spigot-nms:v1_20_R2"))
+    compileOnly(project(":spigot-nms:v1_20_R3"))
+
+    // Starting with 1_20_CB we can opt to not re-obf, so we can shadow again
     shadow(project(":spigot-nms:v1_20_CB"))
     shadow(project(":spigot-nms:v1_21_R1"))
 
@@ -47,18 +50,7 @@ tasks {
         archiveClassifier.set("")
         configurations = listOf(project.configurations.shadow.get())
 
-        dependencies {
-            // Exclude the regular projects, so we can add the reobfJar outputs
-            exclude(project(":spigot-nms:v1_17_R1"))
-            exclude(project(":spigot-nms:v1_18_R1"))
-            exclude(project(":spigot-nms:v1_18_R2"))
-            exclude(project(":spigot-nms:v1_19_R1"))
-            exclude(project(":spigot-nms:v1_19_R2"))
-            exclude(project(":spigot-nms:v1_19_R3"))
-            exclude(project(":spigot-nms:v1_20_R1"))
-            exclude(project(":spigot-nms:v1_20_R2"))
-            exclude(project(":spigot-nms:v1_20_R3"))
-        }
+        // Add the 1.17 to 1.20R3 reobf outputs
         from(project(":spigot-nms:v1_17_R1").tasks.getByName("reobfJar").outputs)
         from(project(":spigot-nms:v1_18_R1").tasks.getByName("reobfJar").outputs)
         from(project(":spigot-nms:v1_18_R2").tasks.getByName("reobfJar").outputs)
@@ -68,6 +60,8 @@ tasks {
         from(project(":spigot-nms:v1_20_R1").tasks.getByName("reobfJar").outputs)
         from(project(":spigot-nms:v1_20_R2").tasks.getByName("reobfJar").outputs)
         from(project(":spigot-nms:v1_20_R3").tasks.getByName("reobfJar").outputs)
+
+        from(project(":spigot-nms:api").tasks.shadowJar.get().outputs)
     }
 }
 

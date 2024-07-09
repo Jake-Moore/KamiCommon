@@ -7,10 +7,12 @@ repositories {
 }
 
 dependencies {
-    shadow(files(project(":standalone-utils")
+    // Submodules are compile-only since they are included in the shadowJar task configuration: from(...)
+    compileOnly(files(project(":standalone-utils")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    shadow("com.github.cryptomorin:XSeries:11.0.0")
+
+    shadow("com.github.cryptomorin:XSeries:11.2.0")
 
     compileOnly(project.property("lowestSpigotDep") as String)
 }
@@ -22,6 +24,8 @@ tasks {
         configurations = listOf(project.configurations.shadow.get())
 
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
+
+        from(project(":standalone-utils").tasks.shadowJar.get().outputs)
     }
 }
 

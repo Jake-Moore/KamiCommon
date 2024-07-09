@@ -12,10 +12,12 @@ var httpcore = "org.apache.httpcomponents.core5:httpcore5:5.3-alpha2"
 dependencies {
     // Unique dependencies for this module
     shadow(httpclient); shadow(httpcore)
-    shadow(files(project(":generic-jar")
+
+    // Submodules are compile-only since they are included in the shadowJar task configuration: from(...)
+    compileOnly(files(project(":generic-jar")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
-    shadow(files(project(":spigot-utils")
+    compileOnly(files(project(":spigot-utils")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
 
@@ -28,7 +30,6 @@ tasks {
     shadowJar {
         archiveBaseName.set("KamiCommon")
         archiveClassifier.set("")
-        // archiveFileName.set("${rootProject.name}-${project.version}.jar") // messes up publishing
         configurations = listOf(project.configurations.shadow.get())
 
         relocate("org.apache.hc.client5", "com.kamikazejam.kamicommon.hc.client5")
