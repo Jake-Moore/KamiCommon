@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 @Accessors(chain = true)
 public class XMaterialData {
     // Used for pre-1.13
-    private @NotNull Byte data = 0;
+    private byte data;
     private @NotNull XMaterial material;
 
     public XMaterialData(@NotNull XMaterial material) {
