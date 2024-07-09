@@ -14,7 +14,7 @@ val slf4jVersion = "2.0.13" // For RabbitMQ
 dependencies {
     // MySQL via HikariCP (2,725 KB)
     shadow("com.zaxxer:HikariCP:5.1.0")
-    shadow("com.mysql:mysql-connector-j:8.4.0") {
+    shadow("com.mysql:mysql-connector-j:9.0.0") {
         exclude("com.google.protobuf", "protobuf-java")
     }
 
