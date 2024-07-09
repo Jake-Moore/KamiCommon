@@ -5,8 +5,11 @@ import lombok.Data;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @deprecated Use {@link XMaterialData} instead.
+ */
 @SuppressWarnings("unused")
-@Data
+@Data @Deprecated
 public class MaterialData {
     private final Material material;
     private final byte data;
@@ -31,7 +34,6 @@ public class MaterialData {
         this.data = data;
     }
 
-    @SuppressWarnings("deprecation")
     public org.bukkit.material.MaterialData toMaterialData() {
         return new org.bukkit.material.MaterialData(material, data);
     }

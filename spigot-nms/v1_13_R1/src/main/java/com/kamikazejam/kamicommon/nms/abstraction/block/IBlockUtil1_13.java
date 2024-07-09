@@ -1,10 +1,14 @@
 package com.kamikazejam.kamicommon.nms.abstraction.block;
 
+import com.kamikazejam.kamicommon.util.data.XBlockData;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.type.Slab;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * For versions 1_13_R1 and above (once BlockState was introduced)
@@ -62,20 +66,29 @@ public abstract class IBlockUtil1_13<X> extends AbstractBlockUtil {
     }
 
     @Override
-    public final void setBlock(@NotNull Block block, @NotNull XMaterial xMaterial, @NotNull PlaceType placeType) {
+    public final void setBlock(@NotNull Block b, @NotNull XBlockData blockData, @NotNull PlaceType placeType) {
         // In 1.13 the flattening occurred, so now we can disregard the data value in XMaterial
+        XMaterial xMaterial = blockData.getMaterialData().getMaterial();
         assert xMaterial.parseMaterial() != null;
+
+        // Create a BlockData object, which may get set if we have additional BlockData properties
+        @Nullable BlockData data = checkBlockDataProperties(b, blockData, xMaterial);
+        if (data != null) {
+            // If we have data from a custom property, set using that instead
+            this.setBlockSuperFast(b, data, placeType);
+            return;
+        }
 
         if (placeType == PlaceType.BUKKIT) {
             // physics = true, light = true
-            block.setType(xMaterial.parseMaterial(), true);
+            b.setType(xMaterial.parseMaterial(), true);
         }else if (placeType == PlaceType.NO_PHYSICS) {
             // physics = false, light = true
-            block.setType(xMaterial.parseMaterial(), false);
+            b.setType(xMaterial.parseMaterial(), false);
 
         }else if (placeType == PlaceType.NMS) {
             // physics = false, light = false
-            this.setNMS(block, getIBlockData(createBlockData(xMaterial)));
+            this.setNMS(b, getIBlockData(createBlockData(xMaterial)));
         }
     }
 
@@ -84,10 +97,52 @@ public abstract class IBlockUtil1_13<X> extends AbstractBlockUtil {
     // ---------------------------------------------------------------------------------------- //
     //                                    UTIL METHODS                                          //
     // ---------------------------------------------------------------------------------------- //
+    public final @NotNull BlockData getOrCreateBlockData(@Nullable BlockData data, @NotNull XMaterial xMaterial) {
+        return (data == null) ? createBlockData(xMaterial) : data;
+    }
     public final BlockData createBlockData(@NotNull XMaterial xMaterial) {
         // In 1.13 the flattening occurred, so now we can disregard the data value in XMaterial
         assert xMaterial.parseMaterial() != null;
         return xMaterial.parseMaterial().createBlockData();
+    }
+
+    private @Nullable BlockData checkBlockDataProperties(@NotNull Block b, @NotNull XBlockData xData, @NotNull XMaterial xMaterial) {
+        @Nullable BlockData blockData = null;
+
+        // Apply Levelled block data
+        if (xData.getLevel() != null) {
+            // We have a level, so make a BlockData with this value
+            blockData = getOrCreateBlockData(blockData, xMaterial);
+            if (blockData instanceof Levelled levelled) {
+                levelled.setLevel(xData.getLevel());
+            }else {
+                throw new IllegalArgumentException("[KamiCommon] [IBlockUtil] tried setting block at "
+                        + "(" + b.getX() + "," + b.getY() + "," + b.getZ() + ")"
+                        + " with type: " + xMaterial.name()
+                        + " and level: " + xData.getLevel()
+                        + " but the BlockData is not a Levelled block,"
+                        + " actual: " + blockData.getClass().getSimpleName());
+            }
+        }
+
+        // Apply slab type
+        if (xData.getSlabType() != null) {
+            Slab.Type slabType = Slab.Type.valueOf(xData.getSlabType().name());
+            blockData = getOrCreateBlockData(blockData, xMaterial);
+            if (blockData instanceof Slab slab) {
+                slab.setType(slabType);
+            }else {
+                throw new IllegalArgumentException("[KamiCommon] [IBlockUtil] tried setting block at "
+                        + "(" + b.getX() + "," + b.getY() + "," + b.getZ() + ")"
+                        + " with type: " + xMaterial.name()
+                        + " and slab type: " + xData.getSlabType()
+                        + " but the BlockData is not a Slab block,"
+                        + " actual: " + blockData.getClass().getSimpleName());
+            }
+        }
+
+
+        return blockData;
     }
 }
 
