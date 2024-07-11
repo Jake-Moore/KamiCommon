@@ -1099,8 +1099,12 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	public static final Mson TEMPLATE_CORE = Mson.mson("/").color(ChatColor.AQUA);
 
 	public Mson getTemplate(boolean addDesc, boolean onlyFirstAlias, CommandSender sender) {
+		return this.getTemplate(addDesc, onlyFirstAlias, false, sender);
+	}
+
+	public Mson getTemplate(boolean addDesc, boolean onlyFirstAlias, boolean onlyOneSubAlias, CommandSender sender) {
 		// Get base
-		Mson ret = this.getTemplateChain(onlyFirstAlias, sender);
+		Mson ret = this.getTemplateChain(onlyFirstAlias, onlyOneSubAlias, sender);
 
 		List<KamiCommand> commands = this.getChain(true);
 		// Check if last command is parentCommand and make command suggestible/clickable
@@ -1142,6 +1146,10 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	}
 
 	public Mson getTemplateChain(boolean onlyFirstAlias, CommandSender sender) {
+		return getTemplateChain(onlyFirstAlias, false, sender);
+	}
+
+	public Mson getTemplateChain(boolean onlyFirstAlias, boolean onlyOneSubAlias, CommandSender sender) {
 		Mson ret = TEMPLATE_CORE;
 
 		// Get commands
@@ -1152,8 +1160,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		for (KamiCommand command : commands) {
 			Mson mson;
 
-			if (first && onlyFirstAlias) {
-				mson = mson(command.getAliases().get(0));
+			if ((first && onlyFirstAlias) || onlyOneSubAlias) {
+				mson = mson(command.getAliases().getFirst());
 			} else {
 				mson = mson(Txt.implode(command.getAliases(), ","));
 			}
