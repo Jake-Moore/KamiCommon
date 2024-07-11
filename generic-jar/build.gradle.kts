@@ -14,7 +14,7 @@ val slf4jVersion = "2.0.13" // For RabbitMQ
 dependencies {
     // MySQL via HikariCP (2,725 KB)
     shadow("com.zaxxer:HikariCP:5.1.0")
-    shadow("com.mysql:mysql-connector-j:8.4.0") {
+    shadow("com.mysql:mysql-connector-j:9.0.0") {
         exclude("com.google.protobuf", "protobuf-java")
     }
 
@@ -30,13 +30,13 @@ dependencies {
     shadow("io.lettuce:lettuce-core:6.3.2.RELEASE")
 
     // For the redis system to deserialize messages (2,244 KB)
-    shadow("com.fasterxml.jackson.core:jackson-databind:2.17.1")
-    shadow("com.fasterxml.jackson.core:jackson-annotations:2.17.1")
+    shadow("com.fasterxml.jackson.core:jackson-databind:2.17.2")
+    shadow("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
 
     // Tests
     testImplementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
-    testImplementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
-    testImplementation("com.fasterxml.jackson.core:jackson-annotations:2.17.1")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
+    testImplementation("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
 }
 
 tasks {

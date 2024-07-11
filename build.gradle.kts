@@ -87,10 +87,10 @@ subprojects {
 
     dependencies {
         // Lombok
-        compileOnly("org.projectlombok:lombok:1.18.32")
-        annotationProcessor("org.projectlombok:lombok:1.18.32")
-        testImplementation("org.projectlombok:lombok:1.18.32")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
+        compileOnly("org.projectlombok:lombok:1.18.34")
+        annotationProcessor("org.projectlombok:lombok:1.18.34")
+        testImplementation("org.projectlombok:lombok:1.18.34")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
 
         // IntelliJ annotations
         compileOnly("org.jetbrains:annotations:24.1.0")
