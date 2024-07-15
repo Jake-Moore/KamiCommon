@@ -24,6 +24,10 @@ dependencies {
     }
     compileOnly("io.lumine:Mythic-Dist:5.6.2")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.19")
+    // Combat Integrations
+    compileOnly("net.minelink:CombatTagPlus:1.3.1")
+    compileOnly("me.NoChance:PvPManager:3.15.9")
+    compileOnly("nl.marido.deluxecombat:DeluxeCombat:1.40.5")
 }
 
 tasks {
