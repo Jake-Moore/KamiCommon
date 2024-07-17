@@ -12,26 +12,34 @@ import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.util.StringUtilP;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
-@Getter
+@Getter @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class KamiMenuContainer {
+    @Getter @AllArgsConstructor
+    public static class PagedItem {
+        private final KamiMenuItem item;
+        private final int index;
+    }
+
     private String title;
     private int rows; // Accepted Values: [-1, 1, 2, 3, 4, 5, 6], or [-1, 4, 5, 6] for paginated menus
     @Nullable private KamiMenuItem fillerItem = null;
+    @Setter
+    private boolean ordered = false;
 
     private final Map<String, KamiMenuItem> menuItemMap = new HashMap<>();
-    private final Map<String, KamiMenuItem> pagedItemMap = new HashMap<>();
+    private final Map<String, PagedItem> pagedItemMap = new HashMap<>();
 
     public KamiMenuContainer(String title, int rows) {
         this.title = title;
@@ -74,7 +82,7 @@ public class KamiMenuContainer {
         // Load the MenuItems
         for (String key : pagedIcons.getKeys(false)) {
             KamiMenuItem item = new KamiMenuItem(pagedIcons, key);
-            pagedItemMap.put(key, item);
+            pagedItemMap.put(key, new PagedItem(item, pagedItemMap.size()));
         }
     }
 
@@ -114,7 +122,7 @@ public class KamiMenuContainer {
      */
     public @Nullable KamiMenuItem getPagedItem(String key) {
         if (!pagedItemMap.containsKey(key)) { return null; }
-        return pagedItemMap.get(key);
+        return pagedItemMap.get(key).item;
     }
 
     public KamiMenuContainer addMenuClick(String key, MenuClick click) {
@@ -156,7 +164,13 @@ public class KamiMenuContainer {
 
             @Override
             public Collection<? extends PageItem> getItems() {
-                return pagedItemMap.values();
+                if (!ordered) {
+                    return pagedItemMap.values().stream().map(PagedItem::getItem).toList();
+                }
+                // Sort by the order they were added to the map (the index)
+                List<PagedItem> items = new ArrayList<>(pagedItemMap.values());
+                items.sort(Comparator.comparingInt(PagedItem::getIndex));
+                return items.stream().map(PagedItem::getItem).toList();
             }
 
             @Override
@@ -183,7 +197,7 @@ public class KamiMenuContainer {
             consumer.accept(menuItem);
         }
 
-        KamiMenuItem pagedItem = pagedItemMap.get(key);
+        KamiMenuItem pagedItem = pagedItemMap.get(key).getItem();
         if (pagedItem != null) {
             consumer.accept(pagedItem);
         }
@@ -250,33 +264,29 @@ public class KamiMenuContainer {
 
 
     public KamiMenuContainer addPagedIcon(String key, KamiMenuItem item) {
-        pagedItemMap.put(key, item);
+        pagedItemMap.put(key, new PagedItem(item, pagedItemMap.size()));
         return this;
     }
     public KamiMenuContainer addPagedIcon(String key, IBuilder item) {
-        pagedItemMap.put(key, new KamiMenuItem(true, item, -1));
+        pagedItemMap.put(key, new PagedItem(new KamiMenuItem(true, item, -1), pagedItemMap.size()));
         return this;
     }
     public KamiMenuContainer addPagedIcon(String key, IBuilder item, int slot) {
-        pagedItemMap.put(key, new KamiMenuItem(true, item, slot));
+        pagedItemMap.put(key, new PagedItem(new KamiMenuItem(true, item, slot), pagedItemMap.size()));
         return this;
     }
     public KamiMenuContainer addPagedIcon(String key, IBuilder item, List<Integer> slots) {
-        pagedItemMap.put(key, new KamiMenuItem(true, item, slots));
+        pagedItemMap.put(key, new PagedItem(new KamiMenuItem(true, item, slots), pagedItemMap.size()));
         return this;
     }
     public KamiMenuContainer addPagedIcon(String key, ItemStack item, int slot) {
-        pagedItemMap.put(key, new KamiMenuItem(true, new IAItemBuilder(item), slot));
+        pagedItemMap.put(key, new PagedItem(new KamiMenuItem(true, new IAItemBuilder(item), slot), pagedItemMap.size()));
         return this;
     }
     public KamiMenuContainer addPagedIcon(String key, ItemStack item, List<Integer> slots) {
-        pagedItemMap.put(key, new KamiMenuItem(true, new IAItemBuilder(item), slots));
+        pagedItemMap.put(key, new PagedItem(new KamiMenuItem(true, new IAItemBuilder(item), slots), pagedItemMap.size()));
         return this;
     }
-
-
-
-
 
     public KamiMenuContainer setTitle(String title) {
         this.title = title;
