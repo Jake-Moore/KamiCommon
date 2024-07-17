@@ -197,9 +197,9 @@ public class KamiMenuContainer {
             consumer.accept(menuItem);
         }
 
-        KamiMenuItem pagedItem = pagedItemMap.get(key).getItem();
+        PagedItem pagedItem = pagedItemMap.get(key);
         if (pagedItem != null) {
-            consumer.accept(pagedItem);
+            consumer.accept(pagedItem.getItem());
         }
         return this;
     }
