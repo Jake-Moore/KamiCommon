@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.gui.items;
 
+import com.kamikazejam.kamicommon.gui.interfaces.Menu;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.gui.items.slots.LastRowItemSlot;
@@ -148,9 +149,9 @@ public class KamiMenuItem extends PageItem {
         }
     }
 
-    public List<Integer> getSlots(PageBuilder<?> pageBuilder) {
+    public List<Integer> getSlots(@NotNull Menu menu) {
         if (slots != null) {
-            return slots.get(pageBuilder);
+            return slots.get(menu);
         }
         return List.of();
     }
