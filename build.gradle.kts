@@ -74,6 +74,13 @@ allprojects {
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
     }
+
+    // The spigot jars have versions with -SNAPSHOT which get downloaded every day
+    //  This is pointless, so lets tell gradle to wait a year
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor(365, "days")
+        resolutionStrategy.cacheDynamicVersionsFor(365, "days")
+    }
 }
 
 subprojects {
