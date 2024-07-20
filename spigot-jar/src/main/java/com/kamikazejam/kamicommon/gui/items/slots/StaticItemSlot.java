@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.gui.items.slots;
 
-import com.kamikazejam.kamicommon.gui.page.PageBuilder;
+import com.kamikazejam.kamicommon.gui.interfaces.Menu;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class StaticItemSlot implements ItemSlot {
     }
 
     @Override
-    public List<Integer> get(PageBuilder<?> builder) {
+    public List<Integer> get(@NotNull Menu menu) {
         return slots;
     }
 }
