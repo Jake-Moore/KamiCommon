@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.command;
 
+import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
@@ -28,7 +29,7 @@ public class KamiCommandHelp extends KamiCommand {
 		this.addAliases("?", "h", "help");
 
 		// Parameters
-		this.addParameter(Parameter.getPage());
+		this.addParameter(1, TypeInteger.get(), "page");
 
 		// Other
 		this.setDesc("");

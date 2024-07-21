@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.command;
 
 import com.kamikazejam.kamicommon.command.type.Type;
-import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -59,10 +58,24 @@ public class Parameter<T> {
 		this.defaultValueSet = defaultValueSet;
 	}
 
+	// Default Description (allows for showing different text than the default value in the command template)
+	// For example of a Param's default value is null, but you want it to say (myParam=you) in the command template.
+	protected @Nullable String defaultDesc = null;
+	@Contract(value = "_ -> this", mutates = "this")
+	public Parameter<T> setDefaultDesc(String defaultDesc) {
+		this.defaultDesc = defaultDesc;
+		return this;
+	}
+	public @Nullable String getDefaultDesc() {
+		if (this.defaultDesc != null) return defaultDesc;
+		if (this.isDefaultValueSet()) return String.valueOf(this.getDefaultValue());
+		return null;
+	}
+
 
 	// Convenience
 	public boolean isRequired() {
-		return this.getDefaultValue() == null;
+		return this.getDefaultDesc() == null;
 	}
 
 	public boolean isOptional() {
@@ -87,21 +100,17 @@ public class Parameter<T> {
 	// description must not be set in the constructor.
 
 	// All
-	@Contract("_, null, _, _, _ -> fail; _, !null, _, null, _ -> fail")
-	public Parameter(T defaultValue, Type<T> type, boolean requiredFromConsole, String name, String defaultDesc) {
-		// Null checks
-		if (type == null) throw new IllegalArgumentException("type mustn't be null");
-		if (name == null) throw new IllegalArgumentException("name mustn't be null");
-
+	public Parameter(@Nullable T defaultValue, @NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name, @Nullable String defaultDesc) {
 		this.setType(type);
 		this.setRequiredFromConsole(requiredFromConsole);
 		this.setName(name);
+		this.setDefaultDesc(defaultDesc);
 		this.setDefaultValue(defaultValue);
 	}
 
 	// Without defaultValue
 	@SuppressWarnings("unchecked")
-	public Parameter(@NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name, String defaultDesc) {
+	public Parameter(@NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name, @Nullable String defaultDesc) {
 		this((T) DEFAULT_VALUE_DEFAULT, type, requiredFromConsole, name, defaultDesc);
 
 		// In fact the default value is not set.
@@ -109,17 +118,17 @@ public class Parameter<T> {
 	}
 
 	// Without reqFromConsole.
-	public Parameter(T defaultValue, @NotNull Type<T> type, @NotNull String name, String defaultDesc) {
+	public Parameter(@Nullable T defaultValue, @NotNull Type<T> type, @NotNull String name, @Nullable String defaultDesc) {
 		this(defaultValue, type, REQUIRED_FROM_CONSOLE_DEFAULT, name, defaultDesc);
 	}
 
 	// Without defaultDesc.
-	public Parameter(T defaultValue, @NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name) {
+	public Parameter(@Nullable T defaultValue, @NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name) {
 		this(defaultValue, type, requiredFromConsole, name, DEFAULT_DESC_DEFAULT);
 	}
 
 	// Without defaultValue & reqFromConsole.
-	public Parameter(@NotNull Type<T> type, @NotNull String name, String defaultDesc) {
+	public Parameter(@NotNull Type<T> type, @NotNull String name, @Nullable String defaultDesc) {
 		this(type, REQUIRED_FROM_CONSOLE_DEFAULT, name, defaultDesc);
 	}
 
@@ -166,20 +175,10 @@ public class Parameter<T> {
 		if (this.isRequiredFor(sender)) {
 			ret = "<" + this.getName() + ">";
 		} else {
-			@Nullable String defVal = (this.isDefaultValueSet() ? String.valueOf(this.getDefaultValue()) : null);
-			ret = "[" + this.getName() + (defVal != null ? "=" + defVal : "") + "]";
+			@Nullable String def = getDefaultDesc();
+			ret = "[" + this.getName() + (def != null ? "=" + def : "") + "]";
 		}
 		return ret;
-	}
-
-	// -------------------------------------------- //
-	// COMMONLY USED PARAMETERS
-	// -------------------------------------------- //
-
-	@Contract(" -> new")
-	public static Parameter<Integer> getPage() {
-		// We can't use a singleton because people might want to set a description.
-		return new Parameter<>(1, TypeInteger.get(), "page", "1");
 	}
 
 }
