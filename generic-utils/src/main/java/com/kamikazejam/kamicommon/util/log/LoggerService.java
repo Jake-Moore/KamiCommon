@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.util;
+package com.kamikazejam.kamicommon.util.log;
 
 import org.jetbrains.annotations.NotNull;
 

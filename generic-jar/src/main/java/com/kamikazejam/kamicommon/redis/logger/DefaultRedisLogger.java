@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.redis.logger;
 
-import com.kamikazejam.kamicommon.util.LoggerService;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 
 public class DefaultRedisLogger extends LoggerService {
 
