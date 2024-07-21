@@ -1,12 +1,17 @@
 package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.command.type.TypeItemStack;
-import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.Txt;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class RequirementHasItemInHand extends RequirementAbstract {
@@ -15,34 +20,17 @@ public class RequirementHasItemInHand extends RequirementAbstract {
 	// INSTANCE & CONSTRUCT
 	// -------------------------------------------- //
 
-	private static final RequirementHasItemInHand i = new RequirementHasItemInHand(TypeItemStack.get());
-
-	public static RequirementHasItemInHand get() {
-		return i;
-	}
+	private static final RequirementHasItemInHand i = new RequirementHasItemInHand();
+	public static RequirementHasItemInHand get() { return i; }
 
 	@Contract("_ -> new")
-	public static @NotNull RequirementHasItemInHand get(TypeItemStack innerType) {
-		return new RequirementHasItemInHand(innerType);
+	public static @NotNull RequirementHasItemInHand get(@NotNull Material... materialWhitelist) {
+		return new RequirementHasItemInHand(materialWhitelist);
 	}
 
-	@Contract("_ -> new")
-	public static @NotNull RequirementHasItemInHand get(Material... materialWhitelist) {
-		return get(TypeItemStack.get(materialWhitelist));
-	}
-
-	public RequirementHasItemInHand(@NotNull TypeItemStack innerType) {
-		this.innerType = innerType;
-	}
-
-	// -------------------------------------------- //
-	// FIELDS
-	// -------------------------------------------- //
-
-	private final TypeItemStack innerType;
-
-	public @NotNull TypeItemStack getInnerType() {
-		return this.innerType;
+	private final @NotNull List<Material> materialWhitelist;
+	public RequirementHasItemInHand(@NotNull Material... materialWhitelist) {
+		this.materialWhitelist = List.of(materialWhitelist);
 	}
 
 	// -------------------------------------------- //
@@ -51,17 +39,25 @@ public class RequirementHasItemInHand extends RequirementAbstract {
 
 	@Override
 	public boolean apply(CommandSender sender, KamiCommand command) {
-		return this.getInnerType().isValid(null, sender);
+		if (!(sender instanceof Player player)) return false;
+		ItemStack inHand = NmsAPI.getItemInMainHand(player);
+		if (this.materialWhitelist.isEmpty()) {
+			// If no whitelist is set, any item in hand is fine.
+			return inHand != null;
+		}
+        return inHand != null && inHand.getType() != Material.AIR && this.materialWhitelist.contains(inHand.getType());
 	}
 
 	@Override
 	public String createErrorMessage(CommandSender sender, KamiCommand command) {
-		try {
-			this.getInnerType().read(sender);
-		} catch (KamiCommonException e) {
-			return e.getMessages().toPlain(true);
+		if (!(sender instanceof Player player)) {
+			return RequirementIsPlayer.get().createErrorMessage(sender, command);
 		}
-		return null;
+		ItemStack inHand = NmsAPI.getItemInMainHand(player);
+		if (inHand == null) {
+			return StringUtil.t("&cYou must be holding an item in your hand.");
+		}
+		return StringUtil.t("&cInvalid Item: " + Txt.getNicedEnum(inHand.getType()));
 	}
 
 }

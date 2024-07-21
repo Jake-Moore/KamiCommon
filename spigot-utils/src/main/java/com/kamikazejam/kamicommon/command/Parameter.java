@@ -2,15 +2,15 @@ package com.kamikazejam.kamicommon.command;
 
 import com.kamikazejam.kamicommon.command.type.Type;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
-import com.kamikazejam.kamicommon.util.Txt;
-import com.kamikazejam.kamicommon.util.mson.Mson;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("unused")
+@Getter
+@SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
 public class Parameter<T> {
 	// -------------------------------------------- //
 	// CONSTANTS
@@ -25,7 +25,6 @@ public class Parameter<T> {
 	// FIELDS
 	// -------------------------------------------- //
 
-	@Getter
 	protected Type<T> type;
 
 	@Contract(value = "_ -> this", mutates = "this")
@@ -34,7 +33,6 @@ public class Parameter<T> {
 		return this;
 	}
 
-	@Getter
 	protected String name;
 
 	@Contract(value = "_ -> this", mutates = "this")
@@ -43,21 +41,6 @@ public class Parameter<T> {
 		return this;
 	}
 
-	protected String defaultDesc = null;
-
-	@Contract(value = "_ -> this", mutates = "this")
-	public Parameter<T> setDefaultDesc(String defaultDesc) {
-		this.defaultDesc = defaultDesc;
-		return this;
-	}
-
-	public String getDefaultDesc() {
-		if (this.defaultDesc != null) return defaultDesc;
-		if (this.isDefaultValueSet()) return String.valueOf(this.getDefaultValue());
-		return null;
-	}
-
-	@Getter
 	protected T defaultValue = null;
 
 	@Contract(value = "_ -> this", mutates = "this")
@@ -69,7 +52,6 @@ public class Parameter<T> {
 
 	// A default value can be null.
 	// So we must keep track of this field too.
-	@Getter
 	protected boolean defaultValueSet = false;
 
 	@Contract(mutates = "this")
@@ -80,7 +62,7 @@ public class Parameter<T> {
 
 	// Convenience
 	public boolean isRequired() {
-		return this.getDefaultDesc() == null;
+		return this.getDefaultValue() == null;
 	}
 
 	public boolean isOptional() {
@@ -89,31 +71,12 @@ public class Parameter<T> {
 
 	// Is this arg ALWAYS required from the console?
 	// That might the case if the arg is a player. and default is oneself.
-	@Getter
 	protected boolean requiredFromConsole = false;
 
 	@Contract(value = "_ -> this", mutates = "this")
 	public Parameter<T> setRequiredFromConsole(boolean requiredFromConsole) {
 		this.requiredFromConsole = requiredFromConsole;
 		return this;
-	}
-
-	// An optional description of this argument.
-	// Examples:
-	// 1. "the faction to show info about"
-	// 2. "the ticket to pick"
-	// 3. "the amount of money to pay"
-	@Getter
-	protected String desc = null;
-
-	@Contract(value = "_ -> this", mutates = "this")
-	public Parameter<T> setDesc(String desc) {
-		this.desc = desc;
-		return this;
-	}
-
-	public boolean hasDesc() {
-		return this.getDesc() != null;
 	}
 
 	// -------------------------------------------- //
@@ -133,7 +96,6 @@ public class Parameter<T> {
 		this.setType(type);
 		this.setRequiredFromConsole(requiredFromConsole);
 		this.setName(name);
-		this.setDefaultDesc(defaultDesc);
 		this.setDefaultValue(defaultValue);
 	}
 
@@ -185,31 +147,28 @@ public class Parameter<T> {
 	// CONVENIENCE
 	// -------------------------------------------- //
 
-	public boolean isRequiredFor(CommandSender sender) {
+	public boolean isRequiredFor(@Nullable CommandSender sender) {
 		if (this.isRequired()) return true; // Required for everyone.
 		if (!this.isRequiredFromConsole()) return false; // If not required for console. Then not anyone.
 		if (sender == null) return false; // If null we will suppose it is a player.
 		return !(sender instanceof Player); // Required for console.
-// Not required.
+		// Not required.
 	}
 
 	public boolean isOptionalFor(CommandSender sender) {
 		return !this.isRequiredFor(sender);
 	}
 
-	public Mson getTemplate(CommandSender sender) {
-		Mson ret;
+	@NotNull
+	public String getTemplate(@Nullable CommandSender sender) {
+		String ret;
 
 		if (this.isRequiredFor(sender)) {
-			ret = Mson.mson("<" + this.getName() + ">");
+			ret = "<" + this.getName() + ">";
 		} else {
-			String def = this.getDefaultDesc();
-			def = (def != null ? "=" + def : "");
-			ret = Mson.mson("[" + this.getName() + def + "]");
+			@Nullable String defVal = (this.isDefaultValueSet() ? String.valueOf(this.getDefaultValue()) : null);
+			ret = "[" + this.getName() + (defVal != null ? "=" + defVal : "") + "]";
 		}
-
-		if (this.hasDesc()) ret = ret.tooltip(Txt.upperCaseFirst(this.getDesc()));
-
 		return ret;
 	}
 
@@ -220,7 +179,7 @@ public class Parameter<T> {
 	@Contract(" -> new")
 	public static Parameter<Integer> getPage() {
 		// We can't use a singleton because people might want to set a description.
-		return new Parameter<>(1, TypeInteger.get(), "page", "1").setDesc("page");
+		return new Parameter<>(1, TypeInteger.get(), "page", "1");
 	}
 
 }

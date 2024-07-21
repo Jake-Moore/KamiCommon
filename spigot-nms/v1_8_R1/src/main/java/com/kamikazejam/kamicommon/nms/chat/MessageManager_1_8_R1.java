@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.nms.chat;
 
 import com.kamikazejam.kamicommon.nms.abstraction.chat.AbstractMessageManager;
+import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.actions.*;
 import com.kamikazejam.kamicommon.nms.abstraction.itemtext.AbstractItemTextPre_1_17;
 import com.kamikazejam.kamicommon.util.StringUtil;
@@ -9,6 +10,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,11 +32,16 @@ public class MessageManager_1_8_R1 extends AbstractMessageManager {
         this.itemText = itemText;
     }
 
-
     @Override
-    public void processAndSend(Player player, String line, boolean translate, Action... actions) {
-        BaseComponent[] components = processPlaceholders(line, translate, actions);
-        player.spigot().sendMessage(components);
+    public void processAndSend(@NotNull CommandSender sender, @NotNull KMessage kMessage) {
+        for (String line : kMessage.getLines()) {
+            BaseComponent[] components = processPlaceholders(line, kMessage.isTranslate(), kMessage.getActions());
+            if (sender instanceof Player player) {
+                player.spigot().sendMessage(components);
+            }else {
+                sender.sendMessage(TextComponent.toPlainText(components));
+            }
+        }
     }
 
     /**
@@ -44,7 +51,7 @@ public class MessageManager_1_8_R1 extends AbstractMessageManager {
      * @param actions The actions which will replace placeholders and setup events
      * @return A list of TextComponent[], each array meant to be sent to the player as one message
      */
-    private BaseComponent[] processPlaceholders(String line, boolean translate, Action... actions) {
+    private BaseComponent[] processPlaceholders(@NotNull String line, boolean translate, @NotNull List<Action> actions) {
         if (translate) { line = StringUtil.t(line); }
         List<BaseComponent> components = new ArrayList<>();
 
@@ -63,7 +70,7 @@ public class MessageManager_1_8_R1 extends AbstractMessageManager {
      * @param actions The actions which will replace placeholders and setup events
      * @return A list of TextComponent[], each array meant to be sent to the player as one message
      */
-    private BaseComponent[] processPlaceholders(BaseComponent base, Action... actions) {
+    private BaseComponent[] processPlaceholders(@NotNull BaseComponent base, @NotNull List<Action> actions) {
         List<BaseComponent> temp = new ArrayList<>();
         temp.add(base);
 
@@ -99,24 +106,19 @@ public class MessageManager_1_8_R1 extends AbstractMessageManager {
         for (BaseComponent clickComponent : legacyTexts) {
 
             @Nullable Click click = action.getClick();
-            if (click instanceof ClickCmd) {
-                ClickCmd clickCmd = (ClickCmd) click;
+            if (click instanceof ClickCmd clickCmd) {
                 clickComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCmd.getCommand()));
-            }else if (click instanceof ClickSuggest) {
-                ClickSuggest clickSuggest = (ClickSuggest) click;
+            }else if (click instanceof ClickSuggest clickSuggest) {
                 clickComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, clickSuggest.getSuggestion()));
-            }else if (click instanceof ClickUrl) {
-                ClickUrl clickUrl = (ClickUrl) click;
+            }else if (click instanceof ClickUrl clickUrl) {
                 clickComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, clickUrl.getUrl()));
             }
 
             @Nullable Hover hover = action.getHover();
-            if (hover instanceof HoverText) {
-                HoverText hoverText = (HoverText) hover;
+            if (hover instanceof HoverText hoverText) {
                 // For every version [1.8 - 1.16.5] this HoverEvent constructor is fine
                 clickComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText.getText())));
-            }else if (hover instanceof HoverItem) {
-                HoverItem hoverItem = (HoverItem) hover;
+            }else if (hover instanceof HoverItem hoverItem) {
                 clickComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, itemText.getComponents(hoverItem.getItemStack())));
             }
         }

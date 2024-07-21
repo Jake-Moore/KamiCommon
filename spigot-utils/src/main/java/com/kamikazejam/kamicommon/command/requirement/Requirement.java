@@ -4,6 +4,7 @@ import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import org.bukkit.command.CommandSender;
 
+@SuppressWarnings("unused")
 public interface Requirement extends Predicate<CommandSender> {
 	boolean apply(CommandSender sender, KamiCommand command);
 

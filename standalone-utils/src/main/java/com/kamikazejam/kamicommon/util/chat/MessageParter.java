@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.chat;
 
-import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.actions.StandaloneAction;
+import com.kamikazejam.kamicommon.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;

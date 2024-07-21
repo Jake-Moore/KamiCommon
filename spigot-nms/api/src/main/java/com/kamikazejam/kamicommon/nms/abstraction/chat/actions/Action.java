@@ -12,7 +12,7 @@ public class Action extends StandaloneAction {
     /**
      * @param item The ItemStack to show when hovering
      */
-    public Action setHoverItem(ItemStack item) {
+    public Action setHoverItem(@NotNull ItemStack item) {
         this.hover = new HoverItem(item);
         return this;
     }
@@ -21,7 +21,7 @@ public class Action extends StandaloneAction {
      * @param command The command the player runs, when clicked (STARTS WITH '/')
      */
     @Override
-    public Action setClickRunCommand(String command) {
+    public Action setClickRunCommand(@NotNull String command) {
         super.setClickRunCommand(command);
         return this;
     }
@@ -29,7 +29,7 @@ public class Action extends StandaloneAction {
      * @param suggestion The command/text to suggest to the player, when clicked
      */
     @Override
-    public Action setClickSuggestCommand(String suggestion) {
+    public Action setClickSuggestCommand(@NotNull String suggestion) {
         super.setClickSuggestCommand(suggestion);
         return this;
     }
@@ -37,7 +37,7 @@ public class Action extends StandaloneAction {
      * @param url The url to open, when clicked
      */
     @Override
-    public Action setClickOpenURL(String url) {
+    public Action setClickOpenURL(@NotNull String url) {
         super.setClickOpenURL(url);
         return this;
     }
@@ -46,7 +46,7 @@ public class Action extends StandaloneAction {
      * @param text The text to show when hovering
      */
     @Override
-    public Action setHoverText(String text) {
+    public Action setHoverText(@NotNull String text) {
         super.setHoverText(text);
         return this;
     }

@@ -1,16 +1,18 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.engine.EngineScheduledTeleport;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.mixin.MixinTeleport;
-import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
-@SuppressWarnings({"unused", "SpellCheckingInspection"})
+@SuppressWarnings({"unused", "SpellCheckingInspection", "UnusedReturnValue"})
 public class ScheduledTeleport implements Runnable {
     // -------------------------------------------- //
     // FIELDS & RAW-DATA ACCESS
@@ -78,7 +80,10 @@ public class ScheduledTeleport implements Runnable {
         try {
             MixinTeleport.get().teleportInternal(this.getTeleporteeId(), this.getDestination(), this.getCallback(), this.getDesc(), 0);
         } catch (KamiCommonException e) {
-            MsonMessenger.get().messageOne(this.getTeleporteeId(), e.getMessage());
+            CommandSender sender = KUtil.getSender(this.getTeleporteeId());
+            if (sender != null && e.getKMessage() != null) {
+                NmsAPI.getMessageManager().processAndSend(sender, e.getKMessage());
+            }
         }
     }
 }

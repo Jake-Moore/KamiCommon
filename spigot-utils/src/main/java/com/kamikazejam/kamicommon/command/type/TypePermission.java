@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.command.type;
 
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -25,7 +26,8 @@ public class TypePermission extends TypeAbstractChoice<Permission> {
 	// -------------------------------------------- //
 
 	@Override
-	public String getIdInner(Permission value) {
+	public @Nullable String getId(@Nullable Permission value) {
+		if (value == null) return null;
 		return value.getName();
 	}
 

@@ -2,7 +2,6 @@ package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.Lang;
-import com.kamikazejam.kamicommon.util.Txt;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
@@ -49,8 +48,6 @@ public class RequirementHasPerm extends RequirementAbstract {
 	}
 
 	public static String getPermissionDeniedMessage() {
-		String deniedFormat = Lang.PERM_DEFAULT_DENIED_FORMAT;
-		String action = Lang.PERM_DEFAULT_DESCRIPTION;
-		return Txt.parse(deniedFormat, action);
+		return Lang.REQ_PERM_DENIED;
 	}
 }

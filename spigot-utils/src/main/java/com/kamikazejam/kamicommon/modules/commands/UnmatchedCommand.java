@@ -27,7 +27,7 @@ public abstract class UnmatchedCommand extends KamiCommand implements Disableabl
     @Override
     public void onUnmatchedArg() {
         if (this.args.isEmpty()) { return; }
-        String arg1 = this.args.get(0).toLowerCase();
+        String arg1 = this.args.getFirst().toLowerCase();
 
         int count = subCommandMap.getOrDefault(arg1, 0);
         subCommandMap.put(arg1, count + 1);

@@ -1,13 +1,15 @@
 package com.kamikazejam.kamicommon.command;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
+import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.Txt;
-import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
-import com.kamikazejam.kamicommon.util.mson.Mson;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class KamiCommandHelp extends KamiCommand {
@@ -46,9 +48,12 @@ public class KamiCommandHelp extends KamiCommand {
 		KamiCommand parent = this.getParent();
 
 		// Create Lines
-		List<Mson> lines = new KamiList<>();
-		for (Object helpline : parent.getHelp()) {
-			lines.add(mson(Mson.parse("<a># "), helpline).color(ChatColor.YELLOW));
+		List<KMessageSingle> lines = new ArrayList<>();
+
+		// Add help lines (if specified), making sure to add the # prefix
+		List<KMessageSingle> helpLines = parent.getHelp();
+		for (KMessageSingle single : helpLines) {
+			lines.add(new KMessageSingle(StringUtil.t("&6# ") + single.getLine()));
 		}
 
 		for (KamiCommand child : parent.getChildren()) {
@@ -57,11 +62,12 @@ public class KamiCommandHelp extends KamiCommand {
 			// Add another visibility check for if they don't have the perms for it
 			if (!child.isFullChainMet(sender)) continue;
 
-			lines.add(child.getTemplate(true, true, sender));
+			lines.add(child.getTemplateClickSuggest(true, true, false, sender));
 		}
 
 		// Send Lines
-		message(Txt.getPage(lines, page, "Help for command \"" + parent.getAliases().get(0) + "\"", this));
+		List<KMessage> messages = Txt.getPage(lines, page, "Help for command \"" + parent.getAliases().getFirst() + "\"", this);
+		NmsAPI.getMessageManager().processAndSend(sender, messages);
 	}
 
 	@Override

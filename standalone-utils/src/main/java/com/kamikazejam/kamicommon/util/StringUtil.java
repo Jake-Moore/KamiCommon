@@ -135,7 +135,7 @@ public class StringUtil {
     }
 
     public static String reverseT(String s) {
-        return s.replace("§", "&");
+        return s.replace(COLOR_CHAR, '&');
     }
 
     public static List<String> reverseT(List<String> s) {

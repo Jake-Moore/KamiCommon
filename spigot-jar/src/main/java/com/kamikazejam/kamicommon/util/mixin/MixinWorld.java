@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import com.kamikazejam.kamicommon.util.teleport.ps.PSFormatDesc;
 import org.bukkit.Bukkit;
@@ -75,7 +75,7 @@ public class MixinWorld extends Mixin {
 
 	public String getWorldAliasOrId(String worldId) {
 		List<String> aliases = this.getWorldAliases(worldId);
-		if (!aliases.isEmpty()) return aliases.get(0);
+		if (!aliases.isEmpty()) return aliases.getFirst();
 		return worldId;
 	}
 
@@ -109,7 +109,7 @@ public class MixinWorld extends Mixin {
 		World world = Bukkit.getWorld(worldId);
 		if (world == null) {
 			if (verboseChange || verboseSame) {
-				MsonMessenger.get().msgOne(sender, "<b>Unknown world <h>%s<b>.", worldId);
+				sender.sendMessage(String.format(StringUtil.t("&cUnknown world &d%s&c."), worldId));
 			}
 			return false;
 		}
@@ -123,14 +123,16 @@ public class MixinWorld extends Mixin {
 		// No change?
 		if (KUtil.equals(goal, current)) {
 			if (verboseSame) {
-				MsonMessenger.get().msgOne(sender, "<i>Spawn location is already <h>%s <i>for <h>%s<i>.", currentFormatted, worldDisplayName);
+				String s = String.format("&eSpawn location is already &d%s &efor &d%s&e.", currentFormatted, worldDisplayName);
+				sender.sendMessage(StringUtil.t(s));
 			}
 			return true;
 		}
 
 		// Report
 		if (verboseChange) {
-			MsonMessenger.get().msgOne(sender, "<i>Changing spawn location from <h>%s <i>to <h>%s <i>for <h>%s<i>.", currentFormatted, goalFormatted, worldDisplayName);
+			String s = String.format("&eChanging spawn location from &d%s &eto &d%s &efor &d%s&e.", currentFormatted, goalFormatted, worldDisplayName);
+			sender.sendMessage(StringUtil.t(s));
 		}
 
 		// Set it

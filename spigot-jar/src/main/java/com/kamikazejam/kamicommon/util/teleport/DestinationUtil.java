@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,7 +21,7 @@ public class DestinationUtil {
     @Contract("null -> fail")
     public static @NotNull Player getPlayer(CommandSender sender) throws KamiCommonException {
         if (!(sender instanceof Player))
-            throw new KamiCommonException().addMsg("<b>You must be a player to use this destination.");
+            throw new KamiCommonException().addMsg(StringUtil.t("&cYou must be a player to use this destination."));
         return (Player) sender;
     }
 

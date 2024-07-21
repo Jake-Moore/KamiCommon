@@ -2,9 +2,10 @@ package com.kamikazejam.kamicommon.command.type.primitive;
 
 import com.kamikazejam.kamicommon.command.type.TypeAbstractChoice;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Set;
 
 public abstract class TypeBooleanAbstract extends TypeAbstractChoice<Boolean> {
@@ -72,24 +73,20 @@ public abstract class TypeBooleanAbstract extends TypeAbstractChoice<Boolean> {
 	}
 
 	@Override
-	public String getVisualInner(Boolean value, CommandSender sender) {
-		String name = this.getNameInner(value);
-		ChatColor color = (value ? ChatColor.GREEN : ChatColor.RED);
-		return color + name;
-	}
-
-	@Override
-	public String getNameInner(Boolean value) {
+	public @Nullable String getName(@Nullable Boolean value) {
+		if (value == null) return null;
 		return value ? this.getNameTrue() : this.getNameFalse();
 	}
 
 	@Override
-	public Set<String> getNamesInner(Boolean value) {
+	public @NotNull Set<String> getNames(@Nullable Boolean value) {
+		if (value == null) return Collections.emptySet();
+
 		// Create
 		Set<String> ret = new KamiSet<>();
 
 		// Fill
-		ret.add(this.getNameInner(value));
+		ret.add(this.getName(value));
 		ret.addAll(value ? NAMES_TRUE : NAMES_FALSE);
 
 		// Return
@@ -97,7 +94,8 @@ public abstract class TypeBooleanAbstract extends TypeAbstractChoice<Boolean> {
 	}
 
 	@Override
-	public String getIdInner(Boolean value) {
+	public @Nullable String getId(@Nullable Boolean value) {
+		if (value == null) return null;
 		return value.toString();
 	}
 
