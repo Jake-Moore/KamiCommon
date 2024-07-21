@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.redis;
 
 import com.kamikazejam.kamicommon.redis.util.RedisConf;
-import com.kamikazejam.kamicommon.util.LoggerService;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

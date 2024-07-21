@@ -7,7 +7,7 @@ import com.kamikazejam.kamicommon.redis.util.RedisConf;
 import com.kamikazejam.kamicommon.redis.util.RedisMonitor;
 import com.kamikazejam.kamicommon.redis.util.RedisState;
 import com.kamikazejam.kamicommon.util.JacksonUtil;
-import com.kamikazejam.kamicommon.util.LoggerService;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.util.interfaces.Service;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;

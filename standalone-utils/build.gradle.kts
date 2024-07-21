@@ -7,6 +7,7 @@ plugins {
 var snakeYaml = "org.yaml:snakeyaml:2.2"
 var json = "org.json:json:20240303"
 dependencies {
+    shadow(project(":generic-utils"))
     // Unique dependencies for this module
     shadow(snakeYaml); testImplementation(snakeYaml)
     shadow(json); testImplementation(json)

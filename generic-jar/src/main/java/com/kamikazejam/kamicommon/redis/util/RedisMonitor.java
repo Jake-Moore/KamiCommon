@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.redis.util;
 
-import com.kamikazejam.kamicommon.util.LoggerService;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.util.interfaces.Service;
 import io.lettuce.core.api.StatefulRedisConnection;
 import org.jetbrains.annotations.NotNull;

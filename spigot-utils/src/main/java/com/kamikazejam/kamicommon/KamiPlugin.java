@@ -10,12 +10,12 @@ import com.kamikazejam.kamicommon.modules.integration.CitizensIntegration;
 import com.kamikazejam.kamicommon.modules.integration.ItemsAdderIntegration;
 import com.kamikazejam.kamicommon.modules.integration.MythicMobsIntegration;
 import com.kamikazejam.kamicommon.util.StringUtil;
-import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
+import com.kamikazejam.kamicommon.util.log.PluginLogger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
@@ -40,10 +39,11 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     @Getter
     private long enableTime;
     private String logPrefixColored = null;
-    private String logPrefixPlain = null;
     @Getter ModuleManager moduleManager;
     private KamiConfigExt modulesConfig = null;
     private @Nullable KamiConfigExt config = null;
+    @Getter
+    private LoggerService colorLogger;
 
     // -------------------------------------------- //
     // ENABLE
@@ -59,7 +59,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     public void onLoadPre() {
         String[] version = this.getDescription().getVersion().split(" ");
         this.logPrefixColored = StringUtil.t(String.format("&3[&b%s %s&3] &e", this.getDescription().getName(), version[version.length - 1]));
-        this.logPrefixPlain = ChatColor.stripColor(this.logPrefixColored);
     }
     public void onLoadInner() {}
     public void onLoadPost() {}
@@ -74,7 +73,8 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
 
     public boolean onEnablePre() {
         this.enableTime = System.currentTimeMillis();
-        log("=== ENABLE START ===");
+        this.colorLogger = new PluginLogger(this);
+        this.colorLogger.logToConsole(this.logPrefixColored + "=== ENABLE START ===", Level.INFO);
 
         // Create the Module Manager
         this.moduleManager = new ModuleManager(this);
@@ -109,7 +109,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         }
 
         long ms = System.currentTimeMillis() - this.enableTime;
-        log(StringUtil.t("=== ENABLE &aCOMPLETE &e(Took &d" + ms + "ms&e) ==="));
+        this.colorLogger.logToConsole(this.logPrefixColored + "=== ENABLE &aCOMPLETE &e(Took &d" + ms + "ms&e) ===", Level.INFO);
     }
 
     public @NotNull KamiConfigExt getKamiConfig() {
@@ -153,7 +153,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         }
 
         onDisablePost();
-        log("Disabled");
+        this.colorLogger.logToConsole(this.logPrefixColored + "Disabled", Level.INFO);
     }
 
     /**
@@ -174,22 +174,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     public String getModuleYmlPath() {
         return null;
     }
-
-    // -------------------------------------------- //
-    // LOGGING
-    // -------------------------------------------- //
-    public void log(Object... msg) {
-        log(Level.INFO, msg);
-    }
-    public void log(Level level, Object... msg) {
-        String imploded = Txt.implode(msg, " ");
-        if (level == Level.INFO) {
-            Bukkit.getConsoleSender().sendMessage(this.logPrefixColored + imploded);
-        } else {
-            Logger.getLogger("Minecraft").log(level, this.logPrefixPlain + imploded);
-        }
-    }
-
 
 
     // -------------------------------------------- //

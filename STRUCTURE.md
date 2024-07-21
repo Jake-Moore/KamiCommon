@@ -1,10 +1,10 @@
 **SEE [README.md](./README.md) FOR API DOCUMENTATION**
 
 # Module Structure
-- Modules Available as Dependencies: [spigot-jar](#spigot-jar), [spigot-utils](#spigot-utils), [standalone-jar](#standalone-jar), [standalone-utils](#standalone-utils), [generic-jar](#generic-jar)
+- Modules Available as Dependencies: [spigot-jar](#spigot-jar), [spigot-utils](#spigot-utils), [standalone-jar](#standalone-jar), [standalone-utils](#standalone-utils), [generic-jar](#generic-jar), [generic-utils](#generic-utils)
 
 ## Module Hierarchy
-![ScreenShot](/docs/screenshots/structure-flow.png)
+![ScreenShot](/docs/screenshots/structure.png)
 
 ## Spigot Development
 ### [spigot-jar](./spigot-jar)
@@ -86,6 +86,12 @@
   - com.rabbitmq:amqp-client
 - (⭐) **CAN** be shaded
   - Also present in either [spigot-jar](#spigot-jar) or [standalone-jar](#standalone-jar)
+
+### [generic-utils](./generic-utils)
+- A jar file containing shared generic utility classes (classes with no dependencies)
+- This module is shaded into both [generic-jar](#generic-jar) and [standalone-utils](#standalone-utils) making it available in all other util and jar modules
+- (⭐) **CAN** be shaded
+  - Also present in either [generic-jar](#generic-jar) or [standalone-utils](#standalone-utils)
 
 ## TLDR
 - two -jar modules contain the full set of utilities for their respective environment

@@ -4,6 +4,7 @@ include(":spigot-utils")
 include(":standalone-jar")
 include(":standalone-utils")
 include(":generic-jar")
+include(":generic-utils")
 include(":spigot-nms")
 
 include(":spigot-nms:v1_8_R3")
