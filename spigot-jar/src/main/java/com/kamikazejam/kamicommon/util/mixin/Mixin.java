@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnstableApiUsage"})
 public class Mixin extends Engine {
     // -------------------------------------------- //
     // DEFAULT
@@ -203,7 +203,7 @@ public class Mixin extends Engine {
         // Inform
         if (verbose) {
             String message = String.format("&eMixin &d%s&e set to &d%s", this.getBaseName(), this.getName());
-            after.getPlugin().log(StringUtil.t(message));
+            after.getPlugin().getColorLogger().info(StringUtil.t(message));
         }
 
         // Super
