@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.util.teleport.ps;
 
-
-import com.kamikazejam.kamicommon.util.Txt;
+import com.kamikazejam.kamicommon.util.StringUtil;
 
 @SuppressWarnings("unused")
 public class PSFormatDesc extends PSFormatAbstract {
@@ -17,24 +16,24 @@ public class PSFormatDesc extends PSFormatAbstract {
 
 	private PSFormatDesc() {
 		super(
-				Txt.parse("<silver><em>NULL"),
-				"",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_WORLD + Txt.parse(" <v>") + "%s",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_BLOCKX + Txt.parse(" <v>") + "%d",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_BLOCKY + Txt.parse(" <v>") + "%d",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_BLOCKZ + Txt.parse(" <v>") + "%d",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_LOCATIONX + Txt.parse(" <v>") + "%.2f",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_LOCATIONY + Txt.parse(" <v>") + "%.2f",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_LOCATIONZ + Txt.parse(" <v>") + "%.2f",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_CHUNKX + Txt.parse(" <v>") + "%d",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_CHUNKZ + Txt.parse(" <v>") + "%d",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_PITCH + Txt.parse(" <v>") + "%.2f",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_YAW + Txt.parse(" <v>") + "%.2f",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_VELOCITYX + Txt.parse(" <v>") + "%.2f",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_VELOCITYY + Txt.parse(" <v>") + "%.2f",
-				Txt.parse("<k>") + PS.NAME_SERIALIZED_VELOCITYZ + Txt.parse(" <v>") + "%.2f",
-				" ",
-				""
+				StringUtil.t("&7&oNULL"),
+				StringUtil.t(""),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_WORLD + " &d%s"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_BLOCKX + " &d%d"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_BLOCKY + " &d%d"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_BLOCKZ + " &d%d"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_LOCATIONX + " &d%.2f"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_LOCATIONY + " &d%.2f"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_LOCATIONZ + " &d%.2f"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_CHUNKX + " &d%d"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_CHUNKZ + " &d%d"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_PITCH + " &d%.2f"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_YAW + " &d%.2f"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_VELOCITYX + " &d%.2f"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_VELOCITYY + " &d%.2f"),
+				StringUtil.t("&b" + PS.NAME_SERIALIZED_VELOCITYZ + " &d%.2f"),
+				StringUtil.t(" "),
+				StringUtil.t("")
 		);
 	}
 }

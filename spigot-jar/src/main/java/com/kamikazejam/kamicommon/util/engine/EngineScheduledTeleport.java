@@ -1,9 +1,10 @@
 package com.kamikazejam.kamicommon.util.engine;
 
 import com.kamikazejam.kamicommon.util.KUtil;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
-import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import com.kamikazejam.kamicommon.util.teleport.ScheduledTeleport;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -98,10 +99,13 @@ public class EngineScheduledTeleport extends Engine {
 		scheduledTeleport.unschedule();
 
 		// ... and inform the teleportee.
+		CommandSender sender = KUtil.getSender(scheduledTeleport.getTeleporteeId());
+		if (sender == null) { return; }
+
 		if (scheduledTeleport.getDesc() != null) {
-			MsonMessenger.get().msgOne(scheduledTeleport.getTeleporteeId(), "<rose>Cancelled <i>teleport to <h>" + scheduledTeleport.getDesc() + "<i>.");
+			sender.sendMessage(StringUtil.t("&cCancelled &eteleport to &d" + scheduledTeleport.getDesc() + "&e."));
 		}else {
-			MsonMessenger.get().msgOne(scheduledTeleport.getTeleporteeId(), "<rose>Cancelled <i>teleport.");
+			sender.sendMessage(StringUtil.t("&cCancelled &eteleport."));
 		}
 	}
 

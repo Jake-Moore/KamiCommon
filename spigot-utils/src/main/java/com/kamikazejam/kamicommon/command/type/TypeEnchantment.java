@@ -6,9 +6,9 @@ import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
-import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -82,7 +82,6 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 
 	private TypeEnchantment() {
 		super(Enchantment.class);
-		this.setVisualColor(ChatColor.AQUA);
 		this.setAll(Enchantment.values());
 	}
 
@@ -90,16 +89,20 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 	// OVERRIDE
 	// -------------------------------------------- //
 
+
 	@Override
-	public String getNameInner(Enchantment enchantment) {
-		String rawname = enchantmentToKey(enchantment);
-		List<String> rawnames = ID_TO_RAWNAMES.get(enchantmentToKey(enchantment));
-		if (rawnames != null) rawname = rawnames.get(0);
-		return Txt.getNicedEnumString(rawname);
+	public @Nullable String getName(@Nullable Enchantment enchantment) {
+		if (enchantment == null) return null;
+		String rawName = enchantmentToKey(enchantment);
+		List<String> rawNames = ID_TO_RAWNAMES.get(enchantmentToKey(enchantment));
+		if (rawNames != null) rawName = rawNames.getFirst();
+		return Txt.getNicedEnumString(rawName);
 	}
 
 	@Override
-	public Set<String> getNamesInner(Enchantment enchantment) {
+	public @NotNull Set<String> getNames(@Nullable Enchantment enchantment) {
+		if (enchantment == null) return new KamiSet<>();
+
 		// Create
 		Set<String> ret = new KamiSet<>();
 
@@ -122,7 +125,7 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 	}
 
 	@Override
-	public String getIdInner(Enchantment enchantment) {
+	public String getId(Enchantment enchantment) {
 		return enchantmentToKey(enchantment);
 	}
 

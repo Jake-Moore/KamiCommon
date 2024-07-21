@@ -2,15 +2,15 @@ package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.event.PlayerPSTeleportEvent;
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.Txt;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
-import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import com.kamikazejam.kamicommon.util.teleport.Destination;
 import com.kamikazejam.kamicommon.util.teleport.ScheduledTeleport;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -72,7 +72,8 @@ public class MixinTeleport extends Mixin {
 			location = ps.asBukkitLocation();
 
 		} catch (Exception e) {
-			throw new KamiCommonException().addMsg(Txt.parse("<b>Could not calculate the location: %s", e.getMessage()));
+			String s = String.format("&cCould not calculate the location: %s", e.getMessage());
+			throw new KamiCommonException().addMsg(StringUtil.t(s));
 		}
 
 		// eject passengers and unmount before transport
@@ -113,8 +114,10 @@ public class MixinTeleport extends Mixin {
 
 	public void teleportInternal(Object teleporteeObject, @Nullable Destination destination, @Nullable TeleportCallback callback, @Nullable String desc, int delaySeconds) throws KamiCommonException {
 		String teleporteeId = IdUtilLocal.getId(teleporteeObject);
-		if (!IdUtilLocal.isPlayerId(teleporteeId))
-			throw new KamiCommonException().addMsg(Txt.parse("<white>%s <b>is not a player.", MixinDisplayName.get().getDisplayName(teleporteeId, IdUtilLocal.getConsole())));
+		if (!IdUtilLocal.isPlayerId(teleporteeId)) {
+			String s = String.format("&f%s &cis not a player.", MixinDisplayName.get().getDisplayName(teleporteeId, IdUtilLocal.getConsole()));
+			throw new KamiCommonException().addMsg(StringUtil.t(s));
+		}
 
 		if (delaySeconds > 0) {
 			if (desc == null && destination != null) {
@@ -122,10 +125,17 @@ public class MixinTeleport extends Mixin {
 			}
 
 			// With delay
+			CommandSender sender = KUtil.getSender(teleporteeId);
 			if (desc != null && !desc.isEmpty()) {
-				MsonMessenger.get().msgOne(teleporteeId, "<i>Teleporting to <h>" + desc + " <i>in <h>" + delaySeconds + "s <i>unless you move.");
+				if (sender != null) {
+					String s = "&eTeleporting to &d" + desc + " &ein &d" + delaySeconds + "s &eunless you move.";
+					sender.sendMessage(StringUtil.t(s));
+				}
 			} else {
-				MsonMessenger.get().msgOne(teleporteeId, "<i>Teleporting in <h>" + delaySeconds + "s <i>unless you move.");
+				if (sender != null) {
+					String s = "&eTeleporting in &d" + delaySeconds + "s &eunless you move.";
+					sender.sendMessage(StringUtil.t(s));
+				}
 			}
 
 			if (destination != null) {
@@ -152,7 +162,10 @@ public class MixinTeleport extends Mixin {
 				desc = destination.getDesc(teleporteeId);
 
 				if (desc != null && !desc.isEmpty()) {
-					MsonMessenger.get().msgOne(teleporteeId, "<i>Teleporting to <h>" + desc + "<i>.");
+					CommandSender sender = KUtil.getSender(teleporteeId);
+					if (sender != null) {
+						sender.sendMessage(StringUtil.t("&eTeleporting to &d" + desc + "&e."));
+					}
 				}
 
 				Player teleportee = IdUtilLocal.getPlayer(teleporteeId);
@@ -163,7 +176,10 @@ public class MixinTeleport extends Mixin {
 				}
 			}else {
 				if (desc != null && !desc.isEmpty()) {
-					MsonMessenger.get().msgOne(teleporteeId, "<i>Teleporting to <h>" + desc + "<i>.");
+					CommandSender sender = KUtil.getSender(teleporteeId);
+					if (sender != null) {
+						sender.sendMessage(StringUtil.t("&eTeleporting to &d" + desc + "&e."));
+					}
 				}
 
 				callback.run();

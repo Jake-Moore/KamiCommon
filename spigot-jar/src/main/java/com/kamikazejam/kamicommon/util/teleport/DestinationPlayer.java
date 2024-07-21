@@ -1,15 +1,17 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
-import com.kamikazejam.kamicommon.util.Txt;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mixin.MixinDisplayName;
 import com.kamikazejam.kamicommon.util.mixin.MixinPlayed;
 import com.kamikazejam.kamicommon.util.mixin.MixinSenderPs;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@Setter
 @Getter
 public class DestinationPlayer extends DestinationAbstract {
 
@@ -18,10 +20,6 @@ public class DestinationPlayer extends DestinationAbstract {
     // -------------------------------------------- //
 
     protected String playerId;
-
-    public void setPlayerId(String playerId) {
-        this.playerId = playerId;
-    }
 
     public void setPlayer(Object playerObject) {
         this.playerId = IdUtilLocal.getId(playerObject);
@@ -61,6 +59,7 @@ public class DestinationPlayer extends DestinationAbstract {
         return this.getDesc(watcherObject, true);
     }
 
+    private static final String offline = StringUtil.t(" &c[Offline]");
     public String getDesc(Object watcherObject, boolean prefix) {
         String ret = "";
 
@@ -74,7 +73,7 @@ public class DestinationPlayer extends DestinationAbstract {
 
         // Offline Suffix
         if (MixinPlayed.get().isOffline(this.getPlayerId())) {
-            ret += Txt.parse(" <b>[Offline]");
+            ret += offline;
         }
 
         return ret;

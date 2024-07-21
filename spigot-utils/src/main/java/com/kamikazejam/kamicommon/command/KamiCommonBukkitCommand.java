@@ -1,9 +1,9 @@
 package com.kamikazejam.kamicommon.command;
 
 import com.kamikazejam.kamicommon.util.KUtil;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
-import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import lombok.Getter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
-@SuppressWarnings({"unused", "NullableProblems"})
+@SuppressWarnings({"unused"})
 public class KamiCommonBukkitCommand extends Command implements PluginIdentifiableCommand {
 	// -------------------------------------------- //
 	// FIELDS
@@ -32,7 +32,7 @@ public class KamiCommonBukkitCommand extends Command implements PluginIdentifiab
 		super(
 				name,
 				kamiCommand.getDesc(),
-				kamiCommand.getTemplate().toPlain(true),
+				kamiCommand.getTemplate(false, false, false, null),
 				Collections.emptyList() // We don't use aliases
 		);
 		this.kamiCommand = kamiCommand;
@@ -138,7 +138,7 @@ public class KamiCommonBukkitCommand extends Command implements PluginIdentifiab
 		int retSize = ret.size();
 		int maxSize = 100; // The limit for tab completions in the vanilla client is 100.
 		if (retSize > maxSize) {
-			MsonMessenger.get().msgOne(sender, Lang.COMMAND_TOO_MANY_TAB_SUGGESTIONS, retSize);
+			sender.sendMessage(StringUtil.t(String.format(Lang.COMMAND_TOO_MANY_TAB_SUGGESTIONS, retSize)));
 			return Collections.emptyList();
 		}
 

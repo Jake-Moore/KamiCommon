@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.command.type;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -26,17 +26,8 @@ public class TypeWorld extends TypeAbstractChoice<World> {
 	// -------------------------------------------- //
 
 	@Override
-	public String getVisualInner(World value, CommandSender sender) {
-		return value.getName();
-	}
-
-	@Override
-	public String getNameInner(World value) {
-		return value.getName();
-	}
-
-	@Override
-	public String getIdInner(World value) {
+	public @Nullable String getId(@Nullable World value) {
+		if (value == null) return null;
 		return value.getName();
 	}
 

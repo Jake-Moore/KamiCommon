@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.command.type.sender;
 import com.kamikazejam.kamicommon.SpigotUtilProvider;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,14 +28,13 @@ public class TypePlayer extends TypeAbstract<Player> {
 	public Player read(String str, CommandSender sender) throws KamiCommonException {
 		Player target = sender.getServer().getPlayer(str);
 		if (target == null) {
-			throw new KamiCommonException().addMsg("<b>No player matching \"<p>%s<b>\".", str);
+			throw new KamiCommonException().addMsg(StringUtil.t("&cNo player matching \"&3%s&c\"."), str);
 		}
 
 		@Nullable PremiumVanishIntegration integration = SpigotUtilProvider.getVanishIntegration();
-		if (integration != null && sender instanceof Player) {
-			Player viewer = (Player) sender;
-			if (!integration.canSee(viewer, target)) {
-				throw new KamiCommonException().addMsg("<b>No player matching \"<p>%s<b>\".", str);
+		if (integration != null && sender instanceof Player viewer) {
+            if (!integration.canSee(viewer, target)) {
+				throw new KamiCommonException().addMsg(StringUtil.t("&cNo player matching \"&3%s&c\"."), str);
 			}
 		}
 		return target;
@@ -46,9 +46,8 @@ public class TypePlayer extends TypeAbstract<Player> {
 		return commandSender.getServer().getOnlinePlayers().stream()
 				// Filter out vanished players that the sender cannot see
 				.filter(plr -> {
-					if (!(commandSender instanceof Player)) return true;
-					Player viewer = (Player) commandSender;
-					return integration == null || integration.canSee(viewer, plr);
+					if (!(commandSender instanceof Player viewer)) return true;
+                    return integration == null || integration.canSee(viewer, plr);
 				})
 				.map(Player::getName)
 				.filter(key -> key.toLowerCase().startsWith(s.toLowerCase())).limit(20)

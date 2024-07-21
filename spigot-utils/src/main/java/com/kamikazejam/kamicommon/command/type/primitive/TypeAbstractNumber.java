@@ -20,7 +20,6 @@ public abstract class TypeAbstractNumber<T extends Number> extends TypeAbstractS
 
 	public TypeAbstractNumber(Class<T> clazz) {
 		super(clazz);
-		this.setVisualColor(COLOR_NUMBER);
 	}
 
 	@Override

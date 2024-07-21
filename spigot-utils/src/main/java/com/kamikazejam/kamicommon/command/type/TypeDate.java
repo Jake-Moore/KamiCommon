@@ -39,7 +39,7 @@ public class TypeDate extends TypeAbstractSimple<Date> {
 	}
 
 	@Override
-	public String getIdInner(Date value) {
+	public String getId(Date value) {
 		return DATE_FORMAT.format(value);
 	}
 

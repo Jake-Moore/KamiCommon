@@ -9,10 +9,10 @@ import com.kamikazejam.kamicommon.modules.ModuleManager;
 import com.kamikazejam.kamicommon.modules.integration.CitizensIntegration;
 import com.kamikazejam.kamicommon.modules.integration.ItemsAdderIntegration;
 import com.kamikazejam.kamicommon.modules.integration.MythicMobsIntegration;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
-import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -58,7 +58,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
 
     public void onLoadPre() {
         String[] version = this.getDescription().getVersion().split(" ");
-        this.logPrefixColored = Txt.parse("<teal>[<aqua>%s %s<teal>] <i>", this.getDescription().getName(), version[version.length - 1]);
+        this.logPrefixColored = StringUtil.t(String.format("&3[&b%s %s&3] &e", this.getDescription().getName(), version[version.length - 1]));
         this.logPrefixPlain = ChatColor.stripColor(this.logPrefixColored);
     }
     public void onLoadInner() {}
@@ -109,7 +109,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         }
 
         long ms = System.currentTimeMillis() - this.enableTime;
-        log(Txt.parse("=== ENABLE <g>COMPLETE <i>(Took <h>" + ms + "ms<i>) ==="));
+        log(StringUtil.t("=== ENABLE &aCOMPLETE &e(Took &d" + ms + "ms&e) ==="));
     }
 
     public @NotNull KamiConfigExt getKamiConfig() {
@@ -184,7 +184,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     public void log(Level level, Object... msg) {
         String imploded = Txt.implode(msg, " ");
         if (level == Level.INFO) {
-            MsonMessenger.get().messageOne(Bukkit.getConsoleSender(), this.logPrefixColored + imploded);
+            Bukkit.getConsoleSender().sendMessage(this.logPrefixColored + imploded);
         } else {
             Logger.getLogger("Minecraft").log(level, this.logPrefixPlain + imploded);
         }

@@ -2,9 +2,9 @@ package com.kamikazejam.kamicommon.util;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommandHelp;
+import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
+import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
-import com.kamikazejam.kamicommon.util.mson.Mson;
-import com.kamikazejam.kamicommon.util.mson.MsonEvent;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import com.kamikazejam.kamicommon.util.predicate.PredicateStartsWithIgnoreCase;
 import org.bukkit.ChatColor;
@@ -18,21 +18,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SuppressWarnings({"unused", "UnnecessaryUnicodeEscape"})
+@SuppressWarnings({"UnnecessaryUnicodeEscape", "unused"})
 public class Txt {
 
     public static final int PAGEHEIGHT_PLAYER = 9;
     public static final int PAGEHEIGHT_CONSOLE = 50;
 
-    public static final Map<String, String> parseReplacements;
-    public static final Pattern parsePattern;
-
     public static final Pattern PATTERN_WHITESPACE = Pattern.compile("\\s+");
     public static final Pattern PATTERN_NEWLINE = Pattern.compile("\\r?\\n");
-    public static final Pattern PATTERN_NUMBER = Pattern.compile("[0-9]+");
     private static final Pattern PATTERN_UPPERCASE_ZEROWIDTH = Pattern.compile("(?=[A-Z])"); // NOTE: Use camelsplit instead for Java 6/7 compatibility.
 
     public static final long millisPerSecond = 1000;
@@ -43,109 +38,11 @@ public class Txt {
     public static final long millisPerMonth = 31 * millisPerDay;
     public static final long millisPerYear = 365 * millisPerDay;
 
-    static {
-        // Create the parse replacements map
-        parseReplacements = new HashMap<>();
-
-        // Color by name
-        parseReplacements.put("<empty>", "");
-        parseReplacements.put("<black>", "\u00A70");
-        parseReplacements.put("<navy>", "\u00A71");
-        parseReplacements.put("<green>", "\u00A72");
-        parseReplacements.put("<teal>", "\u00A73");
-        parseReplacements.put("<red>", "\u00A74");
-        parseReplacements.put("<purple>", "\u00A75");
-        parseReplacements.put("<gold>", "\u00A76");
-        parseReplacements.put("<orange>", "\u00A76");
-        parseReplacements.put("<silver>", "\u00A77");
-        parseReplacements.put("<gray>", "\u00A78");
-        parseReplacements.put("<grey>", "\u00A78");
-        parseReplacements.put("<blue>", "\u00A79");
-        parseReplacements.put("<lime>", "\u00A7a");
-        parseReplacements.put("<aqua>", "\u00A7b");
-        parseReplacements.put("<rose>", "\u00A7c");
-        parseReplacements.put("<pink>", "\u00A7d");
-        parseReplacements.put("<yellow>", "\u00A7e");
-        parseReplacements.put("<white>", "\u00A7f");
-        parseReplacements.put("<magic>", "\u00A7k");
-        parseReplacements.put("<bold>", "\u00A7l");
-        parseReplacements.put("<strong>", "\u00A7l");
-        parseReplacements.put("<strike>", "\u00A7m");
-        parseReplacements.put("<strikethrough>", "\u00A7m");
-        parseReplacements.put("<under>", "\u00A7n");
-        parseReplacements.put("<underline>", "\u00A7n");
-        parseReplacements.put("<italic>", "\u00A7o");
-        parseReplacements.put("<em>", "\u00A7o");
-        parseReplacements.put("<reset>", "\u00A7r");
-
-        // Color by semantic functionality
-        parseReplacements.put("<l>", "\u00A72");
-        parseReplacements.put("<logo>", "\u00A72");
-        parseReplacements.put("<a>", "\u00A76");
-        parseReplacements.put("<art>", "\u00A76");
-        parseReplacements.put("<n>", "\u00A77");
-        parseReplacements.put("<notice>", "\u00A77");
-        parseReplacements.put("<i>", "\u00A7e");
-        parseReplacements.put("<info>", "\u00A7e");
-        parseReplacements.put("<g>", "\u00A7a");
-        parseReplacements.put("<good>", "\u00A7a");
-        parseReplacements.put("<b>", "\u00A7c");
-        parseReplacements.put("<bad>", "\u00A7c");
-
-        parseReplacements.put("<k>", "\u00A7b");
-        parseReplacements.put("<key>", "\u00A7b");
-
-        parseReplacements.put("<v>", "\u00A7d");
-        parseReplacements.put("<value>", "\u00A7d");
-        parseReplacements.put("<h>", "\u00A7d");
-        parseReplacements.put("<highlight>", "\u00A7d");
-
-        parseReplacements.put("<c>", "\u00A7b");
-        parseReplacements.put("<command>", "\u00A7b");
-        parseReplacements.put("<p>", "\u00A73");
-        parseReplacements.put("<parameter>", "\u00A73");
-        parseReplacements.put("&&", "&");
-        parseReplacements.put("§§", "§");
-
-        // Color by number/char
-        for (int i = 48; i <= 122; i++) {
-            char c = (char) i;
-            parseReplacements.put("§" + c, "\u00A7" + c);
-            parseReplacements.put("&" + c, "\u00A7" + c);
-            if (i == 57) i = 96;
-        }
-
-        // Build the parse pattern and compile it
-        StringBuilder patternStringBuilder = new StringBuilder();
-        for (String find : parseReplacements.keySet()) {
-            patternStringBuilder.append('(');
-            patternStringBuilder.append(Pattern.quote(find));
-            patternStringBuilder.append(")|");
-        }
-        String patternString = patternStringBuilder.toString();
-        patternString = patternString.substring(0, patternString.length() - 1); // Remove the last |
-        parsePattern = Pattern.compile(patternString);
-    }
-
-
     @Contract("null -> null; !null -> !null")
     public static String upperCaseFirst(String string) {
         if (string == null) return null;
         if (string.isEmpty()) return string;
         return string.substring(0, 1).toUpperCase() + string.substring(1);
-    }
-
-    public static @NotNull String repeat(@Nullable String string, int times) {
-        // Create Ret
-        StringBuilder ret = new StringBuilder(times);
-
-        // Fill Ret
-        for (int i = 0; i < times; i++) {
-            ret.append(string);
-        }
-
-        // Return Ret
-        return ret.toString();
     }
 
     @Contract("null -> null; !null -> !null")
@@ -208,7 +105,7 @@ public class Txt {
 
         List<Object> ourObjects = new ArrayList<>(objects);
 
-        String lastItem = ourObjects.get(ourObjects.size() - 1).toString();
+        String lastItem = ourObjects.getLast().toString();
         String nextToLastItem = ourObjects.get(ourObjects.size() - 2).toString();
         if (format != null) {
             lastItem = String.format(format, lastItem);
@@ -216,59 +113,18 @@ public class Txt {
         }
         String merge = nextToLastItem + and + lastItem;
         ourObjects.set(ourObjects.size() - 2, merge);
-        ourObjects.remove(ourObjects.size() - 1);
+        ourObjects.removeLast();
 
         return implode(ourObjects, comma, format) + dot;
     }
 
-    public static @NotNull List<String> camelsplit(String string) {
+    public static @NotNull List<String> camelSplit(String string) {
         List<String> ret = Arrays.asList(PATTERN_UPPERCASE_ZEROWIDTH.split(string));
         // In version before Java 8 zero width matches in the beginning created a leading empty string.
         // We manually look for it and removes it to be compatible with Java 6 and 7.
-        if (ret.get(0).isEmpty()) ret = ret.subList(1, ret.size());
+        if (ret.getFirst().isEmpty()) ret = ret.subList(1, ret.size());
         return ret;
     }
-
-    // -------------------------------------------- //
-    // PARSE
-    // -------------------------------------------- //
-
-    @Contract("null -> null; !null -> !null")
-    public static String parse(String string) {
-        if (string == null) return null;
-        StringBuffer ret = new StringBuffer(); // Use StringBuffer instead of StringBuilder
-
-        Matcher matcher = parsePattern.matcher(string);
-        while (matcher.find()) {
-            String replacement = parseReplacements.get(matcher.group(0));
-            if (replacement != null) {
-                matcher.appendReplacement(ret, replacement);
-            } else {
-                // Handle cases where no replacement is found
-                // You can append the original match or an empty string as needed
-                matcher.appendReplacement(ret, "");
-                // Or, throw an exception if no replacement is found
-                // throw new IllegalArgumentException("No replacement found for: " + matcher.group(0));
-            }
-        }
-
-        matcher.appendTail(ret);
-        return ret.toString();
-    }
-
-
-    public static String parse(String string, Object... args) {
-        return String.format(parse(string), args);
-    }
-
-    public static @NotNull ArrayList<String> parse(@NotNull Collection<String> strings) {
-        ArrayList<String> ret = new ArrayList<>(strings.size());
-        for (String string : strings) {
-            ret.add(parse(string));
-        }
-        return ret;
-    }
-
 
     // -------------------------------------------- //
     // FILTER
@@ -305,121 +161,104 @@ public class Txt {
     // Paging and chrome-tools like titleize
     // -------------------------------------------- //
 
-    private final static String titleizeLine = repeat("_", 52);
+    private final static String titleizeLine = "_".repeat(52);
     private final static int titleizeBalance = -1;
 
-    public static @NotNull Mson titleize(Object obj) {
-        Mson title = Mson.mson(obj);
-        if (title.getColor() == null) title = title.color(ChatColor.DARK_GREEN);
+    public static @NotNull String titleize(@NotNull String title) {
+        // Apply color to title if there is none
+        title = ChatColor.DARK_GREEN + title;
 
-        Mson center = Mson.mson(
-                Mson.mson(".[ ").color(ChatColor.GOLD),
-                title,
-                Mson.mson(" ].").color(ChatColor.GOLD)
-        );
+        String center = ChatColor.GOLD + ".[ " + title + ChatColor.GOLD + " ].";
 
-        int centerlen = center.length();
+        int centerLen = ChatColor.stripColor(StringUtil.t(center)).length();
         int pivot = titleizeLine.length() / 2;
-        int eatLeft = (centerlen / 2) - titleizeBalance;
-        int eatRight = (centerlen - eatLeft) + titleizeBalance;
+        int eatLeft = (centerLen / 2) - titleizeBalance;
+        int eatRight = (centerLen - eatLeft) + titleizeBalance;
 
-        if (eatLeft < pivot)
-            return Mson.mson(
-                    Mson.mson(titleizeLine.substring(0, pivot - eatLeft)).color(ChatColor.GOLD),
-                    center,
-                    Mson.mson(titleizeLine.substring(pivot + eatRight)).color(ChatColor.GOLD)
-            );
-        else
+        if (eatLeft < pivot) {
+            return ChatColor.GOLD + titleizeLine.substring(0, pivot - eatLeft)
+                    + center
+                    + ChatColor.GOLD + titleizeLine.substring(pivot + eatRight);
+        }else {
             return center;
+        }
     }
 
     @Contract(" -> new")
-    public static @NotNull Mson getMessageEmpty() {
-        return Mson.mson("Sorry, no pages available.").color(ChatColor.YELLOW);
+    public static @NotNull KMessageSingle getMessageEmpty() {
+        return new KMessageSingle(ChatColor.YELLOW + "Sorry, no pages available.");
     }
 
-    public static @NotNull Mson getMessageInvalid(int size) {
+    public static @NotNull KMessageSingle getMessageInvalid(int size) {
         if (size == 0) {
             return getMessageEmpty();
         } else if (size == 1) {
-            return Mson.mson("Invalid, there is only one page.").color(ChatColor.RED);
+            return new KMessageSingle(ChatColor.RED + "Invalid, there is only one page.");
         } else {
-            return Mson.format("Invalid, page must be between 1 and %d.", size).color(ChatColor.RED);
+            return new KMessageSingle(ChatColor.RED  + "Invalid, page must be between 1 and " + size + ".");
         }
     }
 
-    public static @NotNull Mson titleizeMson(Object obj, int pagecount, int pageHumanBased, @Nullable KamiCommand command, List<String> args) {
+    public static @NotNull KMessageSingle titleizeMson(@NotNull String title, int pageCount, int pageHumanBased, @Nullable KamiCommand command, @Nullable List<String> args) {
         if (command == null) {
-            return titleize(Mson.mson(
-                    obj,
-                    Mson.SPACE,
-                    Mson.mson(pageHumanBased + "/" + pagecount).color(ChatColor.GOLD)
-            ));
+            // Can't add next or back pages without a command -> just add the page numbers
+            //  and skip the prev/next arrows and skip the click events
+            String pageTitle = title + " " + ChatColor.GOLD + pageHumanBased + "/" + pageCount;
+            return new KMessageSingle(titleize(pageTitle));
         }
 
-        // Math
-        Mson title = Mson.mson(obj, Mson.SPACE, "[<]", String.valueOf(pageHumanBased), "/", String.valueOf(pagecount), "[>]");
-        int centerlen = ".[ ".length() + ChatColor.stripColor(title.toPlain(false)).length() + " ].".length();
-        int pivot = titleizeLine.length() / 2;
-        int eatLeft = (centerlen / 2) - titleizeBalance;
-        int eatRight = (centerlen - eatLeft) + titleizeBalance;
+        // Create the title string, using placeholders for the prev/next arrows
+        String pageTitle = ChatColor.GOLD + ".[ "
+                + ChatColor.DARK_GREEN + title
+                + " {prevPage} "
+                + ChatColor.GOLD + pageHumanBased + "/" + pageCount
+                + " {nextPage}"
+                + ChatColor.GOLD + " ].";
 
-        // Mson
-        Mson centerMson = Mson.mson(
-                Mson.mson(".[ ").color(ChatColor.GOLD),
-                Mson.mson(obj, Mson.SPACE).color(ChatColor.DARK_GREEN),
-                getFlipSection(pagecount, pageHumanBased, args, command),
-                Mson.mson(" ].").color(ChatColor.GOLD)
-        );
+        // Calculate the length of what will be visible (Strip colors & replace variables)
+        int centerLen = ChatColor.stripColor(StringUtil.t(
+                pageTitle.replace("{prevPage}", "[<]").replace("{nextPage}", "[>]")
+        )).length();
+        int pivot = titleizeLine.length() / 2;
+        int eatLeft = (centerLen / 2) - titleizeBalance;
+        int eatRight = (centerLen - eatLeft) + titleizeBalance;
+
+        KMessageSingle center = new KMessageSingle(pageTitle);
+        Txt.applyPageActions(center, pageCount, pageHumanBased, args, command);
 
         if (eatLeft < pivot) {
-            return Mson.mson(
-                    Mson.mson(titleizeLine.substring(0, pivot - eatLeft)).color(ChatColor.GOLD),
-                    centerMson,
-                    Mson.mson(titleizeLine.substring(pivot + eatRight)).color(ChatColor.GOLD)
-            );
+            String pre = ChatColor.GOLD + titleizeLine.substring(0, pivot - eatLeft);
+            String post = ChatColor.GOLD + titleizeLine.substring(pivot + eatRight);
+            return center.setLine(pre + center.getLine() + post);
         } else {
-            return centerMson;
+            return center;
         }
     }
 
-    public static @NotNull List<Mson> getPage(@NotNull List<?> lines, int pageHumanBased, Object title) {
-        return getPage(lines, pageHumanBased, title, null, null, null);
+    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, @NotNull KamiCommand command) {
+        return getPage(lines, pageHumanBased, title, (command.sender == null || command.sender instanceof Player) ? Txt.PAGEHEIGHT_PLAYER : Txt.PAGEHEIGHT_CONSOLE, command, command.getArgs());
     }
 
-    public static @NotNull List<Mson> getPage(@NotNull List<?> lines, int pageHumanBased, Object title, @Nullable CommandSender sender) {
-        return getPage(lines, pageHumanBased, title, sender, null, null);
-    }
-
-    public static @NotNull List<Mson> getPage(@NotNull List<?> lines, int pageHumanBased, Object title, @NotNull KamiCommand command) {
-        return getPage(lines, pageHumanBased, title, command, command.getArgs());
-    }
-
-    public static @NotNull List<Mson> getPage(@NotNull List<?> lines, int pageHumanBased, Object title, @NotNull KamiCommand command, List<String> args) {
-        return getPage(lines, pageHumanBased, title, command.sender, command, args);
-    }
-
-    public static @NotNull List<Mson> getPage(@NotNull List<?> lines, int pageHumanBased, Object title, @Nullable CommandSender sender, @Nullable KamiCommand command, @Nullable List<String> args) {
+    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, @Nullable CommandSender sender, @Nullable KamiCommand command, @Nullable List<String> args) {
         return getPage(lines, pageHumanBased, title, (sender == null || sender instanceof Player) ? Txt.PAGEHEIGHT_PLAYER : Txt.PAGEHEIGHT_CONSOLE, command, args);
     }
 
-    @SuppressWarnings("unchecked")
-    public static @NotNull List<Mson> getPage(@NotNull List<?> lines, int pageHumanBased, Object title, int pageheight, @Nullable KamiCommand command, @Nullable List<String> args) {
+    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, int pageheight, @Nullable KamiCommand command, @Nullable List<String> args) {
         // Create Ret
-        List<Mson> ret = new KamiList<>();
+        List<KMessage> ret = new KamiList<>();
         int pageZeroBased = pageHumanBased - 1;
-        int pagecount = (int) Math.ceil(((double) lines.size()) / pageheight);
+        int pageCount = (int) Math.ceil(((double) lines.size()) / pageheight);
 
         // Add Title
-        Mson msonTitle = Txt.titleizeMson(title, pagecount, pageHumanBased, command, args);
-        ret.add(msonTitle);
+        KMessageSingle kTitle = Txt.titleizeMson(title, pageCount, pageHumanBased, command, args);
+        ret.add(kTitle);
 
         // Check empty and invalid
-        if (pagecount == 0) {
+        if (pageCount == 0) {
             ret.add(getMessageEmpty());
             return ret;
-        } else if (pageZeroBased < 0 || pageHumanBased > pagecount) {
-            ret.add(getMessageInvalid(pagecount));
+        } else if (pageZeroBased < 0 || pageHumanBased > pageCount) {
+            ret.add(getMessageInvalid(pageCount));
             return ret;
         }
 
@@ -430,59 +269,44 @@ public class Txt {
             to = lines.size();
         }
 
-        // Check object type and add lines
-        Object first = lines.get(0);
-
-        if (first instanceof String) {
-            for (String line : (List<String>) lines.subList(from, to)) {
-                ret.add(Mson.fromParsedMessage(line));
-            }
-        } else if (first instanceof Mson) {
-            ret.addAll((List<Mson>) lines.subList(from, to));
-        } else {
-            throw new IllegalArgumentException("The lines must be either String or Mson.");
-        }
+        // Add page lines
+        ret.addAll(lines.subList(from, to));
 
         // Return Ret
         return ret;
     }
 
-    private static @NotNull Mson getFlipSection(int pageCount, int pageHumanBased, List<String> args, KamiCommand command) {
+    private static void applyPageActions(@NotNull KMessageSingle title, int pageCount, int pageHumanBased, @Nullable List<String> args, @NotNull KamiCommand command) {
         // Construct Mson
-        Mson start = Mson.mson(String.valueOf(pageHumanBased)).color(ChatColor.GOLD);
-        Mson backward = Mson.mson("[<] ").color(ChatColor.GRAY);
-        Mson forward = Mson.mson(" [>]").color(ChatColor.GRAY);
-        Mson end = Mson.mson(String.valueOf(pageCount)).color(ChatColor.GOLD);
+        String backward = "[<]";
+        String forward = "[>]";
 
-        // Set flip page backward commands
+        // Add flip backwards command
         if (pageHumanBased > 1) {
-            start = setFlipPageCommand(start, pageHumanBased, 1, args, command);
-            backward = setFlipPageCommand(backward, pageHumanBased, pageHumanBased - 1, args, command).color(ChatColor.AQUA);
+            String replacement = ChatColor.AQUA + backward;
+            String cmd = getFlipPageCommand(pageHumanBased, pageHumanBased - 1, args, command);
+            title.addClickRunCommand("{prevPage}", replacement, cmd);
+        }else {
+            title.setLine(title.getLine().replace("{prevPage}", ChatColor.GRAY + backward));
         }
 
-        // Set flip page forward commands
+        // Add flip forwards command
         if (pageCount > pageHumanBased) {
-            forward = setFlipPageCommand(forward, pageHumanBased, pageHumanBased + 1, args, command).color(ChatColor.AQUA);
-            end = setFlipPageCommand(end, pageHumanBased, pageCount, args, command);
+            String replacement = ChatColor.AQUA + forward;
+            String cmd = getFlipPageCommand(pageHumanBased, pageHumanBased + 1, args, command);
+            title.addClickRunCommand("{nextPage}", replacement, cmd);
+        }else {
+            title.setLine(title.getLine().replace("{nextPage}", ChatColor.GRAY + forward));
         }
-
-        return Mson.mson(
-                backward,
-                start,
-                Mson.mson("/").color(ChatColor.GOLD),
-                end,
-                forward
-        );
     }
 
     private static KamiCommandHelp kamiCommandHelp = null;
-
     public static @NotNull KamiCommandHelp getKamiCommandHelp() {
         if (kamiCommandHelp == null) kamiCommandHelp = new KamiCommandHelp();
         return kamiCommandHelp;
     }
 
-    private static @NotNull Mson setFlipPageCommand(@NotNull Mson mson, int pageHumanBased, int destinationPage, @Nullable List<String> args, KamiCommand command) {
+    private static @NotNull String getFlipPageCommand(int pageHumanBased, int destinationPage, @Nullable List<String> args, @NotNull KamiCommand command) {
         // Create the command line
         String number = String.valueOf(destinationPage);
         String oldNumber = String.valueOf(pageHumanBased);
@@ -506,20 +330,10 @@ public class Txt {
             commandLine = command.getCommandLine(number);
         }
 
-        // Render the corresponding tooltip
-        String tooltip = MsonEvent.command(commandLine).createTooltip();
-
         // Make command line clicking
         commandLine = getKamiCommandHelp().getCommandLine(commandLine);
 
-        // Apply command
-        mson = mson.command(commandLine);
-
-        // Set tooltip to hide the clicking clutter
-        mson = mson.tooltip(tooltip);
-
-        // Return
-        return mson;
+        return commandLine;
     }
 
     // -------------------------------------------- //
@@ -554,7 +368,7 @@ public class Txt {
     }
 
     public static @NotNull String getItemName(@Nullable ItemStack itemStack) {
-        if (KUtil.isNothing(itemStack)) return Txt.parse("<silver><em>Nothing");
+        if (KUtil.isNothing(itemStack)) return StringUtil.t("&7&oNothing");
 
         ChatColor color = (!itemStack.getEnchantments().isEmpty()) ? ChatColor.AQUA : ChatColor.WHITE;
 
@@ -567,33 +381,6 @@ public class Txt {
 
         return color + Txt.getMaterialName(itemStack.getType());
     }
-
-    public static Mson createItemMson(ItemStack item) {
-        String name = Txt.getItemName(item);
-        String colors = Txt.getStartColors(name);
-        name = colors + "[" + ChatColor.stripColor(name) + "]";
-
-        Mson ret = Mson.fromParsedMessage(name);
-
-        if (!KUtil.isNothing(item)) ret = ret.item(item);
-
-        return ret;
-    }
-
-    // -------------------------------------------- //
-    // START COLORS
-    // -------------------------------------------- //
-    // This method never returns null
-
-    public static final String START_COLORS_REGEX = "^((?:§.)+).*$";
-    public static final Pattern START_COLORS_PATTERN = Pattern.compile(START_COLORS_REGEX);
-
-    public static String getStartColors(String string) {
-        Matcher matcher = START_COLORS_PATTERN.matcher(string);
-        if (!matcher.find()) return "";
-        return matcher.group(1);
-    }
-
 
     // -------------------------------------------- //
     // Tokenization
@@ -617,13 +404,13 @@ public class Txt {
             } else if (c == '\\') {
                 escaping = true;
             } else if (c == '"') {
-                if (citing || token.length() > 0) {
+                if (citing || !token.isEmpty()) {
                     ret.add(token.toString());
                     token = null;
                 }
                 citing = !citing;
             } else if (!citing && c == ' ') {
-                if (token.length() > 0) {
+                if (!token.isEmpty()) {
                     ret.add(token.toString());
                     token = null;
                 }

@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.command.type.container;
+package com.kamikazejam.kamicommon.command.type;
 
 import org.bukkit.command.CommandSender;
 

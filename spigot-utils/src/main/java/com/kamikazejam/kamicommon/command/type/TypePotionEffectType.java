@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command.type;
 
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 public class TypePotionEffectType extends TypeAbstractChoice<PotionEffectType> {
 	// -------------------------------------------- //
@@ -22,13 +23,16 @@ public class TypePotionEffectType extends TypeAbstractChoice<PotionEffectType> {
 	// OVERRIDE
 	// -------------------------------------------- //
 
+
 	@Override
-	public String getNameInner(PotionEffectType value) {
+	public @Nullable String getName(@Nullable PotionEffectType value) {
+		if (value == null) return null;
 		return value.getName();
 	}
 
 	@Override
-	public String getIdInner(PotionEffectType value) {
+	public @Nullable String getId(@Nullable PotionEffectType value) {
+		if (value == null) return null;
 		return value.getName();
 	}
 

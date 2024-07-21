@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
-import com.kamikazejam.kamicommon.util.Txt;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import com.kamikazejam.kamicommon.util.teleport.ps.PSFormatHumanSpace;
@@ -29,7 +29,7 @@ public abstract class DestinationAbstract implements Destination {
 	public PS getPs(Object watcherObject) throws KamiCommonException {
 		PS ret = this.getPsInner();
 		if (ret == null) {
-			throw new KamiCommonException().addMessage(this.getMessagePsNull(watcherObject));
+			throw new KamiCommonException().addMsg(this.getMessagePsNull(watcherObject));
 		}
 		return ret;
 	}
@@ -46,7 +46,8 @@ public abstract class DestinationAbstract implements Destination {
 	@Override
 	public String getMessagePsNull(Object watcherObject) {
 		String desc = this.getDesc(watcherObject);
-		return Txt.parse("<b>Location for <h>%s<b> could not be found.", desc);
+		String f = String.format("&cLocation for &d%s&c could not be found.", desc);
+		return StringUtil.t(f);
 	}
 
 	@Override

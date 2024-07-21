@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command.type;
 
 import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
@@ -43,7 +44,10 @@ public class TypeRange extends TypeInteger {
 		Integer ret = super.read(arg, sender);
 
 		if (ret <= MIN_RANGE || ret > MAX_RANGE)
-			throw new KamiCommonException().addMsg("<b>Invalid range <h>%d.<b> Range must be between %d and %d.", ret, MIN_RANGE, MAX_RANGE);
+			throw new KamiCommonException().addMsg(
+					StringUtil.t("&cInvalid range &d%d.&c Range must be between %d and %d."),
+					ret, MIN_RANGE, MAX_RANGE
+			);
 
 		return ret;
 	}

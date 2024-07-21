@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.util.mson.MsonMessenger;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -35,13 +35,15 @@ public abstract class RequirementAbstract implements Requirement, Serializable {
 	// BULK
 	// -------------------------------------------- //
 
-	public static boolean isRequirementsMet(@NotNull Iterable<@NotNull Requirement> requirements, CommandSender sender, KamiCommand command, boolean verbose) {
+	public static boolean isRequirementsMet(@NotNull Iterable<@NotNull Requirement> requirements, @NotNull CommandSender sender, KamiCommand command, boolean verbose) {
 		String error = getRequirementsError(requirements, sender, command, verbose);
-		if (error != null && verbose) MsonMessenger.get().messageOne(sender, error);
+		if (error != null && verbose) {
+			sender.sendMessage(StringUtil.t(error));
+		}
 		return error == null;
 	}
 
-	public static @Nullable String getRequirementsError(@NotNull Iterable<@NotNull Requirement> requirements, CommandSender sender, KamiCommand command, boolean verbose) {
+	public static @Nullable String getRequirementsError(@NotNull Iterable<@NotNull Requirement> requirements, @NotNull CommandSender sender, KamiCommand command, boolean verbose) {
 		for (Requirement requirement : requirements) {
 			if (requirement.apply(sender, command)) continue;
 			if (!verbose) return "";

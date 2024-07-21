@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
-import com.kamikazejam.kamicommon.util.mson.Mson;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -26,12 +25,6 @@ public class MixinDisplayName extends Mixin {
     // -------------------------------------------- //
 
     public final static ChatColor DEFAULT_COLOR = ChatColor.WHITE;
-
-    public Mson getDisplayNameMson(Object senderObject, Object watcherObject) {
-        String displayName = this.getDisplayName(senderObject, watcherObject);
-        if (displayName == null) return null;
-        return Mson.fromParsedMessage(displayName);
-    }
 
     public String getDisplayName(Object senderObject, Object watcherObject) {
         String senderId = IdUtilLocal.getId(senderObject);

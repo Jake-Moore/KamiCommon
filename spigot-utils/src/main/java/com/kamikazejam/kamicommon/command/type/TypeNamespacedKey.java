@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.command.type;
 
-import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
@@ -27,20 +26,6 @@ public class TypeNamespacedKey extends TypeAbstract<String> {
 	// -------------------------------------------- //
 	// OVERRIDE
 	// -------------------------------------------- //
-
-	@Override
-	public String getVisualInner(String value, CommandSender sender) {
-		String namespaceColour = "<blue>";
-
-		String[] parts = value.split(":");
-		String namespace = parts[0];
-		String key = parts[1];
-
-		if (namespace.equals("minecraft")) namespaceColour = "<green>";
-		else if (namespace.equals("bukkit")) namespaceColour = "<purple>";
-
-		return Txt.parse(namespaceColour + "%s<n>:<v>%s", namespace, key);
-	}
 
 	@Override
 	public String read(String arg, CommandSender sender) throws KamiCommonException {

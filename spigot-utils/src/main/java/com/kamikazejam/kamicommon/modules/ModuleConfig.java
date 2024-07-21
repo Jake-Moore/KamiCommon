@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.modules;
 
-import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.config.KamiConfigExt;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

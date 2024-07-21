@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
-import com.kamikazejam.kamicommon.util.Txt;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.engine.Engine;
@@ -202,8 +202,8 @@ public class Mixin extends Engine {
 
         // Inform
         if (verbose) {
-            String message = Txt.parse("<i>Mixin <h>%s<i> set to <h>%s", this.getBaseName(), this.getName());
-            after.getPlugin().log(message);
+            String message = String.format("&eMixin &d%s&e set to &d%s", this.getBaseName(), this.getName());
+            after.getPlugin().log(StringUtil.t(message));
         }
 
         // Super

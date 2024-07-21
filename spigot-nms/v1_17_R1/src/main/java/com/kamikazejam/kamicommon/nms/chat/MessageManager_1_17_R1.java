@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.nms.chat;
 
 import com.kamikazejam.kamicommon.nms.abstraction.chat.AbstractMessageManager;
+import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.actions.*;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.chat.MessagePart;
@@ -10,20 +11,28 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class MessageManager_1_17_R1 extends AbstractMessageManager {
+
     @Override
-    public void processAndSend(Player player, String s, boolean translate, Action... actions) {
+    public void processAndSend(@NotNull CommandSender sender, @NotNull KMessage kMessage) {
+        for (String line : kMessage.getLines()) {
+            this.processAndSend(sender, line, kMessage.isTranslate(), kMessage.getActions());
+        }
+    }
+
+    private void processAndSend(@NotNull CommandSender sender, @NotNull String s, boolean translate, @NotNull List<Action> actions) {
         if (translate) { s = StringUtil.t(s); }
 
         LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
 
-        List<MessagePart> messageParts = MessageParter.getMessageParts(s, actions);
+        List<MessagePart> messageParts = MessageParter.getMessageParts(s, actions.toArray(new Action[0]));
         TextComponent component = Component.empty();
         for (MessagePart messagePart : messageParts) {
             TextComponent part = serializer.deserialize(messagePart.getText());
@@ -47,6 +56,6 @@ public class MessageManager_1_17_R1 extends AbstractMessageManager {
             component = component.append(part);
         }
 
-        player.sendMessage(component);
+        sender.sendMessage(component);
     }
 }

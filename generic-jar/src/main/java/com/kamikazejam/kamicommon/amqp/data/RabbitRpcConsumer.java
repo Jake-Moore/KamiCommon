@@ -2,7 +2,8 @@ package com.kamikazejam.kamicommon.amqp.data;
 
 import com.kamikazejam.kamicommon.amqp.RabbitMQAPI;
 import com.kamikazejam.kamicommon.amqp.callback.RabbitRpcCallback;
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.DeliverCallback;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
