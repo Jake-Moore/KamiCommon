@@ -35,11 +35,18 @@ public class MessageManager_1_8_R1 extends AbstractMessageManager {
     @Override
     public void processAndSend(@NotNull CommandSender sender, @NotNull KMessage kMessage) {
         for (String line : kMessage.getLines()) {
-            BaseComponent[] components = processPlaceholders(line, kMessage.isTranslate(), kMessage.getActions());
             if (sender instanceof Player player) {
+                // Use BaseComponent -> will support all actions
+                BaseComponent[] components = processPlaceholders(line, kMessage.isTranslate(), kMessage.getActions());
                 player.spigot().sendMessage(components);
             }else {
-                sender.sendMessage(TextComponent.toPlainText(components));
+                // CommandSender can't take BaseComponent or use any of the Action features -> just send colored text
+                // We must recompile the message using the Action replacements, but none of the actions (simple)
+                String msg = line;
+                for (Action action : kMessage.getActions()) {
+                    msg = msg.replace(action.getPlaceholder(), action.getReplacement());
+                }
+                sender.sendMessage((kMessage.isTranslate()) ? StringUtil.t(msg) : msg);
             }
         }
     }
