@@ -212,7 +212,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	// === EXECUTION ===
 
 	// The raw string arguments passed upon execution. An empty list if there are none.
-	@Setter @Getter
+	@Setter
+    @Getter
 	protected List<String> args = new KamiList<>();
 
 	// The index of the next arg to read.
@@ -777,6 +778,15 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	}
 
 	// -------------------------------------------- //
+	// PUZZLER > APPLY
+	// -------------------------------------------- //
+
+	public List<String> applyPuzzler(List<String> args, CommandSender sender) {
+		args = this.applyConcatenating(args);
+		return new ArrayList<>(args);
+	}
+
+	// -------------------------------------------- //
 	// REQUIREMENTS
 	// -------------------------------------------- //
 
@@ -850,6 +860,10 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		try {
 			// Sender Field - Setup
 			this.senderFieldsOuter(sender);
+
+			// Apply Puzzler
+			args = this.applyPuzzler(args, sender);
+			this.setArgs(args);
 
 			// Requirements
 			if (!this.isRequirementsMet(sender, true)) return;
@@ -1257,16 +1271,20 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	@SuppressWarnings("unchecked")
 	public <T> T readArgAt(int idx) throws KamiCommonException {
 		// Make sure that a Parameter is present.
-		if (!this.hasParameterForIndex(idx))
+		if (!this.hasParameterForIndex(idx)) {
 			throw new IllegalArgumentException(idx + " is out of range. Parameters size: " + this.getParameters().size());
+		}
 
 		// Increment
 		nextArg = idx + 1;
 
 		// Get the parameter
 		Parameter<T> parameter = (Parameter<T>) this.getParameter(idx);
+
 		// Return the default in the parameter.
-		if (!this.argIsSet(idx) && parameter.isDefaultValueSet()) return parameter.getDefaultValue();
+		if (!this.argIsSet(idx) && parameter.isDefaultValueSet()) {
+			return parameter.getDefaultValue();
+		}
 
 		// OLD: Throw error if there was no arg, or default value in the parameter.
 		// OLD: if ( ! this.argIsSet(idx)) throw new IllegalArgumentException("Trying to access arg: " + idx + " but that is not set.");

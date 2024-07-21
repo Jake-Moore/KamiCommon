@@ -7,6 +7,7 @@ import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import com.kamikazejam.kamicommon.util.predicate.PredicateStartsWithIgnoreCase;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -28,8 +29,6 @@ public class Txt {
 
     public static final Pattern PATTERN_WHITESPACE = Pattern.compile("\\s+");
     public static final Pattern PATTERN_NEWLINE = Pattern.compile("\\r?\\n");
-    private static final Pattern PATTERN_UPPERCASE_ZEROWIDTH = Pattern.compile("(?=[A-Z])"); // NOTE: Use camelsplit instead for Java 6/7 compatibility.
-
     public static final long millisPerSecond = 1000;
     public static final long millisPerMinute = 60 * millisPerSecond;
     public static final long millisPerHour = 60 * millisPerMinute;
@@ -37,6 +36,15 @@ public class Txt {
     public static final long millisPerWeek = 7 * millisPerDay;
     public static final long millisPerMonth = 31 * millisPerDay;
     public static final long millisPerYear = 365 * millisPerDay;
+    public static final Set<String> vowel = KUtil.set(
+            "A", "E", "I", "O", "U", "Å", "Ä", "Ö", "Æ", "Ø",
+            "a", "e", "i", "o", "u", "å", "ä", "ö", "æ", "ø"
+    );
+    private static final Pattern PATTERN_UPPERCASE_ZEROWIDTH = Pattern.compile("(?=[A-Z])"); // NOTE: Use camelsplit instead for Java 6/7 compatibility.
+    private final static String titleizeLine = "_".repeat(52);
+    private final static int titleizeBalance = -1;
+    protected static Pattern PATTERN_ENUM_SPLIT = Pattern.compile("[\\s_]+");
+    private static KamiCommandHelp kamiCommandHelp = null;
 
     @Contract("null -> null; !null -> !null")
     public static String upperCaseFirst(String string) {
@@ -51,11 +59,6 @@ public class Txt {
         if (string.isEmpty()) return string;
         return string.substring(0, 1).toLowerCase() + string.substring(1);
     }
-
-    public static final Set<String> vowel = KUtil.set(
-            "A", "E", "I", "O", "U", "Å", "Ä", "Ö", "Æ", "Ø",
-            "a", "e", "i", "o", "u", "å", "ä", "ö", "æ", "ø"
-    );
 
     @Contract("null -> false")
     public static boolean isVowel(String str) {
@@ -74,6 +77,10 @@ public class Txt {
     public static @NotNull String implode(final @NotNull Collection<?> coll, final String glue) {
         return implode(coll, glue, null);
     }
+
+    // -------------------------------------------- //
+    // FILTER
+    // -------------------------------------------- //
 
     public static @NotNull String implode(final @NotNull Collection<?> coll, final String glue, final @Nullable String format) {
         return implode(coll.toArray(new Object[0]), glue, format);
@@ -126,8 +133,9 @@ public class Txt {
         return ret;
     }
 
+
     // -------------------------------------------- //
-    // FILTER
+    // Paging and chrome-tools like titleize
     // -------------------------------------------- //
 
     public static <T> @NotNull List<T> getFiltered(@NotNull Iterable<T> elements, @NotNull Predicate<T> predicate) {
@@ -156,14 +164,6 @@ public class Txt {
         return getStartsWithIgnoreCase(Arrays.asList(elements), prefix);
     }
 
-
-    // -------------------------------------------- //
-    // Paging and chrome-tools like titleize
-    // -------------------------------------------- //
-
-    private final static String titleizeLine = "_".repeat(52);
-    private final static int titleizeBalance = -1;
-
     public static @NotNull String titleize(@NotNull String title) {
         // Apply color to title if there is none
         title = ChatColor.DARK_GREEN + title;
@@ -179,7 +179,7 @@ public class Txt {
             return ChatColor.GOLD + titleizeLine.substring(0, pivot - eatLeft)
                     + center
                     + ChatColor.GOLD + titleizeLine.substring(pivot + eatRight);
-        }else {
+        } else {
             return center;
         }
     }
@@ -195,11 +195,11 @@ public class Txt {
         } else if (size == 1) {
             return new KMessageSingle(ChatColor.RED + "Invalid, there is only one page.");
         } else {
-            return new KMessageSingle(ChatColor.RED  + "Invalid, page must be between 1 and " + size + ".");
+            return new KMessageSingle(ChatColor.RED + "Invalid, page must be between 1 and " + size + ".");
         }
     }
 
-    public static @NotNull KMessageSingle titleizeMson(@NotNull String title, int pageCount, int pageHumanBased, @Nullable KamiCommand command, @Nullable List<String> args) {
+    public static @NotNull KMessageSingle titleizedPageTitle(@NotNull String title, int pageCount, int pageHumanBased, @Nullable KamiCommand command, @Nullable List<String> args) {
         if (command == null) {
             // Can't add next or back pages without a command -> just add the page numbers
             //  and skip the prev/next arrows and skip the click events
@@ -250,7 +250,7 @@ public class Txt {
         int pageCount = (int) Math.ceil(((double) lines.size()) / pageheight);
 
         // Add Title
-        KMessageSingle kTitle = Txt.titleizeMson(title, pageCount, pageHumanBased, command, args);
+        KMessageSingle kTitle = Txt.titleizedPageTitle(title, pageCount, pageHumanBased, command, args);
         ret.add(kTitle);
 
         // Check empty and invalid
@@ -268,6 +268,8 @@ public class Txt {
         if (to > lines.size()) {
             to = lines.size();
         }
+        Bukkit.getLogger().info("From: " + from);
+        Bukkit.getLogger().info("To: " + to);
 
         // Add page lines
         ret.addAll(lines.subList(from, to));
@@ -286,7 +288,7 @@ public class Txt {
             String replacement = ChatColor.AQUA + backward;
             String cmd = getFlipPageCommand(pageHumanBased, pageHumanBased - 1, args, command);
             title.addClickRunCommand("{prevPage}", replacement, cmd);
-        }else {
+        } else {
             title.setLine(title.getLine().replace("{prevPage}", ChatColor.GRAY + backward));
         }
 
@@ -295,52 +297,50 @@ public class Txt {
             String replacement = ChatColor.AQUA + forward;
             String cmd = getFlipPageCommand(pageHumanBased, pageHumanBased + 1, args, command);
             title.addClickRunCommand("{nextPage}", replacement, cmd);
-        }else {
+        } else {
             title.setLine(title.getLine().replace("{nextPage}", ChatColor.GRAY + forward));
         }
     }
 
-    private static KamiCommandHelp kamiCommandHelp = null;
     public static @NotNull KamiCommandHelp getKamiCommandHelp() {
         if (kamiCommandHelp == null) kamiCommandHelp = new KamiCommandHelp();
         return kamiCommandHelp;
-    }
-
-    private static @NotNull String getFlipPageCommand(int pageHumanBased, int destinationPage, @Nullable List<String> args, @NotNull KamiCommand command) {
-        // Create the command line
-        String number = String.valueOf(destinationPage);
-        String oldNumber = String.valueOf(pageHumanBased);
-        String commandLine;
-        if (args != null) {
-            int pageParamIndex = command.getPageParameterIndex();
-
-            List<String> arguments = new ArrayList<>(args);
-
-            // If unable to identify the page parameter, try to use the argument matching the oldNumber
-            if (pageParamIndex == -1) pageParamIndex = arguments.indexOf(oldNumber);
-
-            // If a valid index has been identified, Set the new page number there
-            if (pageParamIndex > -1 && pageParamIndex < arguments.size()) arguments.set(pageParamIndex, number);
-
-                // If unable to find valid page parameter, add the new page as a trailing argument (fallback)
-            else arguments.add(number);
-
-            commandLine = command.getCommandLine(arguments);
-        } else {
-            commandLine = command.getCommandLine(number);
-        }
-
-        // Make command line clicking
-        commandLine = getKamiCommandHelp().getCommandLine(commandLine);
-
-        return commandLine;
     }
 
     // -------------------------------------------- //
     // Material name tools
     // -------------------------------------------- //
 
-    protected static Pattern PATTERN_ENUM_SPLIT = Pattern.compile("[\\s_]+");
+    private static @NotNull String getFlipPageCommand(int pageHumanBased, int destinationPage, @Nullable List<String> args, @NotNull KamiCommand command) {
+        // Create the command line
+        String number = String.valueOf(destinationPage);
+
+        String cmd;
+        if (args != null) {
+            int pageParamIndex = command.getPageParameterIndex();
+
+            List<String> arguments = new ArrayList<>(args);
+
+            // If unable to identify the page parameter, try to use the argument matching the oldNumber
+            if (pageParamIndex == -1) {
+                pageParamIndex = arguments.indexOf(String.valueOf(pageHumanBased));
+            }
+
+            // If a valid index has been identified, Set the new page number there
+            if (pageParamIndex > -1 && pageParamIndex < arguments.size()){
+                arguments.set(pageParamIndex, number);
+            } else {
+                // If unable to find valid page parameter, add the new page as a trailing argument (fallback)
+                arguments.add(number);
+            }
+
+            cmd = command.getCommandLine(arguments);
+        } else {
+            cmd = command.getCommandLine(number);
+        }
+
+        return cmd;
+    }
 
     public static @NotNull String getNicedEnumString(@NotNull String str, String glue) {
         List<String> parts = new ArrayList<>();
