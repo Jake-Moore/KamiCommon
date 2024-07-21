@@ -7,7 +7,6 @@ import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import com.kamikazejam.kamicommon.util.predicate.PredicateStartsWithIgnoreCase;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -268,8 +267,6 @@ public class Txt {
         if (to > lines.size()) {
             to = lines.size();
         }
-        Bukkit.getLogger().info("From: " + from);
-        Bukkit.getLogger().info("To: " + to);
 
         // Add page lines
         ret.addAll(lines.subList(from, to));
