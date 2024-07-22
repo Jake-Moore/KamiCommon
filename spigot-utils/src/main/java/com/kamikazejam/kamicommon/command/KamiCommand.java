@@ -213,7 +213,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
 	// The raw string arguments passed upon execution. An empty list if there are none.
 	@Setter
-    @Getter
+    @Getter @NotNull
 	protected List<String> args = new KamiList<>();
 
 	// The index of the next arg to read.

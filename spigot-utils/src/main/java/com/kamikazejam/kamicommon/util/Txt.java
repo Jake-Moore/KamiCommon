@@ -198,7 +198,7 @@ public class Txt {
         }
     }
 
-    public static @NotNull KMessageSingle titleizedPageTitle(@NotNull String title, int pageCount, int pageHumanBased, @Nullable KamiCommand command, @Nullable List<String> args) {
+    public static @NotNull KMessageSingle titleizedPageTitle(@NotNull String title, int pageCount, int pageHumanBased, @Nullable KamiCommand command, @NotNull List<String> args) {
         if (command == null) {
             // Can't add next or back pages without a command -> just add the page numbers
             //  and skip the prev/next arrows and skip the click events
@@ -238,11 +238,11 @@ public class Txt {
         return getPage(lines, pageHumanBased, title, (command.sender == null || command.sender instanceof Player) ? Txt.PAGEHEIGHT_PLAYER : Txt.PAGEHEIGHT_CONSOLE, command, command.getArgs());
     }
 
-    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, @Nullable CommandSender sender, @Nullable KamiCommand command, @Nullable List<String> args) {
+    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, @Nullable CommandSender sender, @Nullable KamiCommand command, @NotNull List<String> args) {
         return getPage(lines, pageHumanBased, title, (sender == null || sender instanceof Player) ? Txt.PAGEHEIGHT_PLAYER : Txt.PAGEHEIGHT_CONSOLE, command, args);
     }
 
-    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, int pageheight, @Nullable KamiCommand command, @Nullable List<String> args) {
+    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, int pageheight, @Nullable KamiCommand command, @NotNull List<String> args) {
         // Create Ret
         List<KMessage> ret = new KamiList<>();
         int pageZeroBased = pageHumanBased - 1;
@@ -275,25 +275,25 @@ public class Txt {
         return ret;
     }
 
-    private static void applyPageActions(@NotNull KMessageSingle title, int pageCount, int pageHumanBased, @Nullable List<String> args, @NotNull KamiCommand command) {
+    private static void applyPageActions(@NotNull KMessageSingle title, int pageCount, int pageHumanBased, @NotNull List<String> args, @NotNull KamiCommand command) {
         // Construct Mson
         String backward = "[<]";
         String forward = "[>]";
 
         // Add flip backwards command
-        if (pageHumanBased > 1) {
+        @Nullable String forwardCmd = getFlipPageCommand(pageHumanBased, pageHumanBased - 1, args, command);
+        if (pageHumanBased > 1 && forwardCmd != null) {
             String replacement = ChatColor.AQUA + backward;
-            String cmd = getFlipPageCommand(pageHumanBased, pageHumanBased - 1, args, command);
-            title.addClickRunCommand("{prevPage}", replacement, cmd);
+            title.addClickRunCommand("{prevPage}", replacement, forwardCmd);
         } else {
             title.setLine(title.getLine().replace("{prevPage}", ChatColor.GRAY + backward));
         }
 
         // Add flip forwards command
-        if (pageCount > pageHumanBased) {
+        @Nullable String backCmd = getFlipPageCommand(pageHumanBased, pageHumanBased + 1, args, command);
+        if (pageCount > pageHumanBased && backCmd != null) {
             String replacement = ChatColor.AQUA + forward;
-            String cmd = getFlipPageCommand(pageHumanBased, pageHumanBased + 1, args, command);
-            title.addClickRunCommand("{nextPage}", replacement, cmd);
+            title.addClickRunCommand("{nextPage}", replacement, backCmd);
         } else {
             title.setLine(title.getLine().replace("{nextPage}", ChatColor.GRAY + forward));
         }
@@ -308,35 +308,31 @@ public class Txt {
     // Material name tools
     // -------------------------------------------- //
 
-    private static @NotNull String getFlipPageCommand(int pageHumanBased, int destinationPage, @Nullable List<String> args, @NotNull KamiCommand command) {
+    @Nullable
+    private static String getFlipPageCommand(int pageHumanBased, int destinationPage, @NotNull List<String> args, @NotNull KamiCommand command) {
         // Create the command line
         String number = String.valueOf(destinationPage);
 
-        String cmd;
-        if (args != null) {
-            int pageParamIndex = command.getPageParameterIndex();
+        int pageParamIndex = command.getPageParameterIndex();
+        if (pageParamIndex == -1) { return null; } // Couldn't find which arg is the page
 
-            List<String> arguments = new ArrayList<>(args);
+        List<String> arguments = new ArrayList<>(args);
 
-            // If unable to identify the page parameter, try to use the argument matching the oldNumber
-            if (pageParamIndex == -1) {
-                pageParamIndex = arguments.indexOf(String.valueOf(pageHumanBased));
+        // If our page index is farther out than the args we've supplied so far,
+        //  try supplementing with the defaults
+        if (arguments.size() <= pageParamIndex) {
+            // Add defaults for previous arguments
+            for (int i = arguments.size(); i < pageParamIndex; i++) {
+                arguments.add(String.valueOf(command.getParameter(i).getDefaultValue()));
             }
-
-            // If a valid index has been identified, Set the new page number there
-            if (pageParamIndex > -1 && pageParamIndex < arguments.size()){
-                arguments.set(pageParamIndex, number);
-            } else {
-                // If unable to find valid page parameter, add the new page as a trailing argument (fallback)
-                arguments.add(number);
-            }
-
-            cmd = command.getCommandLine(arguments);
-        } else {
-            cmd = command.getCommandLine(number);
+            // Add this page number as the next argument
+            arguments.add(number);
+        }else {
+            // The page is in the current arguments, just update it
+            arguments.set(pageParamIndex, number);
         }
 
-        return cmd;
+        return command.getCommandLine(arguments);
     }
 
     public static @NotNull String getNicedEnumString(@NotNull String str, String glue) {
