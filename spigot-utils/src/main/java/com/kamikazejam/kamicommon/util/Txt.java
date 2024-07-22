@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.util;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommandHelp;
+import com.kamikazejam.kamicommon.command.Parameter;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
@@ -323,7 +324,15 @@ public class Txt {
         if (arguments.size() <= pageParamIndex) {
             // Add defaults for previous arguments
             for (int i = arguments.size(); i < pageParamIndex; i++) {
-                arguments.add(String.valueOf(command.getParameter(i).getDefaultValue()));
+                try {
+                    // Ensure we fetch a valid param, which has its default value set
+                    Parameter<?> param = command.getParameter(i);
+                    if (param == null || !param.isDefaultValueSet()) { return null; }
+                    // Add the default value (which we know was set)
+                    arguments.add(String.valueOf(command.getParameter(i).getDefaultValue()));
+                }catch (IndexOutOfBoundsException ignored) {
+                    return null;
+                }
             }
             // Add this page number as the next argument
             arguments.add(number);
