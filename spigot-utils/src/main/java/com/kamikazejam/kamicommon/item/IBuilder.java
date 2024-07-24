@@ -182,6 +182,10 @@ public abstract class IBuilder {
         this.setLore(config.getStringList("lore"));
         // Load Enchantments
         this.loadEnchantments(config);
+        // Load Misc properties
+        if (config.getBoolean("glow") || config.getBoolean("addGlow")) {
+            this.addGlow = true;
+        }
 
         // Load NBT
         this.loadNBT(config);
