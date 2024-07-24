@@ -135,8 +135,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
         if (val instanceof Boolean) {
             return (boolean) val;
         }
-        if (val instanceof String) {
-            String s = (String) val;
+        if (val instanceof String s) {
             if (s.equalsIgnoreCase("true")) {
                 return true;
             }
@@ -275,12 +274,15 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
         return bd.floatValue();
     }
 
+    private static final BigDecimal MAX_FLOAT = BigDecimal.valueOf(Float.MAX_VALUE);
+    private static final BigDecimal MIN_FLOAT = BigDecimal.valueOf(-Float.MAX_VALUE);
     public boolean isFloat(String key) {
         BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return false;
         }
-        return (Math.abs(bd.doubleValue()) <= Float.MAX_VALUE && Math.abs(bd.doubleValue()) >= Float.MIN_VALUE);
+        // Need special logic since Float.MIN_VALUE is not the negative value, but the smallest > 0 value
+        return bd.compareTo(MAX_FLOAT) <= 0 && bd.compareTo(MIN_FLOAT) >= 0;
     }
 
 
@@ -299,12 +301,15 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
         return bd.doubleValue();
     }
 
+    private static final BigDecimal MAX_DOUBLE = BigDecimal.valueOf(Double.MAX_VALUE);
+    private static final BigDecimal MIN_DOUBLE = BigDecimal.valueOf(-Double.MAX_VALUE);
     public boolean isDouble(String key) {
         BigDecimal bd = getBigDecimal(key);
         if (bd == null) {
             return false;
         }
-        return (Math.abs(bd.doubleValue()) <= Double.MAX_VALUE && Math.abs(bd.doubleValue()) >= Double.MIN_VALUE);
+        // Need special logic since Double.MIN_VALUE is not the negative value, but the smallest > 0 value
+        return bd.compareTo(MAX_DOUBLE) <= 0 && bd.compareTo(MIN_DOUBLE) >= 0;
     }
 
     public BigDecimal getBigDecimal(String key) {
