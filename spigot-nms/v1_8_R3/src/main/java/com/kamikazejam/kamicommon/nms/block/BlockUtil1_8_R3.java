@@ -1,9 +1,11 @@
 package com.kamikazejam.kamicommon.nms.block;
 
+import com.kamikazejam.kamicommon.nms.NmsVersion;
 import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
 import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
 import com.kamikazejam.kamicommon.util.data.XBlockData;
 import com.kamikazejam.kamicommon.util.data.XMaterialData;
+import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.Chunk;
 import net.minecraft.server.v1_8_R3.IBlockData;
@@ -13,8 +15,19 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
+
 @SuppressWarnings({"deprecation", "DuplicatedCode"})
 public class BlockUtil1_8_R3 extends AbstractBlockUtil {
+    private final Method method;
+    @SneakyThrows
+    @SuppressWarnings("all")
+    public BlockUtil1_8_R3() {
+        // WineSpigot: No light and no block update
+        // chunk.a(bp, ibd, false, false);
+        this.method = Chunk.class.getDeclaredMethod("a", BlockPosition.class, IBlockData.class, boolean.class, boolean.class);
+    }
+
     @Override
     public void setBlock(@NotNull Block b, @NotNull XBlockData blockData, @NotNull PlaceType placeType) {
         XMaterialData materialData = blockData.getMaterialData();
@@ -39,7 +52,14 @@ public class BlockUtil1_8_R3 extends AbstractBlockUtil {
 
             IBlockData ibd = net.minecraft.server.v1_8_R3.Block.getByCombinedId(legacyGetCombined(material, data));
             try {
-                chunk.a(bp, ibd);
+                if (NmsVersion.isWineSpigot()) {
+                    // WineSpigot: No light and no block update
+                    method.invoke(chunk, bp, ibd, false, false);
+                }else {
+                    // Best we can do on vanilla, still causes block update
+                    // for falling blocks and liquids, but at least no light update
+                    chunk.a(bp, ibd);
+                }
             } catch (Throwable t) {
                 t.printStackTrace();
             }
