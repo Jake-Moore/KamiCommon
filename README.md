@@ -5,6 +5,18 @@
 
 **SEE [STRUCTURE.md](./STRUCTURE.md) FOR GRADLE MODULE BREAKDOWN**
 
+
+
+## ⚠️ Repository Notice
+
+**Please note:** The Maven repository for this project has been changed.  
+The migration from [Reposilite](https://reposilite.com/) to [Sonatype Nexus OSS](https://www.sonatype.com/products/sonatype-nexus-repository) has been made.  
+You must update your repository url to continue using KamiCommon.
+- Old jars can no longer be pulled from the repo
+- A few old jars remain available in the github releases
+
+
+
 # KamiCommon
 - A common library originally intended for Spigot plugin development, expanded for standalone use too.
 - The spigot portions of this library aim to support all versions (since 1.8.x), contact me if anything does not.
@@ -26,21 +38,21 @@ Add the following Repository to your build file.
 <repository>
   <id>luxious-public</id>
   <name>Luxious Repository</name>
-  <url>https://nexus.luxiouslabs.net/public</url>
+  <url>https://repo.luxiouslabs.net/repository/maven-public/</url>
 </repository>
 ```
 #### Gradle (kotlin) [build.gradle.kts]:
 ```kotlin
 maven {
     name = "luxiousPublic"
-    url = uri("https://nexus.luxiouslabs.net/public")
+    url = uri("https://repo.luxiouslabs.net/repository/maven-public/")
 }
 ```
 #### Gradle (groovy) [build.gradle]:
 ```groovy
 maven {
   name "luxiousPublic"
-  url "https://nexus.luxiouslabs.net/public"
+  url "https://repo.luxiouslabs.net/repository/maven-public/"
 }
 ```
 

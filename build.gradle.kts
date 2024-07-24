@@ -1,7 +1,7 @@
 import java.util.*
 
 @Suppress("PropertyName")
-var VERSION = "3.3.0.10"
+var VERSION = "3.3.1.0"
 
 plugins { // needed for the subprojects section to work
     id("java")
@@ -55,8 +55,11 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        // PaperMC
         maven("https://repo.papermc.io/repository/maven-public/")
-        maven("https://nexus.luxiouslabs.net/public")
+        // Luxious Nexus
+        maven("https://repo.luxiouslabs.net/repository/maven-public/")
+        // Spigot Plugin Repos
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://maven.citizensnpcs.co/repo")
         maven("https://mvn.lumine.io/repository/maven-public/") {
@@ -65,7 +68,8 @@ allprojects {
                 excludeGroup("org.jetbrains")
             }
         }
-        maven("https://repo.maven.apache.org/maven2/")
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+
         maven("https://jitpack.io")
         gradlePluginPortal()
     }
