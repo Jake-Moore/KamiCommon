@@ -10,22 +10,29 @@ import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.Chunk;
 import net.minecraft.server.v1_8_R3.IBlockData;
 import net.minecraft.server.v1_8_R3.WorldServer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
 @SuppressWarnings({"deprecation", "DuplicatedCode"})
 public class BlockUtil1_8_R3 extends AbstractBlockUtil {
-    private final Method method;
+    private final @Nullable Method method;
     @SneakyThrows
     @SuppressWarnings("all")
     public BlockUtil1_8_R3() {
-        // WineSpigot: No light and no block update
-        // chunk.a(bp, ibd, false, false);
-        this.method = Chunk.class.getDeclaredMethod("a", BlockPosition.class, IBlockData.class, boolean.class, boolean.class);
+        if (NmsVersion.isWineSpigot()) {
+            // WineSpigot: No light and no block update
+            // chunk.a(bp, ibd, false, false);
+            this.method = Chunk.class.getDeclaredMethod("a", BlockPosition.class, IBlockData.class, boolean.class, boolean.class);
+            Bukkit.getLogger().info("Detected WineSpigot method for NMS block placement");
+        }else {
+            this.method = null;
+        }
     }
 
     @Override
@@ -52,7 +59,7 @@ public class BlockUtil1_8_R3 extends AbstractBlockUtil {
 
             IBlockData ibd = net.minecraft.server.v1_8_R3.Block.getByCombinedId(legacyGetCombined(material, data));
             try {
-                if (NmsVersion.isWineSpigot()) {
+                if (method != null) {
                     // WineSpigot: No light and no block update
                     method.invoke(chunk, bp, ibd, false, false);
                 }else {
