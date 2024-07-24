@@ -6,10 +6,7 @@ import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
 import com.kamikazejam.kamicommon.util.data.XBlockData;
 import com.kamikazejam.kamicommon.util.data.XMaterialData;
 import lombok.SneakyThrows;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.Chunk;
-import net.minecraft.server.v1_8_R3.IBlockData;
-import net.minecraft.server.v1_8_R3.WorldServer;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -27,9 +24,9 @@ public class BlockUtil1_8_R3 extends AbstractBlockUtil {
     public BlockUtil1_8_R3() {
         if (NmsVersion.isWineSpigot()) {
             // WineSpigot: No light and no block update
-            // chunk.a(bp, ibd, false, false);
-            this.method = Chunk.class.getDeclaredMethod("a", BlockPosition.class, IBlockData.class, boolean.class, boolean.class);
-            Bukkit.getLogger().info("Detected WineSpigot method for NMS block placement");
+            // w.setTypeAndData(bp, ibd, -2, false);
+            this.method = WorldServer.class.getMethod("setTypeAndData", BlockPosition.class, IBlockData.class, int.class, boolean.class);
+            Bukkit.getLogger().info("[KamiCommon] Detected WineSpigot method for NMS block placement");
         }else {
             this.method = null;
         }
@@ -61,16 +58,16 @@ public class BlockUtil1_8_R3 extends AbstractBlockUtil {
             try {
                 if (method != null) {
                     // WineSpigot: No light and no block update
-                    method.invoke(chunk, bp, ibd, false, false);
+                    method.invoke(w, bp, ibd, -2, false);
                 }else {
                     // Best we can do on vanilla, still causes block update
                     // for falling blocks and liquids, but at least no light update
                     chunk.a(bp, ibd);
+                    w.notify(bp);
                 }
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-            w.notify(bp);
         }
     }
 }

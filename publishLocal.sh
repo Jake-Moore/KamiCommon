@@ -3,8 +3,8 @@ root_command="gradle"
 if [ -z "$GITHUB_REPOSITORY" ]; then
   root_command="./gradlew"
 
-  echo "$root_command clean"
-  "$root_command" clean || exit 1
+#  echo "$root_command clean"
+#  "$root_command" clean || exit 1
 fi
 
 echo "$root_command :standalone-utils:build"
