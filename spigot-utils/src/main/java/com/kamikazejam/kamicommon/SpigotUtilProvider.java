@@ -4,13 +4,14 @@ import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.command.type.RegistryType;
 import com.kamikazejam.kamicommon.integrations.PlaceholderAPIIntegration;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
+import com.kamikazejam.kamicommon.nms.provider.event.PreSpawnSpawnerAdapter;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class SpigotUtilProvider {
     private static KamiPlugin plugin = null;
     public static @NotNull KamiPlugin getPlugin() {
@@ -36,6 +37,9 @@ public class SpigotUtilProvider {
         RegistryType.registerAll();
         // Setup Commands
         new KamiCommonCommandRegistration(plugin);
+        // SetUp NMS Event Adapters
+        plugin.registerListener(PreSpawnSpawnerAdapter.getSpawnerAdapter());
+
         return true;
     }
 
