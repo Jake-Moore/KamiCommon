@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 @Getter
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -289,7 +288,7 @@ public abstract class IBuilder {
 
     public IBuilder replaceName(String find, String replacement) {
         assert name != null;
-        name = name.replaceAll(Pattern.quote(find), replacement);
+        name = name.replace(find, replacement);
         return this;
     }
 
@@ -318,7 +317,7 @@ public abstract class IBuilder {
         assert lore != null;
         for (String s : lore) {
             if (s.contains(find)) {
-                newLore.add(s.replaceAll(Pattern.quote(find), replacement));
+                newLore.add(s.replace(find, replacement));
             }else {
                 newLore.add(s);
             }
