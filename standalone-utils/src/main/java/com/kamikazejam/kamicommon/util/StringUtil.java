@@ -56,7 +56,7 @@ public class StringUtil {
     }
 
     public static String r(String msg, String placeholder, String replacement) {
-        return msg.replaceAll(Pattern.quote(placeholder), replacement);
+        return msg.replace(placeholder, replacement);
     }
 
     public static List<String> r(List<String> msg, String placeholder, String replacement) {
