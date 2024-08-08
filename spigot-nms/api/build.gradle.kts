@@ -13,6 +13,7 @@ dependencies {
     )
 
     shadow("com.github.cryptomorin:XSeries:11.2.0.1")
+    shadow("com.github.fierioziy.particlenativeapi:ParticleNativeAPI-core:4.3.0")
 
     compileOnly(project.property("lowestSpigotDep") as String)
 }
@@ -24,6 +25,7 @@ tasks {
         configurations = listOf(project.configurations.shadow.get())
 
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
+        relocate("com.github.fierioziy.particlenativeapi", "com.kamikazejam.kamicommon.particleapi")
 
         from(project(":standalone-utils").tasks.shadowJar.get().outputs)
     }
