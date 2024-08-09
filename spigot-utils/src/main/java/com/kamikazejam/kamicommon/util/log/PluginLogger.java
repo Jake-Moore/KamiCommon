@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.util.log;
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 
 import java.util.logging.Level;
@@ -10,6 +11,8 @@ import java.util.logging.Level;
 @Getter
 public class PluginLogger extends LoggerService {
     private final KamiPlugin plugin;
+    @Setter
+    private boolean debug = false;
     public PluginLogger(KamiPlugin plugin) {
         this.plugin = plugin;
     }
@@ -22,7 +25,7 @@ public class PluginLogger extends LoggerService {
 
     @Override
     public boolean isDebug() {
-        return false;
+        return debug;
     }
 
     @Override
