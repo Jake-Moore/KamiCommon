@@ -7,20 +7,22 @@ import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
 import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.actions.Action;
+import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
 import com.kamikazejam.kamicommon.nms.provider.BlockUtilProvider;
 import com.kamikazejam.kamicommon.nms.provider.ChatColorProvider;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.awt.Color;
+import java.text.DecimalFormat;
 import java.util.List;
 
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
@@ -90,10 +92,28 @@ public class CmdNmsTest extends KamiCommand {
         (player) -> {
             player.sendMessage(StringUtil.t("&7Testing EnchantIDProvider..."));
             player.sendMessage(StringUtil.t("    &7Success: " + NmsAPI.getNamespaced(Enchantment.DAMAGE_ALL)));
+        },
+
+        // Entity Methods Test
+        (player) -> {
+            final DecimalFormat df2 = new DecimalFormat("#.###");
+            player.sendMessage(StringUtil.t("&7Testing EntityMethods..."));
+            AbstractEntityMethods methods = NmsAPI.getEntityMethods();
+            World world = Bukkit.getWorlds().getFirst();
+            Location location = new Location(world, 0, 245, 0);
+            for (EntityType type : EntityType.values()) {
+                if (!type.isSpawnable() || !type.isAlive()) { continue; }
+
+                player.sendMessage(StringUtil.t("    &7" + type.name() + ":"));
+                Entity entity = world.spawnEntity(location, type);
+                final double height = methods.getEntityHeight(entity);
+                final double width = methods.getEntityWidth(entity);
+                player.sendMessage(StringUtil.t("      &7H: " + df2.format(height) +" W: " + df2.format(width)));
+                entity.remove();
+            }
+            player.sendMessage(StringUtil.t("    &7Success (see console)"));
         }
     );
-
-
 
     @Override
     public void perform() {

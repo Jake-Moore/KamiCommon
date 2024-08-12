@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.nms;
 
 import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.AbstractMessageManager;
+import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
 import com.kamikazejam.kamicommon.nms.abstraction.item.AbstractItemEditor;
 import com.kamikazejam.kamicommon.nms.abstraction.item.NmsItemMethods;
 import com.kamikazejam.kamicommon.nms.abstraction.itemtext.AbstractItemTextPre_1_17;
@@ -30,6 +31,7 @@ public class NmsAPI {
     @Getter private static final MessageManagerProvider messageManagerProvider = new MessageManagerProvider();
     @Getter private static final ItemEditorProvider itemEditorProvider = new ItemEditorProvider();
     @Getter private static final NmsItemProvider nmsItemProvider = new NmsItemProvider();
+    @Getter private static final EntityMethodsProvider entityMethodsProvider = new EntityMethodsProvider();
 
 
 
@@ -45,6 +47,7 @@ public class NmsAPI {
     public static AbstractMessageManager getMessageManager() { return messageManagerProvider.get(); }
     public static AbstractItemEditor getItemEditor() { return itemEditorProvider.get(); }
     public static NmsItemMethods getNmsItemMethods() { return nmsItemProvider.get(); }
+    public static AbstractEntityMethods getEntityMethods() { return entityMethodsProvider.get(); }
 
     public static @Nullable ItemStack getItemInMainHand(Player player) {
         return mainHandProvider.get().getItemInMainHand(player);
