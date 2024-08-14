@@ -9,13 +9,10 @@ import org.bukkit.event.entity.SpawnerSpawnEvent;
 public class PreSpawnSpawnerAdapter_1_12_R1 implements Listener {
 
     @EventHandler
-    public void onSpawn(final SpawnerSpawnEvent event) {
-        PreSpawnSpawnerEvent preEvent = new PreSpawnSpawnerEvent(event.getLocation().getBlock(), event.getEntityType());
-        preEvent.setCancelled(event.isCancelled());
+    public void onSpawn(SpawnerSpawnEvent e) {
+        PreSpawnSpawnerEvent preEvent = new PreSpawnSpawnerEvent(e.getSpawner().getBlock(), e.getEntityType(), e.getLocation());
+        preEvent.setCancelled(e.isCancelled());
         Bukkit.getPluginManager().callEvent(preEvent);
-        event.setCancelled(preEvent.isCancelled());
-
-        if (!event.isCancelled()) { return; }
-        event.getSpawner().setSpawnCount(0); // If cancelled -> set spawn count to 0
+        e.setCancelled(preEvent.isCancelled());
     }
 }
