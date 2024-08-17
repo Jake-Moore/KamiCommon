@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
@@ -49,11 +50,14 @@ public class NmsAPI {
     public static NmsItemMethods getNmsItemMethods() { return nmsItemProvider.get(); }
     public static AbstractEntityMethods getEntityMethods() { return entityMethodsProvider.get(); }
 
-    public static @Nullable ItemStack getItemInMainHand(Player player) {
+    public static @Nullable ItemStack getItemInMainHand(@NotNull Player player) {
         return mainHandProvider.get().getItemInMainHand(player);
     }
-    public static void setItemInMainHand(Player player, @Nullable ItemStack itemStack) {
+    public static void setItemInMainHand(@NotNull Player player, @Nullable ItemStack itemStack) {
         mainHandProvider.get().setItemInMainHand(player, itemStack);
+    }
+    public static @Nullable ItemStack getItemInOffHand(@NotNull Player player) {
+        return mainHandProvider.get().getItemInOffHand(player);
     }
 
     public static String getNamespaced(Enchantment enchantment) {
