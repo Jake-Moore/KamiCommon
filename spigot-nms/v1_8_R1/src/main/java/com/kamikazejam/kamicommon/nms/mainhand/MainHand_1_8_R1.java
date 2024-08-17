@@ -24,4 +24,9 @@ public class MainHand_1_8_R1 extends AbstractMainHand {
     public void setItemInMainHand(@NotNull Player player, @Nullable ItemStack itemStack) {
         player.setItemInHand(itemStack);
     }
+
+    @Override
+    public @Nullable ItemStack getItemInOffHand(@NotNull PlayerInventory playerInventory) {
+        return null;
+    }
 }
