@@ -8,8 +8,11 @@ import com.kamikazejam.kamicommon.nms.abstraction.item.NmsItemMethods;
 import com.kamikazejam.kamicommon.nms.abstraction.itemtext.AbstractItemTextPre_1_17;
 import com.kamikazejam.kamicommon.nms.abstraction.teleport.AbstractTeleporter;
 import com.kamikazejam.kamicommon.nms.provider.*;
+import com.kamikazejam.kamicommon.nms.wrapper.NMSWorldWrapper;
+import com.kamikazejam.kamicommon.nms.wrappers.world.NMSWorld;
 import lombok.Getter;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,7 +37,10 @@ public class NmsAPI {
     @Getter private static final NmsItemProvider nmsItemProvider = new NmsItemProvider();
     @Getter private static final EntityMethodsProvider entityMethodsProvider = new EntityMethodsProvider();
 
-
+    // ---------------------------------------------------------------------------------- //
+    //                                     WRAPPERS                                       //
+    // ---------------------------------------------------------------------------------- //
+    @Getter private static final NMSWorldWrapper nmsWorldWrapper = new NMSWorldWrapper();
 
     // ---------------------------------------------------------------------------------- //
     //                                   API METHODS                                      //
@@ -62,5 +68,8 @@ public class NmsAPI {
 
     public static String getNamespaced(Enchantment enchantment) {
         return enchantIDProvider.get().getNamespaced(enchantment);
+    }
+    public static @NotNull NMSWorld getNMSWorld(@NotNull World world) {
+        return nmsWorldWrapper.get(world);
     }
 }
