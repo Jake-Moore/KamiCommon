@@ -10,7 +10,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }
 
-val slf4jVersion = "2.0.13" // For RabbitMQ
+val slf4jVersion = "2.0.16" // For RabbitMQ
 dependencies {
     shadow(project(":generic-utils"))
 
