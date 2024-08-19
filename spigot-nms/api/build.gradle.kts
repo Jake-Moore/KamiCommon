@@ -12,7 +12,7 @@ dependencies {
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
 
-    shadow("com.github.cryptomorin:XSeries:11.2.0.1")
+    shadow("com.github.cryptomorin:XSeries:11.2.1")
     shadow("com.github.fierioziy.particlenativeapi:ParticleNativeAPI-core:4.3.0")
 
     compileOnly(project.property("lowestSpigotDep") as String)
