@@ -12,7 +12,7 @@ dependencies {
 
     shadow("com.google.code.gson:gson:2.11.0")
     shadow("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
-    shadow("de.tr7zw:item-nbt-api:2.13.1")
+    shadow("de.tr7zw:item-nbt-api:2.13.2")
 
     compileOnly(project.property("lowestSpigotDep") as String)
     compileOnly("me.clip:placeholderapi:2.11.6") // TODO soft depend
@@ -22,7 +22,7 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
-    compileOnly("io.lumine:Mythic-Dist:5.6.2")
+    compileOnly("io.lumine:Mythic-Dist:5.7.1")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.19")
     // Combat Integrations
     compileOnly("net.minelink:CombatTagPlus:1.3.1")
