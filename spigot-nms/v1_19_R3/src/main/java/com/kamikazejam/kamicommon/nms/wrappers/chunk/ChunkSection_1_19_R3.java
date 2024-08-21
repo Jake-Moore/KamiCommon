@@ -45,6 +45,6 @@ public class ChunkSection_1_19_R3 implements NMSChunkSection_1_13 {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.chunk.getSection(this.chunk.getSectionIndexFromSectionY(yShift)).hasOnlyAir();
     }
 }
