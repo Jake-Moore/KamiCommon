@@ -5,6 +5,7 @@ import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
 import com.kamikazejam.kamicommon.gui.MenuManager;
 import com.kamikazejam.kamicommon.gui.MenuTask;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
 import com.kamikazejam.kamicommon.util.engine.EngineScheduledTeleport;
 import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
@@ -33,6 +34,8 @@ public class PluginSource {
         if (enabled) { return false; }
         pluginSource = plugin;
         enabled = true;
+
+        int c = NmsAPI.getBlockUtil().legacyGetCombined(0, (byte) 0);
 
         // Provide SpigotUtils with this plugin as well
         SpigotUtilProvider.setPlugin(plugin);
