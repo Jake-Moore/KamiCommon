@@ -17,11 +17,9 @@ public class MenuItem {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MenuItem menuItem = (MenuItem) o;
-        return slot == menuItem.slot &&
-                Objects.equals(item, menuItem.item);
+        if (this == o) { return true; }
+        if (!(o instanceof MenuItem menuItem)) { return false; }
+        return slot == menuItem.slot && Objects.equals(item, menuItem.item);
     }
 
     @Override

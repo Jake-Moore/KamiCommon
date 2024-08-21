@@ -1,8 +1,7 @@
 package com.kamikazejam.kamicommon.gui;
 
 import com.kamikazejam.kamicommon.PluginSource;
-import com.kamikazejam.kamicommon.gui.interfaces.Menu;
-import com.kamikazejam.kamicommon.gui.interfaces.MenuClickInfo;
+import com.kamikazejam.kamicommon.gui.clicks.transform.IClickTransform;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,6 +14,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
@@ -26,32 +26,37 @@ public class MenuManager implements Listener {
     @EventHandler
     public void onClickMenu(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player player)) { return; }
-        if (!(e.getInventory().getHolder() instanceof Menu menu)) { return; }
+        if (!(e.getInventory().getHolder() instanceof KamiMenu menu)) { return; }
         e.setCancelled(true);
 
-        int page = (menu instanceof KamiMenu kMenu && kMenu.getParent() != null) ? kMenu.getParent().getCurrentPage() : 0;
+        // Special Handling for clicks in the player inventory
+        if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER) {
+            // For now just ignore it -> return
+            return;
+        }
 
-        // handle the click handler before the item click handlers
-        Predicate<InventoryClickEvent> consumer = menu.getClickHandler();
-        if (consumer != null) {
-            if (!consumer.test(e)) { return; }
+        // test the click predicate before the item click handlers
+        @Nullable Predicate<InventoryClickEvent> consumer = menu.getClickPredicate();
+        if (consumer != null && !consumer.test(e)) {
+            return;
         }
 
         ItemStack current = e.getCurrentItem();
         if (current == null) { return; }
 
-        for (Map.Entry<MenuItem, MenuClickInfo> entry : menu.getClickableItems().entrySet()) {
+        int page = (menu.getParent() != null) ? menu.getParent().getCurrentPage() : 0;
+        for (Map.Entry<MenuItem, IClickTransform> entry : menu.getClickableItems().entrySet()) {
             if (entry == null) { continue; }
 
-            MenuClickInfo click = entry.getValue();
+            IClickTransform click = entry.getValue();
             if (click == null) { continue; }
 
             MenuItem menuItem = entry.getKey();
             if (menuItem == null) { continue; }
 
             boolean sameItems = compareItemStacks(current, menuItem.getItem());
-            if (menuItem.getSlot() == e.getSlot() && sameItems && (e.getClickedInventory() == null || e.getClickedInventory().getType() != InventoryType.PLAYER)) {
-                click.onItemClickMember(player, e, page);
+            if (menuItem.getSlot() == e.getSlot() && sameItems) {
+                click.process(player, e, page);
                 return;
             }
         }
@@ -61,22 +66,22 @@ public class MenuManager implements Listener {
     public void onCloseMenu(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
 
-        if (!(e.getInventory().getHolder() instanceof Menu menu)) {
+        if (!(e.getInventory().getHolder() instanceof KamiMenu menu)) {
             return;
         }
 
-        Consumer<InventoryCloseEvent> close = menu.getCloseHandler();
+        @Nullable Consumer<Player> close = menu.getPostCloseConsumer();
         if (close != null) {
             if (menu.getIgnoredClose().contains(p.getName())) {
                 menu.getIgnoredClose().remove(p.getName());
             } else {
-                Bukkit.getScheduler().runTaskLater(PluginSource.get(), () -> close.accept(e), 1);
+                Bukkit.getScheduler().runTaskLater(PluginSource.get(), () -> close.accept(p), 1);
             }
         }
 
-        Consumer<InventoryCloseEvent> instantClose = menu.getInstantCloseHandler();
-        if (instantClose != null) {
-            instantClose.accept(e);
+        @Nullable Consumer<InventoryCloseEvent> preClose = menu.getPreCloseConsumer();
+        if (preClose != null) {
+            preClose.accept(e);
         }
 
         MenuTask.getAutoUpdateInventories().remove(menu);
@@ -85,9 +90,9 @@ public class MenuManager implements Listener {
     @EventHandler
     public void onPickup(PlayerPickupItemEvent e) {
         if(e.getPlayer().getOpenInventory() == null) { return; }
-        if (!(e.getPlayer().getInventory().getHolder() instanceof Menu menu)) { return; }
+        if (!(e.getPlayer().getInventory().getHolder() instanceof KamiMenu menu)) { return; }
 
-        if (!menu.allowItemPickup()) {
+        if (!menu.isAllowItemPickup()) {
             e.setCancelled(true);
         }
     }

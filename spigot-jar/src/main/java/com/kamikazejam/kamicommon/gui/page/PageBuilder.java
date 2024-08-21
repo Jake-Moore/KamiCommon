@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -116,10 +117,12 @@ public abstract class PageBuilder<T extends Player> {
         return rows;
     }
 
+    @Nullable
     public IBuilder getFillerItem() {
         return null;
     }
 
+    @Nullable
     public KamiMenuItem getFillerIcon() {
         return new KamiMenuItem(true, getFillerItem(), -1);
     }

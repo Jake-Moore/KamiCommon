@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.gui.items;
 
-import com.kamikazejam.kamicommon.gui.interfaces.Menu;
-import com.kamikazejam.kamicommon.gui.interfaces.MenuClick;
+import com.kamikazejam.kamicommon.gui.KamiMenu;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.gui.items.slots.LastRowItemSlot;
 import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
@@ -148,7 +148,7 @@ public class KamiMenuItem extends PageItem {
         }
     }
 
-    public List<Integer> getSlots(@NotNull Menu menu) {
+    public List<Integer> getSlots(@NotNull KamiMenu menu) {
         if (slots != null) {
             return slots.get(menu);
         }

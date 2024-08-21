@@ -1,21 +1,21 @@
 package com.kamikazejam.kamicommon.gui.items.slots;
 
-import com.kamikazejam.kamicommon.gui.interfaces.Menu;
+import com.kamikazejam.kamicommon.gui.KamiMenu;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class StaticItemSlot implements ItemSlot {
-    private final List<Integer> slots;
-    public StaticItemSlot(List<Integer> slots) {
+    private final @NotNull List<Integer> slots;
+    public StaticItemSlot(@NotNull List<Integer> slots) {
         this.slots = slots;
     }
-    public StaticItemSlot(Integer slot) {
+    public StaticItemSlot(int slot) {
         this.slots = List.of(slot);
     }
 
     @Override
-    public List<Integer> get(@NotNull Menu menu) {
+    public List<Integer> get(@NotNull KamiMenu menu) {
         return slots;
     }
 }

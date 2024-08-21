@@ -2,8 +2,6 @@ package com.kamikazejam.kamicommon.gui;
 
 import com.google.common.collect.Sets;
 import com.kamikazejam.kamicommon.PluginSource;
-import com.kamikazejam.kamicommon.gui.interfaces.Menu;
-import com.kamikazejam.kamicommon.gui.interfaces.MenuTicked;
 import com.kamikazejam.kamicommon.gui.interfaces.MenuUpdateTask;
 import lombok.Getter;
 import org.bukkit.entity.HumanEntity;
@@ -18,12 +16,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MenuTask implements Runnable {
 
-    @Getter private static final Set<MenuTicked> autoUpdateInventories = Sets.newCopyOnWriteArraySet();
+    @Getter private static final Set<KamiMenu> autoUpdateInventories = Sets.newCopyOnWriteArraySet();
     private static final AtomicInteger tickCounter = new AtomicInteger(0);
 
     @Override
     public void run() {
-        Set<Menu> updated = new HashSet<>();
+        Set<KamiMenu> updated = new HashSet<>();
         int tick = tickCounter.getAndIncrement(); // start at 0 (no delay for first loops)
 
         // Run the standard autoUpdateInventories every 20 ticks
@@ -32,7 +30,7 @@ public class MenuTask implements Runnable {
         }
 
         // Check and run any sub-tasks for each inventory
-        for (MenuTicked inv : autoUpdateInventories) {
+        for (KamiMenu inv : autoUpdateInventories) {
             if (inv.getInventory().getViewers().isEmpty()) { continue; }
             if (inv.getUpdateSubTasks().isEmpty()) { continue; }
 
@@ -52,8 +50,8 @@ public class MenuTask implements Runnable {
         });
     }
 
-    private void runRegular20TickUpdates(Set<Menu> updated) {
-        for (Menu inv : autoUpdateInventories) {
+    private void runRegular20TickUpdates(Set<KamiMenu> updated) {
+        for (KamiMenu inv : autoUpdateInventories) {
             if (inv.getInventory().getViewers().isEmpty()) { continue; }
 
             if (inv.isClearBeforeUpdate()) { inv.clear(); }     // clear before updating (if necessary)
