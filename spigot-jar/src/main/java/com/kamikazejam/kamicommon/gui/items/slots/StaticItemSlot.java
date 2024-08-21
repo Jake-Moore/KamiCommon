@@ -3,19 +3,22 @@ package com.kamikazejam.kamicommon.gui.items.slots;
 import com.kamikazejam.kamicommon.gui.KamiMenu;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@SuppressWarnings("unused")
 public class StaticItemSlot implements ItemSlot {
-    private final @NotNull List<Integer> slots;
+    private final @NotNull Set<Integer> slots;
     public StaticItemSlot(@NotNull List<Integer> slots) {
-        this.slots = slots;
+        this.slots = new HashSet<>(slots);
     }
     public StaticItemSlot(int slot) {
-        this.slots = List.of(slot);
+        this.slots = Set.of(slot);
     }
 
     @Override
-    public List<Integer> get(@NotNull KamiMenu menu) {
+    public Set<Integer> get(@NotNull KamiMenu menu) {
         return slots;
     }
 }

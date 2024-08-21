@@ -1,13 +1,15 @@
 package com.kamikazejam.kamicommon.gui.page;
 
 import com.kamikazejam.kamicommon.gui.KamiMenu;
-import com.kamikazejam.kamicommon.gui.items.KamiMenuItem;
+import com.kamikazejam.kamicommon.gui.items.MenuItem;
+import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,14 +18,11 @@ import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "SameReturnValue"})
-public abstract class PageBuilder<T extends Player> {
-
-    private final int[] middleSlots = new int[]{0, 0, 0, 13, 13, 22, 22, 22};
+public abstract class PageBuilder {
 
     @Getter public int currentPage;
-    @Getter
-    private KamiMenu menu;
-    private final Pagination<? extends PageItem> items;
+    @Getter private KamiMenu menu;
+    private final Pagination<MenuItem> items;
     @Setter private List<Integer> slotsOverride = null;
 
     public PageBuilder() {
@@ -31,7 +30,7 @@ public abstract class PageBuilder<T extends Player> {
         this.items = new Pagination<>(21, this.getItems());
     }
 
-    public PageBuilder(List<Integer> slots) {
+    public PageBuilder(@NotNull List<Integer> slots) {
         this.items = new Pagination<>(slots.size(), this.getItems());
         slotsOverride = slots;
     }
@@ -46,8 +45,12 @@ public abstract class PageBuilder<T extends Player> {
 
     // List naturally sorted in increasing numerical order
     public List<Integer> getPlacedSlots(int page) {
+        // If we have an override, then implicitly our Pagination is using this size too
+        // We can just return the override
         if (slotsOverride != null) { return slotsOverride; }
 
+        // We have no override, meaning our Pagination was created with a pageSize of 21
+        // We can create 21 default slot locations and return them
         int rows = getRows(page);
         List<Integer> slots = new ArrayList<>();
         for (int i = 1; i <= (rows-3); i++) {
@@ -62,7 +65,7 @@ public abstract class PageBuilder<T extends Player> {
         return slots;
     }
 
-    public Pagination<? extends PageItem> getPageItems() {
+    public Pagination<MenuItem> getPageItems() {
         return this.items;
     }
 
@@ -73,22 +76,14 @@ public abstract class PageBuilder<T extends Player> {
 
     public abstract String getMenuName();
 
-    public abstract Collection<? extends PageItem> getItems();
+    public abstract Collection<MenuItem> getItems();
 
-    public IBuilder getNextPage() {
+    public IBuilder getNextPageIcon() {
         return new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶");
     }
 
-    public boolean overridePageItems() {
-        return false;
-    }
-
-    public IBuilder getPreviousIcon() {
+    public IBuilder getPrevPageIcon() {
         return new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page");
-    }
-
-    public int getEmptySlot() {
-        return -1;
     }
 
     public int getFixedSize() {
@@ -101,11 +96,11 @@ public abstract class PageBuilder<T extends Player> {
         return Math.min(6, (int) (3 + Math.ceil(totalItemsPage - totalItems * page > totalItems ? 3 : (totalItemsPage - totalItems * page) / 7.0)));
     }
 
-    public int getPreviousSlot() {
+    public int getPreviousIconSlot() {
         return menu.getInventory().getSize() - 8;
     }
 
-    public int getNextSlot() {
+    public int getNextIconSlot() {
         return menu.getInventory().getSize() - 2;
     }
 
@@ -123,8 +118,10 @@ public abstract class PageBuilder<T extends Player> {
     }
 
     @Nullable
-    public KamiMenuItem getFillerIcon() {
-        return new KamiMenuItem(true, getFillerItem(), -1);
+    public MenuItem getFillerIcon() {
+        IBuilder fillerItem = getFillerItem();
+        if (fillerItem == null) { return null; }
+        return new MenuItem(true, fillerItem, -1);
     }
 
     public void openMenu(Player player, int page) {
@@ -139,30 +136,36 @@ public abstract class PageBuilder<T extends Player> {
 
         // Add previous icon
         if (page > 0) {
-            menu.addMenuClick(getPreviousIcon(), (plr, type) -> {
+            menu.addMenuItem(getPrevPageIcon(), getPreviousIconSlot()).setMenuClick((plr, type) -> {
                 menu.getIgnoredClose().add(plr.getName());
                 openMenu(plr, (page - 1));
-            }, getPreviousSlot());
+            });
         }
 
         // Add next icon
         if (items.pageExist(page + 1)) {
-            menu.addMenuClick(getNextPage(), (plr, type) -> {
+            menu.addMenuItem(getNextPageIcon(), getNextIconSlot()).setMenuClick((plr, type) -> {
                 menu.getIgnoredClose().add(plr.getName());
                 openMenu(plr, (page + 1));
-            }, getNextSlot());
+            });
         }
 
         // Add other icons (lower priority than page items)
-        addOtherIcons();
+        for (MenuItem item : this.supplyOtherIcons()) {
+            if (item == null || !item.isEnabled()) { continue; }
+            menu.addMenuItem(item);
+        }
 
         // Add all page items
         if (items.pageExist(page)) {
-            for (PageItem pageItem : items.getPage(page)) {
+            for (MenuItem menuItem : items.getPage(page)) {
+                if (menuItem == null) { continue; }
                 int s = firstEmpty(page);
-                if (pageItem != null && s != -1) {
-                    pageItem.addToMenu(menu, s);
-                }
+                if (s == -1) { break; }
+
+                // Add the page item to the menu
+                menuItem.setItemSlot(new StaticItemSlot(s));
+                menu.addMenuItem(menuItem);
             }
         }
 
@@ -178,29 +181,18 @@ public abstract class PageBuilder<T extends Player> {
         if (menu == null) { return; }
 
         // Filler items
-        KamiMenuItem fillerItem = getFillerIcon();
-        if (fillerItem != null && fillerItem.getIBuilder() != null && fillerItem.isEnabled()) {
-            menu.fill(fillerItem.getIBuilder());
+        MenuItem fillerItem = getFillerIcon();
+        if (fillerItem != null && fillerItem.isEnabled()) {
+            @Nullable IBuilder builder = fillerItem.getNextBuilder();
+            if (builder == null) { return; }
+
+            menu.fill(builder);
         }
     }
 
-    public void addOtherIcons() {
-        Collection<KamiMenuItem> otherIcons = supplyOtherIcons();
-
-        // Regular items
-        for (KamiMenuItem item : otherIcons) {
-            int totalSlots = menu.getRows() * 9;
-            if (!item.isEnabled()) { continue; }
-
-            // Set the item
-            for (int slot : item.getSlots(menu)) {
-                if (slot < 0 || slot >= totalSlots) { continue; }
-                item.addToMenu(menu, slot);
-            }
-        }
+    public Collection<MenuItem> supplyOtherIcons() {
+        return new ArrayList<>();
     }
-
-    public Collection<KamiMenuItem> supplyOtherIcons() { return new ArrayList<>(); }
 
     private int firstEmpty(int page) {
         for (int i : getPlacedSlots(page)) {

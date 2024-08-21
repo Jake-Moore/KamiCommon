@@ -2,7 +2,6 @@ package com.kamikazejam.kamicommon.gui;
 
 import com.google.common.collect.Sets;
 import com.kamikazejam.kamicommon.PluginSource;
-import com.kamikazejam.kamicommon.gui.interfaces.MenuUpdateTask;
 import lombok.Getter;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -22,23 +21,15 @@ public class MenuTask implements Runnable {
     @Override
     public void run() {
         Set<KamiMenu> updated = new HashSet<>();
-        int tick = tickCounter.getAndIncrement(); // start at 0 (no delay for first loops)
-
-        // Run the standard autoUpdateInventories every 20 ticks
-        if (tick % 20 == 0) {
-            runRegular20TickUpdates(updated);
-        }
+        int tick = tickCounter.getAndIncrement();               // start at 0 (no delay for first loops)
+        // With integer max, it would be 1242.75 day before an integer overflow, I think we're fine
 
         // Check and run any sub-tasks for each inventory
         for (KamiMenu inv : autoUpdateInventories) {
             if (inv.getInventory().getViewers().isEmpty()) { continue; }
-            if (inv.getUpdateSubTasks().isEmpty()) { continue; }
-
-            for (MenuUpdateTask task : inv.getUpdateSubTasks()) {
-                if (task.getLoopTicks() <= 0 || tick % task.getLoopTicks() != 0) { continue; }
-                task.onUpdate(inv);
-                updated.add(inv);
-            }
+            // Trigger dynamic item updates on this menu
+            inv.update(tick);
+            updated.add(inv);
         }
 
         // Send updates to all players affected by modified guis
@@ -48,16 +39,5 @@ public class MenuTask implements Runnable {
                 p.updateInventory();
             }
         });
-    }
-
-    private void runRegular20TickUpdates(Set<KamiMenu> updated) {
-        for (KamiMenu inv : autoUpdateInventories) {
-            if (inv.getInventory().getViewers().isEmpty()) { continue; }
-
-            if (inv.isClearBeforeUpdate()) { inv.clear(); }     // clear before updating (if necessary)
-            inv.update();                                       // run the traditional update method
-
-            updated.add(inv);
-        }
     }
 }

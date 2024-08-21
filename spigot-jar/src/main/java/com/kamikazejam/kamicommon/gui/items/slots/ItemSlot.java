@@ -3,8 +3,8 @@ package com.kamikazejam.kamicommon.gui.items.slots;
 import com.kamikazejam.kamicommon.gui.KamiMenu;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Set;
 
 public interface ItemSlot {
-    List<Integer> get(@NotNull KamiMenu menu);
+    Set<Integer> get(@NotNull KamiMenu menu);
 }
