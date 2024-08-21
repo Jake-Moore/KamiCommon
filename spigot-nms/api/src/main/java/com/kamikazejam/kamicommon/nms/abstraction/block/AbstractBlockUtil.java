@@ -95,16 +95,16 @@ public abstract class AbstractBlockUtil {
      * Always available < v1.13
      */
     @Deprecated @ApiStatus.Internal
-    public final int legacyGetCombined(XMaterial xMaterial) {
+    protected final int legacyGetCombined(XMaterial xMaterial) {
         assert xMaterial.parseMaterial() != null;
         return this.legacyGetCombined(xMaterial.parseMaterial().getId(), xMaterial.getData());
     }
     @Deprecated @ApiStatus.Internal
-    public final int legacyGetCombined(Material material, byte data) {
+    protected final int legacyGetCombined(Material material, byte data) {
         return this.legacyGetCombined(material.getId(), data);
     }
     @ApiStatus.Internal
-    public final int legacyGetCombined(int id, byte data) {
+    protected final int legacyGetCombined(int id, byte data) {
         return id + (data << 12);
     }
 }
