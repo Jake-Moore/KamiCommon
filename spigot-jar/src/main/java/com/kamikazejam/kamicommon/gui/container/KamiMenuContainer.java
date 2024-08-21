@@ -102,8 +102,11 @@ public class KamiMenuContainer {
      * @return A nullable {@link MenuItem} of the menuItemMap with the given key. <p>
      *         This is a regular menu item, and not from the paged list. (Use {@link #getPagedItem(String)} for that)
      */
-    public @Nullable MenuItem getItem(@NotNull String key) {
-        if (!menuItemMap.containsKey(key)) { return null; }
+    @NotNull
+    public MenuItem getItem(@NotNull String key) {
+        if (!menuItemMap.containsKey(key)) {
+            throw new IllegalStateException("Could not find icon key: " + key);
+        }
         return menuItemMap.get(key);
     }
 
@@ -111,8 +114,11 @@ public class KamiMenuContainer {
      * @return A @Nullable {@link MenuItem} of the pagedItemMap with the given key. <p>
      *         This is a PAGED menu item, not a slot-based item. (Use {@link #getItem(String)} for that)
      */
-    public @Nullable MenuItem getPagedItem(@NotNull String key) {
-        if (!pagedItemMap.containsKey(key)) { return null; }
+    @NotNull
+    public MenuItem getPagedItem(@NotNull String key) {
+        if (!pagedItemMap.containsKey(key)) {
+            throw new IllegalStateException("Could not find paged icon key: " + key);
+        }
         return pagedItemMap.get(key).item;
     }
 
@@ -201,8 +207,14 @@ public class KamiMenuContainer {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isValidKey(String key) {
+    public boolean isValidKey(@NotNull String key) {
         return menuItemMap.containsKey(key) || pagedItemMap.containsKey(key);
+    }
+    public boolean isValidIcon(@NotNull String key) {
+        return menuItemMap.containsKey(key);
+    }
+    public boolean isValidPagedIcon(@NotNull String key) {
+        return pagedItemMap.containsKey(key);
     }
 
     @NotNull
