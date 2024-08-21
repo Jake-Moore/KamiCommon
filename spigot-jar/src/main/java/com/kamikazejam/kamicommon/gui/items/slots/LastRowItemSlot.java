@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.gui.items.slots;
 
-import com.kamikazejam.kamicommon.gui.interfaces.Menu;
+import com.kamikazejam.kamicommon.gui.KamiMenu;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public class LastRowItemSlot implements ItemSlot {
     }
 
     @Override
-    public List<Integer> get(@NotNull Menu menu) {
+    public List<Integer> get(@NotNull KamiMenu menu) {
         int slot = menu.getSize() - (9 - slotInLastRow);
         return List.of(slot);
     }

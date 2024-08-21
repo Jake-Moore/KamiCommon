@@ -1,12 +1,16 @@
 package com.kamikazejam.kamicommon.gui.page;
 
 import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.gui.KamiMenu;
 import com.kamikazejam.kamicommon.gui.MenuItem;
-import com.kamikazejam.kamicommon.gui.interfaces.*;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClickPage;
+import com.kamikazejam.kamicommon.gui.interfaces.MenuUpdateTask;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -22,46 +26,33 @@ public class PageItem {
 
     // Only one should ever be set
     public @Nullable MenuClick menuClick = null;
-    public @Nullable MenuClickPlayer menuClickPlayer = null;
-    public @Nullable MenuClickPlayerPage menuClickPlayerPage = null;
+    public @Nullable MenuClickPage menuClickPage = null;
 
     // Up to the developer to supply additional builders before use
     public PageItem(@Nullable MenuClick menuClick) {
         this.menuClick = menuClick;
     }
     // Up to the developer to supply additional builders before use
-    public PageItem(@Nullable MenuClickPlayer menuClickPlayer) {
-        this.menuClickPlayer = menuClickPlayer;
-    }
-    // Up to the developer to supply additional builders before use
-    public PageItem(@Nullable MenuClickPlayerPage menuClickPlayerPage) {
-        this.menuClickPlayerPage = menuClickPlayerPage;
+    public PageItem(@Nullable MenuClickPage menuClickPage) {
+        this.menuClickPage = menuClickPage;
     }
 
     public PageItem(IBuilder iBuilder, @Nullable MenuClick menuClick) {
         this.iBuilders.add(iBuilder);
         this.menuClick = menuClick;
     }
-    public PageItem(IBuilder iBuilder, @Nullable MenuClickPlayer menuClickPlayer) {
+    public PageItem(IBuilder iBuilder, @Nullable MenuClickPage menuClickPage) {
         this.iBuilders.add(iBuilder);
-        this.menuClickPlayer = menuClickPlayer;
-    }
-    public PageItem(IBuilder iBuilder, @Nullable MenuClickPlayerPage menuClickPlayerPage) {
-        this.iBuilders.add(iBuilder);
-        this.menuClickPlayerPage = menuClickPlayerPage;
+        this.menuClickPage = menuClickPage;
     }
 
     public PageItem(List<IBuilder> iBuilders, @Nullable MenuClick menuClick) {
         this.iBuilders.addAll(iBuilders);
         this.menuClick = menuClick;
     }
-    public PageItem(List<IBuilder> iBuilders, @Nullable MenuClickPlayer menuClickPlayer) {
+    public PageItem(List<IBuilder> iBuilders, @Nullable MenuClickPage menuClickPage) {
         this.iBuilders.addAll(iBuilders);
-        this.menuClickPlayer = menuClickPlayer;
-    }
-    public PageItem(List<IBuilder> iBuilders, @Nullable MenuClickPlayerPage menuClickPlayerPage) {
-        this.iBuilders.addAll(iBuilders);
-        this.menuClickPlayerPage = menuClickPlayerPage;
+        this.menuClickPage = menuClickPage;
     }
 
     public PageItem setIBuilder(IBuilder iBuilder) {
@@ -77,26 +68,18 @@ public class PageItem {
 
     public PageItem setMenuClick(MenuClick menuClick) {
         this.menuClick = menuClick;
-        this.menuClickPlayer = null;
-        this.menuClickPlayerPage = null;
+        this.menuClickPage = null;
         return this;
     }
 
-    public PageItem setMenuClick(MenuClickPlayer menuClickPlayer) {
-        this.menuClickPlayer = menuClickPlayer;
+    public PageItem setMenuClick(MenuClickPage menuClickPage) {
+        this.menuClickPage = menuClickPage;
         this.menuClick = null;
-        this.menuClickPlayerPage = null;
         return this;
     }
 
-    public PageItem setMenuClick(MenuClickPlayerPage menuClickPlayerPage) {
-        this.menuClickPlayerPage = menuClickPlayerPage;
-        this.menuClick = null;
-        this.menuClickPlayer = null;
-        return this;
-    }
-
-    public MenuTicked addToMenu(MenuTicked menu, int slot) {
+    @NotNull
+    public KamiMenu addToMenu(KamiMenu menu, int slot) {
         // 1. No IBuilder Set
         if (iBuilders.isEmpty()) {
             throw new IllegalArgumentException("No IBuilder set for PageItem");
@@ -117,7 +100,7 @@ public class PageItem {
         });
         menu.addUpdateHandlerSubTask(new MenuUpdateTask() {
             @Override
-            public void onUpdate(MenuTicked menu) {
+            public void onUpdate(@NotNull KamiMenu menu) {
                 bIndex++; if (bIndex >= iBuilders.size()) { bIndex = 0; }
                 updateMenuClick(menu, iBuilders.get(bIndex), slot);
             }
@@ -129,20 +112,15 @@ public class PageItem {
         return menu;
     }
 
-    private void addMenuClick(Menu menu, IBuilder iBuilder, int slot) {
+    private void addMenuClick(@NotNull KamiMenu menu, @NotNull IBuilder iBuilder, int slot) {
         // 1. Click defined
         if (menuClick != null) {
             menu.addMenuClick(iBuilder, menuClick, slot);
             return;
         }
-        // 2. Player Click defined
-        if (menuClickPlayer != null) {
-            menu.addMenuClick(iBuilder, menuClickPlayer, slot);
-            return;
-        }
-        // 3. Player Page Click defined
-        if (menuClickPlayerPage != null) {
-            menu.addMenuClick(iBuilder, menuClickPlayerPage, slot);
+        // 2. Page Click defined
+        if (menuClickPage != null) {
+            menu.addMenuClick(iBuilder, menuClickPage, slot);
             return;
         }
 
@@ -150,7 +128,7 @@ public class PageItem {
         menu.setItem(slot, iBuilder);
     }
 
-    private void updateMenuClick(MenuTicked menu, IBuilder iBuilder, int slot) {
+    private void updateMenuClick(@NotNull KamiMenu menu, @NotNull IBuilder iBuilder, int slot) {
         // Remove the old icon registration
         List<MenuItem> toRemove = new ArrayList<>();
         for (MenuItem item : menu.getClickableItems().keySet()) {
