@@ -2,10 +2,12 @@ package com.kamikazejam.kamicommon.nms.wrappers.chunk;
 
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers;
 import org.jetbrains.annotations.NotNull;
 
-public class ChunkSection_1_17_R1 implements NMSChunkSection {
+public class ChunkSection_1_17_R1 implements NMSChunkSection_1_13 {
     private final @NotNull LevelChunkSection section;
     public ChunkSection_1_17_R1(@NotNull LevelChunkSection section) {
         this.section = section;
@@ -17,8 +19,13 @@ public class ChunkSection_1_17_R1 implements NMSChunkSection {
     }
 
     @Override
-    public void setType(int x, int y, int z, Material material) {
+    public void setType(int x, int y, int z, @NotNull Material material) {
         this.section.setBlockState(x, y, z, CraftMagicNumbers.getBlock(material).defaultBlockState());
+    }
+
+    @Override
+    public void setType(int x, int y, int z, @NotNull BlockData blockData) {
+        this.section.setBlockState(x, y, z, ((CraftBlockData) blockData).getState());
     }
 
     @Override

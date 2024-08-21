@@ -1,6 +1,9 @@
 package com.kamikazejam.kamicommon.nms.wrappers.chunk;
 
+import com.kamikazejam.kamicommon.util.data.XBlockData;
+import com.kamikazejam.kamicommon.util.data.XMaterialData;
 import net.minecraft.server.v1_8_R2.ChunkSection;
+import net.minecraft.server.v1_8_R2.IBlockData;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R2.util.CraftMagicNumbers;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +20,21 @@ public class ChunkSection_1_8_R2 implements NMSChunkSection {
     }
 
     @Override
-    public void setType(int x, int y, int z, Material material) {
+    public void setType(int x, int y, int z, @NotNull Material material) {
         this.section.setType(x, y, z, CraftMagicNumbers.getBlock(material).getBlockData());
+    }
+
+    @Override
+    public void setType(int x, int y, int z, @NotNull XBlockData xBlockData) {
+        // For pre-1.13 we use data values
+        XMaterialData materialData = xBlockData.getMaterialData();
+
+        byte data = materialData.getData();
+        Material material = materialData.getMaterial().parseMaterial();
+        assert material != null;
+
+        IBlockData blockData = CraftMagicNumbers.getBlock(material).fromLegacyData(data);
+        this.section.setType(x, y, z, blockData);
     }
 
     @Override

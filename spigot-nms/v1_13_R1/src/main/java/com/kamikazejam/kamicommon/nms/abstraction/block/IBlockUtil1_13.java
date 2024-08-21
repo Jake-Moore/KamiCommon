@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,7 +73,7 @@ public abstract class IBlockUtil1_13<X> extends AbstractBlockUtil {
         assert xMaterial.parseMaterial() != null;
 
         // Create a BlockData object, which may get set if we have additional BlockData properties
-        @Nullable BlockData data = checkBlockDataProperties(b, blockData, xMaterial);
+        @Nullable BlockData data = findBlockData(b.getLocation().toVector(), blockData, xMaterial);
         if (data != null) {
             // If we have data from a custom property, set using that instead
             this.setBlockSuperFast(b, data, placeType);
@@ -97,16 +98,16 @@ public abstract class IBlockUtil1_13<X> extends AbstractBlockUtil {
     // ---------------------------------------------------------------------------------------- //
     //                                    UTIL METHODS                                          //
     // ---------------------------------------------------------------------------------------- //
-    public final @NotNull BlockData getOrCreateBlockData(@Nullable BlockData data, @NotNull XMaterial xMaterial) {
+    public static @NotNull BlockData getOrCreateBlockData(@Nullable BlockData data, @NotNull XMaterial xMaterial) {
         return (data == null) ? createBlockData(xMaterial) : data;
     }
-    public final BlockData createBlockData(@NotNull XMaterial xMaterial) {
+    public static BlockData createBlockData(@NotNull XMaterial xMaterial) {
         // In 1.13 the flattening occurred, so now we can disregard the data value in XMaterial
         assert xMaterial.parseMaterial() != null;
         return xMaterial.parseMaterial().createBlockData();
     }
 
-    private @Nullable BlockData checkBlockDataProperties(@NotNull Block b, @NotNull XBlockData xData, @NotNull XMaterial xMaterial) {
+    public static @Nullable BlockData findBlockData(@NotNull Vector v, @NotNull XBlockData xData, @NotNull XMaterial xMaterial) {
         @Nullable BlockData blockData = null;
 
         // Apply Levelled block data
@@ -117,7 +118,7 @@ public abstract class IBlockUtil1_13<X> extends AbstractBlockUtil {
                 levelled.setLevel(xData.getLevel());
             }else {
                 throw new IllegalArgumentException("[KamiCommon] [IBlockUtil] tried setting block at "
-                        + "(" + b.getX() + "," + b.getY() + "," + b.getZ() + ")"
+                        + "(" + v.getBlockX() + "," + v.getBlockY() + "," + v.getBlockZ() + ")"
                         + " with type: " + xMaterial.name()
                         + " and level: " + xData.getLevel()
                         + " but the BlockData is not a Levelled block,"
@@ -133,7 +134,7 @@ public abstract class IBlockUtil1_13<X> extends AbstractBlockUtil {
                 slab.setType(slabType);
             }else {
                 throw new IllegalArgumentException("[KamiCommon] [IBlockUtil] tried setting block at "
-                        + "(" + b.getX() + "," + b.getY() + "," + b.getZ() + ")"
+                        + "(" + v.getBlockX() + "," + v.getBlockY() + "," + v.getBlockZ() + ")"
                         + " with type: " + xMaterial.name()
                         + " and slab type: " + xData.getSlabType()
                         + " but the BlockData is not a Slab block,"
