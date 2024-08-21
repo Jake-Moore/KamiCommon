@@ -6,6 +6,7 @@ import com.kamikazejam.kamicommon.util.data.XBlockData;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -93,15 +94,16 @@ public abstract class AbstractBlockUtil {
     /**
      * Always available < v1.13
      */
-    @Deprecated
+    @Deprecated @ApiStatus.Internal
     public final int legacyGetCombined(XMaterial xMaterial) {
         assert xMaterial.parseMaterial() != null;
         return this.legacyGetCombined(xMaterial.parseMaterial().getId(), xMaterial.getData());
     }
-    @SuppressWarnings("deprecation")
+    @Deprecated @ApiStatus.Internal
     public final int legacyGetCombined(Material material, byte data) {
         return this.legacyGetCombined(material.getId(), data);
     }
+    @ApiStatus.Internal
     public final int legacyGetCombined(int id, byte data) {
         return id + (data << 12);
     }
