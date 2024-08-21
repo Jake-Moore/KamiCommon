@@ -102,11 +102,8 @@ public class KamiMenuContainer {
      * @return A nullable {@link MenuItem} of the menuItemMap with the given key. <p>
      *         This is a regular menu item, and not from the paged list. (Use {@link #getPagedItem(String)} for that)
      */
-    @NotNull
-    public MenuItem getItem(@NotNull String key) {
-        if (!menuItemMap.containsKey(key)) {
-            throw new IllegalStateException("Could not find icon key: " + key);
-        }
+    public @Nullable MenuItem getItem(@NotNull String key) {
+        if (!menuItemMap.containsKey(key)) { return null; }
         return menuItemMap.get(key);
     }
 
@@ -114,11 +111,8 @@ public class KamiMenuContainer {
      * @return A @Nullable {@link MenuItem} of the pagedItemMap with the given key. <p>
      *         This is a PAGED menu item, not a slot-based item. (Use {@link #getItem(String)} for that)
      */
-    @NotNull
-    public MenuItem getPagedItem(@NotNull String key) {
-        if (!pagedItemMap.containsKey(key)) {
-            throw new IllegalStateException("Could not find paged icon key: " + key);
-        }
+    public @Nullable MenuItem getPagedItem(@NotNull String key) {
+        if (!pagedItemMap.containsKey(key)) { return null; }
         return pagedItemMap.get(key).item;
     }
 
