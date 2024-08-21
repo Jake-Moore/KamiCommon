@@ -5,7 +5,7 @@ import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
-import com.kamikazejam.kamicommon.gui.KamiMenuContainer;
+import com.kamikazejam.kamicommon.gui.container.KamiMenuContainer;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.entity.Player;
@@ -27,11 +27,11 @@ public class CmdOpenGUI extends KamiCommand {
         String guiKey = readArg();
         KamiMenuContainer menu = new KamiMenuContainer(PluginSource.getKamiConfig(), guiKey);
         for (String key : menu.getMenuItemMap().keySet()) {
-            menu.addMenuClick(key, (p, c) ->
+            menu.setMenuClick(key, (p, c) ->
                     p.sendMessage(StringUtil.t("&7Menu Item Click (&f" + c.name() + "&7) on &f" + key)));
         }
         for (String key : menu.getPagedItemMap().keySet()) {
-            menu.addMenuClick(key, (p, c) ->
+            menu.setMenuClick(key, (p, c) ->
                     p.sendMessage(StringUtil.t("&7Page Item Click (&f" + c.name() + "&7) on &f" + key)));
         }
         menu.openMenu(player);

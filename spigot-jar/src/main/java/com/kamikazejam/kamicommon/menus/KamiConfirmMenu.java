@@ -1,15 +1,17 @@
 package com.kamikazejam.kamicommon.menus;
 
-import com.kamikazejam.kamicommon.gui.KamiMenuContainer;
+import com.kamikazejam.kamicommon.gui.container.KamiMenuContainer;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClickPage;
-import com.kamikazejam.kamicommon.gui.items.KamiMenuItem;
+import com.kamikazejam.kamicommon.gui.items.MenuItem;
+import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -19,7 +21,7 @@ public class KamiConfirmMenu {
     @Getter private final KamiMenuContainer container;
     @Nullable private IBuilder infoIcon = null;
 
-    public KamiConfirmMenu(String title) {
+    public KamiConfirmMenu(@NotNull String title) {
         container = new KamiMenuContainer(title, 3);
         container.addIcon("confirm",
                 new ItemBuilder(XMaterial.GREEN_WOOL, 1).setName("&aConfirm")
@@ -33,75 +35,75 @@ public class KamiConfirmMenu {
         container.setFillerItem(fillerItem);
     }
 
-    public KamiMenuItem getConfirmItem() {
+    public MenuItem getConfirmItem() {
         return container.getItem("confirm");
     }
 
-    public KamiMenuItem getDenyItem() {
+    public MenuItem getDenyItem() {
         return container.getItem("deny");
     }
 
-    public KamiConfirmMenu setConfirmItemName(String name) {
-        getConfirmItem().getIBuilder().setName(name);
+    public KamiConfirmMenu setConfirmItemName(@NotNull String name) {
+        getConfirmItem().directModifyBuilders(builder -> builder.setName(name));
         return this;
     }
 
-    public KamiConfirmMenu setDenyItemName(String name) {
-        getDenyItem().getIBuilder().setName(name);
+    public KamiConfirmMenu setDenyItemName(@NotNull String name) {
+        getDenyItem().directModifyBuilders(builder -> builder.setName(name));
         return this;
     }
 
-    public KamiConfirmMenu setConfirmItemLore(List<String> lore) {
-        getConfirmItem().getIBuilder().setLore(lore);
+    public KamiConfirmMenu setConfirmItemLore(@NotNull List<String> lore) {
+        getConfirmItem().directModifyBuilders(builder -> builder.setLore(lore));
         return this;
     }
-    public KamiConfirmMenu setConfirmItemLore(String... lore) {
-        getConfirmItem().getIBuilder().setLore(lore);
+    public KamiConfirmMenu setConfirmItemLore(@NotNull String... lore) {
+        getConfirmItem().directModifyBuilders(builder -> builder.setLore(lore));
         return this;
     }
 
-    public KamiConfirmMenu setDenyItemLore(List<String> lore) {
-        getDenyItem().getIBuilder().setLore(lore);
+    public KamiConfirmMenu setDenyItemLore(@NotNull List<String> lore) {
+        getDenyItem().directModifyBuilders(builder -> builder.setLore(lore));
         return this;
     }
-    public KamiConfirmMenu setDenyItemLore(String... lore) {
-        getDenyItem().getIBuilder().setLore(lore);
+    public KamiConfirmMenu setDenyItemLore(@NotNull String... lore) {
+        getDenyItem().directModifyBuilders(builder -> builder.setLore(lore));
         return this;
     }
 
     public KamiConfirmMenu setConfirmItemSlot(int slot) {
-        getConfirmItem().setSlot(slot);
+        getConfirmItem().setItemSlot(new StaticItemSlot(slot));
         return this;
     }
-    public KamiConfirmMenu setConfirmItemSlots(List<Integer> slots) {
-        getConfirmItem().setSlots(slots);
+    public KamiConfirmMenu setConfirmItemSlots(@NotNull List<Integer> slots) {
+        getConfirmItem().setItemSlot(new StaticItemSlot(slots));
         return this;
     }
 
     public KamiConfirmMenu setDenyItemSlot(int slot) {
-        getDenyItem().setSlot(slot);
+        getDenyItem().setItemSlot(new StaticItemSlot(slot));
         return this;
     }
-    public KamiConfirmMenu setDenyItemSlots(List<Integer> slots) {
-        getDenyItem().setSlots(slots);
+    public KamiConfirmMenu setDenyItemSlots(@NotNull List<Integer> slots) {
+        getDenyItem().setItemSlot(new StaticItemSlot(slots));
         return this;
     }
 
-    public KamiConfirmMenu setConfirmCallback(MenuClick click) {
-        container.addMenuClick("confirm", click);
+    public KamiConfirmMenu setConfirmCallback(@NotNull MenuClick click) {
+        container.setMenuClick("confirm", click);
         return this;
     }
     public KamiConfirmMenu setConfirmCallback(MenuClickPage click) {
-        container.addMenuClick("confirm", click);
+        container.setMenuClick("confirm", click);
         return this;
     }
 
     public KamiConfirmMenu setDenyCallback(MenuClick denyCallback) {
-        container.addMenuClick("deny", denyCallback);
+        container.setMenuClick("deny", denyCallback);
         return this;
     }
     public KamiConfirmMenu setDenyCallback(MenuClickPage denyCallback) {
-        container.addMenuClick("deny", denyCallback);
+        container.setMenuClick("deny", denyCallback);
         return this;
     }
 

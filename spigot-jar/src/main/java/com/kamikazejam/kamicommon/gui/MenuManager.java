@@ -2,6 +2,8 @@ package com.kamikazejam.kamicommon.gui;
 
 import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.gui.clicks.transform.IClickTransform;
+import com.kamikazejam.kamicommon.gui.items.MenuItem;
+import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -32,6 +33,7 @@ public class MenuManager implements Listener {
         // Special Handling for clicks in the player inventory
         if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER) {
             // For now just ignore it -> return
+            // TODO add player inventory click handling
             return;
         }
 
@@ -45,17 +47,20 @@ public class MenuManager implements Listener {
         if (current == null) { return; }
 
         int page = (menu.getParent() != null) ? menu.getParent().getCurrentPage() : 0;
-        for (Map.Entry<MenuItem, IClickTransform> entry : menu.getClickableItems().entrySet()) {
-            if (entry == null) { continue; }
 
-            IClickTransform click = entry.getValue();
+        for (MenuItem tickedItem : menu.getMenuItems()) {
+            if (tickedItem == null) { continue; }
+
+            IClickTransform click = tickedItem.getTransform();
             if (click == null) { continue; }
 
-            MenuItem menuItem = entry.getKey();
-            if (menuItem == null) { continue; }
+            @Nullable ItemSlot itemSlot = tickedItem.getItemSlot();
+            if (itemSlot == null) { continue; }
 
-            boolean sameItems = compareItemStacks(current, menuItem.getItem());
-            if (menuItem.getSlot() == e.getSlot() && sameItems) {
+            // We use the cached copy from when it was added to the inventory
+            // Since it may change through its lifecycle
+            boolean sameItems = compareItemStacks(current, tickedItem.getLastItem());
+            if (sameItems && itemSlot.get(menu).contains(e.getSlot())) {
                 click.process(player, e, page);
                 return;
             }
