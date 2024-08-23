@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class ChunkProvider_1_20_CB implements NMSChunkProvider {
+public class ChunkProvider_1_21_CB implements NMSChunkProvider {
     private final @NotNull ServerChunkCache handle;
-    public ChunkProvider_1_20_CB(@NotNull ServerChunkCache server) {
+    public ChunkProvider_1_21_CB(@NotNull ServerChunkCache server) {
         this.handle = server;
     }
 
@@ -20,7 +20,7 @@ public class ChunkProvider_1_20_CB implements NMSChunkProvider {
 
     @Override
     public @NotNull NMSChunk getOrCreateChunk(int x, int z) {
-        return new Chunk_1_20_CB(Objects.requireNonNull(this.handle.getChunk(x, z, true)));
+        return new Chunk_1_21_CB(Objects.requireNonNull(this.handle.getChunk(x, z, true)));
     }
 
     @Override
@@ -29,6 +29,6 @@ public class ChunkProvider_1_20_CB implements NMSChunkProvider {
 
     @Override
     public @NotNull NMSChunk wrap(org.bukkit.@NotNull Chunk chunk) {
-        return new Chunk_1_20_CB(((CraftChunk) chunk).getHandle(ChunkStatus.FULL));
+        return new Chunk_1_21_CB(((CraftChunk) chunk).getHandle(ChunkStatus.FULL));
     }
 }

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Working for: 1.20.5, 1.20.6, 1.21
  */
-public class BlockUtil1_20_CB extends IBlockUtil1_13<BlockState> {
+public class BlockUtil1_21_CB extends IBlockUtil1_13<BlockState> {
     @Override
     public BlockState getIBlockData(@NotNull BlockData blockData) {
         return ((CraftBlockData) blockData).getState();
