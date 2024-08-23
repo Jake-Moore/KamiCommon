@@ -2,6 +2,9 @@ package com.kamikazejam.kamicommon.nms.wrappers.chunk;
 
 import net.minecraft.server.v1_13_R1.Chunk;
 import net.minecraft.server.v1_13_R1.ChunkSection;
+import net.minecraft.server.v1_13_R1.PacketPlayOutMapChunk;
+import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class Chunk_1_13_R1 implements NMSChunk {
@@ -32,5 +35,11 @@ public class Chunk_1_13_R1 implements NMSChunk {
     @Override
     public void clearTileEntities() {
         this.chunk.tileEntities.clear();
+    }
+
+    @Override
+    public void sendUpdatePacket(@NotNull Player player) {
+        PacketPlayOutMapChunk packet = new PacketPlayOutMapChunk(this.chunk, '\uffff');
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 }

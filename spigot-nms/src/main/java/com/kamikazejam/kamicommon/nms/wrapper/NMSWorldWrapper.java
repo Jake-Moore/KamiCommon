@@ -63,6 +63,6 @@ public class NMSWorldWrapper extends NMSWrapper<NMSWorld, World> {
             return new NMSWorld_1_20_R3(world);
         }
         // With the mojang-mapped paper nms now, we might be good to use this version indefinitely
-        return new NMSWorld_1_20_CB(world); // Confirmed for 1.20.5, 1.20.6, 1.21
+        return new NMSWorld_1_21_CB(world); // Confirmed for 1.20.5, 1.20.6, 1.21
     }
 }

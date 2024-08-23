@@ -4,13 +4,13 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class Chunk_1_20_R3 implements NMSChunk {
+public class Chunk_1_21_CB implements NMSChunk {
     private final @NotNull ChunkAccess chunk;
-    public Chunk_1_20_R3(@NotNull ChunkAccess chunk) {
+    public Chunk_1_21_CB(@NotNull ChunkAccess chunk) {
         this.chunk = chunk;
     }
 
@@ -21,7 +21,7 @@ public class Chunk_1_20_R3 implements NMSChunk {
 
     @Override
     public @NotNull NMSChunkSection getSection(int y) {
-        return new ChunkSection_1_20_R3(this.chunk, y);
+        return new ChunkSection_1_21_CB(this.chunk, y);
     }
 
     @Override

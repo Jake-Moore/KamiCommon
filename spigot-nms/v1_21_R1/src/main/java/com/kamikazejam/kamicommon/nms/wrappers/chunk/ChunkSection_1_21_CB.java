@@ -10,10 +10,10 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.jetbrains.annotations.NotNull;
 
-public class ChunkSection_1_20_CB implements NMSChunkSection_1_13 {
+public class ChunkSection_1_21_CB implements NMSChunkSection_1_13 {
     private final @NotNull ChunkAccess chunk;
     private final int yShift;
-    public ChunkSection_1_20_CB(@NotNull ChunkAccess chunk, int yShift) {
+    public ChunkSection_1_21_CB(@NotNull ChunkAccess chunk, int yShift) {
         this.chunk = chunk;
         this.yShift = yShift;
     }

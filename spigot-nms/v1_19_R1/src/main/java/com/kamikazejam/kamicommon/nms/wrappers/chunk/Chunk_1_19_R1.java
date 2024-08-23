@@ -1,6 +1,10 @@
 package com.kamikazejam.kamicommon.nms.wrappers.chunk;
 
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.world.level.chunk.LevelChunk;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class Chunk_1_19_R1 implements NMSChunk {
@@ -27,5 +31,11 @@ public class Chunk_1_19_R1 implements NMSChunk {
     @Override
     public void clearTileEntities() {
         this.chunk.blockEntities.clear();
+    }
+
+    @Override
+    public void sendUpdatePacket(@NotNull Player player) {
+        Packet<?> packet = new ClientboundLevelChunkWithLightPacket(this.chunk, this.chunk.getLevel().getLightEngine(), null, null, true, true);
+        ((CraftPlayer) player).getHandle().connection.send(packet);
     }
 }

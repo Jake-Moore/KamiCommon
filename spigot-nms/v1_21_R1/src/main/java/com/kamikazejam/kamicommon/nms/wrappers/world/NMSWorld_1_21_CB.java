@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.nms.wrappers.world;
 
-import com.kamikazejam.kamicommon.nms.wrappers.chunk.ChunkProvider_1_20_CB;
+import com.kamikazejam.kamicommon.nms.wrappers.chunk.ChunkProvider_1_21_CB;
 import com.kamikazejam.kamicommon.nms.wrappers.chunk.NMSChunkProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
@@ -11,9 +11,9 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class NMSWorld_1_20_CB implements NMSWorld {
+public class NMSWorld_1_21_CB implements NMSWorld {
     private final @NotNull ServerLevel serverLevel;
-    public NMSWorld_1_20_CB(@NotNull World world) {
+    public NMSWorld_1_21_CB(@NotNull World world) {
         this.serverLevel = ((CraftWorld) world).getHandle();
     }
 
@@ -34,7 +34,7 @@ public class NMSWorld_1_20_CB implements NMSWorld {
 
     @Override
     public @NotNull NMSChunkProvider getChunkProvider() {
-        return new ChunkProvider_1_20_CB(this.serverLevel.getChunkSource());
+        return new ChunkProvider_1_21_CB(this.serverLevel.getChunkSource());
     }
 
     @Override
