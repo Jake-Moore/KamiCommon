@@ -43,7 +43,7 @@ public class NMSWorld_1_8_R3 implements NMSWorld {
 
     @Override
     public @NotNull NMSChunkProvider getChunkProvider() {
-        return new ChunkProvider_1_8_R3(this.worldServer.chunkProviderServer);
+        return new ChunkProvider_1_8_R3(this, this.worldServer.chunkProviderServer);
     }
 
     @Override
