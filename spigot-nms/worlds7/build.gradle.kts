@@ -4,7 +4,8 @@ repositories {
 
 dependencies {
     // Unique dependencies for this module
-    compileOnly("org.spigotmc:spigot-server:1.8-R0.1")
+    // Use 1.13 since WorldGuard7 uses BlockData and needs it to compile
+    compileOnly("org.spigotmc:spigot-server:1.13.2-R0.1")
     compileOnly(files(project(":spigot-nms:api")
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
