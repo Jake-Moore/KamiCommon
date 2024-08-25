@@ -5,16 +5,21 @@ import com.kamikazejam.kamicommon.nms.wrappers.chunk.NMSChunkProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class NMSWorld_1_21_CB implements NMSWorld {
     private final @NotNull ServerLevel serverLevel;
+    private final @NotNull CraftWorld craftWorld;
     public NMSWorld_1_21_CB(@NotNull World world) {
-        this.serverLevel = ((CraftWorld) world).getHandle();
+        this.craftWorld = (CraftWorld) world;
+        this.serverLevel = this.craftWorld.getHandle();
     }
 
     @Override
@@ -42,5 +47,10 @@ public class NMSWorld_1_21_CB implements NMSWorld {
         BlockPos blockPosition = new BlockPos(x, y, z);
         ClientboundBlockUpdatePacket change = new ClientboundBlockUpdatePacket(this.serverLevel, blockPosition);
         ((CraftPlayer) player).getHandle().connection.send(change);
+    }
+
+    @Override
+    public <T extends Entity> T spawnEntity(@NotNull Location location, @NotNull Class<T> aClass, CreatureSpawnEvent.@NotNull SpawnReason spawnReason) {
+        return this.craftWorld.spawn(location, aClass, (e) -> {}, spawnReason);
     }
 }

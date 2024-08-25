@@ -12,6 +12,7 @@ dependencies {
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
 
+    shadow("de.tr7zw:item-nbt-api:2.13.2")
     shadow("com.github.cryptomorin:XSeries:11.2.1")
     shadow("com.github.fierioziy.particlenativeapi:ParticleNativeAPI-core:4.3.0")
 
@@ -26,6 +27,7 @@ tasks {
 
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
         relocate("com.github.fierioziy.particlenativeapi", "com.kamikazejam.kamicommon.particleapi")
+        relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
 
         from(project(":standalone-utils").tasks.shadowJar.get().outputs)
     }

@@ -3,12 +3,14 @@ package com.kamikazejam.kamicommon.nms;
 import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.AbstractMessageManager;
 import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
+import com.kamikazejam.kamicommon.nms.abstraction.event.EventManager;
 import com.kamikazejam.kamicommon.nms.abstraction.item.AbstractItemEditor;
 import com.kamikazejam.kamicommon.nms.abstraction.item.NmsItemMethods;
 import com.kamikazejam.kamicommon.nms.abstraction.itemtext.AbstractItemTextPre_1_17;
 import com.kamikazejam.kamicommon.nms.abstraction.teleport.AbstractTeleporter;
 import com.kamikazejam.kamicommon.nms.provider.*;
 import com.kamikazejam.kamicommon.nms.wrapper.NMSWorldWrapper;
+import com.kamikazejam.kamicommon.nms.wrappers.packet.NMSPacketHandler;
 import com.kamikazejam.kamicommon.nms.wrappers.world.NMSWorld;
 import lombok.Getter;
 import org.bukkit.ChatColor;
@@ -36,6 +38,8 @@ public class NmsAPI {
     @Getter private static final ItemEditorProvider itemEditorProvider = new ItemEditorProvider();
     @Getter private static final NmsItemProvider nmsItemProvider = new NmsItemProvider();
     @Getter private static final EntityMethodsProvider entityMethodsProvider = new EntityMethodsProvider();
+    @Getter private static final PacketHandlerProvider packetHandlerProvider = new PacketHandlerProvider();
+    @Getter private static final EventManagerProvider eventManagerProvider = new EventManagerProvider();
 
     // ---------------------------------------------------------------------------------- //
     //                                     WRAPPERS                                       //
@@ -55,6 +59,8 @@ public class NmsAPI {
     public static AbstractItemEditor getItemEditor() { return itemEditorProvider.get(); }
     public static NmsItemMethods getNmsItemMethods() { return nmsItemProvider.get(); }
     public static AbstractEntityMethods getEntityMethods() { return entityMethodsProvider.get(); }
+    public static NMSPacketHandler getPacketHandler() { return packetHandlerProvider.get(); }
+    public static EventManager getEventManager() { return eventManagerProvider.get(); }
 
     public static @Nullable ItemStack getItemInMainHand(@NotNull Player player) {
         return mainHandProvider.get().getItemInMainHand(player);

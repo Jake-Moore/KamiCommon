@@ -35,10 +35,36 @@ public class EntityMethodsProvider extends Provider<AbstractEntityMethods> {
             return new EntityMethods_1_13_R1();
         }else if (ver <= f("1.13.2")) {
             return new EntityMethods_1_13_R2();
+        }else if (ver <= f("1.14.4")) {
+            return new EntityMethods_1_14_R1();
+        }else if (ver <= f("1.15.2")) {
+            return new EntityMethods_1_16_R1();
+        }else if (ver <= f("1.16.1")) {
+            return new EntityMethods_1_16_R1();
+        }else if (ver <= f("1.16.3")) {
+            return new EntityMethods_1_16_R2();
+        }else if (ver <= f("1.16.5")) {
+            return new EntityMethods_1_16_R3();
+        }else if (ver <= f("1.17.1")) {
+            return new EntityMethods_1_17_R1();
+        }else if (ver <= f("1.18.1")) {
+            return new EntityMethods_1_18_R1();
+        }else if (ver <= f("1.18.2")) {
+            return new EntityMethods_1_19_R1();
+        }else if (ver <= f("1.19.2")) {
+            return new EntityMethods_1_19_R1();
+        }else if (ver <= f("1.19.3")) {
+            return new EntityMethods_1_19_R2();
+        }else if (ver <= f("1.19.4")) {
+            return new EntityMethods_1_19_R3();
+        }else if (ver <= f("1.20.1")) {
+            return new EntityMethods_1_20_R1();
+        }else if (ver <= f("1.20.2")) {
+            return new EntityMethods_1_20_R3();
+        }else if (ver <= f("1.20.4")) {
+            return new EntityMethods_1_20_R3();
         }
-
-        // 1.14 added Bukkit api support for fetching the size
-        // Every version after that no longer requires nms
-        return new EntityMethods_1_14_R1();
+        // With the mojang-mapped paper nms now, we might be good to use this version indefinitely
+        return new EntityMethods_1_21_R1(); // Confirmed for 1.20.5, 1.20.6, 1.21
     }
 }

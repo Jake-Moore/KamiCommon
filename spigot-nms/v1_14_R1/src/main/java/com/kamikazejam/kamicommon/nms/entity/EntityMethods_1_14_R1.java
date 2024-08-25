@@ -1,18 +1,27 @@
 package com.kamikazejam.kamicommon.nms.entity;
 
-import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftCreature;
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftLivingEntity;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class EntityMethods_1_14_R1 extends AbstractEntityMethods {
+public class EntityMethods_1_14_R1 extends EntityMethodsPost_1_14 {
+
     @Override
-    public double getEntityHeight(@NotNull Entity entity) {
-        return entity.getHeight();
+    public void setPersists(@NotNull Creature creature, boolean value) {
+        ((CraftCreature) creature).getHandle().persistent = value;
     }
 
     @Override
-    public double getEntityWidth(@NotNull Entity entity) {
-        return entity.getWidth();
+    public void setFromSpawner(@NotNull Entity entity, boolean value) {
+        ((CraftEntity) entity).getHandle().fromMobSpawner = value;
+    }
+
+    @Override
+    public void setMobAI(@NotNull Entity entity, boolean value) {
+        ((CraftLivingEntity) entity).setAI(value);
     }
 }
