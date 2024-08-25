@@ -5,5 +5,4 @@ dependencies {
         .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
     )
     compileOnly(project(":spigot-nms:v1_13_R1"))
-    compileOnly(project(":spigot-nms:v1_14_R1"))
 }
