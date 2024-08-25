@@ -15,9 +15,9 @@
     - Which contains [spigot-nms](#spigot-nms)
   - [generic-jar](#generic-jar)
 - 📄 Shaded Utilities
-  - com.google.code.gson:gson, org.apache.commons:commons-text, [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API) [via [spigot-utils](#spigot-utils)]
+  - com.google.code.gson:gson, org.apache.commons:commons-text [via [spigot-utils](#spigot-utils)]
   - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
-  - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries) [via [spigot-nms](#spigot-nms)]
+  - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries), [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API) [via [spigot-nms](#spigot-nms)]
   - com.zaxxer:HikariCP, com.mysql:mysql-connector-j, redis.clients:jedis, com.rabbitmq:amqp-client [via [generic-jar](#generic-jar)]
 - (⭐) Should **NOT** be shaded ❌
   - <span style="text-decoration:underline;">should be added to the server as a plugin</span>
@@ -33,7 +33,6 @@
   - org.json:json
   - com.google.code.gson:gson
   - org.apache.commons:commons-text
-  - [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API)
   - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries) [via [spigot-nms](#spigot-nms)]
   - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
 - (⭐) **CAN** be shaded
@@ -43,6 +42,7 @@
 - A parent module responsible for nms utilities & implementations.
 - Wrapper classes (available in [spigot-jar](#spigot-jar)) should be used instead!
 - 📄 Shaded Utilities
+  - [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API)
   - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries)
   - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
 - ❌ Not Available

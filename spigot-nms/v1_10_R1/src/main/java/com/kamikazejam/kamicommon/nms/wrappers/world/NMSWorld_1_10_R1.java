@@ -5,16 +5,21 @@ import com.kamikazejam.kamicommon.nms.wrappers.chunk.NMSChunkProvider;
 import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.PacketPlayOutBlockChange;
 import net.minecraft.server.v1_10_R1.WorldServer;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class NMSWorld_1_10_R1 implements NMSWorld {
     private final @NotNull WorldServer worldServer;
+    private final @NotNull CraftWorld craftWorld;
     public NMSWorld_1_10_R1(@NotNull World world) {
-        this.worldServer = ((CraftWorld) world).getHandle();
+        this.craftWorld = (CraftWorld) world;
+        this.worldServer = this.craftWorld.getHandle();
     }
 
     @Override
@@ -42,5 +47,10 @@ public class NMSWorld_1_10_R1 implements NMSWorld {
         BlockPosition blockPosition = new BlockPosition(x, y, z);
         PacketPlayOutBlockChange change = new PacketPlayOutBlockChange(this.worldServer, blockPosition);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(change);
+    }
+
+    @Override
+    public <T extends Entity> T spawnEntity(@NotNull Location location, @NotNull Class<T> aClass, CreatureSpawnEvent.@NotNull SpawnReason spawnReason) {
+        return this.craftWorld.spawn(location, aClass, spawnReason);
     }
 }

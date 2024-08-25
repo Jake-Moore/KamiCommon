@@ -12,7 +12,6 @@ dependencies {
 
     shadow("com.google.code.gson:gson:2.11.0")
     shadow("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
-    shadow("de.tr7zw:item-nbt-api:2.13.2")
 
     compileOnly(project.property("lowestSpigotDep") as String)
     compileOnly("me.clip:placeholderapi:2.11.6") // TODO soft depend
@@ -39,7 +38,6 @@ tasks {
 
         relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
         relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
-        relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
         relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")
         relocate("com.google.errorprone", "com.kamikazejam.kamicommon.errorprone")
 
