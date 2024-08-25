@@ -11,11 +11,18 @@ import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.jetbrains.annotations.NotNull;
 
 public class ChunkSection_1_19_R3 implements NMSChunkSection_1_13 {
+    private final @NotNull Chunk_1_19_R3 nmsChunk;
     private final @NotNull ChunkAccess chunk;
     private final int yShift;
-    public ChunkSection_1_19_R3(@NotNull ChunkAccess chunk, int yShift) {
+    public ChunkSection_1_19_R3(@NotNull Chunk_1_19_R3 nmsChunk, @NotNull ChunkAccess chunk, int yShift) {
+        this.nmsChunk = nmsChunk;
         this.chunk = chunk;
         this.yShift = yShift;
+    }
+
+    @Override
+    public @NotNull NMSChunk getNMSChunk() {
+        return this.nmsChunk;
     }
 
     @Override

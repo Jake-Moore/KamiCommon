@@ -58,3 +58,7 @@ include("spigot-nms:v1_20_CB")
 findProject(":spigot-nms:v1_20_CB")?.name = "v1_20_CB"
 include("spigot-nms:v1_21_R1")
 findProject(":spigot-nms:v1_21_R1")?.name = "v1_21_R1"
+include("spigot-nms:worlds6")
+findProject(":spigot-nms:worlds6")?.name = "worlds6"
+include("spigot-nms:worlds7")
+findProject(":spigot-nms:worlds7")?.name = "worlds7"

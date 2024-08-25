@@ -8,8 +8,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class Chunk_1_11_R1 implements NMSChunk {
+    private final @NotNull ChunkProvider_1_11_R1 provider;
     private final @NotNull Chunk chunk;
-    public Chunk_1_11_R1(@NotNull Chunk chunk) {
+    public Chunk_1_11_R1(@NotNull ChunkProvider_1_11_R1 provider, @NotNull Chunk chunk) {
+        this.provider = provider;
         this.chunk = chunk;
     }
 
@@ -19,8 +21,13 @@ public class Chunk_1_11_R1 implements NMSChunk {
     }
 
     @Override
+    public @NotNull NMSChunkProvider getNMSChunkProvider() {
+        return this.provider;
+    }
+
+    @Override
     public @NotNull NMSChunkSection getSection(final int y) {
-        return new ChunkSection_1_11_R1(this.chunk.getSections()[y]);
+        return new ChunkSection_1_11_R1(this, this.chunk.getSections()[y]);
     }
 
     @Override
@@ -29,7 +36,7 @@ public class Chunk_1_11_R1 implements NMSChunk {
             ChunkSection chunkSection = new ChunkSection(y << 4, !this.chunk.world.worldProvider.m());
             this.chunk.getSections()[y] = chunkSection;
         }
-        return new ChunkSection_1_11_R1(this.chunk.getSections()[y]);
+        return new ChunkSection_1_11_R1(this, this.chunk.getSections()[y]);
     }
 
     @Override

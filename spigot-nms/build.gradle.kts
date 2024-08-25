@@ -37,6 +37,12 @@ dependencies {
     shadow(project(":spigot-nms:v1_20_CB"))
     shadow(project(":spigot-nms:v1_21_R1"))
 
+    shadow(project(":spigot-nms:worlds6"))
+    shadow(project(":spigot-nms:worlds7"))
+
+    // So we have access to the Clipboard class
+    compileOnly("com.sk89q.worldedit:bukkit:6.1.9")
+
     compileOnly(project.property("lowestSpigotDep") as String)
 }
 

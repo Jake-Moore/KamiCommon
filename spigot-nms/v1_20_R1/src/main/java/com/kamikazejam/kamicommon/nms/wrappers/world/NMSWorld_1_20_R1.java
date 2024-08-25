@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.nms.wrappers.world;
 
 import com.kamikazejam.kamicommon.nms.wrappers.chunk.ChunkProvider_1_20_R1;
 import com.kamikazejam.kamicommon.nms.wrappers.chunk.NMSChunkProvider;
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
@@ -15,9 +16,12 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class NMSWorld_1_20_R1 implements NMSWorld {
+    @Getter
+    private final @NotNull World bukkitWorld;
     private final @NotNull ServerLevel serverLevel;
     private final @NotNull CraftWorld craftWorld;
     public NMSWorld_1_20_R1(@NotNull World world) {
+        this.bukkitWorld = world;
         this.craftWorld = (CraftWorld) world;
         this.serverLevel = this.craftWorld.getHandle();
     }
@@ -39,7 +43,7 @@ public class NMSWorld_1_20_R1 implements NMSWorld {
 
     @Override
     public @NotNull NMSChunkProvider getChunkProvider() {
-        return new ChunkProvider_1_20_R1(this.serverLevel.getChunkSource());
+        return new ChunkProvider_1_20_R1(this, this.serverLevel.getChunkSource());
     }
 
     @Override
@@ -50,7 +54,7 @@ public class NMSWorld_1_20_R1 implements NMSWorld {
     }
 
     @Override
-    public <T extends Entity> T spawnEntity(@NotNull Location location, @NotNull Class<T> aClass, CreatureSpawnEvent.@NotNull SpawnReason spawnReason) {
+    public <T extends Entity> @NotNull T spawnEntity(@NotNull Location location, @NotNull Class<T> aClass, CreatureSpawnEvent.@NotNull SpawnReason spawnReason) {
         return this.craftWorld.spawn(location, aClass, (e) -> {}, spawnReason);
     }
 }
