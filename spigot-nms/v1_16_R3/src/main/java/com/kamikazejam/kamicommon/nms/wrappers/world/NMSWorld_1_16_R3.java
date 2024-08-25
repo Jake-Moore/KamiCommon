@@ -33,12 +33,12 @@ public class NMSWorld_1_16_R3 implements NMSWorld {
 
     @Override
     public int getMinHeight() {
-        return 0;
+        return this.bukkitWorld.getMinHeight();
     }
 
     @Override
     public int getMaxHeight() {
-        return this.worldServer.getHeight();
+        return this.bukkitWorld.getMaxHeight();
     }
 
     @Override
