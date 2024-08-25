@@ -4,6 +4,7 @@ import com.kamikazejam.kamicommon.nms.wrappers.NMSObject;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public interface NMSChunk extends NMSObject {
     @NotNull NMSChunkProvider getNMSChunkProvider();
 
