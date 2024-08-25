@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public interface NMSChunk extends NMSObject {
+    @NotNull NMSChunkProvider getNMSChunkProvider();
+
     @NotNull
     NMSChunkSection getSection(int y);
     @NotNull

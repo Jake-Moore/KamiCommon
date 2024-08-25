@@ -8,9 +8,16 @@ import org.bukkit.craftbukkit.v1_16_R2.util.CraftMagicNumbers;
 import org.jetbrains.annotations.NotNull;
 
 public class ChunkSection_1_16_R2 implements NMSChunkSection_1_13 {
+    private final @NotNull Chunk_1_16_R2 chunk;
     private final @NotNull ChunkSection section;
-    public ChunkSection_1_16_R2(@NotNull ChunkSection section) {
+    public ChunkSection_1_16_R2(@NotNull Chunk_1_16_R2 chunk, @NotNull ChunkSection section) {
+        this.chunk = chunk;
         this.section = section;
+    }
+
+    @Override
+    public @NotNull NMSChunk getNMSChunk() {
+        return this.chunk;
     }
 
     @Override
