@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
 public class OutEntityStatus_1_18_R2 implements NMSOutEntityStatus {
-    private static final FieldHandle<Integer> entityHandle = (FieldHandle<Integer>) FieldHandles.getHandle("entityId", ClientboundEntityEventPacket.class);
+    private static final FieldHandle<Integer> entityHandle = (FieldHandle<Integer>) FieldHandles.getHandle("a", ClientboundEntityEventPacket.class);
 
     private final @NotNull ClientboundEntityEventPacket packet;
 
