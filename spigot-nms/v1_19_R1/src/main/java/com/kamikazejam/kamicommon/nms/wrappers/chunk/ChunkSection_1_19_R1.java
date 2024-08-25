@@ -36,6 +36,7 @@ public class ChunkSection_1_19_R1 implements NMSChunkSection_1_13 {
 
     @Override
     public void setType(int x, int y, int z, @NotNull BlockData blockData) {
+        y += (this.yShift << 4);
         this.chunk.setBlockState(new BlockPos(x, y, z), ((CraftBlockData) blockData).getState(), false, false);
     }
 

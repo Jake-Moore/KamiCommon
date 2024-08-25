@@ -11,6 +11,8 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * For versions 1_13_R1 and above (once BlockState was introduced)
  * {@link X} is the IBlockData type for the corresponding version.
@@ -73,7 +75,7 @@ public abstract class IBlockUtil1_13<X> extends AbstractBlockUtil {
         assert xMaterial.parseMaterial() != null;
 
         // Create a BlockData object, which may get set if we have additional BlockData properties
-        @Nullable BlockData data = findBlockData(b.getLocation().toVector(), blockData, xMaterial);
+        @Nullable BlockData data = findBlockData(b.getLocation().toVector(), blockData);
         if (data != null) {
             // If we have data from a custom property, set using that instead
             this.setBlockSuperFast(b, data, placeType);
@@ -107,7 +109,8 @@ public abstract class IBlockUtil1_13<X> extends AbstractBlockUtil {
         return xMaterial.parseMaterial().createBlockData();
     }
 
-    public static @Nullable BlockData findBlockData(@NotNull Vector v, @NotNull XBlockData xData, @NotNull XMaterial xMaterial) {
+    public static @Nullable BlockData findBlockData(@NotNull Vector v, @NotNull XBlockData xData) {
+        @NotNull XMaterial xMaterial = Objects.requireNonNull(xData.getMaterialData().getMaterial());
         @Nullable BlockData blockData = null;
 
         // Apply Levelled block data
