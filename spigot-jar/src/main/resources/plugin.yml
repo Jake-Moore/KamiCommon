@@ -9,5 +9,8 @@ softdepend:
   - Citizens
   - SuperVanish
   - PremiumVanish
+  - WorldEdit
+  - WorldGuard
+  - FastAsyncWorldEdit
 description: KamikazeJAM's common library for Spigot.
 api-version: 1.13
