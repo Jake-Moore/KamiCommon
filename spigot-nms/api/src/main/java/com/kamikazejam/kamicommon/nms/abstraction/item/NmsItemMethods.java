@@ -9,5 +9,5 @@ public interface NmsItemMethods {
      * @return The {@link org.bukkit.entity.Item} internal key name
      */
     @NotNull
-    String getI18NItemKey(@NotNull ItemStack item);
+    String getI18NItemName(@NotNull ItemStack item);
 }
