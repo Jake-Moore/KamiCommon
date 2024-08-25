@@ -33,15 +33,17 @@ public class ChunkSection_1_20_R3 implements NMSChunkSection_1_13 {
     @Override
     public void setType(int x, int y, int z, @NotNull Material material) {
         y += (this.yShift << 4);
+        BlockState state = CraftMagicNumbers.getBlock(material).defaultBlockState();
         if (this.chunk instanceof LevelChunk c) {
-            c.setBlockState(new BlockPos(x, y, z), CraftMagicNumbers.getBlock(material).defaultBlockState(), false, false);
+            c.setBlockState(new BlockPos(x, y, z), state, false, false);
         }else {
-            this.chunk.setBlockState(new BlockPos(x, y, z), CraftMagicNumbers.getBlock(material).defaultBlockState(), false);
+            this.chunk.setBlockState(new BlockPos(x, y, z), state, false);
         }
     }
 
     @Override
     public void setType(int x, int y, int z, @NotNull BlockData blockData) {
+        y += (this.yShift << 4);
         BlockState state = ((CraftBlockData) blockData).getState();
         if (this.chunk instanceof LevelChunk c) {
             c.setBlockState(new BlockPos(x, y, z), state, false, false);
