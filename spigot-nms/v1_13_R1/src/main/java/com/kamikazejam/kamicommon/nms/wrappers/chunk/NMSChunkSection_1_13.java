@@ -2,7 +2,6 @@ package com.kamikazejam.kamicommon.nms.wrappers.chunk;
 
 import com.kamikazejam.kamicommon.nms.abstraction.block.IBlockUtil1_13;
 import com.kamikazejam.kamicommon.util.data.XBlockData;
-import org.bukkit.Bukkit;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,6 @@ public interface NMSChunkSection_1_13 extends NMSChunkSection {
         // Create a BlockData object, which may get set if we have additional BlockData properties
         @Nullable BlockData data = IBlockUtil1_13.findBlockData(new Vector(x, y, z), xBlockData);
         if (data != null) {
-            Bukkit.getLogger().info("Setting " + data.getMaterial().name() + " at " + x + ", " + y + ", " + z);
             // If we have data from a custom property, set using that instead
             this.setType(x, y, z, data);
             return;
@@ -29,7 +27,6 @@ public interface NMSChunkSection_1_13 extends NMSChunkSection {
 
         // Use the default block data
         BlockData defData = IBlockUtil1_13.createBlockData(Objects.requireNonNull(xBlockData.getMaterialData().getMaterial()));
-        Bukkit.getLogger().info("Setting def " + defData.getMaterial().name() + " at " + x + ", " + y + ", " + z);
         this.setType(x, y, z, defData);
     }
 }
