@@ -12,5 +12,5 @@ dependencies {
 
     // WorldEdit v7 / World Guard v7
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
-    compileOnly("com.sk89q.worldedit:fawe:2.4.5")
+    compileOnly("com.sk89q.worldedit:fawe:19.11.13")
 }
