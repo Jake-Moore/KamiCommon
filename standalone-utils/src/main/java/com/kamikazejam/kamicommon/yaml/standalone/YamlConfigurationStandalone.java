@@ -9,7 +9,7 @@ import java.io.File;
 public class YamlConfigurationStandalone extends MemorySectionStandalone implements AbstractYamlConfiguration {
     private final File configFile;
     public YamlConfigurationStandalone(MappingNode node, File configFile) {
-        super(node);
+        super(node, "");
         this.configFile = configFile;
     }
 

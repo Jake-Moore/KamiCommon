@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.gui.items.slots;
 import com.kamikazejam.kamicommon.gui.KamiMenu;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,9 @@ public class StaticItemSlot implements ItemSlot {
     }
     public StaticItemSlot(int slot) {
         this.slots = Set.of(slot);
+    }
+    public StaticItemSlot(@NotNull Integer... slots) {
+        this(Arrays.asList(slots));
     }
 
     @Override

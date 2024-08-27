@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.gui.items.interfaces;
 
 import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClickPage;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +14,8 @@ public interface IMenuItem {
     IMenuItem setMenuClick(@NotNull MenuClick click);
     @NotNull
     IMenuItem setMenuClick(@NotNull MenuClickPage click);
+    @NotNull
+    IMenuItem setMenuClick(@NotNull MenuClickEvent click);
     @NotNull
     IMenuItem setAutoUpdate(@NotNull IBuilderModifier modifier, int tickInterval);
     @NotNull

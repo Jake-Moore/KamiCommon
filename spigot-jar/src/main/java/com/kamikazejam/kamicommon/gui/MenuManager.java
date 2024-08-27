@@ -32,8 +32,27 @@ public class MenuManager implements Listener {
 
         // Special Handling for clicks in the player inventory
         if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER) {
-            // For now just ignore it -> return
-            // TODO add player inventory click handling
+            // Get the player inventory slot that was clicked. This should be in range [0, 35]
+            // Where 0-8 are the hotbar slots from left to right.
+            // Then slot 9 starts at the top left of the player inventory, and goes right and down to 35.
+            int slot = e.getSlot();
+
+            // Assume standard 36 slot core inventory container
+            // Note: they have an inventory open, they should not be able to click
+            //  armor or offhand slots, if we receive that event, we should ignore it
+            if (slot < 0 || slot > 35) { return; }
+
+            // If we have a generic slot listener -> call it
+            if (menu.getPlayerInvClick() != null) {
+                menu.getPlayerInvClick().onClick(player, e.getClick(), slot);
+            }
+
+            // If we have a specific-slot listener -> call it (lower priority)
+            if (menu.getPlayerInvClicks().containsKey(slot)) {
+                menu.getPlayerInvClicks().get(slot).onClick(player, e.getClick(), slot);
+            }
+
+            // Return (we handled the player click, and are done)
             return;
         }
 
@@ -55,12 +74,11 @@ public class MenuManager implements Listener {
             if (click == null) { continue; }
 
             @Nullable ItemSlot itemSlot = tickedItem.getItemSlot();
-            if (itemSlot == null) { continue; }
+            if (itemSlot == null || !itemSlot.get(menu).contains(e.getSlot())) { continue; }
 
             // We use the cached copy from when it was added to the inventory
             // Since it may change through its lifecycle
-            boolean sameItems = compareItemStacks(current, tickedItem.getLastItem());
-            if (sameItems && itemSlot.get(menu).contains(e.getSlot())) {
+            if (compareItemStacks(current, tickedItem.getLastItem())) {
                 click.process(player, e, page);
                 return;
             }
@@ -75,6 +93,17 @@ public class MenuManager implements Listener {
             return;
         }
 
+        // Remove this menu from the auto update list
+        // We do this before consumers, because some consumers may re-open the menu
+        MenuTask.getAutoUpdateInventories().remove(menu);
+
+        // Trigger the Pre-Close Consumer
+        @Nullable Consumer<InventoryCloseEvent> preClose = menu.getPreCloseConsumer();
+        if (preClose != null) {
+            preClose.accept(e);
+        }
+
+        // Trigger the Post-Close Consumer
         @Nullable Consumer<Player> close = menu.getPostCloseConsumer();
         if (close != null) {
             if (menu.getIgnoredClose().contains(p.getName())) {
@@ -83,13 +112,6 @@ public class MenuManager implements Listener {
                 Bukkit.getScheduler().runTaskLater(PluginSource.get(), () -> close.accept(p), 1);
             }
         }
-
-        @Nullable Consumer<InventoryCloseEvent> preClose = menu.getPreCloseConsumer();
-        if (preClose != null) {
-            preClose.accept(e);
-        }
-
-        MenuTask.getAutoUpdateInventories().remove(menu);
     }
 
     @EventHandler

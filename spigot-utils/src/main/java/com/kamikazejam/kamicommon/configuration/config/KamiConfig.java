@@ -45,7 +45,6 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
 
     public KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, boolean strictKeys) {
         this(plugin, file, addDefaults, null);
-        this.setStrictKeys(strictKeys);
     }
 
     public KamiConfig(@Nonnull JavaPlugin plugin, File file, Supplier<InputStream> defaultSupplier) {
@@ -61,14 +60,14 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         ensureFile();
 
         this.yamlHandler = new YamlHandler(this, plugin, file);
-        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier, this.isStrictKeys());
+        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
         save();
     }
 
     @Override
     public void reload() {
         try {
-            config = yamlHandler.loadConfig(addDefaults, defaultSupplier, this.isStrictKeys());
+            config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
             save();
         }catch (Exception e) {
             e.printStackTrace();
@@ -222,4 +221,10 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     @Override public void setItemBuilder(String key, IBuilder builder) { getYamlConfiguration().setItemBuilder(key, builder); }
     @Override public IBuilder getItemBuilder(String key) { return getYamlConfiguration().getItemBuilder(key); }
     @Override public boolean isItemStack(String key) { return getYamlConfiguration().isItemStack(key); }
+
+    @Override
+    public String getCurrentPath() {
+        // No path, this is the root config
+        return "";
+    }
 }

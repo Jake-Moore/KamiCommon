@@ -44,7 +44,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
     public abstract T newConfig(MappingNode node, File configFile);
     public abstract MemorySectionMethods<?> newMemorySection(MappingNode node);
 
-    public T loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream, boolean strictKeys) {
+    public T loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream) {
         try {
             if (!configFile.exists()) {
                 if (!configFile.getParentFile().exists()) {
@@ -62,7 +62,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
             config = newConfig((MappingNode) (YamlUtil.getYaml()).compose(reader), configFile);
 
             if (addDefaults) {
-                config = addDefaults(stream, strictKeys);
+                config = addDefaults(stream);
             }
 
             config.save();
@@ -88,7 +88,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
     }
 
     private static final DecimalFormat DF_THOUSANDS = new DecimalFormat("#,###");
-    private T addDefaults(@Nullable Supplier<InputStream> defStreamSupplier, boolean strictKeys) {
+    private T addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) {
         // Use passed arg unless it's null, then grab the IS from the plugin
         InputStream defConfigStream = getIS(defStreamSupplier);
 
@@ -104,10 +104,6 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
 
         MemorySectionMethods<?> defConfig = newMemorySection((MappingNode) (YamlUtil.getYaml()).compose(reader));
         Set<String> defKeys = defConfig.getKeys(true);
-
-        if (strictKeys) {
-            applyStrictKeys(defConfig, defKeys);
-        }
 
         boolean needsNewKeys = false;
         for (String key : defKeys) {
@@ -270,62 +266,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
         }
     }
 
-
     public record NodePair(String key, ScalarNode scalarNode, boolean terminatesInValue) { }
-
-
-    // TODO optimize this with skips (i.e. if a section is marked as exempt, we should intelligently skip all child keys)
-    //   at the loop level
-    private void applyStrictKeys(MemorySectionMethods<?> defConfig, Set<String> defKeys) {
-        // WIP - not sure if this is a good idea
-        //   Disabled for now (can't think of a good way to do this)
-
-        /*
-        Set<String> configKeys = config.getKeys(true);
-
-        // Compile the keep keys set
-        Set<String> keepKeys = new HashSet<>();
-        System.out.println("Searching Keys for @keep Comments...");
-        System.out.println(Arrays.toString(configKeys.toArray()));
-        loop1: for (String key : configKeys) {
-            // Check if this key is covered by a parent key
-            for (String k : keepKeys) {
-                if (key.startsWith(k + ".")) { continue loop1; }
-            }
-
-            @Nullable Set<String> comments1 = getBlockComments(config.getNodeTuple(key));
-            @Nullable Set<String> comments2 = getBlockComments(defConfig.getNodeTuple(key));
-            boolean exempt = isExempt(comments1, comments2);
-            if (!exempt) { continue; }
-            System.out.println("\tFound Key: " + key);
-
-            // Remove any subkeys of this one (more detailed keys covered by this one)
-            Set<String> toRemove = new HashSet<>();
-            keepKeys.forEach(k -> {
-                if (k.startsWith(key + ".")) { toRemove.add(k); }
-            });
-            keepKeys.removeAll(toRemove);
-
-            // Add this key to the keepKeys set
-            keepKeys.add(key);
-        }
-
-        System.out.println("keepKeys: " + Arrays.toString(keepKeys.toArray()));
-
-        // Check config for stale keys to remove
-        for (String key : configKeys) {
-            if (defKeys.contains(key)) { continue; }
-
-            boolean exempt = false;
-            for (String k : keepKeys) {
-                if (key.startsWith(k)) { exempt = true; break; }
-            }
-            if (exempt) { continue; }
-            System.out.println("Removing stale key: " + key);
-            config.internalPut(key, null);
-        }
-        */
-    }
 
     private @Nullable Set<String> getBlockComments(@Nullable NodeTuple tuple) {
         if (tuple == null) { return null; }

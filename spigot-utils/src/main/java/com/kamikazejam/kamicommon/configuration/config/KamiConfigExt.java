@@ -22,7 +22,6 @@ public class KamiConfigExt extends KamiConfig {
     }
     public KamiConfigExt(@NotNull JavaPlugin plugin, File file, boolean addDefaults, boolean strictKeys) {
         super(plugin, file, addDefaults);
-        this.setStrictKeys(strictKeys);
     }
     public KamiConfigExt(@NotNull JavaPlugin plugin, File file, Supplier<InputStream> defaultSupplier) {
         super(plugin, file, defaultSupplier);

@@ -79,4 +79,5 @@ public interface ConfigurationMethods<T extends ConfigurationMethods<?>> {
     void addDefault(String key, Object o);
 
     boolean isEmpty();
+    String getCurrentPath();
 }

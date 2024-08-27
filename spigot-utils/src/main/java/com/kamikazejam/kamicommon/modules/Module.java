@@ -125,11 +125,9 @@ public abstract class Module {
             @Nullable String moduleYmlPath = getPlugin().getModuleYmlPath();
             if (moduleYmlPath == null) {
                 moduleConfig = new ModuleConfig(this, getConfigName());
-                moduleConfig.setStrictKeys(true);
             }else {
                 if (!moduleYmlPath.endsWith("/")) { moduleYmlPath += "/"; }
                 moduleConfig = new ModuleConfig(this, moduleYmlPath + getConfigName());
-                moduleConfig.setStrictKeys(true);
             }
         }
         return moduleConfig;

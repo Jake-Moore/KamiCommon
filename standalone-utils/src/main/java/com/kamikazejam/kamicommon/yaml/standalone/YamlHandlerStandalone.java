@@ -44,6 +44,6 @@ public class YamlHandlerStandalone extends AbstractYamlHandler<YamlConfiguration
 
     @Override
     public MemorySectionMethods<?> newMemorySection(MappingNode node) {
-        return new MemorySectionStandalone(node);
+        return new MemorySectionStandalone(node, "");
     }
 }

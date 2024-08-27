@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon;
 
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
-import com.kamikazejam.kamicommon.command.type.RegistryType;
 import com.kamikazejam.kamicommon.integrations.PlaceholderAPIIntegration;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
 import com.kamikazejam.kamicommon.nms.provider.event.PreSpawnSpawnerAdapter;
@@ -33,8 +32,6 @@ public class SpigotUtilProvider {
         Preconditions.checkNotNull(plugin, "plugin");
         SpigotUtilProvider.plugin = plugin;
 
-        // Setup RegistryType (Types for Commands)
-        RegistryType.registerAll();
         // Setup Commands
         new KamiCommonCommandRegistration(plugin);
         // SetUp NMS Event Adapters

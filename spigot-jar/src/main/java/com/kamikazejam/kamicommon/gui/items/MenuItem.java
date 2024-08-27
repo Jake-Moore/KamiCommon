@@ -1,8 +1,10 @@
 package com.kamikazejam.kamicommon.gui.items;
 
 import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClickPage;
 import com.kamikazejam.kamicommon.gui.clicks.transform.IClickTransform;
+import com.kamikazejam.kamicommon.gui.clicks.transform.MenuClickEventTransform;
 import com.kamikazejam.kamicommon.gui.clicks.transform.MenuClickPageTransform;
 import com.kamikazejam.kamicommon.gui.clicks.transform.MenuClickTransform;
 import com.kamikazejam.kamicommon.gui.items.interfaces.IMenuItem;
@@ -39,30 +41,76 @@ public class MenuItem implements IMenuItem {
     private final @NotNull List<IBuilder> iBuilders = new ArrayList<>();
     private int builderRotateTicks = 20; // Default to 1 second
     // Allow multiple possible slots
-    private @Nullable ItemSlot itemSlot = null;
+    private @Nullable ItemSlot itemSlot;
 
+    // --------------------------------------------- //
+    //                  Constructors                 //
+    // --------------------------------------------- //
+
+    public MenuItem(@NotNull IBuilder builder, int slot) {
+        this(true, builder, slot);
+    }
     public MenuItem(boolean enabled, @NotNull IBuilder builder, int slot) {
         this.enabled = enabled;
         this.iBuilders.add(builder);
         this.itemSlot = new StaticItemSlot(slot);
     }
-    public MenuItem(boolean enabled, @NotNull IBuilder builder, List<Integer> slots) {
+    public MenuItem(@NotNull IBuilder builder, @NotNull List<Integer> slots) {
+        this(true, builder, slots);
+    }
+    public MenuItem(boolean enabled, @NotNull IBuilder builder, @NotNull List<Integer> slots) {
         this.enabled = enabled;
         this.iBuilders.add(builder);
         this.itemSlot = new StaticItemSlot(slots);
     }
-    public MenuItem(boolean enabled, @NotNull IBuilder... builders) {
+    public MenuItem(@NotNull IBuilder builder, @NotNull Integer... slots) {
+        this(true, builder, slots);
+    }
+    public MenuItem(boolean enabled, @NotNull IBuilder builder, @NotNull Integer... slots) {
+        this(enabled, builder, Arrays.asList(slots));
+    }
+    public MenuItem(int slot, @NotNull IBuilder... builders) {
+        this(true, slot, builders);
+    }
+    public MenuItem(boolean enabled, int slot, @NotNull IBuilder... builders) {
         this.enabled = enabled;
         this.iBuilders.addAll(Arrays.asList(builders));
+        this.itemSlot = new StaticItemSlot(slot);
+    }
+    public MenuItem(@NotNull List<Integer> slots, @NotNull IBuilder... builders) {
+        this(true, slots, builders);
+    }
+    public MenuItem(boolean enabled, @NotNull List<Integer> slots, @NotNull IBuilder... builders) {
+        this.enabled = enabled;
+        this.iBuilders.addAll(Arrays.asList(builders));
+        this.itemSlot = new StaticItemSlot(slots);
+    }
+    public MenuItem(@Nullable ItemSlot slot, @NotNull IBuilder... builders) {
+        this(true, slot, builders);
     }
     public MenuItem(boolean enabled, @Nullable ItemSlot slot, @NotNull IBuilder... builders) {
         this.enabled = enabled;
         this.itemSlot = slot;
         this.iBuilders.addAll(Arrays.asList(builders));
     }
-    public MenuItem(boolean enabled, @NotNull Collection<IBuilder> builders) {
+    public MenuItem(int slot, @NotNull Collection<IBuilder> builders) {
+        this(true, slot, builders);
+    }
+    public MenuItem(boolean enabled, int slot, @NotNull Collection<IBuilder> builders) {
         this.enabled = enabled;
         this.iBuilders.addAll(builders);
+        this.itemSlot = new StaticItemSlot(slot);
+    }
+    public MenuItem(@NotNull List<Integer> slots, @NotNull Collection<IBuilder> builders) {
+        this(true, slots, builders);
+    }
+    public MenuItem(boolean enabled, @NotNull List<Integer> slots, @NotNull Collection<IBuilder> builders) {
+        this.enabled = enabled;
+        this.iBuilders.addAll(builders);
+        this.itemSlot = new StaticItemSlot(slots);
+    }
+    public MenuItem(@Nullable ItemSlot slot, @NotNull Collection<IBuilder> builders) {
+        this(true, slot, builders);
     }
     public MenuItem(boolean enabled, @Nullable ItemSlot slot, @NotNull Collection<IBuilder> builders) {
         this.enabled = enabled;
@@ -94,6 +142,12 @@ public class MenuItem implements IMenuItem {
     }
 
     @Override
+    public @NotNull IMenuItem setMenuClick(@NotNull MenuClickEvent click) {
+        this.transform = new MenuClickEventTransform(click);
+        return this;
+    }
+
+    @Override
     public @NotNull IMenuItem setModifier(@Nullable IBuilderModifier modifier) {
         this.modifier = modifier;
         this.tickInterval = null;
@@ -116,7 +170,7 @@ public class MenuItem implements IMenuItem {
 
     public boolean shouldUpdateForTick(int tick) {
         // If we need to supply a new IBuilder from MenuItem, then we should update
-        if (this.getBuilderRotateTicks() > 0 && tick % this.getBuilderRotateTicks() == 0) {
+        if (this.iBuilders.size() > 1 && this.getBuilderRotateTicks() > 0 && tick % this.getBuilderRotateTicks() == 0) {
             return true;
         }
         // If our dynamic tick interval is ready, we should update

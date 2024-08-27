@@ -14,7 +14,7 @@ dependencies {
     shadow("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
 
     compileOnly(project.property("lowestSpigotDep") as String)
-    compileOnly("me.clip:placeholderapi:2.11.6") // TODO soft depend
+    compileOnly("me.clip:placeholderapi:2.11.6")
 
     // Spigot Libs (soft-depend)
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
@@ -75,7 +75,6 @@ publishing {
     }
 }
 
-// ONLY REQUIRED IF: you are using Solution 2 with the modified dependency
 tasks.register<Copy>("unpackShadow") {
     dependsOn(tasks.shadowJar)
     from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))

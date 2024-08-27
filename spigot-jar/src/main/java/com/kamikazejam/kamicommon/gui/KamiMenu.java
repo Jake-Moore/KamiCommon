@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.gui;
 
+import com.kamikazejam.kamicommon.gui.clicks.PlayerSlotClick;
 import com.kamikazejam.kamicommon.gui.items.MenuItem;
 import com.kamikazejam.kamicommon.gui.items.interfaces.IMenuItem;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
@@ -11,6 +12,7 @@ import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import io.netty.util.internal.ConcurrentSet;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,9 +28,8 @@ import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -43,6 +44,12 @@ public class KamiMenu extends MenuHolder {
     // Menu Items
     private final @Nullable PageBuilder parent;
     private final Set<MenuItem> menuItems = new ConcurrentSet<>();
+
+    // Player Menu Clicks
+    @Setter(AccessLevel.NONE)
+    private @Nullable PlayerSlotClick playerInvClick = null;
+    @Setter(AccessLevel.NONE)
+    private final Map<Integer, PlayerSlotClick> playerInvClicks = new ConcurrentHashMap<>();
 
     // Menu Callbacks
     private @Nullable Predicate<InventoryClickEvent> clickPredicate;
@@ -76,7 +83,8 @@ public class KamiMenu extends MenuHolder {
 
     @NotNull
     public InventoryView openMenu(@NotNull Player player, boolean ignoreCloseHandler) {
-        this.update(0); // Passing 0 should trigger an immediate update
+        // Passing 0 should trigger an immediate update, so that all item Modifiers can be applied
+        this.update(0);
         MenuTask.getAutoUpdateInventories().add(this);
 
         if (ignoreCloseHandler) {
@@ -151,14 +159,13 @@ public class KamiMenu extends MenuHolder {
         return menuItem;
     }
 
-
     @Override
     public void clear() {
         super.clear();
         this.menuItems.clear();
     }
 
-    public void update(int tick) {
+    protected void update(int tick) {
         int size = this.getSize();
         for (MenuItem tickedItem : this.menuItems) {
             if (!tickedItem.shouldUpdateForTick(tick)) { continue; }
@@ -180,6 +187,32 @@ public class KamiMenu extends MenuHolder {
 
 
 
+    // ------------------------------------------------------------ //
+    //                         Player Clicks                        //
+    // ------------------------------------------------------------ //
+
+    @NotNull
+    public KamiMenu setPlayerClick(int slot, @NotNull PlayerSlotClick click) {
+        this.playerInvClicks.put(slot, click);
+        return this;
+    }
+
+    /**
+     * Listen to all player inventory clicks.
+     * @param click The callback to run when a player clicks a slot in their inventory.
+     * @return
+     */
+    @NotNull
+    public KamiMenu setPlayerClick(@NotNull PlayerSlotClick click) {
+        this.playerInvClick = click;
+        return this;
+    }
+
+
+    // ------------------------------------------------------------ //
+    //                          Fill Methods                        //
+    // ------------------------------------------------------------ //
+
     @NotNull
     public ItemStack getDefaultFiller() {
         XMaterial mat = XMaterial.GRAY_STAINED_GLASS_PANE;
@@ -188,27 +221,56 @@ public class KamiMenu extends MenuHolder {
 
     @NotNull
     public KamiMenu fill() {
-        fill(getDefaultFiller());
+        this.fill(getDefaultFiller());
         return this;
     }
 
     @NotNull
-    public KamiMenu fill(@NotNull ItemStack fillerItem) {
+    public KamiMenu fill(@NotNull Integer... ignoreSlots) {
+        this.fill(getDefaultFiller(), Arrays.asList(ignoreSlots));
+        return this;
+    }
+
+    @NotNull
+    public KamiMenu fill(@NotNull List<Integer> ignoreSlots) {
+        this.fill(getDefaultFiller(), ignoreSlots);
+        return this;
+    }
+
+    @NotNull
+    public KamiMenu fill(@NotNull IBuilder filler) {
+        return fill(filler.toItemStack());
+    }
+
+    @NotNull
+    public KamiMenu fill(@NotNull IBuilder filler, @NotNull Integer... ignoreSlots) {
+        return fill(filler.toItemStack(), Arrays.asList(ignoreSlots));
+    }
+
+    @NotNull
+    public KamiMenu fill(@NotNull IBuilder filler, @NotNull List<Integer> ignoreSlots) {
+        return fill(filler.toItemStack(), ignoreSlots);
+    }
+
+    @NotNull
+    public KamiMenu fill(@NotNull ItemStack filler) {
+        return fill(filler, List.of());
+    }
+
+    @NotNull
+    public KamiMenu fill(@NotNull ItemStack filler, @NotNull Integer... ignoreSlots) {
+        return fill(filler, Arrays.asList(ignoreSlots));
+    }
+
+    @NotNull
+    public KamiMenu fill(@NotNull ItemStack filler, @NotNull List<Integer> ignoreSlots) {
         int empty = getInventory().firstEmpty();
         while (empty != -1) {
-            this.setItem(empty, fillerItem);
+            if (!ignoreSlots.contains(empty)) {
+                this.setItem(empty, filler);
+            }
             empty = getInventory().firstEmpty();
         }
         return this;
-    }
-
-    @NotNull
-    public KamiMenu fill(@Nullable IBuilder iBuilder) {
-        if (iBuilder == null) {
-            try { throw new Exception("iBuilder is null in fill(iBuilder). Using default filler!");
-            }catch (Throwable t) { t.printStackTrace(); }
-            return fill();
-        }
-        return fill(iBuilder.toItemStack());
     }
 }

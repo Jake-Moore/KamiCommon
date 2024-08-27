@@ -5,6 +5,7 @@ import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.snakeyaml.nodes.MappingNode;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -14,17 +15,21 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @SuppressWarnings("unused")
 public class MemorySection extends MemorySectionMethods<MemorySection> implements ConfigurationSection {
-    public MemorySection(@Nullable MappingNode node) {
+    @Getter(AccessLevel.NONE)
+    private final @NotNull String fullPath;
+    public MemorySection(@Nullable MappingNode node, @NotNull String fullPath) {
         super(node);
+        this.fullPath = fullPath;
     }
 
     @Override
     public @NotNull MemorySection getConfigurationSection(String key) {
         Object o = get(key);
+        String newPath = (this.fullPath.isEmpty()) ? key : this.fullPath + "." + key;
         if (o instanceof MappingNode m) {
-            return new MemorySection(m);
+            return new MemorySection(m, newPath);
         }
-        return new MemorySection(AbstractYamlHandler.createNewMappingNode());
+        return new MemorySection(AbstractYamlHandler.createNewMappingNode(), newPath);
     }
 
     @Override
@@ -115,5 +120,10 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         if (!contains(key)) { return false; }
         ItemStack stack = getItemStack(key);
         return stack != null;
+    }
+
+    @Override
+    public String getCurrentPath() {
+        return this.fullPath;
     }
 }

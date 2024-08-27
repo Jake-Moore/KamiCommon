@@ -68,27 +68,43 @@ public class MenuItemLoader {
     @Nullable
     private static ItemSlot loadSlots(ConfigurationSection section) {
 
-        // Load Static Slots (if found)
+        // Try to load a relative slot (high priority).
+        // If set to -1, ignore this key
+        if (section.isInt("slotInLastRow")) {
+            int slotInLast = section.getInt("slotInLastRow");
+            if (slotInLast >= 0) {
+                return new LastRowItemSlot(slotInLast);
+            }
+        }
+
+        // Load Static Slots (if found).
+        // If a slot is -1, ignore it
         List<Integer> slots = new ArrayList<>();
         if (section.isInt("slot")) {
-            slots.add(section.getInt("slot"));
+            int s = section.getInt("slot");
+            if (s >= 0) {
+                slots.add(s);
+            }
         }else if (section.isList("slot")) {
-            slots.addAll(section.getIntegerList("slot"));
+            List<Integer> s = section.getIntegerList("slot");
+            s.forEach(slot -> {
+                if (slot < 0) { return; }
+                slots.add(slot);
+            });
         }else if (section.isList("slots")) {
-            slots.addAll(section.getIntegerList("slots"));
+            List<Integer> s = section.getIntegerList("slots");
+            s.forEach(slot -> {
+                if (slot < 0) { return; }
+                slots.add(slot);
+            });
         }else if (section.isInt("slots")) {
-            slots.add(section.getInt("slots"));
-        }
-        if (!slots.isEmpty()) {
-            return new StaticItemSlot(slots);
-        }
-
-        // Try to load a relative slot
-        if (section.isInt("slotInLastRow")) {
-            return new LastRowItemSlot(section.getInt("slotInLastRow"));
+            int s = section.getInt("slots");
+            if (s >= 0) {
+                slots.add(s);
+            }
         }
 
-        // No slot data found
-        return null;
+        // Return null if we didn't find any valid slots
+        return (slots.isEmpty()) ? null : new StaticItemSlot(slots);
     }
 }

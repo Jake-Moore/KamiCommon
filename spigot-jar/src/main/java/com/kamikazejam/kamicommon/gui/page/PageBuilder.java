@@ -112,6 +112,11 @@ public abstract class PageBuilder {
         return rows;
     }
 
+    @NotNull
+    public KamiMenu createBlankMenu(@NotNull String title, int page) {
+        return new KamiMenu(title, getRows(page), this);
+    }
+
     @Nullable
     public IBuilder getFillerItem() {
         return null;
@@ -132,7 +137,7 @@ public abstract class PageBuilder {
     // page 0 indexed
     public KamiMenu createMenu(Player player, int page) {
         String title = getMenuName(page + 1, this.items.totalPages());
-        this.menu = new KamiMenu(title, getRows(page), this);
+        this.menu = this.createBlankMenu(title, page);
 
         // Add previous icon
         if (page > 0) {

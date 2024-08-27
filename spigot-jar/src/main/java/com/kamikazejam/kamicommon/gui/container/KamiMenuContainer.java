@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.gui.container;
 import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.gui.KamiMenu;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClickPage;
 import com.kamikazejam.kamicommon.gui.items.MenuItem;
 import com.kamikazejam.kamicommon.gui.items.interfaces.IBuilderModifier;
@@ -14,19 +15,19 @@ import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtilP;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
-
-// TODO we need to be able to load inventory type as opposed to just rows
 
 @Getter @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -38,17 +39,27 @@ public class KamiMenuContainer {
     }
 
     private String title;
-    private int rows; // Accepted Values: [-1, 1, 2, 3, 4, 5, 6], or [-1, 4, 5, 6] for paginated menus
+    private @Nullable Integer rows;         // Accepted Values: [-1, 1, 2, 3, 4, 5, 6], or [-1, 4, 5, 6] for paginated menus
+    private @Nullable InventoryType type;
     @Nullable private MenuItem fillerItem = null;
     @Setter
     private boolean ordered = false;
 
+    @Getter(AccessLevel.NONE)
     private final Map<String, MenuItem> menuItemMap = new HashMap<>();
+    @Getter(AccessLevel.NONE)
     private final Map<String, IndexedItem> pagedItemMap = new HashMap<>();
 
     public KamiMenuContainer(@NotNull String title, int rows) {
         this.title = title;
         this.rows = rows;
+        this.type = null;
+    }
+
+    public KamiMenuContainer(@NotNull String title, @NotNull InventoryType type) {
+        this.title = title;
+        this.type = type;
+        this.rows = null;
     }
 
     // For calls like new KamiMenuContainer(config, "menus.menu1")
@@ -59,8 +70,9 @@ public class KamiMenuContainer {
     // For calls like new KamiMenuContainer(config.getConfigurationSection("menus.menu1"))
     public KamiMenuContainer(@NotNull ConfigurationSection section) {
         title = section.getString("title", section.getString("name", " "));
-        rows = section.getInt("rows", -1);
-        if (rows < -1 || rows == 0 || rows > 6) { throw new IllegalArgumentException("Invalid rows: " + rows); }
+
+        // Load Inventory Type/Size
+        this.loadInventorySize(section);
 
         // Load the Filler item
         if (section.isConfigurationSection("filler")) {
@@ -88,6 +100,49 @@ public class KamiMenuContainer {
             MenuItem item = MenuItemLoader.load(pagedIcons.getConfigurationSection(key));
             pagedItemMap.put(key, new IndexedItem(item, pagedItemMap.size()));
         }
+    }
+
+    private void loadInventorySize(@NotNull ConfigurationSection section) {
+        // Load Type with higher priority (if successful -> return)
+        if (section.isString("type")) {
+            String s = section.getString("type");
+            try {
+                type = InventoryType.valueOf(s);
+                rows = null;
+                return;
+            }catch (IllegalArgumentException ignored) {}
+        }
+
+        // Try to load rows
+        if (section.isInt("rows")) {
+            int r = section.getInt("rows");
+            if (r > 0 && r < 7) {
+                rows = r;
+                type = null;
+                return;
+            }
+        }
+        if (section.isInt("row")) {
+            int r = section.getInt("row");
+            if (r > 0 && r < 7) {
+                rows = r;
+                type = null;
+                return;
+            }
+        }
+
+        // Give them more details about their configuration errors
+        if (section.isString("type")) {
+            PluginSource.get().getLogger().warning("Invalid inventory type in config: '" + section.getString("type") + "' at " + (section.getCurrentPath() + ".type"));
+        }
+        if (section.isInt("rows")) {
+            PluginSource.get().getLogger().warning("Invalid inventory rows in config: '" + section.getInt("rows") + "' at " + (section.getCurrentPath() + ".rows"));
+        }
+        if (section.isInt("row")) {
+            PluginSource.get().getLogger().warning("Invalid inventory row in config: '" + section.getInt("row") + "' at " + (section.getCurrentPath() + ".row"));
+        }
+
+        throw new IllegalStateException("Invalid inventory size (rows or type) in config at " + section.getCurrentPath());
     }
 
     @NotNull
@@ -125,6 +180,10 @@ public class KamiMenuContainer {
         return modifyItem(key, item -> item.setMenuClick(click));
     }
     @NotNull
+    public KamiMenuContainer setMenuClick(@NotNull String key, @NotNull MenuClickEvent click) {
+        return modifyItem(key, item -> item.setMenuClick(click));
+    }
+    @NotNull
     public KamiMenuContainer setModifier(@NotNull String key, @NotNull IBuilderModifier modifier) {
         return modifyItem(key, item -> item.setModifier(modifier));
     }
@@ -152,9 +211,14 @@ public class KamiMenuContainer {
             public String getMenuName() { return StringUtilP.justP(player, title); }
 
             @Override
-            public int getFixedSize() {
-                // if rows=-1 then it will try to adapt to the number of items
-                return rows;
+            public @NotNull KamiMenu createBlankMenu(@NotNull String title, int page) {
+                if (type != null) {
+                    return new KamiMenu(title, type, this);
+                }else if (rows != null) {
+                    return new KamiMenu(title, rows, this);
+                }
+                // Should not happen, our constructor doesn't allow it
+                throw new IllegalStateException("Invalid rows or type");
             }
 
             @Override
@@ -209,6 +273,22 @@ public class KamiMenuContainer {
     }
     public boolean isValidPagedIcon(@NotNull String key) {
         return pagedItemMap.containsKey(key);
+    }
+
+    @NotNull
+    public Set<String> getAllIconKeys() {
+        Set<String> keys = new HashSet<>();
+        keys.addAll(menuItemMap.keySet());
+        keys.addAll(pagedItemMap.keySet());
+        return keys;
+    }
+    @NotNull
+    public Set<String> getIconKeys() {
+        return menuItemMap.keySet();
+    }
+    @NotNull
+    public Set<String> getPagedIconKeys() {
+        return pagedItemMap.keySet();
     }
 
     @NotNull
@@ -311,6 +391,14 @@ public class KamiMenuContainer {
     @NotNull
     public KamiMenuContainer setRows(int rows) {
         this.rows = rows;
+        this.type = null;
+        return this;
+    }
+
+    @NotNull
+    public KamiMenuContainer setType(@Nullable InventoryType type) {
+        this.type = type;
+        this.rows = null;
         return this;
     }
 

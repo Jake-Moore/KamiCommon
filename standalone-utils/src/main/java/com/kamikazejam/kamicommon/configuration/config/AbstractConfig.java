@@ -19,7 +19,6 @@ import java.io.File;
 @SuppressWarnings("unused")
 public abstract class AbstractConfig<T extends AbstractYamlConfiguration> {
     private boolean defaultCommentsOverwrite = true;
-    private boolean strictKeys = false;
 
     /**
      * @return The file associated with this config
