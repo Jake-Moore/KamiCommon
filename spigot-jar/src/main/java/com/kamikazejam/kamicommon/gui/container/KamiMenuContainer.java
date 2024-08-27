@@ -222,7 +222,7 @@ public class KamiMenuContainer {
             }
 
             @Override
-            public Collection<MenuItem> getItems() {
+            public @NotNull Collection<MenuItem> getItems() {
                 if (!ordered) {
                     return pagedItemMap.values().stream().map(IndexedItem::getItem).toList();
                 }
