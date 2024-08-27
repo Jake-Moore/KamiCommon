@@ -58,7 +58,6 @@ publishing {
 }
 
 
-// not required, but useful to see jar contents
 tasks.register<Copy>("unpackShadow") {
     dependsOn(tasks.shadowJar)
     from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))

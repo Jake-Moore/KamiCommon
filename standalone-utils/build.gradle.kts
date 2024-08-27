@@ -52,7 +52,6 @@ publishing {
     }
 }
 
-// ONLY REQUIRED IF: you are using Solution 2 with the modified dependency
 tasks.register<Copy>("unpackShadow") {
     dependsOn(tasks.shadowJar)
     from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))

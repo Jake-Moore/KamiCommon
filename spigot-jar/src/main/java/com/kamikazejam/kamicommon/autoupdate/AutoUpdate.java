@@ -32,12 +32,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-//TODO remove any old .off files when it starts up
 /**
  * A utility class, primarily for KamikazeJAM_YT's plugins, allowing them to be automatically updated
  * (By streaming update files into the Bukkit "update-folder", normally the `/plugins/update` folder)
  * When a file is added here, it will replace the file with the same name in /plugins automatically next boot.
- * This utility also renames the current jar to .off and places the new jar into /plugins if the names do not match.
+ * This utility also tries to rename the current jar to .old while placing the new jar into /plugins if the names do not match.
  *   This allows linux machines to update jars that have different versions seamlessly
  */
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
@@ -246,8 +245,8 @@ public class AutoUpdate implements Listener {
                     return false;
                 }
 
-                //Rename the jar file to .off so it won't load next time
-                File offFile = new File(file.getParent() + File.separator + file.getName() + ".off");
+                //Rename the jar file to .old so it won't load next time
+                File offFile = new File(file.getParent() + File.separator + file.getName() + ".old");
                 Files.move(Paths.get(file.getAbsolutePath()), Paths.get(offFile.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
 
                 //Upload the new file which will work after next restart

@@ -43,7 +43,7 @@ public abstract class KamiCommonEvent extends Event implements Runnable, Cancell
     // -------------------------------------------- //
 
     public KamiCommonEvent() {
-        super(!Bukkit.isPrimaryThread()); // TODO - Is this incredibly dangerous?
+        super(!Bukkit.isPrimaryThread());
     }
 
     public KamiCommonEvent(boolean isAsync) {

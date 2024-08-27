@@ -15,4 +15,6 @@ public interface ConfigurationSection extends ConfigurationMethods<Configuration
     IBuilder getItemBuilder(String key);
 
     boolean isItemStack(String key);
+
+    String getCurrentPath();
 }

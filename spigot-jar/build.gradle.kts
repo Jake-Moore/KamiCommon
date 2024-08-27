@@ -106,10 +106,9 @@ tasks.processResources {
 }
 
 
-// not required, but useful to see what's in the jar
-tasks.register<Copy>("unpackShadow") {
-    dependsOn(tasks.shadowJar)
-    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
-    into(layout.buildDirectory.dir("unpacked-shadow"))
-}
-tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))
+//tasks.register<Copy>("unpackShadow") {
+//    dependsOn(tasks.shadowJar)
+//    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
+//    into(layout.buildDirectory.dir("unpacked-shadow"))
+//}
+//tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

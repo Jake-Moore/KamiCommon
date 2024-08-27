@@ -38,11 +38,6 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
         this(file, addDefaults, null);
     }
 
-    public StandaloneConfig(File file, boolean addDefaults, boolean strictKeys) {
-        this(file, addDefaults, null);
-        this.setStrictKeys(strictKeys);
-    }
-
     public StandaloneConfig(File file, Supplier<InputStream> defaultStream) {
         this(file, true, defaultStream);
     }
@@ -55,14 +50,14 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
         ensureFile();
 
         this.yamlHandler = new YamlHandlerStandalone(this, file);
-        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier, this.isStrictKeys());
+        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
         save();
     }
 
     @Override
     public void reload() {
         try {
-            config = yamlHandler.loadConfig(addDefaults, defaultSupplier, this.isStrictKeys());
+            config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
             save();
         }catch (Exception e) {
             e.printStackTrace();
@@ -210,4 +205,10 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
     @Override public void addDefault(String key, Object o) { getYamlConfiguration().addDefault(key, o); }
     @Override
     public boolean isEmpty() { return getYamlConfiguration().isEmpty(); }
+
+    @Override
+    public String getCurrentPath() {
+        // No current path, this is root config
+        return "";
+    }
 }

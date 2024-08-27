@@ -26,11 +26,11 @@ public class CmdOpenGUI extends KamiCommand {
         Player player = (Player) sender;
         String guiKey = readArg();
         KamiMenuContainer menu = new KamiMenuContainer(PluginSource.getKamiConfig(), guiKey);
-        for (String key : menu.getMenuItemMap().keySet()) {
+        for (String key : menu.getIconKeys()) {
             menu.setMenuClick(key, (p, c) ->
                     p.sendMessage(StringUtil.t("&7Menu Item Click (&f" + c.name() + "&7) on &f" + key)));
         }
-        for (String key : menu.getPagedItemMap().keySet()) {
+        for (String key : menu.getPagedIconKeys()) {
             menu.setMenuClick(key, (p, c) ->
                     p.sendMessage(StringUtil.t("&7Page Item Click (&f" + c.name() + "&7) on &f" + key)));
         }
