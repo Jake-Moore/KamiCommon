@@ -83,8 +83,8 @@ public class KamiMenu extends MenuHolder {
 
     @NotNull
     public InventoryView openMenu(@NotNull Player player, boolean ignoreCloseHandler) {
-        // Passing 0 should trigger an immediate update, so that all item Modifiers can be applied
-        this.update(0);
+        // Place all items into the inventory
+        this.placeItems();
         MenuTask.getAutoUpdateInventories().add(this);
 
         if (ignoreCloseHandler) {
@@ -166,9 +166,16 @@ public class KamiMenu extends MenuHolder {
     }
 
     protected void update(int tick) {
+        this.placeItems((m) -> m.shouldUpdateForTick(tick));
+    }
+    public void placeItems() {
+        this.placeItems(null);
+    }
+
+    public void placeItems(@Nullable Predicate<MenuItem> filter) {
         int size = this.getSize();
         for (MenuItem tickedItem : this.menuItems) {
-            if (!tickedItem.shouldUpdateForTick(tick)) { continue; }
+            if (filter != null && !filter.test(tickedItem)) { continue; }
             @Nullable ItemSlot itemSlot = tickedItem.getItemSlot();
             if (itemSlot == null) { continue; }
 
@@ -191,6 +198,10 @@ public class KamiMenu extends MenuHolder {
     //                         Player Clicks                        //
     // ------------------------------------------------------------ //
 
+    /**
+     * Listen to a player inventory click at a specific slot.
+     * @param slot The player inventory slot to listen to.
+     */
     @NotNull
     public KamiMenu setPlayerClick(int slot, @NotNull PlayerSlotClick click) {
         this.playerInvClicks.put(slot, click);
@@ -200,7 +211,6 @@ public class KamiMenu extends MenuHolder {
     /**
      * Listen to all player inventory clicks.
      * @param click The callback to run when a player clicks a slot in their inventory.
-     * @return
      */
     @NotNull
     public KamiMenu setPlayerClick(@NotNull PlayerSlotClick click) {
