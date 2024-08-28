@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.nms.wrappers.chunk;
 
+import com.kamikazejam.kamicommon.nms.wrappers.chunk.impl.NMSChunkDef;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -8,7 +9,7 @@ import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class Chunk_1_20_R2 implements NMSChunk {
+public class Chunk_1_20_R2 implements NMSChunkDef {
     private final @NotNull ChunkProvider_1_20_R2 provider;
     private final @NotNull ChunkAccess chunk;
     public Chunk_1_20_R2(@NotNull ChunkProvider_1_20_R2 provider, @NotNull ChunkAccess chunk) {
@@ -49,5 +50,15 @@ public class Chunk_1_20_R2 implements NMSChunk {
         }else {
             throw new IllegalArgumentException("Chunk is not an instance of LevelChunk");
         }
+    }
+
+    @Override
+    public int getX() {
+        return this.chunk.getPos().x;
+    }
+
+    @Override
+    public int getZ() {
+        return this.chunk.getPos().z;
     }
 }

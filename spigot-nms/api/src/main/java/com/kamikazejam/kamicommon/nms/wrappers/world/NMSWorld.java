@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public interface NMSWorld extends NMSObject {
     @NotNull
     World getBukkitWorld();

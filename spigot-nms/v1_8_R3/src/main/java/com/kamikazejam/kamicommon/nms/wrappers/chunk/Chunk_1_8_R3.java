@@ -1,17 +1,21 @@
 package com.kamikazejam.kamicommon.nms.wrappers.chunk;
 
+import com.kamikazejam.kamicommon.nms.wrappers.chunk.impl.NMSChunkDef;
 import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.Chunk;
 import net.minecraft.server.v1_8_R3.ChunkSection;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
+import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.util.LongHash;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 
-public class Chunk_1_8_R3 implements NMSChunk {
+public class Chunk_1_8_R3 implements NMSChunkDef {
     private final @NotNull ChunkProvider_1_8_R3 provider;
     private final @NotNull Chunk chunk;
     private @Nullable Constructor<ChunkSection> constructor; // Alternate ChunkSection constructor
@@ -64,5 +68,25 @@ public class Chunk_1_8_R3 implements NMSChunk {
     public void sendUpdatePacket(@NotNull Player player) {
         PacketPlayOutMapChunk packet = new PacketPlayOutMapChunk(this.chunk, true, '\uffff');
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    @Override
+    public int getX() {
+        return this.chunk.locX;
+    }
+
+    @Override
+    public int getZ() {
+        return this.chunk.locZ;
+    }
+
+    @Override
+    public void saveAndRefresh(boolean withUpdatePackets) {
+        // Do regular save and refresh
+        this.saveAndRefreshI(withUpdatePackets);
+
+        // Re-cache the chunk, which fixes a race condition if the chunk was currently in use
+        World world = this.getNMSChunkProvider().getNMSWorld().getBukkitWorld();
+        ((CraftWorld) world).getHandle().chunkProviderServer.chunks.put(LongHash.toLong(chunk.locX, chunk.locZ), chunk);
     }
 }
