@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.nms.wrappers.chunk;
 
+import com.kamikazejam.kamicommon.nms.wrappers.chunk.impl.NMSChunkDef;
 import net.minecraft.server.v1_9_R1.Chunk;
 import net.minecraft.server.v1_9_R1.ChunkSection;
 import net.minecraft.server.v1_9_R1.PacketPlayOutMapChunk;
@@ -7,7 +8,7 @@ import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class Chunk_1_9_R1 implements NMSChunk {
+public class Chunk_1_9_R1 implements NMSChunkDef {
     private final @NotNull ChunkProvider_1_9_R1 provider;
     private final @NotNull Chunk chunk;
     public Chunk_1_9_R1(@NotNull ChunkProvider_1_9_R1 provider, @NotNull Chunk chunk) {
@@ -48,5 +49,15 @@ public class Chunk_1_9_R1 implements NMSChunk {
     public void sendUpdatePacket(@NotNull Player player) {
         PacketPlayOutMapChunk packet = new PacketPlayOutMapChunk(this.chunk, true, '\uffff');
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    @Override
+    public int getX() {
+        return this.chunk.locX;
+    }
+
+    @Override
+    public int getZ() {
+        return this.chunk.locZ;
     }
 }

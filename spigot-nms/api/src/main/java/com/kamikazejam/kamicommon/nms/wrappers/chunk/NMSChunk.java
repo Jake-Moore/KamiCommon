@@ -15,4 +15,10 @@ public interface NMSChunk extends NMSObject {
     void clearTileEntities();
 
     void sendUpdatePacket(@NotNull Player player);
+
+    int getX();
+    int getZ();
+
+    void saveAndRefresh(boolean withUpdatePackets);
+
 }

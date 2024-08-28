@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.nms.wrappers.chunk;
 
+import com.kamikazejam.kamicommon.nms.wrappers.chunk.impl.NMSChunkDef;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -7,7 +8,7 @@ import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class Chunk_1_19_R2 implements NMSChunk {
+public class Chunk_1_19_R2 implements NMSChunkDef {
     private final @NotNull ChunkProvider_1_19_R2 provider;
     private final @NotNull LevelChunk chunk;
     public Chunk_1_19_R2(@NotNull ChunkProvider_1_19_R2 provider, @NotNull LevelChunk chunk) {
@@ -44,5 +45,15 @@ public class Chunk_1_19_R2 implements NMSChunk {
     public void sendUpdatePacket(@NotNull Player player) {
         Packet<?> packet = new ClientboundLevelChunkWithLightPacket(this.chunk, this.chunk.getLevel().getLightEngine(), null, null, true, true);
         ((CraftPlayer) player).getHandle().connection.send(packet);
+    }
+
+    @Override
+    public int getX() {
+        return this.chunk.getPos().x;
+    }
+
+    @Override
+    public int getZ() {
+        return this.chunk.getPos().z;
     }
 }
