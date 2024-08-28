@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.nms.wrappers.world;
 
+import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
 import com.kamikazejam.kamicommon.nms.wrappers.NMSObject;
 import com.kamikazejam.kamicommon.nms.wrappers.chunk.NMSChunkProvider;
 import org.bukkit.Location;
@@ -21,4 +22,8 @@ public interface NMSWorld extends NMSObject {
 
     @NotNull
     <T extends org.bukkit.entity.Entity> T spawnEntity(@NotNull Location loc, @NotNull Class<T> clazz, @NotNull CreatureSpawnEvent.SpawnReason reason);
+
+    // Internal API method
+    @NotNull
+    AbstractBlockUtil getBlockUtil();
 }

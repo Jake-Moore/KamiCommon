@@ -4,7 +4,6 @@ import com.kamikazejam.kamicommon.nms.wrappers.world.NMSWorld;
 import com.kamikazejam.kamicommon.nms.wrappers.world.NMSWorld_1_9_R2;
 import net.minecraft.server.v1_9_R2.Chunk;
 import net.minecraft.server.v1_9_R2.ChunkProviderServer;
-import org.bukkit.craftbukkit.v1_9_R2.CraftChunk;
 import org.jetbrains.annotations.NotNull;
 
 public class ChunkProvider_1_9_R2 implements NMSChunkProvider {
@@ -26,17 +25,12 @@ public class ChunkProvider_1_9_R2 implements NMSChunkProvider {
     }
 
     @Override
-    public @NotNull NMSChunk getOrCreateChunk(int x, int z) {
-        return new Chunk_1_9_R2(this, this.handle.getChunkAt(x, z));
-    }
-
-    @Override
     public void saveChunk(NMSChunk chunk) {
         this.handle.saveChunk((Chunk) chunk.getHandle());
     }
 
     @Override
     public @NotNull NMSChunk wrap(org.bukkit.@NotNull Chunk chunk) {
-        return new Chunk_1_9_R2(this, ((CraftChunk) chunk).getHandle());
+        return new Chunk_1_9_R2(this, chunk);
     }
 }
