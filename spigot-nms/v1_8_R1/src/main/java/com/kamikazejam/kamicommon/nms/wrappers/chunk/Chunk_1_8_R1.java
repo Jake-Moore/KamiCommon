@@ -5,6 +5,7 @@ import net.minecraft.server.v1_8_R1.Chunk;
 import net.minecraft.server.v1_8_R1.ChunkSection;
 import net.minecraft.server.v1_8_R1.PacketPlayOutMapChunk;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_8_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R1.util.LongHash;
@@ -13,15 +14,22 @@ import org.jetbrains.annotations.NotNull;
 
 public class Chunk_1_8_R1 implements NMSChunkDef {
     private final @NotNull ChunkProvider_1_8_R1 provider;
+    private final @NotNull org.bukkit.Chunk bukkitChunk;
     private final @NotNull Chunk chunk;
-    public Chunk_1_8_R1(@NotNull ChunkProvider_1_8_R1 provider, @NotNull Chunk chunk) {
+    public Chunk_1_8_R1(@NotNull ChunkProvider_1_8_R1 provider, @NotNull org.bukkit.Chunk bukkitChunk) {
         this.provider = provider;
-        this.chunk = chunk;
+        this.bukkitChunk = bukkitChunk;
+        this.chunk = ((CraftChunk) bukkitChunk).getHandle();
     }
 
     @Override
     public @NotNull NMSChunkProvider getNMSChunkProvider() {
         return this.provider;
+    }
+
+    @Override
+    public @NotNull org.bukkit.Chunk getBukkitChunk() {
+        return bukkitChunk;
     }
 
     @Override

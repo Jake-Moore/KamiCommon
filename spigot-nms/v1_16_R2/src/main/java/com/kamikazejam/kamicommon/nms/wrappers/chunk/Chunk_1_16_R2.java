@@ -4,21 +4,29 @@ import com.kamikazejam.kamicommon.nms.wrappers.chunk.impl.NMSChunkDef;
 import net.minecraft.server.v1_16_R2.Chunk;
 import net.minecraft.server.v1_16_R2.ChunkSection;
 import net.minecraft.server.v1_16_R2.PacketPlayOutMapChunk;
+import org.bukkit.craftbukkit.v1_16_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class Chunk_1_16_R2 implements NMSChunkDef {
     private final @NotNull ChunkProvider_1_16_R2 provider;
+    private final @NotNull org.bukkit.Chunk bukkitChunk;
     private final @NotNull Chunk chunk;
-    public Chunk_1_16_R2(@NotNull ChunkProvider_1_16_R2 provider, @NotNull Chunk chunk) {
+    public Chunk_1_16_R2(@NotNull ChunkProvider_1_16_R2 provider, @NotNull org.bukkit.Chunk bukkitChunk) {
         this.provider = provider;
-        this.chunk = chunk;
+        this.bukkitChunk = bukkitChunk;
+        this.chunk = ((CraftChunk) bukkitChunk).getHandle();
     }
 
     @Override
     public @NotNull NMSChunkProvider getNMSChunkProvider() {
         return this.provider;
+    }
+
+    @Override
+    public @NotNull org.bukkit.Chunk getBukkitChunk() {
+        return bukkitChunk;
     }
 
     @Override

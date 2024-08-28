@@ -18,9 +18,6 @@ public interface NMSChunkProvider extends NMSObject {
         // Do nothing (most versions can't change this)
     }
 
-    @NotNull
-    NMSChunk getOrCreateChunk(int x, int z);
-
     void saveChunk(@NotNull NMSChunk chunk);
 
     @NotNull

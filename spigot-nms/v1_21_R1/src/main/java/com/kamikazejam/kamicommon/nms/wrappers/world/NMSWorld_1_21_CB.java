@@ -1,5 +1,7 @@
 package com.kamikazejam.kamicommon.nms.wrappers.world;
 
+import com.kamikazejam.kamicommon.nms.abstraction.block.AbstractBlockUtil;
+import com.kamikazejam.kamicommon.nms.provider.Provider;
 import com.kamikazejam.kamicommon.nms.wrappers.chunk.ChunkProvider_1_21_CB;
 import com.kamikazejam.kamicommon.nms.wrappers.chunk.NMSChunkProvider;
 import lombok.Getter;
@@ -20,15 +22,22 @@ public class NMSWorld_1_21_CB implements NMSWorld {
     private final @NotNull World bukkitWorld;
     private final @NotNull ServerLevel serverLevel;
     private final @NotNull CraftWorld craftWorld;
-    public NMSWorld_1_21_CB(@NotNull World world) {
+    private final @NotNull Provider<AbstractBlockUtil> provider;
+    public NMSWorld_1_21_CB(@NotNull World world, @NotNull Provider<AbstractBlockUtil> provider) {
         this.bukkitWorld = world;
         this.craftWorld = (CraftWorld) world;
         this.serverLevel = this.craftWorld.getHandle();
+        this.provider = provider;
     }
 
     @Override
     public @NotNull Object getHandle() {
         return this.serverLevel;
+    }
+
+    @Override
+    public @NotNull AbstractBlockUtil getBlockUtil() {
+        return this.provider.get();
     }
 
     @Override
