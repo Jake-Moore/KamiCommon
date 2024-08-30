@@ -60,7 +60,7 @@ public class CmdOpenGUI extends KamiCommand {
                     p.sendMessage(StringUtil.t("&7Paged Item Click (&f" + c.name() + "&7) on &f" + id))
             );
         }
-        paged.applyToParent(0).fill().openMenu(player);
+        paged.applyToParent(0).openMenu(player);
     }
 
     private void openPaged2(@NotNull Player player) {
@@ -77,6 +77,6 @@ public class CmdOpenGUI extends KamiCommand {
                     p.sendMessage(StringUtil.t("&7Paged Item Click (&f" + c.name() + "&7) on &f" + id))
             );
         }
-        paged.applyToParent(0).fill().openMenu(player);
+        paged.applyToParent(0).openMenu(player);
     }
 }

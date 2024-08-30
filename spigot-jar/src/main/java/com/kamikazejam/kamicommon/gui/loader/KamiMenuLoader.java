@@ -29,7 +29,7 @@ public class KamiMenuLoader {
 
         // Load Filler Item
         if (section.isConfigurationSection("filler")) {
-            menu.fill(MenuItemLoader.load(section.getConfigurationSection("filler")));
+            menu.setFillerItem(MenuItemLoader.load(section.getConfigurationSection("filler")));
         }
 
         // Load Icons
