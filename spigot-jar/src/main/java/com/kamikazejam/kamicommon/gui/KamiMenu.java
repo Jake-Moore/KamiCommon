@@ -63,7 +63,7 @@ public class KamiMenu extends MenuHolder {
     private final Set<UUID> ignoredClose = new HashSet<>(); // Set of Player UUID to ignore calling the close handler for
     private boolean allowItemPickup;
     // Filler is a MenuItem so that it can have the same features as other items (rotating materials, clicks, etc)
-    private @Nullable MenuItem fillerItem = new MenuItem(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS).setName(" "), -1);
+    private @Nullable MenuItem fillerItem = new MenuItem(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" "), -1);
     private final Set<Integer> excludedFillSlots = new HashSet<>();
 
     public KamiMenu(@NotNull String name, int rows) {
