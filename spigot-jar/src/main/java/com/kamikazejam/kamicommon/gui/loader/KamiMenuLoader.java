@@ -28,7 +28,9 @@ public class KamiMenuLoader {
         KamiMenu menu = new KamiMenu(title, MenuSizeLoader.load(section));
 
         // Load Filler Item
-        menu.fill(MenuItemLoader.load(section.getConfigurationSection("filler")));
+        if (section.isConfigurationSection("filler")) {
+            menu.fill(MenuItemLoader.load(section.getConfigurationSection("filler")));
+        }
 
         // Load Icons
         ConfigurationSection icons = section.getConfigurationSection("icons");

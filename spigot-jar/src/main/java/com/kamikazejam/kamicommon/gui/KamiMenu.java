@@ -61,6 +61,8 @@ public class KamiMenu extends MenuHolder {
     // Menu Options
     private final Set<UUID> ignoredClose = new HashSet<>(); // Set of Player UUID to ignore calling the close handler for
     private boolean allowItemPickup;
+    private @Nullable IBuilder fillerItem = new ItemBuilder(XMaterial.GRAY_STAINED_GLASS).setName(" ");
+    private final Set<Integer> excludedFillSlots = new HashSet<>();
 
     public KamiMenu(@NotNull String name, int rows) {
         super(name, rows);
@@ -221,6 +223,8 @@ public class KamiMenu extends MenuHolder {
                 super.setItem(slot, item);
             }
         }
+        // Automatically fill using filler item, which can be set to null to disable
+        this.fill();
     }
 
     // ------------------------------------------------------------ //
@@ -310,78 +314,16 @@ public class KamiMenu extends MenuHolder {
         return this;
     }
 
-    // ------------------------------------------------------------ //
-    //                          Fill Methods                        //
-    // ------------------------------------------------------------ //
 
-    @NotNull
-    public ItemStack getDefaultFiller() {
-        XMaterial mat = XMaterial.GRAY_STAINED_GLASS_PANE;
-        return new ItemBuilder(mat, 1, mat.getData()).setName(" ").toItemStack();
-    }
 
-    @NotNull
-    public KamiMenu fill() {
-        this.fill(getDefaultFiller());
-        return this;
-    }
+    private KamiMenu fill() {
+        if (this.fillerItem == null) { return this; }
 
-    @NotNull
-    public KamiMenu fill(@NotNull Integer... ignoreSlots) {
-        this.fill(getDefaultFiller(), Arrays.asList(ignoreSlots));
-        return this;
-    }
-
-    @NotNull
-    public KamiMenu fill(@NotNull List<Integer> ignoreSlots) {
-        this.fill(getDefaultFiller(), ignoreSlots);
-        return this;
-    }
-
-    @NotNull
-    public KamiMenu fill(@NotNull IBuilder filler) {
-        return fill(filler.toItemStack());
-    }
-
-    @NotNull
-    public KamiMenu fill(@NotNull IBuilder filler, @NotNull Integer... ignoreSlots) {
-        return fill(filler.toItemStack(), Arrays.asList(ignoreSlots));
-    }
-
-    @NotNull
-    public KamiMenu fill(@NotNull IBuilder filler, @NotNull List<Integer> ignoreSlots) {
-        return fill(filler.toItemStack(), ignoreSlots);
-    }
-
-    @NotNull
-    public KamiMenu fill(@NotNull ItemStack filler) {
-        return fill(filler, List.of());
-    }
-
-    @NotNull
-    public KamiMenu fill(@NotNull ItemStack filler, @NotNull Integer... ignoreSlots) {
-        return fill(filler, Arrays.asList(ignoreSlots));
-    }
-
-    @NotNull
-    public KamiMenu fill(@NotNull ItemStack filler, @NotNull List<Integer> ignoreSlots) {
         int empty = getInventory().firstEmpty();
         while (empty != -1) {
-            if (!ignoreSlots.contains(empty)) {
-                this.setItem(empty, filler);
+            if (!excludedFillSlots.contains(empty)) {
+                this.setItem(empty, this.fillerItem);
             }
-            empty = getInventory().firstEmpty();
-        }
-        return this;
-    }
-
-    @NotNull
-    public KamiMenu fill(@NotNull MenuItem menuItem) {
-        if (!menuItem.isEnabled()) { return this; }
-        int empty = getInventory().firstEmpty();
-        while (empty != -1) {
-            // Copy the item, editing the slot to be the fill slot
-            this.addMenuItem(new MenuItem(true, new StaticItemSlot(empty), menuItem.getIBuilders()));
             empty = getInventory().firstEmpty();
         }
         return this;
