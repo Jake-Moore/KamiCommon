@@ -135,8 +135,7 @@ public class MenuItem {
     public void playClickSound(@NotNull Player player) {
         clickSound.play(player, clickVolume, clickPitch);
     }
-    @ApiStatus.Internal
-    public MenuItem setId(@NotNull String id) {
+    public @NotNull MenuItem setId(@NotNull String id) {
         this.id = id;
         return this;
     }
