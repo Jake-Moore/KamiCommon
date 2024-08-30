@@ -56,7 +56,7 @@ public class CmdOpenGUI extends KamiCommand {
         for (int i = 1; i < 45; i++) {
             String id = "Item" + i;
             IBuilder builder = new ItemBuilder(XMaterial.STONE).setName("&fItem &7#" + i);
-            paged.addPagedItem(builder, i).setMenuClick((p, c) ->
+            paged.addPagedItem(builder).setMenuClick((p, c) ->
                     p.sendMessage(StringUtil.t("&7Paged Item Click (&f" + c.name() + "&7) on &f" + id))
             );
         }
@@ -73,7 +73,7 @@ public class CmdOpenGUI extends KamiCommand {
         for (int i = 1; i < 45; i++) {
             String id = "Item" + i;
             IBuilder builder = new ItemBuilder(XMaterial.STONE).setName("&fItem &7#" + i);
-            paged.addPagedItem(builder, i).setMenuClick((p, c) ->
+            paged.addPagedItem(builder).setMenuClick((p, c) ->
                     p.sendMessage(StringUtil.t("&7Paged Item Click (&f" + c.name() + "&7) on &f" + id))
             );
         }

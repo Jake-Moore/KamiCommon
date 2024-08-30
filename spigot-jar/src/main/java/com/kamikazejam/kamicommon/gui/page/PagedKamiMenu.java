@@ -96,37 +96,21 @@ public class PagedKamiMenu {
     //                        Item Management                       //
     // ------------------------------------------------------------ //
     @CheckReturnValue
-    public @NotNull MenuItem addPagedItem(@NotNull IBuilder builder, int slot) {
-        return this.addPagedItem(new MenuItem(true, new StaticItemSlot(slot), builder));
+    public @NotNull MenuItem addPagedItem(@NotNull IBuilder builder) {
+        return this.addPagedItem(new MenuItem(true, new StaticItemSlot(-1), builder));
     }
     @CheckReturnValue
-    public @NotNull MenuItem addPagedItem(@NotNull IBuilder builder, @NotNull ItemSlot slot) {
-        return this.addPagedItem(new MenuItem(true, slot, builder));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addPagedItem(@NotNull ItemStack stack, int slot) {
-        return this.addPagedItem(new MenuItem(true, new StaticItemSlot(slot), new ItemBuilder(stack)));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addPagedItem(@NotNull ItemStack stack, @NotNull ItemSlot slot) {
-        return this.addPagedItem(new MenuItem(true, slot, new ItemBuilder(stack)));
+    public @NotNull MenuItem addPagedItem(@NotNull ItemStack stack) {
+        return this.addPagedItem(new MenuItem(true, new StaticItemSlot(-1), new ItemBuilder(stack)));
     }
 
     @CheckReturnValue
-    public @NotNull MenuItem addPagedItem(@NotNull String id, @NotNull IBuilder builder, int slot) {
-        return this.addPagedItem(new MenuItem(true, new StaticItemSlot(slot), builder).setId(id));
+    public @NotNull MenuItem addPagedItem(@NotNull String id, @NotNull IBuilder builder) {
+        return this.addPagedItem(new MenuItem(true, new StaticItemSlot(-1), builder).setId(id));
     }
     @CheckReturnValue
-    public @NotNull MenuItem addPagedItem(@NotNull String id, @NotNull ItemStack stack, int slot) {
-        return this.addPagedItem(new MenuItem(true, new StaticItemSlot(slot), new ItemBuilder(stack)).setId(id));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addPagedItem(@NotNull String id, @NotNull IBuilder builder, @NotNull ItemSlot slot) {
-        return this.addPagedItem(new MenuItem(true, slot, builder).setId(id));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addPagedItem(@NotNull String id, @NotNull ItemStack stack, @NotNull ItemSlot slot) {
-        return this.addPagedItem(new MenuItem(true, slot, new ItemBuilder(stack)).setId(id));
+    public @NotNull MenuItem addPagedItem(@NotNull String id, @NotNull ItemStack stack) {
+        return this.addPagedItem(new MenuItem(true, new StaticItemSlot(-1), new ItemBuilder(stack)).setId(id));
     }
 
     @CheckReturnValue
