@@ -16,4 +16,9 @@ public class LastRowItemSlot implements ItemSlot {
         int slot = menu.getSize() - (9 - slotInLastRow);
         return Set.of(slot);
     }
+
+    @Override
+    public @NotNull ItemSlot copy() {
+        return new LastRowItemSlot(slotInLastRow);
+    }
 }

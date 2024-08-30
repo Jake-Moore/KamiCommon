@@ -7,4 +7,5 @@ import java.util.Set;
 
 public interface ItemSlot {
     Set<Integer> get(@NotNull KamiMenu menu);
+    @NotNull ItemSlot copy();
 }
