@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.gui.items;
 
+import com.kamikazejam.kamicommon.gui.KamiMenu;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClickPage;
@@ -158,6 +159,12 @@ public class MenuItem {
     public @NotNull MenuItem setId(@NotNull String id) {
         this.id = id;
         return this;
+    }
+
+    @NotNull
+    public Set<Integer> getSlots(@NotNull KamiMenu menu) {
+        if (itemSlot == null) { return Collections.emptySet(); }
+        return itemSlot.get(menu);
     }
 
     // --------------------------------------------- //

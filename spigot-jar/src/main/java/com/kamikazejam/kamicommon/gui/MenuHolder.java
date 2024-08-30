@@ -8,6 +8,7 @@ import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -15,8 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * InventoryHolder with constructor parameters for making an Inventory with either a row count or an InventoryType.<br>
@@ -51,6 +51,27 @@ public class MenuHolder implements InventoryHolder {
             return this.inventory = this.size.createInventory(this, title);
         }
         return this.inventory;
+    }
+
+    public void closeAll(@NotNull Set<UUID> exceptions) {
+        this.getViewers().forEach(humanEntity -> {
+            if (!exceptions.contains(humanEntity.getUniqueId())) {
+                humanEntity.closeInventory();
+            }
+        });
+    }
+
+    public void recreateInventory() {
+        this.inventory = null;
+        this.getInventory();
+    }
+
+    @NotNull
+    public List<HumanEntity> getViewers() {
+        if (this.inventory == null) {
+            return new ArrayList<>();
+        }
+        return this.inventory.getViewers();
     }
 
     @NotNull
