@@ -208,25 +208,27 @@ public class KamiMenu extends MenuHolder {
     }
 
     public void placeItems(@Nullable Predicate<MenuItem> filter) {
-        int size = this.getSize();
-        for (MenuItem tickedItem : this.menuItems.values()) {
-            if (filter != null && !filter.test(tickedItem)) { continue; }
-            @Nullable ItemSlot itemSlot = tickedItem.getItemSlot();
-            if (itemSlot == null) { continue; }
-
-            // Build the new item, storing it back in the TickedItem for comparison on clicks
-            ItemStack item = tickedItem.buildItem();
-            if (item != null && item.getAmount() > 64) { item.setAmount(64); }
-            tickedItem.setLastItem(item);
-
-            // Update the inventory slots
-            for (int slot : itemSlot.get(this)) {
-                if (slot < 0 || slot >= size) { continue; }
-                super.setItem(slot, item);
-            }
-        }
+        this.menuItems.values().forEach(item -> this.placeItem(filter, item));
         // Automatically fill using filler item, which can be set to null to disable
         this.fill();
+    }
+
+    private void placeItem(@Nullable Predicate<MenuItem> filter, @NotNull MenuItem tickedItem) {
+        if (filter != null && !filter.test(tickedItem)) { return; }
+        @Nullable ItemSlot itemSlot = tickedItem.getItemSlot();
+        if (itemSlot == null) { return; }
+
+        // Build the new item, storing it back in the TickedItem for comparison on clicks
+        ItemStack item = tickedItem.buildItem();
+        if (item != null && item.getAmount() > 64) { item.setAmount(64); }
+        tickedItem.setLastItem(item);
+
+        // Update the inventory slots
+        int size = this.getSize();
+        for (int slot : itemSlot.get(this)) {
+            if (slot < 0 || slot >= size) { continue; }
+            super.setItem(slot, item);
+        }
     }
 
     // ------------------------------------------------------------ //
@@ -325,7 +327,9 @@ public class KamiMenu extends MenuHolder {
             if (excludedFillSlots.contains(i)) { continue; }
             ItemStack here = getInventory().getItem(i);
             if (here == null || here.getType() == Material.AIR) {
-                this.addMenuItem(new MenuItem(new StaticItemSlot(i), fillerItem.getIBuilders()));
+                MenuItem item = new MenuItem(new StaticItemSlot(i), fillerItem.getIBuilders());
+                this.addMenuItem(item); // Cache so it gets updated like other items
+                this.placeItem(null, item); // Set the item in the inventory
             }
         }
 
