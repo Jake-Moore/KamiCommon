@@ -1,12 +1,13 @@
 package com.kamikazejam.kamicommon.gui;
 
 import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.gui.struct.MenuSize;
 import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -26,39 +26,34 @@ import java.util.Objects;
 public class MenuHolder implements InventoryHolder {
 
     protected transient @Nullable Inventory inventory;
-    @Getter @Setter private @NotNull String invName;
-    @Getter @Setter private int rows;
-    @Getter @Setter private @Nullable InventoryType type;
-
-    public MenuHolder() {}
+    @Getter @Setter private @NotNull String title;
+    @Setter private @NotNull MenuSize size;
 
     public MenuHolder(@NotNull String name, int rows) {
-        this.invName = StringUtil.t(name);
-        this.rows = rows;
-        this.type = null;
+        this.title = StringUtil.t(name);
+        this.size = new MenuSize(rows);
     }
-
-    public MenuHolder(@NotNull String name, @Nonnull InventoryType type) {
-        this.invName = StringUtil.t(name);
-        this.rows = -1;
-        this.type = type;
+    public MenuHolder(@NotNull String name, @NotNull InventoryType type) {
+        this.title = StringUtil.t(name);
+        this.size = new MenuSize(type);
+    }
+    public MenuHolder(@NotNull String name, @NotNull MenuSize size) {
+        this.title = StringUtil.t(name);
+        this.size = size;
     }
 
     @Override
     public @NotNull Inventory getInventory() {
         if (this.inventory == null) {
-            if (invName.length() > 32) {
-                PluginSource.warning("Inventory name is too long! (" + invName.length() + " > 32)");
+            if (title.length() > 32) {
+                PluginSource.warning("Inventory name is too long! (" + title.length() + " > 32): '" + title + "'");
             }
-
-            // Create the new inventory, preferring to use the Type over slot count
-            return this.inventory = (type != null)
-                    ? Bukkit.createInventory(this, type, invName)
-                    : Bukkit.createInventory(this, rows * 9, invName);
+            return this.inventory = this.size.createInventory(this, title);
         }
         return this.inventory;
     }
 
+    @NotNull
     public InventoryHolder getHolder() {
         return this;
     }
@@ -70,6 +65,10 @@ public class MenuHolder implements InventoryHolder {
     // --------------------------------------------------------------------- //
     public int getSize() {
         return this.getInventory().getSize();
+    }
+    @NotNull
+    public MenuSize getMenuSize() {
+        return this.size;
     }
 
     @Nullable
@@ -119,7 +118,19 @@ public class MenuHolder implements InventoryHolder {
         return -1;
     }
 
+    public void replaceTitle(@NotNull String find, @NotNull String replacement) {
+        Preconditions.checkNotNull(find, "find cannot be null");
+        Preconditions.checkNotNull(replacement, "replacement cannot be null");
+        title = title.replace(find, replacement);
+    }
 
+    public void setRows(int rows) {
+        this.size.setRows(rows);
+    }
+
+    public void setType(@NotNull InventoryType type) {
+        this.size.setType(type);
+    }
 
     // --------------------------------------------------------------------- //
     //                           Object Comparison                           //

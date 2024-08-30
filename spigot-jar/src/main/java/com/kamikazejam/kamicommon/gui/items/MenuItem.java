@@ -7,14 +7,16 @@ import com.kamikazejam.kamicommon.gui.clicks.transform.IClickTransform;
 import com.kamikazejam.kamicommon.gui.clicks.transform.MenuClickEventTransform;
 import com.kamikazejam.kamicommon.gui.clicks.transform.MenuClickPageTransform;
 import com.kamikazejam.kamicommon.gui.clicks.transform.MenuClickTransform;
-import com.kamikazejam.kamicommon.gui.items.interfaces.IMenuItem;
 import com.kamikazejam.kamicommon.gui.items.interfaces.IBuilderModifier;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
 import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.xseries.XSound;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +29,12 @@ import java.util.*;
  * This class does not include any click data, it just provides items
  */
 @Getter @Setter
-@SuppressWarnings("unused")
-public class MenuItem implements IMenuItem {
+@Accessors(chain = true)
+@SuppressWarnings({"unused", "UnusedReturnValue"})
+public class MenuItem {
+    @Setter(AccessLevel.NONE)
+    private @NotNull String id = UUID.randomUUID().toString(); // final because it's used in HashMaps
+
     // Fields for DynamicItem and TickedItem
     private @Nullable ItemStack lastItem;
     private @Nullable IClickTransform transform = null;
@@ -42,6 +48,11 @@ public class MenuItem implements IMenuItem {
     private int builderRotateTicks = 20; // Default to 1 second
     // Allow multiple possible slots
     private @Nullable ItemSlot itemSlot;
+
+    // Item Click Sound Fields
+    private @NotNull XSound clickSound = XSound.UI_BUTTON_CLICK;
+    private int clickVolume = 1;
+    private int clickPitch = 2;
 
     // --------------------------------------------- //
     //                  Constructors                 //
@@ -119,36 +130,43 @@ public class MenuItem implements IMenuItem {
     }
 
     // --------------------------------------------- //
+    //                 MenuItem Methods              //
+    // --------------------------------------------- //
+    public void playClickSound(@NotNull Player player) {
+        clickSound.play(player, clickVolume, clickPitch);
+    }
+    @ApiStatus.Internal
+    public MenuItem setId(@NotNull String id) {
+        this.id = id;
+        return this;
+    }
+
+    // --------------------------------------------- //
     //                    IMenuItem                  //
     // --------------------------------------------- //
 
-    @Override
-    public @NotNull IMenuItem setAutoUpdate(@NotNull IBuilderModifier modifier, int tickInterval) {
+    public @NotNull MenuItem setAutoUpdate(@NotNull IBuilderModifier modifier, int tickInterval) {
         this.tickInterval = tickInterval;
         this.modifier = modifier;
         return this;
     }
 
-    @Override
-    public @NotNull IMenuItem setMenuClick(@NotNull MenuClick click) {
+    public @NotNull MenuItem setMenuClick(@NotNull MenuClick click) {
         this.transform = new MenuClickTransform(click);
         return this;
     }
 
-    @Override
-    public @NotNull IMenuItem setMenuClick(@NotNull MenuClickPage click) {
+    public @NotNull MenuItem setMenuClick(@NotNull MenuClickPage click) {
         this.transform = new MenuClickPageTransform(click);
         return this;
     }
 
-    @Override
-    public @NotNull IMenuItem setMenuClick(@NotNull MenuClickEvent click) {
+    public @NotNull MenuItem setMenuClick(@NotNull MenuClickEvent click) {
         this.transform = new MenuClickEventTransform(click);
         return this;
     }
 
-    @Override
-    public @NotNull IMenuItem setModifier(@Nullable IBuilderModifier modifier) {
+    public @NotNull MenuItem setModifier(@Nullable IBuilderModifier modifier) {
         this.modifier = modifier;
         this.tickInterval = null;
         return this;
