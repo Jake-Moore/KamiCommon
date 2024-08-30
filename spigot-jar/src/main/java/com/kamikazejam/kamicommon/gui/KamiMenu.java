@@ -18,6 +18,7 @@ import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -61,7 +62,8 @@ public class KamiMenu extends MenuHolder {
     // Menu Options
     private final Set<UUID> ignoredClose = new HashSet<>(); // Set of Player UUID to ignore calling the close handler for
     private boolean allowItemPickup;
-    private @Nullable IBuilder fillerItem = new ItemBuilder(XMaterial.GRAY_STAINED_GLASS).setName(" ");
+    // Filler is a MenuItem so that it can have the same features as other items (rotating materials, clicks, etc)
+    private @Nullable MenuItem fillerItem = new MenuItem(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS).setName(" "), -1);
     private final Set<Integer> excludedFillSlots = new HashSet<>();
 
     public KamiMenu(@NotNull String name, int rows) {
@@ -319,13 +321,14 @@ public class KamiMenu extends MenuHolder {
     private KamiMenu fill() {
         if (this.fillerItem == null) { return this; }
 
-        int empty = getInventory().firstEmpty();
-        while (empty != -1) {
-            if (!excludedFillSlots.contains(empty)) {
-                this.setItem(empty, this.fillerItem);
+        for (int i = 0; i < getInventory().getSize(); i++) {
+            if (excludedFillSlots.contains(i)) { continue; }
+            ItemStack here = getInventory().getItem(i);
+            if (here == null || here.getType() == Material.AIR) {
+                this.addMenuItem(new MenuItem(new StaticItemSlot(i), fillerItem.getIBuilders()));
             }
-            empty = getInventory().firstEmpty();
         }
+
         return this;
     }
 }
