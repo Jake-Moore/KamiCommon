@@ -11,6 +11,7 @@ import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -74,8 +75,13 @@ public class PagedKamiMenu {
     }
 
     // Overridable (currentPage is 1 indexed, maxPages is 1 indexed)
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private transient @Nullable String cachedTitle = null;
     public @NotNull String getMenuName(int currentPage, int maxPages) {
-        return this.parent.getTitle() + (maxPages > 1 ? " (Page " + (currentPage) + "/" + maxPages + ")" : "");
+        // We use a cached title, since after the first modification to include page information
+        // We no longer can request the original title
+        String base = (cachedTitle == null) ? cachedTitle = this.parent.getTitle() : cachedTitle;
+        return base + (maxPages > 1 ? " (Page " + (currentPage) + "/" + maxPages + ")" : "");
     }
 
     // Utility methods to make it easier to configure the slots of page icons
@@ -145,8 +151,7 @@ public class PagedKamiMenu {
      */
     public void openMenu(@NotNull Player player, int pageIndex) {
         // createMenu handles the currentPage variable
-        applyToParent(pageIndex);
-        this.parent.openMenu(player);
+        this.applyToParent(pageIndex).openMenu(player);
     }
 
     /**
@@ -155,6 +160,11 @@ public class PagedKamiMenu {
      */
     @NotNull
     public KamiMenu applyToParent(int pageIndex) {
+        // ***** WARNING *****
+        // All changes to KamiMenu are persisted between calls
+        // It is imperative that data from previous calls is removed if necessary
+        // For example, title may already contain pagination info, inventory may contain paged items, etc.
+        // ***** WARNING *****
         this.parent.getMetaData().put(META_DATA_KEY, this);
 
         // Calculate the current pagination, this allows the items list to be modified before opening
@@ -162,12 +172,17 @@ public class PagedKamiMenu {
 
         // Update the title with the pagination data
         if (appendTitleWithPage) {
+            // getMenuName uses a cached value from the first time it was called, so that it doesn't change
             this.parent.setTitle(StringUtil.t(getMenuName(pageIndex + 1, pagination.totalPages())));
+            // We must recreate a new inventory to use a new title
+            this.parent.recreateInventory();
         }
 
         // Add previous icon
+        final String nextId = "PagedKamiMenu-Next";
+        this.parent.removeMenuItem(nextId); // Remove cached icon
         if (pageIndex > 0) {
-            this.parent.addMenuItem(this.prevPageIcon).setMenuClick((plr, type) -> {
+            this.parent.addMenuItem(this.prevPageIcon.setId(nextId)).setMenuClick((plr, type) -> {
                 // We ignore the close since the menu isn't 'closing', just changing pages
                 this.parent.getIgnoredClose().add(plr.getUniqueId());
                 openMenu(plr, (pageIndex - 1));
@@ -175,12 +190,18 @@ public class PagedKamiMenu {
         }
 
         // Add next icon
+        final String prevId = "PagedKamiMenu-Prev";
+        this.parent.removeMenuItem(prevId); // Remove cached icon
         if (pagination.pageExist(pageIndex + 1)) {
-            this.parent.addMenuItem(this.nextPageIcon).setMenuClick((plr, type) -> {
+            this.parent.addMenuItem(this.nextPageIcon.setId(prevId)).setMenuClick((plr, type) -> {
                 this.parent.getIgnoredClose().add(plr.getUniqueId());
                 openMenu(plr, (pageIndex + 1));
             });
         }
+
+        // Remove all items within the paged slots
+        final String pagedItemId = "PagedKamiMenu-Item";
+        this.parent.getMenuItems().entrySet().removeIf(entry -> entry.getKey().startsWith(pagedItemId));
 
         // Add all page items
         if (pagination.pageExist(pageIndex)) {
@@ -191,14 +212,15 @@ public class PagedKamiMenu {
                 if (s == -1) { break; }
 
                 // Add the page item to the menu
-                menuItem.setItemSlot(new StaticItemSlot(s));
-                this.parent.addMenuItem(menuItem);
+                MenuItem item = menuItem.copy().setId(pagedItemId + "-" + s).setItemSlot(new StaticItemSlot(s));
+                this.parent.addMenuItem(item);
                 placeableSlots.remove(s); // Mark it as filled, so firstEmpty moves to the next slot
             }
         }
 
         // We make some assumptions, like that this menu object belongs to 1 player
-        this.parent.whenOpened((plr, v) -> this.currentPage = pageIndex);
+        final String callbackId = "PagedKamiMenu-Callback";
+        this.parent.setOpenCallback(callbackId, (plr, v) -> this.currentPage = pageIndex);
         return this.parent;
     }
 

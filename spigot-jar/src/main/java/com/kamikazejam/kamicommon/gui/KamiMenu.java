@@ -57,7 +57,7 @@ public class KamiMenu extends MenuHolder {
     // Menu Callbacks
     private final List<Predicate<InventoryClickEvent>> clickPredicates = new ArrayList<>();
     private final List<Consumer<InventoryCloseEvent>> closeConsumers = new ArrayList<>();
-    private final List<MenuOpenCallback> openCallbacks = new ArrayList<>();
+    private final Map<String, MenuOpenCallback> openCallbacks = new ConcurrentHashMap<>(); // Map<Id, Callback>
 
     // Menu Options
     private final Set<UUID> ignoredClose = new HashSet<>(); // Set of Player UUID to ignore calling the close handler for
@@ -97,7 +97,7 @@ public class KamiMenu extends MenuHolder {
         }
 
         InventoryView view = Objects.requireNonNull(player.openInventory(this.getInventory()));
-        openCallbacks.forEach(callback -> callback.onOpen(player, view));
+        openCallbacks.values().forEach(callback -> callback.onOpen(player, view));
         return view;
     }
 
@@ -119,11 +119,22 @@ public class KamiMenu extends MenuHolder {
         inv.getViewers().forEach(HumanEntity::closeInventory);
     }
 
-    public void whenOpened(@Nullable MenuOpenCallback menuOpen) {
-        this.openCallbacks.add(menuOpen);
+    /**
+     * @return The id this callback was registered under. For direct removal from the callback map.
+     */
+    public @NotNull String whenOpened(@Nullable MenuOpenCallback menuOpen) {
+        return this.addOpenCallback(menuOpen);
     }
-    public void addOpenCallback(@Nullable MenuOpenCallback menuOpen) {
-        this.openCallbacks.add(menuOpen);
+    /**
+     * @return The id this callback was registered under. For direct removal from the callback map.
+     */
+    public @NotNull String addOpenCallback(@Nullable MenuOpenCallback menuOpen) {
+        String id = UUID.randomUUID().toString();
+        this.openCallbacks.put(id, menuOpen);
+        return id;
+    }
+    public void setOpenCallback(@NotNull String id, @Nullable MenuOpenCallback menuOpen) {
+        this.openCallbacks.put(id, menuOpen);
     }
 
     public void addIgnoredClose(@NotNull Player player) {
@@ -194,6 +205,14 @@ public class KamiMenu extends MenuHolder {
         return menuItem;
     }
 
+    public void removeMenuItem(@NotNull String id) {
+        MenuItem item = this.menuItems.remove(id);
+        if (item != null) {
+            // We removed a MenuItem -> remove the item from the inventory
+            item.getSlots(this).forEach(slot -> this.setItem(slot, (ItemStack) null));
+        }
+    }
+
     @Override
     public void clear() {
         super.clear();
@@ -214,7 +233,7 @@ public class KamiMenu extends MenuHolder {
     }
 
     private void placeItem(@Nullable Predicate<MenuItem> filter, @NotNull MenuItem tickedItem) {
-        if (filter != null && !filter.test(tickedItem)) { return; }
+        if (!tickedItem.isEnabled() || (filter != null && !filter.test(tickedItem))) { return; }
         @Nullable ItemSlot itemSlot = tickedItem.getItemSlot();
         if (itemSlot == null) { return; }
 
