@@ -87,7 +87,7 @@ public class IAItemBuilder extends IBuilder {
         // Try Loading a CustomStack
         @Nullable String id = config.getString("material", config.getString("type", null));
         if (id == null) {
-            throw new IllegalStateException("No materials/namespacedIDs found in config.");
+            throw new IllegalStateException("No materials/namespacedIDs found in config for section: " + config.getCurrentPath());
         }
         CustomStack stack = CustomStack.getInstance(id);
         if (stack == null) {
