@@ -1,18 +1,20 @@
 package com.kamikazejam.kamicommon.gui;
 
+import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClickEvent;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClickPage;
 import com.kamikazejam.kamicommon.gui.clicks.PlayerSlotClick;
 import com.kamikazejam.kamicommon.gui.items.MenuItem;
-import com.kamikazejam.kamicommon.gui.items.interfaces.IMenuItem;
+import com.kamikazejam.kamicommon.gui.items.interfaces.IBuilderModifier;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
 import com.kamikazejam.kamicommon.gui.loader.MenuItemLoader;
-import com.kamikazejam.kamicommon.gui.page.PageBuilder;
+import com.kamikazejam.kamicommon.gui.page.PagedKamiMenu;
+import com.kamikazejam.kamicommon.gui.struct.MenuSize;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
-import io.netty.util.internal.ConcurrentSet;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -41,39 +43,38 @@ public class KamiMenu extends MenuHolder {
         void onOpen(@NotNull Player player, @NotNull InventoryView view);
     }
 
-    // Menu Items
-    private final @Nullable PageBuilder parent;
-    private final Set<MenuItem> menuItems = new ConcurrentSet<>();
+    // MetaData (for various data storage)
+    private final Map<String, Object> metaData = new ConcurrentHashMap<>();
+
+    // Menu Items (maps id to item with that id)
+    private final Map<String, MenuItem> menuItems = new ConcurrentHashMap<>();
 
     // Player Menu Clicks
-    @Setter(AccessLevel.NONE)
-    private @Nullable PlayerSlotClick playerInvClick = null;
-    @Setter(AccessLevel.NONE)
-    private final Map<Integer, PlayerSlotClick> playerInvClicks = new ConcurrentHashMap<>();
+    private final List<PlayerSlotClick> playerInvClicks = new ArrayList<>();
+    private final Map<Integer, List<PlayerSlotClick>> playerSlotClicks = new ConcurrentHashMap<>();
 
     // Menu Callbacks
-    private @Nullable Predicate<InventoryClickEvent> clickPredicate;
-    private @Nullable Consumer<InventoryCloseEvent> preCloseConsumer = null;
-    private @Nullable Consumer<Player> postCloseConsumer = null;
-    private @Nullable MenuOpenCallback openCallback = null;
+    private final List<Predicate<InventoryClickEvent>> clickPredicates = new ArrayList<>();
+    private final List<Consumer<InventoryCloseEvent>> closeConsumers = new ArrayList<>();
+    private final List<MenuOpenCallback> openCallbacks = new ArrayList<>();
 
     // Menu Options
-    private final Set<String> ignoredClose = new HashSet<>();
+    private final Set<UUID> ignoredClose = new HashSet<>(); // Set of Player UUID to ignore calling the close handler for
     private boolean allowItemPickup;
 
-    public KamiMenu(@NotNull String name, int lines) {
-        this(name, lines, null);
+    public KamiMenu(@NotNull String name, int rows) {
+        super(name, rows);
     }
     public KamiMenu(@NotNull String name, @NotNull InventoryType type) {
-        this(name, type, null);
-    }
-    public KamiMenu(@NotNull String name, int lines, @Nullable PageBuilder parent) {
-        super(name, lines);
-        this.parent = parent;
-    }
-    public KamiMenu(@NotNull String name, @NotNull InventoryType type, @Nullable PageBuilder parent) {
         super(name, type);
-        this.parent = parent;
+    }
+    public KamiMenu(@NotNull String name, @NotNull MenuSize size) {
+        super(name, size);
+    }
+
+    @NotNull
+    public PagedKamiMenu wrapAsPaged() {
+        return new PagedKamiMenu(this);
     }
 
     @NotNull
@@ -88,13 +89,11 @@ public class KamiMenu extends MenuHolder {
         MenuTask.getAutoUpdateInventories().add(this);
 
         if (ignoreCloseHandler) {
-            getIgnoredClose().add(player.getName());
+            getIgnoredClose().add(player.getUniqueId());
         }
 
         InventoryView view = Objects.requireNonNull(player.openInventory(this.getInventory()));
-        if (openCallback != null) {
-            openCallback.onOpen(player, view);
-        }
+        openCallbacks.forEach(callback -> callback.onOpen(player, view));
         return view;
     }
 
@@ -102,9 +101,9 @@ public class KamiMenu extends MenuHolder {
         closeInventory(player, false);
     }
 
-    public void closeInventory(@NotNull Player player, boolean onlyCloseOne) {
-        if (!onlyCloseOne) {
-            getIgnoredClose().add(player.getName());
+    public void closeInventory(@NotNull Player player, boolean ignoreCloseHandler) {
+        if (ignoreCloseHandler) {
+            getIgnoredClose().add(player.getUniqueId());
         }
 
         player.closeInventory();
@@ -117,45 +116,77 @@ public class KamiMenu extends MenuHolder {
     }
 
     public void whenOpened(@Nullable MenuOpenCallback menuOpen) {
-        this.openCallback = menuOpen;
+        this.openCallbacks.add(menuOpen);
+    }
+    public void addOpenCallback(@Nullable MenuOpenCallback menuOpen) {
+        this.openCallbacks.add(menuOpen);
+    }
+
+    public void addIgnoredClose(@NotNull Player player) {
+        this.ignoredClose.add(player.getUniqueId());
+    }
+    public void removeIgnoredClose(@NotNull Player player) {
+        this.ignoredClose.remove(player.getUniqueId());
     }
 
 
+    // ------------------------------------------------------------ //
+    //                        Item Management                       //
+    // ------------------------------------------------------------ //
 
-    @NotNull
     @CheckReturnValue
-    public IMenuItem addMenuItem(@NotNull IBuilder builder, int slot) {
+    public @NotNull MenuItem addMenuItem(@NotNull IBuilder builder, int slot) {
         return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), builder));
     }
-    @NotNull
     @CheckReturnValue
-    public IMenuItem addMenuItem(@NotNull ItemStack stack, int slot) {
+    public @NotNull MenuItem addMenuItem(@NotNull IBuilder builder, @NotNull ItemSlot slot) {
+        return this.addMenuItem(new MenuItem(true, slot, builder));
+    }
+    @CheckReturnValue
+    public @NotNull MenuItem addMenuItem(@NotNull ItemStack stack, int slot) {
         return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), new ItemBuilder(stack)));
     }
-    @NotNull
     @CheckReturnValue
-    public IMenuItem addMenuItem(@NotNull ConfigurationSection section, @NotNull String key, @Nullable Player player) {
+    public @NotNull MenuItem addMenuItem(@NotNull ItemStack stack, @NotNull ItemSlot slot) {
+        return this.addMenuItem(new MenuItem(true, slot, new ItemBuilder(stack)));
+    }
+
+    @CheckReturnValue
+    public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull IBuilder builder, int slot) {
+        return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), builder).setId(id));
+    }
+    @CheckReturnValue
+    public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull ItemStack stack, int slot) {
+        return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), new ItemBuilder(stack)).setId(id));
+    }
+    @CheckReturnValue
+    public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull IBuilder builder, @NotNull ItemSlot slot) {
+        return this.addMenuItem(new MenuItem(true, slot, builder).setId(id));
+    }
+    @CheckReturnValue
+    public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull ItemStack stack, @NotNull ItemSlot slot) {
+        return this.addMenuItem(new MenuItem(true, slot, new ItemBuilder(stack)).setId(id));
+    }
+
+    @CheckReturnValue
+    public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section, @NotNull String key, @Nullable Player player) {
         return this.addMenuItem(MenuItemLoader.load(section.getConfigurationSection(key), player));
     }
-    @NotNull
     @CheckReturnValue
-    public IMenuItem addMenuItem(@NotNull ConfigurationSection section, @NotNull String key) {
+    public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section, @NotNull String key) {
         return this.addMenuItem(MenuItemLoader.load(section.getConfigurationSection(key)));
     }
-    @NotNull
     @CheckReturnValue
-    public IMenuItem addMenuItem(@NotNull ConfigurationSection section, @Nullable Player player) {
+    public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section, @Nullable Player player) {
         return this.addMenuItem(MenuItemLoader.load(section, player));
     }
-    @NotNull
     @CheckReturnValue
-    public IMenuItem addMenuItem(@NotNull ConfigurationSection section) {
+    public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section) {
         return this.addMenuItem(MenuItemLoader.load(section));
     }
 
-    @NotNull
-    public MenuItem addMenuItem(@NotNull MenuItem menuItem) {
-        this.menuItems.add(menuItem);
+    public @NotNull MenuItem addMenuItem(@NotNull MenuItem menuItem) {
+        this.menuItems.put(menuItem.getId(), menuItem);
         return menuItem;
     }
 
@@ -174,7 +205,7 @@ public class KamiMenu extends MenuHolder {
 
     public void placeItems(@Nullable Predicate<MenuItem> filter) {
         int size = this.getSize();
-        for (MenuItem tickedItem : this.menuItems) {
+        for (MenuItem tickedItem : this.menuItems.values()) {
             if (filter != null && !filter.test(tickedItem)) { continue; }
             @Nullable ItemSlot itemSlot = tickedItem.getItemSlot();
             if (itemSlot == null) { continue; }
@@ -192,10 +223,53 @@ public class KamiMenu extends MenuHolder {
         }
     }
 
+    // ------------------------------------------------------------ //
+    //                   Item Management (by ID)                    //
+    // ------------------------------------------------------------ //
+    /**
+     * Retrieve a menu item by its id
+     */
+    @NotNull
+    public Optional<MenuItem> getMenuItem(@NotNull String id) {
+        if (!menuItems.containsKey(id)) { return Optional.empty(); }
+        return Optional.ofNullable(menuItems.get(id));
+    }
 
+    @NotNull
+    public KamiMenu setMenuClick(@NotNull String id, @NotNull MenuClick click) {
+        this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
+        return this;
+    }
+    @NotNull
+    public KamiMenu setMenuClick(@NotNull String id, @NotNull MenuClickPage click) {
+        this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
+        return this;
+    }
+    @NotNull
+    public KamiMenu setMenuClick(@NotNull String id, @NotNull MenuClickEvent click) {
+        this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
+        return this;
+    }
+    @NotNull
+    public KamiMenu setModifier(@NotNull String id, @NotNull IBuilderModifier modifier) {
+        this.getMenuItem(id).ifPresent(item -> item.setModifier(modifier));
+        return this;
+    }
+    @NotNull
+    public KamiMenu setAutoUpdate(@NotNull String id, @NotNull IBuilderModifier modifier, int tickInterval) {
+        this.getMenuItem(id).ifPresent(item -> item.setAutoUpdate(modifier, tickInterval));
+        return this;
+    }
+    public boolean isValidMenuItemID(@NotNull String id) {
+        return menuItems.containsKey(id);
+    }
+    @NotNull
+    public Set<String> getMenuItemIDs() {
+        return menuItems.keySet();
+    }
 
     // ------------------------------------------------------------ //
-    //                         Player Clicks                        //
+    //              Callbacks, Consumers, and Predicates            //
     // ------------------------------------------------------------ //
 
     /**
@@ -203,8 +277,8 @@ public class KamiMenu extends MenuHolder {
      * @param slot The player inventory slot to listen to.
      */
     @NotNull
-    public KamiMenu setPlayerClick(int slot, @NotNull PlayerSlotClick click) {
-        this.playerInvClicks.put(slot, click);
+    public KamiMenu onPlayerSlotClick(int slot, @NotNull PlayerSlotClick click) {
+        this.playerSlotClicks.computeIfAbsent(slot, k -> new ArrayList<>()).add(click);
         return this;
     }
 
@@ -213,11 +287,28 @@ public class KamiMenu extends MenuHolder {
      * @param click The callback to run when a player clicks a slot in their inventory.
      */
     @NotNull
-    public KamiMenu setPlayerClick(@NotNull PlayerSlotClick click) {
-        this.playerInvClick = click;
+    public KamiMenu onPlayerSlotClick(@NotNull PlayerSlotClick click) {
+        this.playerInvClicks.add(click);
         return this;
     }
 
+    /**
+     * Add a predicate on InventoryClickEvent that must pass for click handlers to be called.
+     */
+    @NotNull
+    public KamiMenu addClickPredicate(@NotNull Predicate<InventoryClickEvent> predicate) {
+        this.clickPredicates.add(predicate);
+        return this;
+    }
+
+    /**
+     * Add a consumer that runs when the inventory is closed, with access to {@link InventoryCloseEvent}.
+     */
+    @NotNull
+    public KamiMenu addCloseConsumer(@NotNull Consumer<InventoryCloseEvent> consumer) {
+        this.closeConsumers.add(consumer);
+        return this;
+    }
 
     // ------------------------------------------------------------ //
     //                          Fill Methods                        //
@@ -279,6 +370,18 @@ public class KamiMenu extends MenuHolder {
             if (!ignoreSlots.contains(empty)) {
                 this.setItem(empty, filler);
             }
+            empty = getInventory().firstEmpty();
+        }
+        return this;
+    }
+
+    @NotNull
+    public KamiMenu fill(@NotNull MenuItem menuItem) {
+        if (!menuItem.isEnabled()) { return this; }
+        int empty = getInventory().firstEmpty();
+        while (empty != -1) {
+            // Copy the item, editing the slot to be the fill slot
+            this.addMenuItem(new MenuItem(true, new StaticItemSlot(empty), menuItem.getIBuilders()));
             empty = getInventory().firstEmpty();
         }
         return this;

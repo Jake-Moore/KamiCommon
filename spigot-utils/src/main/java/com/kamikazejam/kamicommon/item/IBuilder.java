@@ -56,10 +56,12 @@ public abstract class IBuilder {
     }
     public IBuilder(@NotNull XMaterial material, ConfigurationSection section) {
         this.material = material;
+        this.damage = material.getData();
         loadConfigItem(section, null, false);
     }
     public IBuilder(@NotNull XMaterial material, ConfigurationSection section, OfflinePlayer offlinePlayer) {
         this.material = material;
+        this.damage = material.getData();
         loadConfigItem(section, offlinePlayer, false);
     }
     public IBuilder(@Nullable ItemStack base, ConfigurationSection section) {
@@ -292,6 +294,15 @@ public abstract class IBuilder {
         return this;
     }
 
+    public IBuilder replaceNamePAPI() {
+        return replaceNamePAPI(null);
+    }
+    public IBuilder replaceNamePAPI(@Nullable OfflinePlayer player) {
+        assert name != null;
+        name = StringUtilP.p(player, name);
+        return this;
+    }
+
     /**
      * Searches for the find placeholder in the lore, and replaces that entire line with replacement
      * @param find The string to search for in the lore
@@ -326,9 +337,27 @@ public abstract class IBuilder {
         return this;
     }
 
+    public IBuilder replaceLorePAPI() {
+        return replaceLorePAPI(null);
+    }
+    public IBuilder replaceLorePAPI(@Nullable OfflinePlayer player) {
+        assert lore != null;
+        lore.replaceAll(s -> StringUtilP.p(player, s));
+        return this;
+    }
+
     public IBuilder replaceBoth(String find, String replacement) {
         replaceName(find, replacement);
         replaceLore(find, replacement);
+        return this;
+    }
+
+    public IBuilder replaceBothPAPI() {
+        return replaceBothPAPI(null);
+    }
+    public IBuilder replaceBothPAPI(@Nullable OfflinePlayer player) {
+        replaceNamePAPI(player);
+        replaceLorePAPI(player);
         return this;
     }
 
