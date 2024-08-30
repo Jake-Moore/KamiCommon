@@ -321,13 +321,13 @@ public class KamiMenu extends MenuHolder {
 
 
     private KamiMenu fill() {
-        if (this.fillerItem == null) { return this; }
+        if (this.fillerItem == null || !this.fillerItem.isEnabled()) { return this; }
 
         for (int i = 0; i < getInventory().getSize(); i++) {
             if (excludedFillSlots.contains(i)) { continue; }
             ItemStack here = getInventory().getItem(i);
             if (here == null || here.getType() == Material.AIR) {
-                MenuItem item = new MenuItem(new StaticItemSlot(i), fillerItem.getIBuilders());
+                MenuItem item = fillerItem.copy().setItemSlot(new StaticItemSlot(i));
                 this.addMenuItem(item); // Cache so it gets updated like other items
                 this.placeItem(null, item); // Set the item in the inventory
             }

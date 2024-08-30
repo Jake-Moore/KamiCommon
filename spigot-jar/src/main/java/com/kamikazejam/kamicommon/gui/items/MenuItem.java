@@ -129,6 +129,26 @@ public class MenuItem {
         this.iBuilders.addAll(builders);
     }
 
+    @NotNull
+    public MenuItem copy() {
+        MenuItem copy;
+        if (this.itemSlot != null) {
+            copy = new MenuItem(this.enabled, this.itemSlot.copy(), this.iBuilders);
+        }else {
+            copy = new MenuItem(this.enabled, (ItemSlot) null, this.iBuilders);
+        }
+        copy.id = this.id;
+        copy.lastItem = this.lastItem;
+        copy.transform = this.transform;
+        copy.tickInterval = this.tickInterval;
+        copy.modifier = this.modifier;
+        copy.builderRotateTicks = this.builderRotateTicks;
+        copy.clickSound = this.clickSound;
+        copy.clickVolume = this.clickVolume;
+        copy.clickPitch = this.clickPitch;
+        return copy;
+    }
+
     // --------------------------------------------- //
     //                 MenuItem Methods              //
     // --------------------------------------------- //

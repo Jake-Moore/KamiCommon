@@ -3,10 +3,7 @@ package com.kamikazejam.kamicommon.gui.items.slots;
 import com.kamikazejam.kamicommon.gui.KamiMenu;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class StaticItemSlot implements ItemSlot {
@@ -24,5 +21,10 @@ public class StaticItemSlot implements ItemSlot {
     @Override
     public Set<Integer> get(@NotNull KamiMenu menu) {
         return slots;
+    }
+
+    @Override
+    public @NotNull ItemSlot copy() {
+        return new StaticItemSlot(new ArrayList<>(slots));
     }
 }
