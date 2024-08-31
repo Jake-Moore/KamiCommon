@@ -174,6 +174,9 @@ public abstract class IBuilder {
         if (meta != null) {
             this.name = meta.getDisplayName();
             this.lore = meta.getLore();
+        }else {
+            this.name = null;
+            this.lore = null;
         }
     }
 
@@ -259,12 +262,7 @@ public abstract class IBuilder {
     }
 
     public IBuilder(@NotNull ItemStack is, boolean clone) {
-        // Erase default name and lore, so that the base isn't overwritten
-        this.name = null;
-        this.lore = null;
-
-        is = (clone) ? is.clone() : is;
-        loadBase(is);
+        loadBase((clone) ? is.clone() : is);
     }
 
     public IBuilder setUnbreakable(boolean b) {
