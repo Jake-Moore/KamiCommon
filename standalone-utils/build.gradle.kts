@@ -5,10 +5,10 @@ plugins {
 var snakeYaml = "org.yaml:snakeyaml:2.2"
 var json = "org.json:json:20240303"
 dependencies {
-    api(project(":generic-utils")); implementation(project(":generic-utils"))
+    api(project(":generic-utils"))
     // Unique dependencies for this module
-    api(snakeYaml); implementation(snakeYaml)
-    api(json); implementation(json)
+    api(snakeYaml)
+    api(json)
 
     // Testing Dependencies
     testImplementation(snakeYaml)
@@ -18,11 +18,11 @@ dependencies {
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            from(components["java"])
+            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
         }
     }
 

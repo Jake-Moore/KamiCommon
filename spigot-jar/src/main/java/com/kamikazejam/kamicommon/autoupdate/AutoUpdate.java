@@ -1,11 +1,11 @@
 package com.kamikazejam.kamicommon.autoupdate;
 
-import com.kamikazejam.kamicommon.PluginSource;
-import com.kamikazejam.kamicommon.configuration.ConfigHelper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.configuration.spigot.ConfigHelper;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.util.data.SimpleStringCoder;

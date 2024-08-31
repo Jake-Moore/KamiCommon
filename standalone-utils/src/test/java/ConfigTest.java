@@ -1,4 +1,4 @@
-import com.kamikazejam.kamicommon.configuration.config.StandaloneConfigExt;
+import com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfigExt;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;

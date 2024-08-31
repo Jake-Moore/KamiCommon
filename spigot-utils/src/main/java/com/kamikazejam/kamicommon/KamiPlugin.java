@@ -3,7 +3,7 @@ package com.kamikazejam.kamicommon;
 import com.google.gson.JsonObject;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
-import com.kamikazejam.kamicommon.configuration.config.KamiConfigExt;
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.modules.Module;
 import com.kamikazejam.kamicommon.modules.ModuleManager;
 import com.kamikazejam.kamicommon.modules.integration.CitizensIntegration;

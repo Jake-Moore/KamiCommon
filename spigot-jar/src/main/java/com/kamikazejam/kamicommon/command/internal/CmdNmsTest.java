@@ -1,17 +1,17 @@
 package com.kamikazejam.kamicommon.command.internal;
 
+import com.kamikazejam.kamicommon.actions.Action;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
 import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.actions.Action;
 import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
 import com.kamikazejam.kamicommon.nms.provider.BlockUtilProvider;
 import com.kamikazejam.kamicommon.nms.provider.ChatColorProvider;
 import com.kamikazejam.kamicommon.util.StringUtil;
-import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.xseries.XMaterial;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;

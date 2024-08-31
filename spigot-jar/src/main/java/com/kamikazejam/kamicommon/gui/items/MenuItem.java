@@ -12,7 +12,7 @@ import com.kamikazejam.kamicommon.gui.items.interfaces.IBuilderModifier;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
 import com.kamikazejam.kamicommon.item.IBuilder;
-import com.cryptomorin.xseries.XSound;
+import com.kamikazejam.kamicommon.xseries.XSound;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

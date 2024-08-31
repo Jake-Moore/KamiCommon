@@ -3,20 +3,20 @@ plugins {
 }
 
 dependencies {
-    api(project(":generic-jar")); implementation(project(":generic-jar"))
-    api(project(":standalone-utils")); implementation(project(":standalone-utils"))
+    api(project(":generic-jar"))
+    api(project(":standalone-utils"))
 
     // org.json (standalone-utils) and google gson needed for for jedis (in :generic-jar) to work properly
-    api("com.google.code.gson:gson:2.11.0"); implementation("com.google.code.gson:gson:2.11.0")
+    api("com.google.code.gson:gson:2.11.0")
 }
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            from(components["java"])
+            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
         }
     }
 
@@ -38,7 +38,7 @@ publishing {
 
 tasks {
     shadowJar {
-        dependsOn(project(":generic-jar").tasks.shadowJar) // Gradle complained...
-        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
+        dependsOn(project(":generic-jar").tasks.shadowJar.get())
+        dependsOn(project(":generic-utils").tasks.shadowJar.get())
     }
 }
