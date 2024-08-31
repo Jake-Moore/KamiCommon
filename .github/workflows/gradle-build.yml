@@ -34,10 +34,7 @@ jobs:
         gradle-version: '8.7'
 
     - name: Build with Gradle 8.7
+      run: gradle build
       env:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
-      run: |
-        chmod +x ./build.sh
-        chmod +x ./refresh.sh
-        ./build.sh gradle

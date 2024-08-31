@@ -3,10 +3,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":spigot-nms")) // Must use shadowJar output, to include 1.17+ reobf outputs
+    // Add NMS library from KamiCommonNMS
+    api(project.property("kamicommonNMS") as String)
+    api(project(":standalone-utils"))
 
-    api("com.google.code.gson:gson:2.11.0"); implementation("com.google.code.gson:gson:2.11.0")
-    api("org.apache.commons:commons-text:1.12.0"); implementation("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
+    api("com.google.code.gson:gson:2.11.0")
+    api("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
 
     compileOnly(project.property("lowestSpigotDep") as String)
 
@@ -28,21 +30,13 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
-tasks {
-    build.get().dependsOn(shadowJar)
-    shadowJar {
-        dependsOn(project(":spigot-nms").tasks.shadowJar)
-        from(project(":spigot-nms").tasks.shadowJar.get().outputs)
-    }
-}
-
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            from(components["java"])
+            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
         }
     }
 
@@ -59,5 +53,11 @@ publishing {
                 uri("https://repo.luxiouslabs.net/repository/maven-releases/")
             }
         }
+    }
+}
+
+tasks {
+    shadowJar {
+        dependsOn(project(":generic-utils").tasks.shadowJar.get())
     }
 }

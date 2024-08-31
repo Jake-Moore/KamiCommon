@@ -1,20 +1,21 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 @Suppress("PropertyName")
-var VERSION = "3.5.0.8-SNAPSHOT"
+var VERSION = "3.6.0.0-SNAPSHOT"
 
 plugins { // needed for the allprojects section to work
     id("java")
     id("java-library")
     id("maven-publish")
     id("com.gradleup.shadow") version "8.3.0"
-    id("io.papermc.paperweight.userdev") version "1.7.2" apply false
 }
 
 ext {
     // reduced is just a re-zipped version of the original, without some conflicting libraries
     //  gson, org.json, com.yaml.snakeyaml
     set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED")    // luxious nexus (public)
+    // From KamiCommonNMS sister project (via luxious maven)
+    set("kamicommonNMS", "com.kamikazejam.kamicommon:spigot-nms:1.0.1")
 }
 
 allprojects {
@@ -98,10 +99,6 @@ allprojects {
         // standalone-jar
         relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
         relocate("com.google.errorprone", "com.kamikazejam.kamicommon.errorprone")
-        // spigot-nms:api
-        relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
-        relocate("com.github.fierioziy.particlenativeapi", "com.kamikazejam.kamicommon.particleapi")
-        relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
         // spigot-utils
         relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
         relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")
@@ -116,3 +113,4 @@ allprojects {
 
 // Disable root project build
 tasks.jar.get().enabled = false
+tasks.shadowJar.get().enabled = false

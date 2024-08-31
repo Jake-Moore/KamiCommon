@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.yaml.standalone;
 
-import com.kamikazejam.kamicommon.configuration.config.AbstractConfig;
+import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.util.data.ANSI;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;

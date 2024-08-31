@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon;
 
 import com.kamikazejam.kamicommon.command.internal.KamiCommonCommand;
-import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.gui.MenuManager;
 import com.kamikazejam.kamicommon.gui.MenuTask;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;

@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-@SuppressWarnings({"SameParameterValue"})
+@SuppressWarnings({"SameParameterValue", "deprecation"})
 public class VersionControl {
     @Setter
     @Getter
@@ -165,7 +165,7 @@ public class VersionControl {
         // Preserve correctness in the original date object by removing the extra buffer time
         to.add(Calendar.MILLISECOND, future ? -50 : 50);
 
-        if (sb.length() == 0) {
+        if (sb.isEmpty()) {
             return "now";
         }
 

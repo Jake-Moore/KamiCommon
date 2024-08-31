@@ -4,50 +4,38 @@ plugins {
 
 // Dependency Version Configuration
 val slf4jVersion = "2.0.16"
-val rabbitMQVersion = "com.rabbitmq:amqp-client:5.21.0"
-val hikariVersion = "com.zaxxer:HikariCP:5.1.0"
-val mysqlVersion = "com.mysql:mysql-connector-j:9.0.0"
-val lettuceVersion = "io.lettuce:lettuce-core:6.4.0.RELEASE"
 val jacksonVersion = "2.17.2"
-val jacksonDatabindVersion = "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-val jacksonCoreVersion = "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
-
 dependencies {
-    implementation(project(":generic-utils"))
+    api(project(":generic-utils"))
 
     // MySQL via HikariCP (2,725 KB)
-    api(hikariVersion); implementation(hikariVersion)
-    api(mysqlVersion) { exclude("com.google.protobuf", "protobuf-java") }
-    implementation(mysqlVersion) { exclude("com.google.protobuf", "protobuf-java") }
+    api("com.zaxxer:HikariCP:5.1.0")
+    api("com.mysql:mysql-connector-j:9.0.0") {
+        exclude("com.google.protobuf", "protobuf-java")
+    }
 
     // RabbitMQ amqp-client (732 KB)
-    api(rabbitMQVersion); implementation(rabbitMQVersion)
+    api("com.rabbitmq:amqp-client:5.21.0")
 
     // SLF4J (39 KB) (needed for RabbitMQ)
-    api("org.slf4j:slf4j-api:$slf4jVersion"); implementation("org.slf4j:slf4j-api:$slf4jVersion")
-    api("org.slf4j:slf4j-simple:$slf4jVersion"); implementation("org.slf4j:slf4j-simple:$slf4jVersion")
+    api("org.slf4j:slf4j-api:$slf4jVersion")
+    api("org.slf4j:slf4j-simple:$slf4jVersion")
 
     // Lettuce Core (Redis) (6,246 KB)
-    api(lettuceVersion); implementation(lettuceVersion)
+    api("io.lettuce:lettuce-core:6.4.0.RELEASE")
 
     // For the redis system to deserialize messages (2,244 KB)
-    api(jacksonDatabindVersion); implementation(jacksonDatabindVersion)
-    api(jacksonCoreVersion); implementation(jacksonCoreVersion)
-
-    // Tests
-    testImplementation(rabbitMQVersion)
-    testImplementation(lettuceVersion)
-    testImplementation(jacksonDatabindVersion)
-    testImplementation(jacksonCoreVersion)
+    api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
 }
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            from(components["java"])
+            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
         }
     }
 
@@ -64,14 +52,5 @@ publishing {
                 uri("https://repo.luxiouslabs.net/repository/maven-releases/")
             }
         }
-    }
-}
-
-tasks {
-    shadowJar {
-        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
-    }
-    test {
-        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
     }
 }

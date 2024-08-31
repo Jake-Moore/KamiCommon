@@ -5,15 +5,13 @@ plugins {
     // Unique plugins for this module
 }
 
-var httpclient = "org.apache.httpcomponents.client5:httpclient5:5.4-beta1"
-var httpcore = "org.apache.httpcomponents.core5:httpcore5:5.3-beta1"
 dependencies {
     // Unique dependencies for this module
-    api(project(":generic-jar")); implementation(project(":generic-jar"))
-    api(project(":spigot-utils")); compileOnly(project(":spigot-utils"))
+    api(project(":generic-jar"))
+    api(project(":spigot-utils"))
 
-    api(httpclient); implementation(httpclient)
-    api(httpcore); implementation(httpcore)
+    api("org.apache.httpcomponents.client5:httpclient5:5.4-beta1")
+    api("org.apache.httpcomponents.core5:httpcore5:5.3-beta1")
 
     // Spigot Libraries
     compileOnly(project.property("lowestSpigotDep") as String)
@@ -21,12 +19,9 @@ dependencies {
 
 tasks {
     shadowJar {
-        dependsOn(project(":generic-jar").tasks.shadowJar) // Gradle complained...
-        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
+        dependsOn(project(":generic-jar").tasks.shadowJar.get())
+        dependsOn(project(":generic-utils").tasks.shadowJar.get())
         archiveBaseName.set("KamiCommon")
-
-        dependsOn(project(":spigot-utils").tasks.shadowJar)
-        from(project(":spigot-utils").tasks.shadowJar.get().outputs)
     }
     jar {
         // Starting with 1.20.5 Paper we can choose not to reobf the jar, leaving it mojang mapped
@@ -61,11 +56,11 @@ java {
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            from(components["java"])
+            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
         }
     }
 
