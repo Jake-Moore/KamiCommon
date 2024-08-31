@@ -1,9 +1,9 @@
 package com.kamikazejam.kamicommon.autoupdate;
 
 import com.google.common.base.Preconditions;
-import com.kamikazejam.kamicommon.gson.JsonElement;
-import com.kamikazejam.kamicommon.gson.JsonObject;
-import com.kamikazejam.kamicommon.gson.JsonParser;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

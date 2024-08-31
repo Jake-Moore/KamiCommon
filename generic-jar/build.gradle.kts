@@ -13,26 +13,26 @@ val jacksonDatabindVersion = "com.fasterxml.jackson.core:jackson-databind:$jacks
 val jacksonCoreVersion = "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
 
 dependencies {
-    api(project(":generic-utils")); shadow(project(":generic-utils"))
+    implementation(project(":generic-utils"))
 
     // MySQL via HikariCP (2,725 KB)
-    api(hikariVersion); shadow(hikariVersion)
+    api(hikariVersion); implementation(hikariVersion)
     api(mysqlVersion) { exclude("com.google.protobuf", "protobuf-java") }
-    shadow(mysqlVersion) { exclude("com.google.protobuf", "protobuf-java") }
+    implementation(mysqlVersion) { exclude("com.google.protobuf", "protobuf-java") }
 
     // RabbitMQ amqp-client (732 KB)
-    api(rabbitMQVersion); shadow(rabbitMQVersion)
+    api(rabbitMQVersion); implementation(rabbitMQVersion)
 
     // SLF4J (39 KB) (needed for RabbitMQ)
-    api("org.slf4j:slf4j-api:$slf4jVersion"); shadow("org.slf4j:slf4j-api:$slf4jVersion")
-    api("org.slf4j:slf4j-simple:$slf4jVersion"); shadow("org.slf4j:slf4j-simple:$slf4jVersion")
+    api("org.slf4j:slf4j-api:$slf4jVersion"); implementation("org.slf4j:slf4j-api:$slf4jVersion")
+    api("org.slf4j:slf4j-simple:$slf4jVersion"); implementation("org.slf4j:slf4j-simple:$slf4jVersion")
 
     // Lettuce Core (Redis) (6,246 KB)
-    api(lettuceVersion); shadow(lettuceVersion)
+    api(lettuceVersion); implementation(lettuceVersion)
 
     // For the redis system to deserialize messages (2,244 KB)
-    api(jacksonDatabindVersion); shadow(jacksonDatabindVersion)
-    api(jacksonCoreVersion); shadow(jacksonCoreVersion)
+    api(jacksonDatabindVersion); implementation(jacksonDatabindVersion)
+    api(jacksonCoreVersion); implementation(jacksonCoreVersion)
 
     // Tests
     testImplementation(rabbitMQVersion)

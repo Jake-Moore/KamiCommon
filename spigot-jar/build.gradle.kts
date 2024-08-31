@@ -3,42 +3,23 @@ import java.time.format.DateTimeFormatter
 
 plugins {
     // Unique plugins for this module
-    id("io.github.goooler.shadow")
-    id("maven-publish")
 }
 
 var httpclient = "org.apache.httpcomponents.client5:httpclient5:5.4-beta1"
 var httpcore = "org.apache.httpcomponents.core5:httpcore5:5.3-beta1"
 dependencies {
     // Unique dependencies for this module
-    shadow(httpclient); shadow(httpcore)
+    api(project(":generic-jar")); implementation(project(":generic-jar"))
+    api(project(":spigot-utils")); implementation(project(":spigot-utils"))
 
-    // Submodules are compile-only since they are included in the shadowJar task configuration: from(...)
-    compileOnly(files(project(":generic-jar")
-        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
-    )
-    compileOnly(files(project(":spigot-utils")
-        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
-    )
+    api(httpclient); implementation(httpclient)
+    api(httpcore); implementation(httpcore)
 
+    // Spigot Libraries
     compileOnly(project.property("lowestSpigotDep") as String)
 }
 
 tasks {
-    publish.get().dependsOn(build)
-    build.get().dependsOn(shadowJar)
-    shadowJar {
-        archiveBaseName.set("KamiCommon")
-        archiveClassifier.set("")
-        configurations = listOf(project.configurations.shadow.get())
-
-        relocate("org.apache.hc.client5", "com.kamikazejam.kamicommon.hc.client5")
-        relocate("org.apache.hc.core5", "com.kamikazejam.kamicommon.hc.core5")
-
-        from(project(":generic-jar").tasks.shadowJar.get().outputs)
-        from(project(":spigot-utils").tasks.shadowJar.get().outputs)
-
-    }
     jar {
         // Starting with 1.20.5 Paper we can choose not to reobf the jar, leaving it mojang mapped
         //  we forfeit spigot compatability, but it will natively work on paper
@@ -95,20 +76,3 @@ publishing {
         }
     }
 }
-
-tasks.processResources {
-    val props = mapOf("version" to rootProject.version)
-    inputs.properties(props)
-    filteringCharset = "UTF-8"
-    filesMatching("plugin.yml") {
-        expand(props)
-    }
-}
-
-
-//tasks.register<Copy>("unpackShadow") {
-//    dependsOn(tasks.shadowJar)
-//    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
-//    into(layout.buildDirectory.dir("unpacked-shadow"))
-//}
-//tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

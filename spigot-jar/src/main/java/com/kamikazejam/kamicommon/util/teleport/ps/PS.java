@@ -1,8 +1,8 @@
 package com.kamikazejam.kamicommon.util.teleport.ps;
 
-import com.kamikazejam.kamicommon.gson.JsonElement;
-import com.kamikazejam.kamicommon.gson.JsonObject;
-import com.kamikazejam.kamicommon.gson.annotations.SerializedName;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.comparator.ComparatorSmart;

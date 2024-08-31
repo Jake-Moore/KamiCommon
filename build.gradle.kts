@@ -1,13 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 @Suppress("PropertyName")
-var VERSION = "3.5.0.7-SNAPSHOT"
+var VERSION = "3.5.0.8-SNAPSHOT"
 
-plugins { // needed for the subprojects section to work
+plugins { // needed for the allprojects section to work
     id("java")
     id("java-library")
     id("maven-publish")
-    id("io.github.goooler.shadow") version "8.1.8"
+    id("com.gradleup.shadow") version "8.3.0"
     id("io.papermc.paperweight.userdev") version "1.7.2" apply false
 }
 
@@ -21,6 +21,16 @@ allprojects {
     group = "com.kamikazejam.kamicommon"
     version = VERSION
     description = "KamikazeJAM's common library for Spigot and Standalone projects."
+
+    apply(plugin = "java")
+    apply(plugin = "java-library")
+    apply(plugin = "maven-publish")
+    apply(plugin = "com.gradleup.shadow")
+
+    // Provision Java 17 all subprojects (new modules have version 21 configured)
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    }
 
     repositories {
         mavenLocal()
@@ -46,30 +56,6 @@ allprojects {
         gradlePluginPortal()
     }
 
-    // We want UTF-8 for everything
-    tasks.withType<JavaCompile> {
-        options.encoding = Charsets.UTF_8.name()
-    }
-
-    // The spigot jars have versions with -SNAPSHOT which get downloaded every day
-    //  This is pointless, so lets tell gradle to wait a year
-    configurations.all {
-        resolutionStrategy.cacheChangingModulesFor(365, "days")
-        resolutionStrategy.cacheDynamicVersionsFor(365, "days")
-    }
-}
-
-subprojects {
-    apply(plugin = "java")
-    apply(plugin = "java-library")
-    apply(plugin = "maven-publish")
-    apply(plugin = "io.github.goooler.shadow")
-
-    // Provision Java 17 all subprojects (new modules have version 21 configured)
-    java {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-    }
-
     dependencies {
         // Lombok
         compileOnly("org.projectlombok:lombok:1.18.34")
@@ -81,10 +67,21 @@ subprojects {
         compileOnly("org.jetbrains:annotations:24.1.0")
     }
 
+    // We want UTF-8 for everything
+    tasks.withType<JavaCompile> {
+        options.encoding = Charsets.UTF_8.name()
+    }
+
+    // The spigot jars have versions with -SNAPSHOT which get downloaded every day
+    //  This is pointless, so lets tell gradle to wait a year
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor(365, "days")
+        resolutionStrategy.cacheDynamicVersionsFor(365, "days")
+    }
+
     // Configure shadowJar, including all relocations that are needed anywhere
     tasks.withType(ShadowJar::class.java).configureEach {
         archiveClassifier.set("")
-        configurations = listOf(project.configurations.getByName("shadow"))
 
         // List of relocation exclusions:
         // - Jackson libraries
@@ -112,25 +109,17 @@ subprojects {
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
         relocate("com.github.fierioziy.particlenativeapi", "com.kamikazejam.kamicommon.particleapi")
         relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbt.nbtapi")
+        // spigot-utils
+        relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
+        relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")
+        // spigot-jar
+        relocate("org.apache.hc.client5", "com.kamikazejam.kamicommon.hc.client5")
+        relocate("org.apache.hc.core5", "com.kamikazejam.kamicommon.hc.core5")
     }
+    // Ensure all publish tasks depend on build and shadowJar
     tasks.publish.get().dependsOn(tasks.build)
     tasks.build.get().dependsOn(tasks.withType(ShadowJar::class.java))
 }
 
 // Disable root project build
 tasks.jar.get().enabled = false
-
-tasks {
-    processResources {
-        filteringCharset = Charsets.UTF_8.name() // We want UTF-8
-        val props = mapOf(
-            "name" to project.name,
-            "version" to project.version,
-            "description" to project.description,
-        )
-        inputs.properties(props)
-        filesMatching("plugin.yml") {
-            expand(props)
-        }
-    }
-}
