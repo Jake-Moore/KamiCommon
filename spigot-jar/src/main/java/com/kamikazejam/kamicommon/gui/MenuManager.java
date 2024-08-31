@@ -4,7 +4,7 @@ import com.kamikazejam.kamicommon.gui.clicks.transform.IClickTransform;
 import com.kamikazejam.kamicommon.gui.items.MenuItem;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.gui.page.PagedKamiMenu;
-import com.kamikazejam.kamicommon.xseries.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

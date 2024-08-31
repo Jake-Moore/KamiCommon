@@ -3,11 +3,11 @@ plugins {
 }
 
 dependencies {
-    api(project(":generic-jar")); shadow(project(":generic-jar"))
-    api(project(":standalone-utils")); shadow(project(":standalone-utils"))
+    api(project(":generic-jar")); implementation(project(":generic-jar"))
+    api(project(":standalone-utils")); implementation(project(":standalone-utils"))
 
     // org.json (standalone-utils) and google gson needed for for jedis (in :generic-jar) to work properly
-    api("com.google.code.gson:gson:2.11.0"); shadow("com.google.code.gson:gson:2.11.0")
+    api("com.google.code.gson:gson:2.11.0"); implementation("com.google.code.gson:gson:2.11.0")
 }
 
 publishing {
@@ -35,3 +35,10 @@ publishing {
         }
     }
 }
+
+tasks.register<Copy>("unpackShadow") {
+    dependsOn(tasks.shadowJar)
+    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
+    into(layout.buildDirectory.dir("unpacked-shadow"))
+}
+tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

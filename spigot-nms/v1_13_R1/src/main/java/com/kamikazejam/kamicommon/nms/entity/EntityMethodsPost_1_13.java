@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.nms.entity;
 
 import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
-import com.kamikazejam.kamicommon.xseries.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
@@ -18,8 +18,6 @@ public abstract class EntityMethodsPost_1_13 extends AbstractEntityMethods {
         if (stack.getType() != XMaterial.SPAWNER.parseMaterial() || !stack.hasItemMeta()) {
             return stack;
         }
-        XMaterial m1;
-        com.cryptomorin.xseries.XMaterial m2;
 
         BlockStateMeta meta = (BlockStateMeta) stack.getItemMeta();
         BlockState state = meta.getBlockState();

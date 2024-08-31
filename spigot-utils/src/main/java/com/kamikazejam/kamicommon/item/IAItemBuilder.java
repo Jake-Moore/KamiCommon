@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.item;
 
-import com.kamikazejam.kamicommon.xseries.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.OfflinePlayer;
