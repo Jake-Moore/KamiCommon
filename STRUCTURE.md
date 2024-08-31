@@ -2,6 +2,7 @@
 
 # Module Structure
 - Modules Available as Dependencies: [spigot-jar](#spigot-jar), [spigot-utils](#spigot-utils), [standalone-jar](#standalone-jar), [standalone-utils](#standalone-utils), [generic-jar](#generic-jar), [generic-utils](#generic-utils)
+- NMS modularity has been extracted into a separate project to reduce build times for quick changes. See [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS) for that project
 
 ## Module Hierarchy
 ![ScreenShot](/docs/screenshots/structure.png)
@@ -12,20 +13,31 @@
 - Contains ALL of
   - [spigot-utils](#spigot-utils)
     - Which contains [standalone-utils](#standalone-utils)
-    - Which contains [spigot-nms](#spigot-nms)
+    - Which contains [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS)
   - [generic-jar](#generic-jar)
 - 📄 Shaded Utilities
-  - com.google.code.gson:gson, org.apache.commons:commons-text [via [spigot-utils](#spigot-utils)]
-  - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
-  - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries), [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API) [via [spigot-nms](#spigot-nms)]
-  - com.zaxxer:HikariCP, com.mysql:mysql-connector-j, redis.clients:jedis, com.rabbitmq:amqp-client [via [generic-jar](#generic-jar)]
+  - From [spigot-utils](#spigot-utils)
+    - com.google.code.gson:gson
+    - org.apache.commons:commons-text
+  - From [standalone-utils](#standalone-utils)
+    - org.yaml:snakeyaml
+    - org.json:json
+  - From [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS)
+    - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries)
+    - [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API)
+    - [com.github.fierioziy.particlenativeapi:ParticleNativeAPI](https://github.com/Fierioziy/ParticleNativeAPI)
+  - From [generic-jar](#generic-jar)
+    - com.zaxxer:HikariCP
+    - com.mysql:mysql-connector-j
+    - redis.clients:jedis
+    - com.rabbitmq:amqp-client
 - (⭐) Should **NOT** be shaded ❌
   - <span style="text-decoration:underline;">should be added to the server as a plugin</span>
 
 ### [spigot-utils](./spigot-utils)
 - A **developer** jar file containing *some* of the standalone spigot APIs in KamiCommon
 - Contains ALL:
-  - [spigot-nms](#spigot-nms)
+  - [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS)
   - [standalone-utils](#standalone-utils)
 - Does not contain the shaded utilities the spigot-jar has
 - Meant for developers who want some of the small/frequently used classes, without loading all of the shaded utilities
@@ -33,21 +45,9 @@
   - org.json:json
   - com.google.code.gson:gson
   - org.apache.commons:commons-text
-  - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries) [via [spigot-nms](#spigot-nms)]
   - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
 - (⭐) **CAN** be shaded
   - classes in this module may use the spigot-api, but do not require a plugin to back them
-
-### [spigot-nms](./spigot-nms)
-- A parent module responsible for nms utilities & implementations.
-- Wrapper classes (available in [spigot-jar](#spigot-jar)) should be used instead!
-- 📄 Shaded Utilities
-  - [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API)
-  - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries)
-  - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
-- ❌ Not Available
-    - This module is not available on its own
-    - The quickest way to use this module is via [spigot-utils](#spigot-utils)
 
 ## Standalone Development
 ### [standalone-jar](./standalone-jar)
