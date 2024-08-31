@@ -14,10 +14,14 @@ import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings({"SpellCheckingInspection", "DuplicatedCode"})
 public class CmdOpenGUI extends KamiCommand {
@@ -60,7 +64,17 @@ public class CmdOpenGUI extends KamiCommand {
                     p.sendMessage(StringUtil.t("&7Paged Item Click (&f" + c.name() + "&7) on &f" + id))
             );
         }
-        paged.applyToParent(0).openMenu(player);
+        KamiMenu menu = paged.applyToParent(0);
+        ItemStack stackWithMeta = new ItemStack(Material.STONE);
+        ItemMeta meta = stackWithMeta.getItemMeta();
+        meta.setDisplayName(StringUtil.t("&a&lRandom Name: " + UUID.randomUUID()));
+        meta.setLore(List.of(StringUtil.t("&7This is a random lore line."), StringUtil.t("&7This is another random lore line.")));
+        stackWithMeta.setItemMeta(meta);
+        menu.addMenuItem("RandomItem", stackWithMeta, 0).setMenuClick((p, c) ->
+                p.sendMessage(StringUtil.t("&7Menu Item Click (&f" + c.name() + "&7) on &fRandomItem"))
+        );
+
+        menu.openMenu(player);
     }
 
     private void openPaged2(@NotNull Player player) {
