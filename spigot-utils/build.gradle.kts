@@ -29,7 +29,9 @@ java {
 }
 
 tasks {
+    build.get().dependsOn(shadowJar)
     shadowJar {
+        dependsOn(project(":spigot-nms").tasks.shadowJar)
         from(project(":spigot-nms").tasks.shadowJar.get().outputs)
     }
 }

@@ -14,3 +14,10 @@ dependencies {
 
     compileOnly(project.property("lowestSpigotDep") as String)
 }
+
+tasks {
+    shadowJar {
+        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
+        dependsOn(project(":standalone-utils").tasks.shadowJar) // Gradle complained...
+    }
+}
