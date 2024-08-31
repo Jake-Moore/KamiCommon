@@ -35,3 +35,10 @@ publishing {
         }
     }
 }
+
+tasks {
+    shadowJar {
+        dependsOn(project(":generic-jar").tasks.shadowJar) // Gradle complained...
+        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
+    }
+}

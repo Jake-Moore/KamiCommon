@@ -72,13 +72,6 @@ allprojects {
         options.encoding = Charsets.UTF_8.name()
     }
 
-    // The spigot jars have versions with -SNAPSHOT which get downloaded every day
-    //  This is pointless, so lets tell gradle to wait a year
-    configurations.all {
-        resolutionStrategy.cacheChangingModulesFor(365, "days")
-        resolutionStrategy.cacheDynamicVersionsFor(365, "days")
-    }
-
     // Configure shadowJar, including all relocations that are needed anywhere
     tasks.withType(ShadowJar::class.java).configureEach {
         archiveClassifier.set("")

@@ -52,6 +52,8 @@ java {
 tasks {
     build.get().dependsOn(shadowJar)
     shadowJar {
+        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
+
         // Add the 1.17 to 1.20R3 reobf outputs
         from(project(":spigot-nms:v1_17_R1").tasks.getByName("reobfJar").outputs)
         from(project(":spigot-nms:v1_18_R1").tasks.getByName("reobfJar").outputs)

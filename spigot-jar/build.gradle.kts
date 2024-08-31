@@ -10,7 +10,7 @@ var httpcore = "org.apache.httpcomponents.core5:httpcore5:5.3-beta1"
 dependencies {
     // Unique dependencies for this module
     api(project(":generic-jar")); implementation(project(":generic-jar"))
-    api(project(":spigot-utils")); implementation(project(":spigot-utils"))
+    api(project(":spigot-utils")); compileOnly(project(":spigot-utils"))
 
     api(httpclient); implementation(httpclient)
     api(httpcore); implementation(httpcore)
@@ -21,7 +21,12 @@ dependencies {
 
 tasks {
     shadowJar {
+        dependsOn(project(":generic-jar").tasks.shadowJar) // Gradle complained...
+        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
         archiveBaseName.set("KamiCommon")
+
+        dependsOn(project(":spigot-utils").tasks.shadowJar)
+        from(project(":spigot-utils").tasks.shadowJar.get().outputs)
     }
     jar {
         // Starting with 1.20.5 Paper we can choose not to reobf the jar, leaving it mojang mapped
