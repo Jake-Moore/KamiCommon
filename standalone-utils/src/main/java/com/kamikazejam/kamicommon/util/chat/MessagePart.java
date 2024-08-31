@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.chat;
 
-import com.kamikazejam.kamicommon.nms.abstraction.chat.actions.Click;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.actions.Hover;
+import com.kamikazejam.kamicommon.actions.Click;
+import com.kamikazejam.kamicommon.actions.Hover;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;

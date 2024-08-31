@@ -1,43 +1,22 @@
 plugins {
     // Unique plugins for this module
-    id("io.github.goooler.shadow")
-    id("maven-publish")
 }
 
 dependencies {
-    // Submodules are compile-only since they are included in the shadowJar task configuration: from(...)
-    compileOnly(files(project(":generic-jar")
-        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
-    )
-    compileOnly(files(project(":standalone-utils")
-        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
-    )
+    api(project(":generic-jar"))
+    api(project(":standalone-utils"))
 
     // org.json (standalone-utils) and google gson needed for for jedis (in :generic-jar) to work properly
-    shadow("com.google.code.gson:gson:2.11.0")
+    api("com.google.code.gson:gson:2.11.0")
 }
-tasks {
-    publish.get().dependsOn(build)
-    build.get().dependsOn(shadowJar)
-    shadowJar {
-        archiveClassifier.set("")
-        configurations = listOf(project.configurations.shadow.get())
 
-        relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
-        relocate("org.json", "com.kamikazejam.kamicommon.json")
-        relocate("com.google.errorprone", "com.kamikazejam.kamicommon.errorprone")
-
-        from(project(":generic-jar").tasks.shadowJar.get().outputs)
-        from(project(":standalone-utils").tasks.shadowJar.get().outputs)
-    }
-}
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            from(components["java"])
+            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
         }
     }
 
@@ -57,10 +36,9 @@ publishing {
     }
 }
 
-
-tasks.register<Copy>("unpackShadow") {
-    dependsOn(tasks.shadowJar)
-    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
-    into(layout.buildDirectory.dir("unpacked-shadow"))
+tasks {
+    shadowJar {
+        dependsOn(project(":generic-jar").tasks.shadowJar.get())
+        dependsOn(project(":generic-utils").tasks.shadowJar.get())
+    }
 }
-tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.item;
 
-import com.kamikazejam.kamicommon.nbt.nbtapi.NBT;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.StringUtilP;
 import com.kamikazejam.kamicommon.util.data.Pair;
@@ -8,6 +7,7 @@ import com.kamikazejam.kamicommon.util.data.TriState;
 import com.kamikazejam.kamicommon.xseries.XEnchantment;
 import com.kamikazejam.kamicommon.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import com.kamikazejam.kamicommon.nbtapi.NBT;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.ChatColor;
