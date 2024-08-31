@@ -3,7 +3,7 @@ package com.kamikazejam.kamicommon.modules;
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
-import com.kamikazejam.kamicommon.configuration.config.KamiConfigExt;
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import lombok.Getter;

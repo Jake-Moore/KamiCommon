@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util;
 
-import com.kamikazejam.kamicommon.configuration.config.KamiConfig;
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import lombok.Setter;

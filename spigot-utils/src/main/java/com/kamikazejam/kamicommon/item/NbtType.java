@@ -1,10 +1,10 @@
 package com.kamikazejam.kamicommon.item;
 
-import com.kamikazejam.kamicommon.nbt.nbtapi.NBTType;
-import com.kamikazejam.kamicommon.nbt.nbtapi.iface.ReadWriteItemNBT;
-import com.kamikazejam.kamicommon.nbt.nbtapi.iface.ReadableNBT;
+import com.kamikazejam.kamicommon.nbtapi.iface.ReadWriteItemNBT;
+import com.kamikazejam.kamicommon.nbtapi.iface.ReadableNBT;
 import com.kamikazejam.kamicommon.yaml.base.ConfigurationMethods;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import com.kamikazejam.kamicommon.nbtapi.NBTType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

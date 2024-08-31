@@ -1,24 +1,18 @@
 plugins {
     // Unique plugins for this module
-    id("maven-publish")
 }
 
 dependencies {
     // Unique dependencies for this module
 }
 
-tasks {
-    publish.get().dependsOn(build)
-    // Avoiding shadowJar makes the build process simpler
-}
-
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            from(components["java"])
+            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
         }
     }
 
