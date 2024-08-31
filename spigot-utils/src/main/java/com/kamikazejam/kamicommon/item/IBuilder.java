@@ -65,11 +65,11 @@ public abstract class IBuilder {
         loadConfigItem(section, offlinePlayer, false);
     }
     public IBuilder(@Nullable ItemStack base, ConfigurationSection section) {
-        this.base = base;
+        loadBase(base);
         loadConfigItem(section, null, false);
     }
     public IBuilder(@Nullable ItemStack base, ConfigurationSection section, OfflinePlayer offlinePlayer) {
-        this.base = base;
+        loadBase(base);
         loadConfigItem(section, offlinePlayer, false);
     }
 
@@ -164,6 +164,22 @@ public abstract class IBuilder {
         return itemStack;
     }
 
+    final void loadBase(@Nullable ItemStack base) {
+        this.base = base;
+        if (base == null) { return; }
+        // Copy the base's ItemMeta so it doesn't get lost
+        // Specifically name and lore, if other properties are set they will be overwritten
+        // But by default lore is an empty list and needs to be set
+        @Nullable ItemMeta meta = base.getItemMeta();
+        if (meta != null) {
+            this.name = meta.getDisplayName();
+            this.lore = meta.getLore();
+        }else {
+            this.name = null;
+            this.lore = null;
+        }
+    }
+
     /**
      * @param config The configuration section to load data from
      * @param offlinePlayer The player to use as the skull owner
@@ -246,12 +262,7 @@ public abstract class IBuilder {
     }
 
     public IBuilder(@NotNull ItemStack is, boolean clone) {
-        // Erase default name and lore, so that the base isn't overwritten
-        this.name = null;
-        this.lore = null;
-
-        is = (clone) ? is.clone() : is;
-        this.base = is;
+        loadBase((clone) ? is.clone() : is);
     }
 
     public IBuilder setUnbreakable(boolean b) {
