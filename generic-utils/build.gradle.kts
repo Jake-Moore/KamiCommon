@@ -1,15 +1,9 @@
 plugins {
     // Unique plugins for this module
-    id("maven-publish")
 }
 
 dependencies {
     // Unique dependencies for this module
-}
-
-tasks {
-    publish.get().dependsOn(build)
-    // Avoiding shadowJar makes the build process simpler
 }
 
 publishing {

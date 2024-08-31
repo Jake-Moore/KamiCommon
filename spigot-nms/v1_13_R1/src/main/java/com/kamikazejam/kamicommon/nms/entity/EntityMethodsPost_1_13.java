@@ -18,6 +18,8 @@ public abstract class EntityMethodsPost_1_13 extends AbstractEntityMethods {
         if (stack.getType() != XMaterial.SPAWNER.parseMaterial() || !stack.hasItemMeta()) {
             return stack;
         }
+        XMaterial m1;
+        com.cryptomorin.xseries.XMaterial m2;
 
         BlockStateMeta meta = (BlockStateMeta) stack.getItemMeta();
         BlockState state = meta.getBlockState();
