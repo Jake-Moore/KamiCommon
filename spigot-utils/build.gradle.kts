@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":spigot-nms")); implementation(project(":spigot-nms"))
+    api(project(":spigot-nms")) // Must use shadowJar output, to include 1.17+ reobf outputs
 
     api("com.google.code.gson:gson:2.11.0"); implementation("com.google.code.gson:gson:2.11.0")
     api("org.apache.commons:commons-text:1.12.0"); implementation("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
@@ -26,6 +26,12 @@ dependencies {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+tasks {
+    shadowJar {
+        from(project(":spigot-nms").tasks.shadowJar.get().outputs)
+    }
 }
 
 publishing {
