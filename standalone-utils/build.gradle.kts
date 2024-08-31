@@ -1,29 +1,19 @@
 plugins {
     // Unique plugins for this module
-    id("io.github.goooler.shadow")
-    id("maven-publish")
 }
 
 var snakeYaml = "org.yaml:snakeyaml:2.2"
 var json = "org.json:json:20240303"
 dependencies {
-    shadow(project(":generic-utils"))
+    api(project(":generic-utils")); shadow(project(":generic-utils"))
     // Unique dependencies for this module
-    shadow(snakeYaml); testImplementation(snakeYaml)
-    shadow(json); testImplementation(json)
+    api(snakeYaml); shadow(snakeYaml)
+    api(json); shadow(json)
+
+    // Testing Dependencies
+    testImplementation(snakeYaml)
+    testImplementation(json)
     testImplementation("org.jetbrains:annotations:24.1.0")
-}
-
-tasks {
-    publish.get().dependsOn(build)
-    build.get().dependsOn(shadowJar)
-    shadowJar {
-        archiveClassifier.set("")
-        configurations = listOf(project.configurations.shadow.get())
-
-        relocate("org.yaml.snakeyaml", "com.kamikazejam.kamicommon.snakeyaml")
-        relocate("org.json", "com.kamikazejam.kamicommon.json")
-    }
 }
 
 publishing {
@@ -51,10 +41,3 @@ publishing {
         }
     }
 }
-
-tasks.register<Copy>("unpackShadow") {
-    dependsOn(tasks.shadowJar)
-    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
-    into(layout.buildDirectory.dir("unpacked-shadow"))
-}
-tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

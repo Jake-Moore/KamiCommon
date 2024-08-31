@@ -8,9 +8,7 @@ dependencies {
     paperweight.paperDevBundle("1.20.6-R0.1-SNAPSHOT")           // 2. add the dev bundle (contains all apis)
     // Confirmed working for 1.20.5 and 1.20.6
     
-    compileOnly(files(project(":spigot-nms:api")
-        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
-    )
+    compileOnly(project(":spigot-nms:api"))
     compileOnly(project(":spigot-nms:v1_13_R1"))
     compileOnly(project(":spigot-nms:v1_14_R1"))
 }

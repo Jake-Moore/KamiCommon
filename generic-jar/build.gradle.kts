@@ -1,65 +1,44 @@
 plugins {
     // Unique plugins for this module
-    id("io.github.goooler.shadow")
-    id("maven-publish")
 }
 
-repositories {
-    mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-}
+// Dependency Version Configuration
+val slf4jVersion = "2.0.16"
+val rabbitMQVersion = "com.rabbitmq:amqp-client:5.21.0"
+val hikariVersion = "com.zaxxer:HikariCP:5.1.0"
+val mysqlVersion = "com.mysql:mysql-connector-j:9.0.0"
+val lettuceVersion = "io.lettuce:lettuce-core:6.4.0.RELEASE"
+val jacksonVersion = "2.17.2"
+val jacksonDatabindVersion = "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+val jacksonCoreVersion = "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
 
-val slf4jVersion = "2.0.16" // For RabbitMQ
 dependencies {
-    shadow(project(":generic-utils"))
+    api(project(":generic-utils")); shadow(project(":generic-utils"))
 
     // MySQL via HikariCP (2,725 KB)
-    shadow("com.zaxxer:HikariCP:5.1.0")
-    shadow("com.mysql:mysql-connector-j:9.0.0") {
-        exclude("com.google.protobuf", "protobuf-java")
-    }
+    api(hikariVersion); shadow(hikariVersion)
+    api(mysqlVersion) { exclude("com.google.protobuf", "protobuf-java") }
+    shadow(mysqlVersion) { exclude("com.google.protobuf", "protobuf-java") }
 
     // RabbitMQ amqp-client (732 KB)
-    shadow("com.rabbitmq:amqp-client:5.21.0")
-    testImplementation("com.rabbitmq:amqp-client:5.21.0")
+    api(rabbitMQVersion); shadow(rabbitMQVersion)
 
-    // SLF4J (39 KB)
-    shadow("org.slf4j:slf4j-api:$slf4jVersion")
-    shadow("org.slf4j:slf4j-simple:$slf4jVersion")
+    // SLF4J (39 KB) (needed for RabbitMQ)
+    api("org.slf4j:slf4j-api:$slf4jVersion"); shadow("org.slf4j:slf4j-api:$slf4jVersion")
+    api("org.slf4j:slf4j-simple:$slf4jVersion"); shadow("org.slf4j:slf4j-simple:$slf4jVersion")
 
     // Lettuce Core (Redis) (6,246 KB)
-    shadow("io.lettuce:lettuce-core:6.4.0.RELEASE")
+    api(lettuceVersion); shadow(lettuceVersion)
 
     // For the redis system to deserialize messages (2,244 KB)
-    shadow("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-    shadow("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
+    api(jacksonDatabindVersion); shadow(jacksonDatabindVersion)
+    api(jacksonCoreVersion); shadow(jacksonCoreVersion)
 
     // Tests
-    testImplementation("io.lettuce:lettuce-core:6.4.0.RELEASE")
-    testImplementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-    testImplementation("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
-}
-
-tasks {
-    publish.get().dependsOn(build)
-    build.get().dependsOn("shadowJar")
-    shadowJar {
-        archiveClassifier.set("")
-        configurations = listOf(project.configurations.shadow.get())
-
-        relocate("com.zaxxer.hikari", "com.kamikazejam.kamicommon.hikari")
-        relocate("org.slf4j", "com.kamikazejam.kamicommon.slf4j") // part of the hikari jar
-        relocate("org.apache.commons.pool2", "com.kamikazejam.kamicommon.commons.pool2")
-        relocate("com.mysql", "com.kamikazejam.kamicommon.mysql")
-        relocate("com.rabbitmq", "com.kamikazejam.kamicommon.rabbitmq")
-        relocate("org.slf4j", "com.kamikazejam.kamicommon.slf4j")
-        relocate("io.netty", "com.kamikazejam.kamicommon.netty")
-        relocate("reactor", "com.kamikazejam.kamicommon.reactor")
-        relocate("org.reactivestreams", "com.kamikazejam.kamicommon.reactivestreams")
-        // don't relocate jackson
-        relocate("io.lettuce.core", "com.kamikazejam.kamicommon.lettuce.core")
-    }
+    testImplementation(rabbitMQVersion)
+    testImplementation(lettuceVersion)
+    testImplementation(jacksonDatabindVersion)
+    testImplementation(jacksonCoreVersion)
 }
 
 publishing {
@@ -87,10 +66,3 @@ publishing {
         }
     }
 }
-
-tasks.register<Copy>("unpackShadow") {
-    dependsOn(tasks.shadowJar)
-    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
-    into(layout.buildDirectory.dir("unpacked-shadow"))
-}
-tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

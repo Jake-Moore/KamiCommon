@@ -6,9 +6,7 @@ plugins {
 dependencies {
     // Unique dependencies for this module
     paperweight.paperDevBundle("1.17.1-R0.1-SNAPSHOT")           // 2. add the dev bundle (contains all apis)
-    compileOnly(files(project(":spigot-nms:api")
-        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
-    )
+    compileOnly(project(":spigot-nms:api"))
     compileOnly(project(":spigot-nms:v1_13_R1"))
     compileOnly(project(":spigot-nms:v1_14_R1"))
 }

@@ -1,12 +1,11 @@
 plugins {
-    id("io.github.goooler.shadow")
+    // Unique plugins for this module
 }
 
 dependencies {
     // Unique dependencies for this module
-    compileOnly(files(project(":spigot-nms:api")
-        .dependencyProject.layout.buildDirectory.dir("unpacked-shadow"))
-    )
+    api(project(":spigot-nms:api")); shadow(project(":spigot-nms:api"))
+
     shadow(project(":spigot-nms:v1_8_R1"))
     shadow(project(":spigot-nms:v1_8_R2"))
     shadow(project(":spigot-nms:v1_8_R3"))
@@ -53,9 +52,6 @@ java {
 tasks {
     build.get().dependsOn(shadowJar)
     shadowJar {
-        archiveClassifier.set("")
-        configurations = listOf(project.configurations.shadow.get())
-
         // Add the 1.17 to 1.20R3 reobf outputs
         from(project(":spigot-nms:v1_17_R1").tasks.getByName("reobfJar").outputs)
         from(project(":spigot-nms:v1_18_R1").tasks.getByName("reobfJar").outputs)
@@ -66,8 +62,6 @@ tasks {
         from(project(":spigot-nms:v1_20_R1").tasks.getByName("reobfJar").outputs)
         from(project(":spigot-nms:v1_20_R2").tasks.getByName("reobfJar").outputs)
         from(project(":spigot-nms:v1_20_R3").tasks.getByName("reobfJar").outputs)
-
-        from(project(":spigot-nms:api").tasks.shadowJar.get().outputs)
     }
 }
 
