@@ -20,6 +20,9 @@ dependencies {
 }
 
 tasks {
+    shadowJar {
+        archiveBaseName.set("KamiCommon")
+    }
     jar {
         // Starting with 1.20.5 Paper we can choose not to reobf the jar, leaving it mojang mapped
         //  we forfeit spigot compatability, but it will natively work on paper
