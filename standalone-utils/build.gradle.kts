@@ -5,7 +5,7 @@ plugins {
 var snakeYaml = "org.yaml:snakeyaml:2.2"
 var json = "org.json:json:20240303"
 dependencies {
-    api(project(":generic-utils"))
+    api(project(":shared-utils"))
     // Unique dependencies for this module
     api(snakeYaml)
     api(json)
@@ -13,7 +13,10 @@ dependencies {
     // Testing Dependencies
     testImplementation(snakeYaml)
     testImplementation(json)
-    testImplementation("org.jetbrains:annotations:24.1.0")
+}
+
+tasks {
+    publish.get().dependsOn(build.get())
 }
 
 publishing {
@@ -22,7 +25,7 @@ publishing {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
+            from(components["java"])
         }
     }
 
@@ -39,14 +42,5 @@ publishing {
                 uri("https://repo.luxiouslabs.net/repository/maven-releases/")
             }
         }
-    }
-}
-
-tasks {
-    shadowJar {
-        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
-    }
-    test {
-        dependsOn(project(":generic-utils").tasks.shadowJar) // Gradle complained...
     }
 }

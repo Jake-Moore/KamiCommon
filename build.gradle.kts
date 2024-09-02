@@ -7,15 +7,13 @@ plugins { // needed for the allprojects section to work
     id("java")
     id("java-library")
     id("maven-publish")
-    id("com.gradleup.shadow") version "8.3.0"
+    id("com.gradleup.shadow") version "8.3.0" apply false
 }
 
 ext {
     // reduced is just a re-zipped version of the original, without some conflicting libraries
     //  gson, org.json, com.yaml.snakeyaml
     set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED")    // luxious nexus (public)
-    // From KamiCommonNMS sister project (via luxious maven)
-    set("kamicommonNMS", "com.kamikazejam.kamicommon:spigot-nms:1.0.1")
 }
 
 allprojects {
@@ -26,11 +24,10 @@ allprojects {
     apply(plugin = "java")
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
-    apply(plugin = "com.gradleup.shadow")
 
-    // Provision Java 17 all subprojects (new modules have version 21 configured)
+    // Provision Java 21 all projects
     java {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     }
 
     repositories {
@@ -66,51 +63,14 @@ allprojects {
 
         // IntelliJ annotations
         compileOnly("org.jetbrains:annotations:24.1.0")
+        testImplementation("org.jetbrains:annotations:24.1.0")
     }
 
     // We want UTF-8 for everything
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
     }
-
-    // Configure shadowJar, including all relocations that are needed anywhere
-    tasks.withType(ShadowJar::class.java).configureEach {
-        archiveClassifier.set("")
-
-        // List of relocation exclusions:
-        // - Jackson libraries
-
-        // --------------------------------------------------- //
-        // *** Relocations (will apply to ALL subprojects) *** //
-        // --------------------------------------------------- //
-        // standalone-utils
-        relocate("org.yaml.snakeyaml", "com.kamikazejam.kamicommon.snakeyaml")
-        relocate("org.json", "com.kamikazejam.kamicommon.json")
-        // generic-jar
-        relocate("com.zaxxer.hikari", "com.kamikazejam.kamicommon.hikari")
-        relocate("org.apache.commons.pool2", "com.kamikazejam.kamicommon.commons.pool2")
-        relocate("com.mysql", "com.kamikazejam.kamicommon.mysql")
-        relocate("com.rabbitmq", "com.kamikazejam.kamicommon.rabbitmq")
-        relocate("org.slf4j", "com.kamikazejam.kamicommon.slf4j")
-        relocate("io.netty", "com.kamikazejam.kamicommon.netty")
-        relocate("reactor", "com.kamikazejam.kamicommon.reactor")
-        relocate("org.reactivestreams", "com.kamikazejam.kamicommon.reactivestreams")
-        relocate("io.lettuce.core", "com.kamikazejam.kamicommon.lettuce.core")
-        // standalone-jar
-        relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
-        relocate("com.google.errorprone", "com.kamikazejam.kamicommon.errorprone")
-        // spigot-utils
-        relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
-        relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")
-        // spigot-jar
-        relocate("org.apache.hc.client5", "com.kamikazejam.kamicommon.hc.client5")
-        relocate("org.apache.hc.core5", "com.kamikazejam.kamicommon.hc.core5")
-    }
-    // Ensure all publish tasks depend on build and shadowJar
-    tasks.publish.get().dependsOn(tasks.build)
-    tasks.build.get().dependsOn(tasks.withType(ShadowJar::class.java))
 }
 
 // Disable root project build
 tasks.jar.get().enabled = false
-tasks.shadowJar.get().enabled = false

@@ -6,13 +6,17 @@ dependencies {
     // Unique dependencies for this module
 }
 
+tasks {
+    publish.get().dependsOn(build.get())
+}
+
 publishing {
     publications {
         create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
+            from(components["java"])
         }
     }
 

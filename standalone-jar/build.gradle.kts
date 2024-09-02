@@ -3,11 +3,19 @@ plugins {
 }
 
 dependencies {
-    api(project(":generic-jar"))
-    api(project(":standalone-utils"))
+    // Both shared-jar and standalone-utils inherit from shared-utils
+    // We should exclude one of them to avoid duplicate classes
+    api(project(":shared-jar"))
+    api(project(":standalone-utils")) {
+        exclude(group = "com.kamikazejam.kamicommon", module = "shared-utils")
+    }
 
-    // org.json (standalone-utils) and google gson needed for for jedis (in :generic-jar) to work properly
+    // org.json (standalone-utils) and google gson needed for for jedis (in :shared-jar) to work properly
     api("com.google.code.gson:gson:2.11.0")
+}
+
+tasks {
+    publish.get().dependsOn(build.get())
 }
 
 publishing {
@@ -16,7 +24,7 @@ publishing {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
+            from(components["java"])
         }
     }
 
@@ -33,12 +41,5 @@ publishing {
                 uri("https://repo.luxiouslabs.net/repository/maven-releases/")
             }
         }
-    }
-}
-
-tasks {
-    shadowJar {
-        dependsOn(project(":generic-jar").tasks.shadowJar.get())
-        dependsOn(project(":generic-utils").tasks.shadowJar.get())
     }
 }

@@ -4,8 +4,9 @@ plugins {
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api(project.property("kamicommonNMS") as String)
+    api("com.kamikazejam.kamicommon:spigot-nms:1.0.2")
     api(project(":standalone-utils"))
+    api(project(":shared-utils"))
 
     api("com.google.code.gson:gson:2.11.0")
     api("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
@@ -26,8 +27,8 @@ dependencies {
     compileOnly("nl.marido.deluxecombat:DeluxeCombat:1.40.5")
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+tasks {
+    publish.get().dependsOn(build.get())
 }
 
 publishing {
@@ -36,7 +37,7 @@ publishing {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
+            from(components["java"])
         }
     }
 
@@ -53,11 +54,5 @@ publishing {
                 uri("https://repo.luxiouslabs.net/repository/maven-releases/")
             }
         }
-    }
-}
-
-tasks {
-    shadowJar {
-        dependsOn(project(":generic-utils").tasks.shadowJar.get())
     }
 }

@@ -6,13 +6,11 @@ plugins {
 val slf4jVersion = "2.0.16"
 val jacksonVersion = "2.17.2"
 dependencies {
-    api(project(":generic-utils"))
+    api(project(":shared-utils"))
 
     // MySQL via HikariCP (2,725 KB)
     api("com.zaxxer:HikariCP:5.1.0")
-    api("com.mysql:mysql-connector-j:9.0.0") {
-        exclude("com.google.protobuf", "protobuf-java")
-    }
+    api("com.mysql:mysql-connector-j:9.0.0") { exclude("com.google.protobuf", "protobuf-java") }
 
     // RabbitMQ amqp-client (732 KB)
     api("com.rabbitmq:amqp-client:5.21.0")
@@ -29,13 +27,17 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
 }
 
+tasks {
+    publish.get().dependsOn(build)
+}
+
 publishing {
     publications {
         create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
+            from(components["java"])
         }
     }
 

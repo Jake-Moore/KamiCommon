@@ -11,7 +11,7 @@ import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
 import com.kamikazejam.kamicommon.nms.provider.BlockUtilProvider;
 import com.kamikazejam.kamicommon.nms.provider.ChatColorProvider;
 import com.kamikazejam.kamicommon.util.StringUtil;
-import com.kamikazejam.kamicommon.xseries.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
