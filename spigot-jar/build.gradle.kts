@@ -3,25 +3,60 @@ import java.time.format.DateTimeFormatter
 
 plugins {
     // Unique plugins for this module
+    id("com.gradleup.shadow")
+    id("com.github.hierynomus.license") version "0.15.0"
 }
 
 dependencies {
     // Unique dependencies for this module
-    api(project(":generic-jar"))
-    api(project(":spigot-utils"))
+    implementation(project(":shared-jar"))
+    implementation(project(":spigot-utils"))
 
-    api("org.apache.httpcomponents.client5:httpclient5:5.4-beta1")
-    api("org.apache.httpcomponents.core5:httpcore5:5.3-beta1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.4-beta1")
+    implementation("org.apache.httpcomponents.core5:httpcore5:5.3-beta1")
 
     // Spigot Libraries
     compileOnly(project.property("lowestSpigotDep") as String)
 }
 
 tasks {
+    publish.get().dependsOn(build.get())
+    build.get().dependsOn(shadowJar)
+
     shadowJar {
-        dependsOn(project(":generic-jar").tasks.shadowJar.get())
-        dependsOn(project(":generic-utils").tasks.shadowJar.get())
+        archiveClassifier.set("")
         archiveBaseName.set("KamiCommon")
+
+        // From particlenativeapi
+        exclude("LICENSE*", "META-INF/LICENSE*")
+        exclude("License*", "META-INF/License*")
+
+        // KamiCommonNMS
+        relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
+        relocate("com.github.fierioziy.particlenativeapi", "com.kamikazejam.kamicommon.particleapi")
+        relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbtapi")
+        // shared-jar
+        relocate("com.zaxxer.hikari", "com.kamikazejam.kamicommon.hikari")
+        relocate("org.apache.commons.pool2", "com.kamikazejam.kamicommon.commons.pool2")
+        relocate("com.mysql", "com.kamikazejam.kamicommon.mysql")
+        relocate("com.rabbitmq", "com.kamikazejam.kamicommon.rabbitmq")
+        relocate("org.slf4j", "com.kamikazejam.kamicommon.slf4j")
+        relocate("io.netty", "com.kamikazejam.kamicommon.netty")
+        relocate("reactor", "com.kamikazejam.kamicommon.reactor")
+        relocate("org.reactivestreams", "com.kamikazejam.kamicommon.reactivestreams")
+        relocate("io.lettuce.core", "com.kamikazejam.kamicommon.lettuce.core")
+        // standalone-utils
+        relocate("org.yaml.snakeyaml", "com.kamikazejam.kamicommon.snakeyaml")
+        relocate("org.json", "com.kamikazejam.kamicommon.json")
+        // standalone-jar
+        relocate("com.google.gson", "com.kamikazejam.kamicommon.gson")
+        relocate("com.google.errorprone", "com.kamikazejam.kamicommon.errorprone")
+        // spigot-utils
+        relocate("org.apache.commons.text", "com.kamikazejam.kamicommon.text")
+        relocate("org.apache.commons.lang3", "com.kamikazejam.kamicommon.lang3")
+        // spigot-jar
+        relocate("org.apache.hc.client5", "com.kamikazejam.kamicommon.hc.client5")
+        relocate("org.apache.hc.core5", "com.kamikazejam.kamicommon.hc.core5")
     }
     jar {
         // Starting with 1.20.5 Paper we can choose not to reobf the jar, leaving it mojang mapped
@@ -50,10 +85,6 @@ tasks {
     }
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
-
 publishing {
     publications {
         create<MavenPublication>("shadow") {
@@ -79,3 +110,10 @@ publishing {
         }
     }
 }
+
+tasks.register<Copy>("unpackShadow") {
+    dependsOn(tasks.shadowJar)
+    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
+    into(layout.buildDirectory.dir("unpacked-shadow"))
+}
+tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))
