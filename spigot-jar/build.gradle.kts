@@ -4,7 +4,6 @@ import java.time.format.DateTimeFormatter
 plugins {
     // Unique plugins for this module
     id("com.gradleup.shadow")
-    id("com.github.hierynomus.license") version "0.15.0"
 }
 
 dependencies {
