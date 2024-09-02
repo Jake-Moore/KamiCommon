@@ -1,105 +1,115 @@
-**SEE [README.md](./README.md) FOR API DOCUMENTATION**
+&nbsp;
+
+**SEE [README.md](./README.md) FOR DEPENDENCY INFORMATION**  
+**SEE [WIKI](https://github.com/Jake-Moore/KamiCommon/wiki) FOR FEATURE DOCUMENTATION**
 
 # Module Structure
-- Modules Available as Dependencies: [spigot-jar](#spigot-jar), [spigot-utils](#spigot-utils), [standalone-jar](#standalone-jar), [standalone-utils](#standalone-utils), [shared-jar](#shared-jar), [shared-utils](#shared-utils)
-- NMS modularity has been extracted into a separate project to reduce build times for quick changes. See [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS) for that project
+All 6 modules are published as repository artifacts for use, but only 5 are intended for shading into your project.
+- The 5 modules that can be shaded are:
+  - `shared-utils`, `shared-jar`, `standalone-utils`, `standalone-jar`, `spigot-utils`
+- The last module, `spigot-jar`, compiles the spigot-jar which should not be shaded.
+
+**NMS & Cross Version Compatibility**
+- NMS (`net.minecraft.server`) support has been extracted into a sister project ([KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS))
+  - This module is included in `spigot-utils` & `spigot-jar`
 
 ## Module Hierarchy
 ![ScreenShot](/docs/screenshots/structure.png)
 
 ## Spigot Development
+For developers writing spigot plugins.
+
 ### [spigot-jar](./spigot-jar)
-- The primary module responsible for the spigot plugin jar.
-- Contains ALL of
-  - [spigot-utils](#spigot-utils)
-    - Which contains [standalone-utils](#standalone-utils)
-    - Which contains [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS)
-  - [shared-jar](#shared-jar)
-- 📄 Shaded Utilities
-  - From [spigot-utils](#spigot-utils)
-    - com.google.code.gson:gson
-    - org.apache.commons:commons-text
-  - From [standalone-utils](#standalone-utils)
-    - org.yaml:snakeyaml
-    - org.json:json
-  - From [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS)
-    - [com.github.cryptomorin:XSeries](https://github.com/CryptoMorin/XSeries)
-    - [de.tr7zw:item-nbt-api](https://github.com/tr7zw/Item-NBT-API)
-    - [com.github.fierioziy.particlenativeapi:ParticleNativeAPI](https://github.com/Fierioziy/ParticleNativeAPI)
-  - From [shared-jar](#shared-jar)
-    - com.zaxxer:HikariCP
-    - com.mysql:mysql-connector-j
-    - redis.clients:jedis
-    - com.rabbitmq:amqp-client
-- (⭐) Should **NOT** be shaded ❌
-  - <span style="text-decoration:underline;">should be added to the server as a plugin</span>
+- The primary module responsible for compiling the spigot plugin jar.
+- This module uses relocation for all dependencies (including transitives) to avoid conflicts on the server.
+
+This module inherits: [spigot-utils](#spigot-utils), [shared-jar](#shared-jar)
+
+It also adds the following dependencies:
+- `org.apache.httpcomponents.client5:httpclient5`
+- `org.apache.httpcomponents.core5:httpcore5`
+
+(⭐) Should **NOT** be shaded ❌
+- <span style="text-decoration:underline;">should be added to the server as a plugin, and to projects as an API only</span>
+
 
 ### [spigot-utils](./spigot-utils)
-- A **developer** jar file containing *some* of the standalone spigot APIs in KamiCommon
-- Contains ALL:
-  - [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS)
-  - [standalone-utils](#standalone-utils)
-- Does not contain the shaded utilities the spigot-jar has
-- Meant for developers who want some of the small/frequently used classes, without loading all of the shaded utilities
-- 📄 Shaded Utilities
-  - org.json:json
-  - com.google.code.gson:gson
-  - org.apache.commons:commons-text
-  - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
-- (⭐) **CAN** be shaded
-  - classes in this module may use the spigot-api, but do not require a plugin to back them
+- A developer jar file containing *some* of the spigot APIs from KamiCommon
+
+This module inherits: [shared-utils](#shared-utils), [standalone-utils](#standalone-utils), and [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS)
+
+It also adds the following dependencies:
+- `com.google.code.gson:gson`
+- `org.apache.commons:commons-text`
+
+(⭐) **SHOULD** be shaded ✅
+
+
 
 ## Standalone Development
+For developers compiling outside the spigot server environment.
+
 ### [standalone-jar](./standalone-jar)
 - A standalone jar file containing utilities that do not utilize the spigot-api
-- Contains ALL of
-  - [standalone-utils](#standalone-utils)
-  - [shared-jar](#shared-jar)
-- Meant for developers who want to use the config system or other utilities in a non-spigot environment
-- 📄 Shaded Utilities
-  - org.json:json
-  - com.google.code.gson:gson
-  - org.json:json, org.yaml:snakeyaml [via [standalone-utils](#standalone-utils)]
-  - com.zaxxer:HikariCP, com.mysql:mysql-connector-j, redis.clients:jedis [via [shared-jar](#shared-jar)]
-- (⭐) **SHOULD** be shaded ✅
-  - jar does not function as a spigot plugin
-  - meant to be integrated (shaded) into your project
+
+This module inherits: [shared-jar](#shared-jar), [standalone-utils](#standalone-utils)
+
+It also adds the following dependencies:
+- `com.google.code.gson:gson`
+
+(⭐) **SHOULD** be shaded ✅
+
 
 ### [standalone-utils](./standalone-utils)
 - A jar file containing standalone utilities that do not require shaded dependencies
-- This is a **smaller** and **less feature complete** version of the full [standalone-jar](#standalone-jar)
-- 📄 Shaded Utilities
-  - org.yaml:snakeyaml
-  - org.json:json
-- (⭐) **CAN** be shaded
-  - Developers should only use this if they are NOT using [standalone-jar](#standalone-jar)
-  - These classes do not require any backing, they are safe to shade
 
-## Generic Development
+This module inherits: [shared-utils](#shared-utils)
+
+It also adds the following dependencies:
+- `org.yaml:snakeyaml`
+- `org.json:json`
+
+(⭐) **SHOULD** be shaded ✅
+- jar does not function as a spigot plugin
+- meant to be integrated (shaded) into your project
+- While code is also present in the spigot-jar, relocations are not applied (do not assume it will work with KamiCommon the plugin)
+
+
+
+## Shared Development
+For developers who want some generic KamiCommon libraries in their project.
+
 ### [shared-jar](./shared-jar)
 - A jar file containing generic utility classes (with their shaded dependencies)
-- Placed in its own module so it can be included in both other -jar modules
-- 📄 Shaded Utilities
-  - com.zaxxer:HikariCP
-  - com.mysql:mysql-connector-j
-  - redis.clients:jedis
-  - com.rabbitmq:amqp-client
-- (⭐) **CAN** be shaded
-  - Also present in either [spigot-jar](#spigot-jar) or [standalone-jar](#standalone-jar)
+- Included (transitive dependency) in both `spigot-jar` and `standalone-jar`
+
+This module inherits: [shared-utils](#shared-utils)
+
+It also adds the following dependencies:
+- `com.zaxxer:HikariCP`
+- `com.mysql:mysql-connector-j`
+- `com.rabbitmq:amqp-client`
+- `org.slf4j:slf4j-api`
+- `org.slf4j:slf4j-simple`
+- `io.lettuce:lettuce-core`
+- `com.fasterxml.jackson.core:jackson-databind`
+- `com.fasterxml.jackson.core:jackson-annotations`
+
+(⭐) **SHOULD** be shaded ✅
+
 
 ### [shared-utils](./shared-utils)
 - A jar file containing shared generic utility classes (classes with no dependencies)
-- This module is shaded into both [shared-jar](#shared-jar) and [standalone-utils](#standalone-utils) making it available in all other util and jar modules
-- (⭐) **CAN** be shaded
-  - Also present in either [shared-jar](#shared-jar) or [standalone-utils](#standalone-utils)
 
-## TLDR
-- two -jar modules contain the full set of utilities for their respective environment
-  - [spigot-jar](#spigot-jar) meant to run as a spigot plugin
-  - [standalone-jar](#standalone-jar) meant to be shaded into any kind of project
-- shared-jar module contains a set of utilities that can be used in either environment
-  - it is included in both the [spigot-jar](#spigot-jar) and [standalone-jar](#standalone-jar) modules
-  - It can be used on its own if desired
-- both -utils modules contain a minimized set of utilities
-  - They avoid large utilities that require shaded dependencies (those are left in the -jar module)
-  - you can use them if you shade them
+This module inherits: none
+
+It also adds the following dependencies:
+- none
+
+(⭐) **SHOULD** be shaded ✅
+
+
+## Warning
+- Only the `spigot-jar` module relocates dependencies. This means that developing against `spigot-utils` will develop against non-relocated dependencies.  
+- It is highly unlikely that a jar developed with `spigot-utils` without shading will work on a server, regardless if the KamiCommon plugin is installed.
+- <span style="text-decoration:underline;">If you intended to use a module other than `spigot-jar`, you need to shade it and its dependencies into your project.</span>
