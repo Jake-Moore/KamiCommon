@@ -222,11 +222,11 @@ public class KamiMenu extends MenuHolder {
     protected void update(int tick) {
         this.placeItems((m) -> m.shouldUpdateForTick(tick));
     }
-    public void placeItems() {
+    private void placeItems() {
         this.placeItems(null);
     }
 
-    public void placeItems(@Nullable Predicate<MenuItem> filter) {
+    private void placeItems(@Nullable Predicate<MenuItem> filter) {
         this.menuItems.values().forEach(item -> this.placeItem(filter, item));
         // Automatically fill using filler item, which can be set to null to disable
         this.fill();
