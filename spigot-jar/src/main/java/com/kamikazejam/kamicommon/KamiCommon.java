@@ -12,7 +12,8 @@ public class KamiCommon extends KamiPlugin {
     private static KamiCommon plugin;
 
     @Override
-    public void onEnableInner() {
+    public void onEnableInner()
+    {
         PluginSource.onEnable(this);
     }
 

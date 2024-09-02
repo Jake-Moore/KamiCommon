@@ -31,6 +31,10 @@ tasks {
     publish.get().dependsOn(build.get())
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
 publishing {
     publications {
         create<MavenPublication>("shadow") {

@@ -1,5 +1,5 @@
 @Suppress("PropertyName")
-var VERSION = "3.6.0.0"
+var VERSION = "3.6.0.1"
 
 plugins { // needed for the allprojects section to work
     id("java")
@@ -23,9 +23,9 @@ allprojects {
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
 
-    // Provision Java 21 all projects
+    // Provision Java 17 all projects (Java 21 required for spigot-utils and spigot-jar)
     java {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
     }
 
     repositories {

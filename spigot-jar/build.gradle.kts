@@ -88,6 +88,10 @@ gradle.projectsEvaluated {
     tasks.getByName("publishShadowPublicationToMavenRepository").dependsOn(tasks.jar)
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
 publishing {
     publications {
         create<MavenPublication>("shadow") {
