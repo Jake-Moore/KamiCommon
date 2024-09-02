@@ -84,6 +84,10 @@ tasks {
     }
 }
 
+gradle.projectsEvaluated {
+    tasks.getByName("publishShadowPublicationToMavenRepository").dependsOn(tasks.jar)
+}
+
 publishing {
     publications {
         create<MavenPublication>("shadow") {
