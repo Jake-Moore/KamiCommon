@@ -1,7 +1,11 @@
 package com.kamikazejam.kamicommon.gui.page;
 
 import com.kamikazejam.kamicommon.gui.KamiMenu;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClickEvent;
+import com.kamikazejam.kamicommon.gui.clicks.MenuClickPage;
 import com.kamikazejam.kamicommon.gui.items.MenuItem;
+import com.kamikazejam.kamicommon.gui.items.interfaces.IBuilderModifier;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.gui.items.slots.LastRowItemSlot;
 import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
@@ -12,6 +16,7 @@ import com.kamikazejam.kamicommon.util.StringUtil;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -20,9 +25,7 @@ import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * A wrapper class for {@link KamiMenu} that adds paged functionality to the existing GUI.<br>
@@ -31,11 +34,17 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class PagedKamiMenu {
+    @AllArgsConstructor @Getter
+    public static class IndexedMenuItem {
+        public final @NotNull MenuItem item;
+        public final int index;
+    }
+
     public static final String META_DATA_KEY = "PagedKamiMenu";
 
     // PagedKamiMenu Data. We use KamiMenu as a 'parent' for UI logic
     private final @NotNull KamiMenu parent;
-    @Getter private final @NotNull List<MenuItem> pagedItems; // List for ordering
+    @Getter private final Map<String, IndexedMenuItem> pagedItems = new HashMap<>(); // Uses IndexedMenuItem for ordering
     @Getter public int currentPage = 0;
 
     // Configuration Options
@@ -49,7 +58,7 @@ public class PagedKamiMenu {
     }
     public PagedKamiMenu(@NotNull KamiMenu parent, @NotNull List<MenuItem> pagedItems) {
         this.parent = parent;
-        this.pagedItems = pagedItems;
+        pagedItems.forEach(this::addPagedItem);
         this.pageSlots = defaultPageSlots(parent);
     }
 
@@ -58,7 +67,7 @@ public class PagedKamiMenu {
     }
     public PagedKamiMenu(@NotNull KamiMenu parent, @NotNull List<MenuItem> pagedItems, @NotNull Collection<Integer> slots) {
         this.parent = parent;
-        this.pagedItems = pagedItems;
+
         this.pageSlots = slots;
     }
 
@@ -67,7 +76,7 @@ public class PagedKamiMenu {
     }
     public PagedKamiMenu(@NotNull KamiMenu parent, @NotNull List<MenuItem> pagedItems, int[] slots) {
         this.parent = parent;
-        this.pagedItems = pagedItems;
+        pagedItems.forEach(this::addPagedItem);
         this.pageSlots = new ArrayList<>();
         for (int slot : slots) {
             this.pageSlots.add(slot);
@@ -137,13 +146,67 @@ public class PagedKamiMenu {
     }
 
     public @NotNull MenuItem addPagedItem(@NotNull MenuItem menuItem) {
-        this.pagedItems.add(menuItem);
-        return menuItem;
+        return this.addPagedItem(new IndexedMenuItem(menuItem, this.pagedItems.size()));
+    }
+    public @NotNull MenuItem addPagedItem(@NotNull IndexedMenuItem indexed) {
+        if (this.pagedItems.containsKey(indexed.item.getId())) {
+            // throw error so the developer can fix it
+            throw new IllegalArgumentException("Duplicate MenuItem ID in PagedKamiMenu: '" + indexed.item.getId() + "'. Existing IDs are: " + Arrays.toString(this.getPagedItemIDs().toArray(new String[0])));
+        }
+        this.pagedItems.put(indexed.item.getId(), indexed);
+        return indexed.item;
     }
 
     public void clearPagedItems() {
         this.pagedItems.clear();
     }
+
+    // ------------------------------------------------------------ //
+    //                   Item Management (by ID)                    //
+    // ------------------------------------------------------------ //
+    /**
+     * Retrieve a menu item by its id
+     */
+    @NotNull
+    public Optional<MenuItem> getMenuItem(@NotNull String id) {
+        if (!pagedItems.containsKey(id)) { return Optional.empty(); }
+        return Optional.ofNullable(pagedItems.get(id)).map(IndexedMenuItem::getItem);
+    }
+
+    @NotNull
+    public PagedKamiMenu setMenuClick(@NotNull String id, @NotNull MenuClick click) {
+        this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
+        return this;
+    }
+    @NotNull
+    public PagedKamiMenu setMenuClick(@NotNull String id, @NotNull MenuClickPage click) {
+        this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
+        return this;
+    }
+    @NotNull
+    public PagedKamiMenu setMenuClick(@NotNull String id, @NotNull MenuClickEvent click) {
+        this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
+        return this;
+    }
+    @NotNull
+    public PagedKamiMenu setModifier(@NotNull String id, @NotNull IBuilderModifier modifier) {
+        this.getMenuItem(id).ifPresent(item -> item.setModifier(modifier));
+        return this;
+    }
+    @NotNull
+    public PagedKamiMenu setAutoUpdate(@NotNull String id, @NotNull IBuilderModifier modifier, int tickInterval) {
+        this.getMenuItem(id).ifPresent(item -> item.setAutoUpdate(modifier, tickInterval));
+        return this;
+    }
+    public boolean isValidPagedItemID(@NotNull String id) {
+        return pagedItems.containsKey(id);
+    }
+    @NotNull
+    public Set<String> getPagedItemIDs() {
+        return pagedItems.keySet();
+    }
+
+
 
     /**
      * Applies changes to Parent menu, and Opens it for a given player.
@@ -168,7 +231,12 @@ public class PagedKamiMenu {
         this.parent.getMetaData().put(META_DATA_KEY, this);
 
         // Calculate the current pagination, this allows the items list to be modified before opening
-        Pagination<MenuItem> pagination = new Pagination<>(this.pageSlots.size(), this.pagedItems);
+        List<MenuItem> ordered = this.pagedItems.values().stream()
+                        .filter(Objects::nonNull)
+                        .sorted(Comparator.comparingInt(IndexedMenuItem::getIndex))
+                        .map(IndexedMenuItem::getItem)
+                        .toList();
+        Pagination<MenuItem> pagination = new Pagination<>(this.pageSlots.size(), ordered);
 
         // Update the title with the pagination data
         if (appendTitleWithPage) {

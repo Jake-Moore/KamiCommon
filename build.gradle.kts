@@ -1,5 +1,5 @@
 @Suppress("PropertyName")
-var VERSION = "3.6.0.3"
+var VERSION = "3.6.0.4"
 
 plugins { // needed for the allprojects section to work
     id("java")
