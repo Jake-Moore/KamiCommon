@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api("com.kamikazejam.kamicommon:spigot-nms:1.0.4")
+    api("com.kamikazejam.kamicommon:spigot-nms:1.0.5")
     api(project(":standalone-utils"))
     api(project(":shared-utils"))
 
