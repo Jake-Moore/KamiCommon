@@ -34,7 +34,9 @@ public class KamiConfigExt extends KamiConfig {
 
     @Override
     public String getString(String key, String def) {
-        return this.applyThisPlaceholders(super.getString(key, def));
+        String string = super.getString(key, def);
+        if (string == null) { return null; }
+        return this.applyThisPlaceholders(string);
     }
 
     @Override
@@ -45,15 +47,16 @@ public class KamiConfigExt extends KamiConfig {
     @Override
     public List<String> getStringList(String key, List<String> def) {
         List<String> list = super.getStringList(key, def);
+        if (list == null) { return null; }
         list.replaceAll(this::applyThisPlaceholders);
         return list;
     }
 
-    public @NotNull String applyThisPlaceholders(@NotNull String val) {
+    public String applyThisPlaceholders(String val) {
+        if (val == null) { return null; }
         if (!this.isConfigurationSection("this.placeholders")) { return val; }
 
         MemorySection section = this.getConfigurationSection("this.placeholders");
-        if (section == null) { return val; }
 
         // Recursion base case, if there are no placeholders just return the string
         if (!val.contains("{") || !val.contains("}")) { return val; }

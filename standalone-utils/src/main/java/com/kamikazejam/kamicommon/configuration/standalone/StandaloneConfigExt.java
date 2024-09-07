@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.configuration.standalone;
 
 import com.kamikazejam.kamicommon.yaml.standalone.MemorySectionStandalone;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -35,7 +34,9 @@ public class StandaloneConfigExt extends StandaloneConfig {
     }
     @Override
     public String getString(String key, String def) {
-        return this.applyThisPlaceholders(super.getString(key, def));
+        String string = super.getString(key, def);
+        if (string == null) { return null; }
+        return this.applyThisPlaceholders(string);
     }
 
     @Override
@@ -45,15 +46,16 @@ public class StandaloneConfigExt extends StandaloneConfig {
     @Override
     public List<String> getStringList(String key, List<String> def) {
         List<String> list = super.getStringList(key, def);
+        if (list == null) { return null; }
         list.replaceAll(this::applyThisPlaceholders);
         return list;
     }
 
-    public @NotNull String applyThisPlaceholders(@NotNull String val) {
+    public String applyThisPlaceholders(String val) {
+        if (val == null) { return null; }
         if (!this.isConfigurationSection("this.placeholders")) { return val; }
 
         MemorySectionStandalone section = this.getConfigurationSection("this.placeholders");
-        if (section == null) { return val; }
 
         // Recursion base case, if there are no placeholders just return the string
         if (!val.contains("{") || !val.contains("}")) { return val; }
