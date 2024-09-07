@@ -1,13 +1,19 @@
 package com.kamikazejam.kamicommon.integrations.combat;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.UUID;
 
+@SuppressWarnings("unused")
 public interface CombatIntegration {
 
-    boolean isTagged(Player player);
+    boolean isTagged(@NotNull Player player);
+    boolean isTagged(@NotNull UUID uuid);
 
-    void tag(Player victim, @Nonnull Player attacker);
+    void tag(@NotNull Player victim, @NotNull Player attacker);
+
+    void untag(@NotNull Player player);
+    void untag(@NotNull UUID uuid);
 
 }
