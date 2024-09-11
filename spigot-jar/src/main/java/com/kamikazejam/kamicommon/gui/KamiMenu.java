@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClickPage;
@@ -13,7 +14,6 @@ import com.kamikazejam.kamicommon.gui.page.PagedKamiMenu;
 import com.kamikazejam.kamicommon.gui.struct.MenuSize;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
-import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,12 +27,14 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -63,8 +65,10 @@ public class KamiMenu extends MenuHolder {
     private final Set<UUID> ignoredClose = new HashSet<>(); // Set of Player UUID to ignore calling the close handler for
     private boolean allowItemPickup;
     // Filler is a MenuItem so that it can have the same features as other items (rotating materials, clicks, etc)
-    private @Nullable MenuItem fillerItem = new MenuItem(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" "), -1);
+    private @Nullable MenuItem fillerItem = new MenuItem(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" "), -1).setId("filler");
     private final Set<Integer> excludedFillSlots = new HashSet<>();
+    @ApiStatus.Internal
+    private final AtomicInteger tickCounter = new AtomicInteger(0);
 
     public KamiMenu(@NotNull String name, int rows) {
         super(name, rows);
@@ -89,7 +93,7 @@ public class KamiMenu extends MenuHolder {
     @NotNull
     public InventoryView openMenu(@NotNull Player player, boolean ignoreCloseHandler) {
         // Place all items into the inventory
-        this.placeItems();
+        this.placeItems(null);
         MenuTask.getAutoUpdateInventories().add(this);
 
         if (ignoreCloseHandler) {
@@ -219,11 +223,9 @@ public class KamiMenu extends MenuHolder {
         this.menuItems.clear();
     }
 
-    protected void update(int tick) {
-        this.placeItems((m) -> m.shouldUpdateForTick(tick));
-    }
-    private void placeItems() {
-        this.placeItems(null);
+    protected void update() {
+        int tick = this.tickCounter.get();
+        this.placeItems((m) -> m.needsModification(tick));
     }
 
     private void placeItems(@Nullable Predicate<MenuItem> filter) {
@@ -232,15 +234,41 @@ public class KamiMenu extends MenuHolder {
         this.fill();
     }
 
-    private void placeItem(@Nullable Predicate<MenuItem> filter, @NotNull MenuItem tickedItem) {
-        if (!tickedItem.isEnabled() || (filter != null && !filter.test(tickedItem))) { return; }
-        @Nullable ItemSlot itemSlot = tickedItem.getItemSlot();
+    private void placeItem(@Nullable Predicate<MenuItem> filter, @NotNull MenuItem menuItem) {
+        if (!menuItem.isEnabled() || (filter != null && !filter.test(menuItem))) { return; }
+        int tick = this.tickCounter.get();
+
+        @Nullable ItemSlot itemSlot = menuItem.getItemSlot();
         if (itemSlot == null) { return; }
 
-        // Build the new item, storing it back in the TickedItem for comparison on clicks
-        ItemStack item = tickedItem.buildItem();
+        // The tick determines if we should cycle the builder
+        // We also skip tick 0 since the modulo operation will always be true
+        @Nullable ItemStack item = menuItem.buildItem(tick > 0 && menuItem.isCycleBuilderForTick(tick));
+        this.placeItemStack(item, menuItem, itemSlot);
+    }
+
+    public void updateItem(@NotNull String id) {
+        this.getMenuItem(id).ifPresent(this::updateItem);
+    }
+
+    public void updateItem(@NotNull MenuItem menuItem) {
+        this.updateItem(null, menuItem);
+    }
+
+    public void updateItem(@Nullable Predicate<MenuItem> filter, @NotNull MenuItem menuItem) {
+        if (!menuItem.isEnabled() || (filter != null && !filter.test(menuItem))) { return; }
+        @Nullable ItemSlot itemSlot = menuItem.getItemSlot();
+        if (itemSlot == null) { return; }
+
+        // Build the new item, storing it back in the MenuItem for comparison on clicks
+        @Nullable ItemStack item = menuItem.buildItem(false);
+        this.placeItemStack(item, menuItem, itemSlot);
+    }
+
+    private void placeItemStack(@Nullable ItemStack item, @NotNull MenuItem menuItem, @NotNull ItemSlot itemSlot) {
         if (item != null && item.getAmount() > 64) { item.setAmount(64); }
-        tickedItem.setLastItem(item);
+        // Store the item back in the MenuItem for comparison on clicks
+        menuItem.setLastItem(item);
 
         // Update the inventory slots
         int size = this.getSize();
@@ -249,6 +277,7 @@ public class KamiMenu extends MenuHolder {
             super.setItem(slot, item);
         }
     }
+
 
     // ------------------------------------------------------------ //
     //                   Item Management (by ID)                    //
@@ -353,5 +382,12 @@ public class KamiMenu extends MenuHolder {
         }
 
         return this;
+    }
+
+    public void setFillerItem(@Nullable MenuItem fillerItem) {
+        this.fillerItem = fillerItem;
+        if (fillerItem != null) {
+            fillerItem.setId("filler");
+        }
     }
 }

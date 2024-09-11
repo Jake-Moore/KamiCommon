@@ -118,9 +118,10 @@ publishing {
     }
 }
 
-tasks.register<Copy>("unpackShadow") {
-    dependsOn(tasks.shadowJar)
-    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
-    into(layout.buildDirectory.dir("unpacked-shadow"))
-}
-tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))
+// Uncomment for debug
+//tasks.register<Copy>("unpackShadow") {
+//    dependsOn(tasks.shadowJar)
+//    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
+//    into(layout.buildDirectory.dir("unpacked-shadow"))
+//}
+//tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

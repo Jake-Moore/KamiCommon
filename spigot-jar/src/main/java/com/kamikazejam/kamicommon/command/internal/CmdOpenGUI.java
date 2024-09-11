@@ -1,11 +1,13 @@
 package com.kamikazejam.kamicommon.command.internal;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
 import com.kamikazejam.kamicommon.gui.KamiMenu;
+import com.kamikazejam.kamicommon.gui.items.MenuItem;
 import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
 import com.kamikazejam.kamicommon.gui.loader.KamiMenuLoader;
 import com.kamikazejam.kamicommon.gui.page.PagedKamiMenu;
@@ -13,7 +15,6 @@ import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
-import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +45,10 @@ public class CmdOpenGUI extends KamiCommand {
         }
         if (guiKey.equalsIgnoreCase("paged2")) {
             this.openPaged2(player);
+            return;
+        }
+        if (guiKey.equalsIgnoreCase("test1")) {
+            this.openTest1(player);
             return;
         }
 
@@ -92,5 +97,32 @@ public class CmdOpenGUI extends KamiCommand {
             );
         }
         paged.applyToParent(0).openMenu(player);
+    }
+
+    private void openTest1(@NotNull Player player) {
+        KamiMenu menu = new KamiMenu("&8&lTest Menu", 3);
+
+        // Add an item with rotating builders
+        List<IBuilder> builders = List.of(
+                new ItemBuilder(XMaterial.STONE, 1).setName("&fStone"),
+                new ItemBuilder(XMaterial.DIAMOND, 1).setName("&bDiamond"),
+                new ItemBuilder(XMaterial.EMERALD, 1).setName("&aEmerald")
+        );
+        builders.forEach(builder -> builder.setLore("&7This is a lore with the time: {time}"));
+
+        // Rotate every 3 seconds
+        menu.addMenuItem(new MenuItem(true, 13, builders).setId("TEST").setBuilderRotateTicks(60));
+        // Update the time every 1 second
+        menu.setAutoUpdate("TEST", (builder) ->
+                builder.replaceBoth("{time}", String.valueOf(System.currentTimeMillis()))
+        , 20);
+
+        // When clicked, update the item (on demand)
+        menu.setMenuClick("TEST", (p, c) -> {
+            p.sendMessage(StringUtil.t("&7Menu Item Click (&f" + c.name() + "&7) on &fTEST"));
+            menu.updateItem("TEST");
+        });
+
+        menu.openMenu(player);
     }
 }
