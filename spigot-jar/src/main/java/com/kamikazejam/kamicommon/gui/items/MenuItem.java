@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.gui.items;
 
+import com.cryptomorin.xseries.XSound;
 import com.kamikazejam.kamicommon.gui.KamiMenu;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClick;
 import com.kamikazejam.kamicommon.gui.clicks.MenuClickEvent;
@@ -12,7 +13,6 @@ import com.kamikazejam.kamicommon.gui.items.interfaces.IBuilderModifier;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.gui.items.slots.StaticItemSlot;
 import com.kamikazejam.kamicommon.item.IBuilder;
-import com.cryptomorin.xseries.XSound;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,10 +36,9 @@ public class MenuItem {
     @Setter(AccessLevel.NONE)
     private @NotNull String id = UUID.randomUUID().toString(); // final because it's used in HashMaps
 
-    // Fields for DynamicItem and TickedItem
     private @Nullable ItemStack lastItem;
     private @Nullable IClickTransform transform = null;
-    private @Nullable Integer tickInterval = null;
+    private @Nullable Integer updateInterval = null;
     private @Nullable IBuilderModifier modifier = null;
 
     // Allow this item to be enabled or disabled (if it should be put in the menu)
@@ -141,7 +140,7 @@ public class MenuItem {
         copy.id = this.id;
         copy.lastItem = this.lastItem;
         copy.transform = this.transform;
-        copy.tickInterval = this.tickInterval;
+        copy.updateInterval = this.updateInterval;
         copy.modifier = this.modifier;
         copy.builderRotateTicks = this.builderRotateTicks;
         copy.clickSound = this.clickSound;
@@ -172,7 +171,7 @@ public class MenuItem {
     // --------------------------------------------- //
 
     public @NotNull MenuItem setAutoUpdate(@NotNull IBuilderModifier modifier, int tickInterval) {
-        this.tickInterval = tickInterval;
+        this.updateInterval = tickInterval;
         this.modifier = modifier;
         return this;
     }
@@ -194,7 +193,7 @@ public class MenuItem {
 
     public @NotNull MenuItem setModifier(@Nullable IBuilderModifier modifier) {
         this.modifier = modifier;
-        this.tickInterval = null;
+        this.updateInterval = null;
         return this;
     }
 
@@ -202,9 +201,11 @@ public class MenuItem {
     //              Tickable Properties              //
     // --------------------------------------------- //
 
-    public final @Nullable ItemStack buildItem() {
-        @Nullable IBuilder base = getNextBuilder();
+    public final @Nullable ItemStack buildItem(boolean newBuilder) {
+        final int pre = this.builderIndex;
+        @Nullable IBuilder base = newBuilder ? getNextBuilder() : getCurrentBuilder();
         if (base == null) { return null; }
+
         // Modify the item
         if (modifier != null) {
             modifier.modify(base);
@@ -212,13 +213,17 @@ public class MenuItem {
         return base.build();
     }
 
-    public boolean shouldUpdateForTick(int tick) {
+    public boolean isCycleBuilderForTick(int tick) {
         // If we need to supply a new IBuilder from MenuItem, then we should update
-        if (this.iBuilders.size() > 1 && this.getBuilderRotateTicks() > 0 && tick % this.getBuilderRotateTicks() == 0) {
-            return true;
-        }
-        // If our dynamic tick interval is ready, we should update
-        return tickInterval != null && tickInterval > 0 && tick % tickInterval == 0;
+        return this.iBuilders.size() > 1 && this.getBuilderRotateTicks() > 0 && tick % this.getBuilderRotateTicks() == 0;
+    }
+
+    public boolean isAutoUpdateForTick(int tick) {
+        return updateInterval != null && updateInterval > 0 && tick % updateInterval == 0;
+    }
+
+    public boolean needsModification(int tick) {
+        return isCycleBuilderForTick(tick) || isAutoUpdateForTick(tick);
     }
 
     // --------------------------------------------- //
@@ -232,10 +237,20 @@ public class MenuItem {
     @Nullable
     public IBuilder getNextBuilder() {
         if (iBuilders.isEmpty()) { return null; }
-        if (builderIndex >= iBuilders.size()) {
-            builderIndex = 0;
+        this.builderIndex++;
+        if (this.builderIndex >= iBuilders.size()) {
+            this.builderIndex = 0;
         }
-        return iBuilders.get(builderIndex++).clone();
+        return iBuilders.get(this.builderIndex).clone();
+    }
+
+    @Nullable
+    public IBuilder getCurrentBuilder() {
+        if (iBuilders.isEmpty()) { return null; }
+        if (this.builderIndex >= iBuilders.size()) {
+            this.builderIndex = 0;
+        }
+        return iBuilders.get(this.builderIndex).clone();
     }
 
     @ApiStatus.Internal
@@ -255,13 +270,13 @@ public class MenuItem {
                 && iBuilders.equals(menuItem.iBuilders)
                 && Objects.equals(itemSlot, menuItem.itemSlot)
                 && Objects.equals(transform, menuItem.transform)
-                && Objects.equals(tickInterval, menuItem.tickInterval)
+                && Objects.equals(updateInterval, menuItem.updateInterval)
                 && Objects.equals(modifier, menuItem.modifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabled, iBuilders, itemSlot, transform, tickInterval, modifier);
+        return Objects.hash(enabled, iBuilders, itemSlot, transform, updateInterval, modifier);
     }
 }
 
