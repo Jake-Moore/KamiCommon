@@ -21,6 +21,7 @@ dependencies {
 tasks {
     publish.get().dependsOn(build.get())
     build.get().dependsOn(shadowJar)
+    shadowJar.get().dependsOn(jar)
 
     shadowJar {
         archiveClassifier.set("")
@@ -98,7 +99,7 @@ publishing {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
-            project.extensions.getByType<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>().component(this)
+            from(components["shadow"])
         }
     }
 
