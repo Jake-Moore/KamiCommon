@@ -70,8 +70,6 @@ public class KamiMenu extends MenuHolder {
     @ApiStatus.Internal
     private final AtomicInteger tickCounter = new AtomicInteger(0);
 
-    private boolean cancelOnClick = true;
-
     public KamiMenu(@NotNull String name, int rows) {
         super(name, rows);
     }
