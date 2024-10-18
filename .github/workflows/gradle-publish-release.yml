@@ -93,35 +93,36 @@ jobs:
           https://api.github.com/gists/$GIST_ID \
           -d "{\"files\": {\"kamicommon.txt\": {\"content\": \"$CONTENT\"}}}"
 
-    # Automatically bump the version
-    # This will also automatically update the VERSION to -SNAPSHOT
-    # So that any PRs or commits that are merged to main won't be automatically released
-    # It will now require an intentional release by changing the version
-    - name: Increment Version
-      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
-      id: increment_version
-      run: |
-        # Extract the current version and split it into components
-        version=$current_version
-        major=$(echo $version | cut -d'.' -f1)
-        minor=$(echo $version | cut -d'.' -f2)
-        patch=$(echo $version | cut -d'.' -f3)
-        build=$(echo $version | cut -d'.' -f4)
-
-        # Increment the patch or minor version (you can customize this logic)
-        new_build=$((build + 1))
-        new_version="$major.$minor.$patch.$new_build-SNAPSHOT"
-
-        echo "new_version=$new_version" >> $GITHUB_OUTPUT
-        echo "New Gradle Version: $new_version"
-
-    # Push changes to the build.gradle.kts file
-    - name: Update VERSION in build.gradle.kts
-      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
-      run: |
-        new_version=${{ steps.increment_version.outputs.new_version }}
-        sed -i 's/^var VERSION = ".*"/var VERSION = "$new_version"/' build.gradle.kts
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git commit -am "Increment version to $new_version after release"
-        git push
+# Will revisit later, repo settings don't allow direct pushes to main from actions atm
+#    # Automatically bump the version
+#    # This will also automatically update the VERSION to -SNAPSHOT
+#    # So that any PRs or commits that are merged to main won't be automatically released
+#    # It will now require an intentional release by changing the version
+#    - name: Increment Version
+#      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
+#      id: increment_version
+#      run: |
+#        # Extract the current version and split it into components
+#        version=$current_version
+#        major=$(echo $version | cut -d'.' -f1)
+#        minor=$(echo $version | cut -d'.' -f2)
+#        patch=$(echo $version | cut -d'.' -f3)
+#        build=$(echo $version | cut -d'.' -f4)
+#
+#        # Increment the patch or minor version (you can customize this logic)
+#        new_build=$((build + 1))
+#        new_version="$major.$minor.$patch.$new_build-SNAPSHOT"
+#
+#        echo "new_version=$new_version" >> $GITHUB_OUTPUT
+#        echo "New Gradle Version: $new_version"
+#
+#    # Push changes to the build.gradle.kts file
+#    - name: Update VERSION in build.gradle.kts
+#      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
+#      run: |
+#        new_version=${{ steps.increment_version.outputs.new_version }}
+#        sed -i 's/^var VERSION = ".*"/var VERSION = "$new_version"/' build.gradle.kts
+#        git config --global user.name "github-actions[bot]"
+#        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#        git commit -am "Increment version to $new_version after release"
+#        git push
