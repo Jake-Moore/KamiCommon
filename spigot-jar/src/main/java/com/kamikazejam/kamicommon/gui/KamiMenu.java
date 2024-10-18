@@ -69,6 +69,8 @@ public class KamiMenu extends MenuHolder {
     private final Set<Integer> excludedFillSlots = new HashSet<>();
     @ApiStatus.Internal
     private final AtomicInteger tickCounter = new AtomicInteger(0);
+    
+    private boolean cancelOnClick = true;
 
     public KamiMenu(@NotNull String name, int rows) {
         super(name, rows);
