@@ -19,7 +19,7 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
-    compileOnly("io.lumine:Mythic-Dist:5.7.1")
+    compileOnly("io.lumine:Mythic-Dist:5.7.2")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.19")
     // Combat Integrations
     compileOnly("net.minelink:CombatTagPlus:1.3.1")
