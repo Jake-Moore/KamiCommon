@@ -30,7 +30,10 @@ public class MenuManager implements Listener {
     public void onClickMenu(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player player)) { return; }
         if (!(e.getInventory().getHolder() instanceof KamiMenu menu)) { return; }
-        e.setCancelled(true);
+
+        if (menu.isCancelOnClick()) {
+            e.setCancelled(true);
+        }
 
         // Special Handling for clicks in the player inventory
         if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER) {
