@@ -98,6 +98,7 @@ jobs:
     # So that any PRs or commits that are merged to main won't be automatically released
     # It will now require an intentional release by changing the version
     - name: Increment Version
+      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
       id: increment_version
       run: |
         # Extract the current version and split it into components
@@ -116,8 +117,9 @@ jobs:
 
     # Push changes to the build.gradle.kts file
     - name: Update VERSION in build.gradle.kts
+      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
       run: |
-        new_version = ${{ steps.increment_version.outputs.new_version }}
+        new_version=${{ steps.increment_version.outputs.new_version }}
         sed -i 's/^var VERSION = ".*"/var VERSION = "$new_version"/' build.gradle.kts
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
