@@ -60,8 +60,8 @@ allprojects {
         testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
 
         // IntelliJ annotations
-        compileOnly("org.jetbrains:annotations:24.1.0")
-        testImplementation("org.jetbrains:annotations:24.1.0")
+        compileOnly("org.jetbrains:annotations:26.0.1")
+        testImplementation("org.jetbrains:annotations:26.0.1")
     }
 
     // We want UTF-8 for everything
