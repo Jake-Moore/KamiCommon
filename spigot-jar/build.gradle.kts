@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":shared-jar"))
     implementation(project(":spigot-utils"))
 
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.4")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.4.1")
     implementation("org.apache.httpcomponents.core5:httpcore5:5.3")
 
     // Spigot Libraries
