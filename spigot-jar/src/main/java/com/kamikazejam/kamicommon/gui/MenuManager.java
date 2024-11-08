@@ -1,10 +1,12 @@
 package com.kamikazejam.kamicommon.gui;
 
+import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.PluginSource;
 import com.kamikazejam.kamicommon.gui.clicks.transform.IClickTransform;
 import com.kamikazejam.kamicommon.gui.items.MenuItem;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.gui.page.PagedKamiMenu;
-import com.cryptomorin.xseries.XMaterial;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -91,7 +93,7 @@ public class MenuManager implements Listener {
 
     @EventHandler
     public void onCloseMenu(InventoryCloseEvent e) {
-        Player p = (Player) e.getPlayer();
+        final Player p = (Player) e.getPlayer();
 
         if (!(e.getInventory().getHolder() instanceof KamiMenu menu)) {
             return;
@@ -101,8 +103,13 @@ public class MenuManager implements Listener {
         // We do this before consumers, because some consumers may re-open the menu
         MenuTask.getAutoUpdateInventories().remove(menu);
 
-        // Trigger the Close Consumer
+        // Trigger the Close Consumers
         menu.getCloseConsumers().forEach(consumer -> consumer.accept(e));
+
+        // Trigger the Post-Close Consumers (1-tick later)
+        Bukkit.getScheduler().runTaskLater(PluginSource.get(), () ->
+                menu.getPostCloseConsumers().forEach(consumer -> consumer.accept(p))
+        , 1L);
     }
 
     @EventHandler
