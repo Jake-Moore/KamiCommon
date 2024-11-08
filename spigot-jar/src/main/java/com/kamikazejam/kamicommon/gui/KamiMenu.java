@@ -59,6 +59,7 @@ public class KamiMenu extends MenuHolder {
     // Menu Callbacks
     private final List<Predicate<InventoryClickEvent>> clickPredicates = new ArrayList<>();
     private final List<Consumer<InventoryCloseEvent>> closeConsumers = new ArrayList<>();
+    private final List<Consumer<Player>> postCloseConsumers = new ArrayList<>();
     private final Map<String, MenuOpenCallback> openCallbacks = new ConcurrentHashMap<>(); // Map<Id, Callback>
 
     // Menu Options
@@ -368,6 +369,16 @@ public class KamiMenu extends MenuHolder {
         return this;
     }
 
+    /**
+     * Add a consumer that runs 1 tick after the inventory is closed, with access to {@link Player}.<br>
+     * Note: This 1 tick delay is technically enough time for a player to log out. This event is guaranteed to run, but the player may not be online.<br>
+     * This is the method you should use for GUIs that you want to re-open if closed.
+     */
+    @NotNull
+    public KamiMenu addPostCloseConsumer(@NotNull Consumer<Player> consumer) {
+        this.postCloseConsumers.add(consumer);
+        return this;
+    }
 
 
     private KamiMenu fill() {
