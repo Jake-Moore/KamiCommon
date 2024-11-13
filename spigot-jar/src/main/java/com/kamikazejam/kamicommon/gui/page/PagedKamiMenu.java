@@ -223,6 +223,10 @@ public class PagedKamiMenu {
      */
     @NotNull
     public KamiMenu applyToParent(int pageIndex) {
+        if (this.pageSlots.isEmpty()) {
+            throw new IllegalStateException("No page slots have been configured for a PagedKamiMenu, cannot open a page without slots!!!");
+        }
+
         // ***** WARNING *****
         // All changes to KamiMenu are persisted between calls
         // It is imperative that data from previous calls is removed if necessary
