@@ -16,7 +16,7 @@ dependencies {
     // Spigot Libs (soft-depend)
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT") {
+    compileOnly("net.citizensnpcs:citizens-main:2.0.36-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
     compileOnly("io.lumine:Mythic-Dist:5.7.2")
