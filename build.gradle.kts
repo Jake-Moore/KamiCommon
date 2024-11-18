@@ -5,7 +5,7 @@ plugins { // needed for the allprojects section to work
     id("java")
     id("java-library")
     id("maven-publish")
-    id("com.gradleup.shadow") version "8.3.3" apply false
+    id("com.gradleup.shadow") version "8.3.5" apply false
 }
 
 ext {
