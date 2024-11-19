@@ -13,7 +13,7 @@ dependencies {
     api("com.mysql:mysql-connector-j:9.1.0") { exclude("com.google.protobuf", "protobuf-java") }
 
     // RabbitMQ amqp-client (732 KB)
-    api("com.rabbitmq:amqp-client:5.22.0")
+    api("com.rabbitmq:amqp-client:5.23.0")
 
     // SLF4J (39 KB) (needed for RabbitMQ)
     api("org.slf4j:slf4j-api:$slf4jVersion")
