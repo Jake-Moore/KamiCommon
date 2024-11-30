@@ -300,7 +300,7 @@ public abstract class IBuilder {
     }
 
     public IBuilder replaceName(String find, String replacement) {
-        assert name != null;
+        if (name == null) { return this; }
         name = name.replace(find, replacement);
         return this;
     }
@@ -309,7 +309,7 @@ public abstract class IBuilder {
         return replaceNamePAPI(null);
     }
     public IBuilder replaceNamePAPI(@Nullable OfflinePlayer player) {
-        assert name != null;
+        if (name == null) { return this; }
         name = StringUtilP.p(player, name);
         return this;
     }
@@ -322,7 +322,7 @@ public abstract class IBuilder {
      */
     public IBuilder replaceLoreLine(String find, List<String> replacement) {
         final List<String> newLore = new ArrayList<>();
-        assert lore != null;
+        if (lore == null) { return this; }
         for (String s : lore) {
             if (ChatColor.stripColor(s).contains(ChatColor.stripColor(find))) {
                 newLore.addAll(replacement);
@@ -336,7 +336,7 @@ public abstract class IBuilder {
 
     public IBuilder replaceLore(String find, String replacement) {
         final List<String> newLore = new ArrayList<>();
-        assert lore != null;
+        if (lore == null) { return this; }
         for (String s : lore) {
             if (s.contains(find)) {
                 newLore.add(s.replace(find, replacement));
@@ -352,7 +352,7 @@ public abstract class IBuilder {
         return replaceLorePAPI(null);
     }
     public IBuilder replaceLorePAPI(@Nullable OfflinePlayer player) {
-        assert lore != null;
+        if (lore == null) { return this; }
         lore.replaceAll(s -> StringUtilP.p(player, s));
         return this;
     }
