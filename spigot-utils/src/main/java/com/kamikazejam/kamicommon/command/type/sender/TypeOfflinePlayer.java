@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command.type.sender;
 
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.id.SenderPresence;
@@ -25,7 +26,11 @@ public class TypeOfflinePlayer extends TypeAbstract<OfflinePlayer> {
 
 	@Override
 	public OfflinePlayer read(String str, CommandSender sender) throws KamiCommonException {
-		return IdUtilLocal.getOfflinePlayer(str);
+		OfflinePlayer offlinePlayer = IdUtilLocal.getOfflinePlayer(str);
+		if (offlinePlayer == null) {
+			throw new KamiCommonException().addMsg(StringUtil.t("&cNo player with the name '&f" + str + "&c' has been seen before on this server."));
+		}
+		return offlinePlayer;
 	}
 
 	@Override
