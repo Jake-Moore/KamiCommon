@@ -72,3 +72,17 @@ allprojects {
 
 // Disable root project build
 tasks.jar.get().enabled = false
+
+// ---------------- Define Helper Methods ---------------- //
+
+// This method adapts the version string to send the artifact to the snapshots repository if it does not
+//  comply with the SemVer release versioning scheme.
+extra["getPublishingVersion"] = {
+    val version = rootProject.version.toString()
+    if (!version.matches(Regex("^\\d+\\.\\d+\\.\\d+$"))) {
+        // Only apply -SNAPSHOT if necessary
+        if (!version.endsWith("-SNAPSHOT")) "$version-SNAPSHOT" else version
+    } else {
+        version
+    }
+}
