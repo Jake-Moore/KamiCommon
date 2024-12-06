@@ -5,6 +5,13 @@
 
 **SEE [STRUCTURE.md](./STRUCTURE.md) FOR GRADLE MODULE BREAKDOWN**
 
+## ⚠️ v4 Announcement ⚠️
+In the coming weeks/months I will be dedicating the majority of work for this project towards creating a v4 release.  
+V4 will be a complete rewrite of several sections of this project, and will make no attempt at backwards compatibility.  
+I will provide basic bug fix support for the v3 branch, but no new features will be added.  
+
+**Soon I will be posting a roadmap for v4, including all the planned features and changes**.
+- **TLDR**: v4 aims to rewrite GUIs, stick to semver practices, improve commands, improve usability of the `spigot-utils` module, add global configuration, and much more.
 
 
 # KamiCommon
