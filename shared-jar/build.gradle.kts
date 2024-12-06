@@ -20,7 +20,7 @@ dependencies {
     api("org.slf4j:slf4j-simple:$slf4jVersion")
 
     // Lettuce Core (Redis) (6,246 KB)
-    api("io.lettuce:lettuce-core:6.5.0.RELEASE")
+    api("io.lettuce:lettuce-core:6.5.1.RELEASE")
 
     // For the redis system to deserialize messages (2,244 KB)
     api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
