@@ -10,6 +10,7 @@ import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -185,7 +186,7 @@ public class RabbitMQAPI {
      * @param queueName the name of the queue to declare
      * @param TTL_MS the time-to-live of the queue (in milliseconds)
      */
-    public void declareQueue(@NotNull String queueName, long TTL_MS) {
+    public void declareQueue(@NotNull String queueName, @Nullable Long TTL_MS) {
         this.manager.declareQueue(queueName, TTL_MS);
     }
 
@@ -197,7 +198,7 @@ public class RabbitMQAPI {
      * @param autoDelete whether the queue should be auto-deleted when no longer in use
      * @param TTL_MS the time-to-live of the queue (in milliseconds)
      */
-    public void declareQueue(@NotNull String queueName, boolean durable, boolean exclusive, boolean autoDelete, long TTL_MS) {
+    public void declareQueue(@NotNull String queueName, boolean durable, boolean exclusive, boolean autoDelete, @Nullable Long TTL_MS) {
         this.manager.declareQueue(queueName, durable, exclusive, autoDelete, TTL_MS);
     }
 
