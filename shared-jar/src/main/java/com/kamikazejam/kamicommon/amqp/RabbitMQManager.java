@@ -84,7 +84,7 @@ class RabbitMQManager {
     }
 
     @ApiStatus.Internal
-    private Channel getChannel() {
+    protected Channel getChannel() {
         if (channel == null || !channel.isOpen()) {
             try {
                 channel = getConnection().createChannel();

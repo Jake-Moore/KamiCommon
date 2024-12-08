@@ -7,6 +7,8 @@ import com.kamikazejam.kamicommon.amqp.data.RabbitRpcQueue;
 import com.kamikazejam.kamicommon.amqp.data.RabbitStdConsumer;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.BuiltinExchangeType;
+import com.rabbitmq.client.Channel;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -168,5 +170,42 @@ public class RabbitMQAPI {
     public void publishFanout(@NotNull String exchangeName, @NotNull AMQP.BasicProperties props, @NotNull String message) {
         manager.declareExchange(exchangeName, BuiltinExchangeType.FANOUT);
         manager.publishFanout(exchangeName, props, message);
+    }
+
+    /**
+     * Declares a queue with a default TTL of 60 seconds (iff not declared already)
+     * @param queueName the name of the queue to declare
+     */
+    public void declareQueue(@NotNull String queueName) {
+        this.manager.declareQueue(queueName);
+    }
+
+    /**
+     * Declares a queue with a specified TTL (iff not declared already)
+     * @param queueName the name of the queue to declare
+     * @param TTL_MS the time-to-live of the queue (in milliseconds)
+     */
+    public void declareQueue(@NotNull String queueName, long TTL_MS) {
+        this.manager.declareQueue(queueName, TTL_MS);
+    }
+
+    /**
+     * Declares a queue with a specified TTL (iff not declared already)
+     * @param queueName the name of the queue to declare
+     * @param durable whether the queue should survive a broker restart
+     * @param exclusive whether the queue should be exclusive to the connection
+     * @param autoDelete whether the queue should be auto-deleted when no longer in use
+     * @param TTL_MS the time-to-live of the queue (in milliseconds)
+     */
+    public void declareQueue(@NotNull String queueName, boolean durable, boolean exclusive, boolean autoDelete, long TTL_MS) {
+        this.manager.declareQueue(queueName, durable, exclusive, autoDelete, TTL_MS);
+    }
+
+    /**
+     * Get the underlying RabbitMQ {@link Channel} for direct access
+     */
+    @ApiStatus.Internal
+    public @NotNull Channel getChannel() {
+        return this.manager.getChannel();
     }
 }
