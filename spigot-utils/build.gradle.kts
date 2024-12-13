@@ -9,7 +9,7 @@ dependencies {
     api(project(":shared-utils"))
 
     api("com.google.code.gson:gson:2.11.0")
-    api("org.apache.commons:commons-text:1.12.0") // primarily for LevenshteinDistance
+    api("org.apache.commons:commons-text:1.13.0") // primarily for LevenshteinDistance
 
     compileOnly(project.property("lowestSpigotDep") as String)
 
