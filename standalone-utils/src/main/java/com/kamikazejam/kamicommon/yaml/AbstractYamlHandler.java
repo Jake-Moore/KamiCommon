@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.yaml;
 
 import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
-import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
@@ -157,11 +156,6 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
     public abstract InputStream getIS();
 
     public abstract void error(String s);
-
-    @SuppressWarnings("SameParameterValue")
-    private String repeat(String s, int times) {
-        return StringUtil.repeat(s, times);
-    }
 
     private boolean isInteger(String s) {
         try { Integer.parseInt(s); return true;

@@ -2,66 +2,97 @@ package com.kamikazejam.kamicommon.util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
 @SuppressWarnings("unused")
 public class TimeUtil {
+    public enum TimeFormat {
+        LETTERS,
+        WORDS,
+    }
+
     /**
-     * Returns the current time in the format like 10h, 5m, 3s <p>
-     * If there are no hours it returns 5m, 3s <p>
-     * If there are no hours or minutes it returns 3s
+     * Compiles current duration in the {@link TimeFormat#LETTERS} format: <br>
+     * {@code "2d, 10h, 5m, 3s"} when days > 0 <br>
+     * {@code "10h, 5m, 3s"} when hours > 0 <br>
+     * {@code "5m, 3s"} when minutes > 0 <br>
+     * {@code "3s"} when seconds > 0
      */
+    @NotNull
     public static String getSecondsToTimeString(long seconds) {
-        //Anything past 1 day gets weird because days in a month varies
-        if (seconds >= 86400) { //1 day
-            int days = (int) Math.floor(seconds / 86400D);
-            long left = (seconds - (days * 86400L));
-
-            TimeZone tz = TimeZone.getTimeZone("UTC");
-            SimpleDateFormat df = new SimpleDateFormat("HH'h, 'mm'm, 'ss's'");
-            df.setTimeZone(tz);
-
-            return days + "d " + df.format(new Date((left)*1000L));
-        }else if (seconds >= 36000) { //10 hours
-            TimeZone tz = TimeZone.getTimeZone("UTC");
-            SimpleDateFormat df = new SimpleDateFormat("HH'h, 'mm'm, 'ss's'");
-            df.setTimeZone(tz);
-
-            return df.format(new Date(seconds*1000L));
-        }else if (seconds >= 3600) { //1 hour
-            TimeZone tz = TimeZone.getTimeZone("UTC");
-            SimpleDateFormat df = new SimpleDateFormat("H'h, 'mm'm, 'ss's'");
-            df.setTimeZone(tz);
-
-            return df.format(new Date(seconds*1000L));
-        }else if (seconds >= 600) { //10 minutes
-            TimeZone tz = TimeZone.getTimeZone("UTC");
-            SimpleDateFormat df = new SimpleDateFormat("mm'm, 'ss's'");
-            df.setTimeZone(tz);
-
-            return df.format(new Date(seconds*1000L));
-        }else if (seconds >= 60) { //1 minute
-            TimeZone tz = TimeZone.getTimeZone("UTC");
-            SimpleDateFormat df = new SimpleDateFormat("m'm, 'ss's'");
-            df.setTimeZone(tz);
-
-            return df.format(new Date(seconds*1000L));
-        }else if (seconds >= 10) { //10 seconds
-            TimeZone tz = TimeZone.getTimeZone("UTC");
-            SimpleDateFormat df = new SimpleDateFormat("ss's'");
-            df.setTimeZone(tz);
-
-            return df.format(new Date(seconds*1000L));
-        }else { //1 second
-            TimeZone tz = TimeZone.getTimeZone("UTC");
-            SimpleDateFormat df = new SimpleDateFormat("s's'");
-            df.setTimeZone(tz);
-
-            return df.format(new Date(seconds*1000L));
+        // Using the Duration Java Class
+        Duration duration = Duration.ofSeconds(seconds);
+        
+        long days = duration.toDays();
+        long hours = duration.toHoursPart();
+        long minutes = duration.toMinutesPart();
+        long secs = duration.toSecondsPart();
+        
+        StringBuilder result = new StringBuilder();
+        if (days > 0) {
+            result.append(days).append("d ");
         }
+        if (days > 0 || hours > 0) {
+            result.append(hours).append("h");
+            result.append(", ");
+        }
+        if (days > 0 || hours > 0 || minutes > 0) {
+            result.append(minutes).append("m");
+            result.append(", ");
+        }
+        result.append(secs).append("s");
+        
+        return result.toString();
+    }
+
+    /**
+     * Returns the current time in the following formats: <br>
+     * <br>
+     * {@link TimeFormat#LETTERS} <br>
+     * {@code "2d, 10h, 5m, 3s"} when days > 0 <br>
+     * {@code "10h, 5m, 3s"} when hours > 0 <br>
+     * {@code "5m, 3s"} when minutes > 0 <br>
+     * {@code "3s"} when seconds > 0 <br>
+     * <br>
+     * {@link TimeFormat#WORDS} <br>
+     * {@code "2 days, 10 hours, 5 minutes, 3 seconds"} when days > 0 <br>
+     * {@code "10 hours, 5 minutes, 3 seconds"} when hours > 0 <br>
+     * {@code "5 minutes, 3 seconds"} when minutes > 0 <br>
+     * {@code "3 seconds"} when seconds > 0 <br>
+     * (The time word only includes the plural "s" when appropriate)
+     */
+    @NotNull
+    public static String getSecondsToTimeString(long seconds, @NotNull TimeFormat format) {
+        Preconditions.checkNotNull(format, "Time format cannot be null");
+        if (format == TimeFormat.LETTERS) {
+            return getSecondsToTimeString(seconds);
+        }
+        
+        Duration duration = Duration.ofSeconds(seconds);
+        
+        long days = duration.toDays();
+        long hours = duration.toHoursPart();
+        long minutes = duration.toMinutesPart();
+        long secs = duration.toSecondsPart();
+        
+        StringBuilder result = new StringBuilder();
+        if (days > 0) {
+            result.append(days).append(days == 1 ? " day " : " days ");
+        }
+        if (days > 0 || hours > 0) {
+            result.append(hours).append(hours == 1 ? " hour" : " hours");
+            result.append(", ");
+        }
+        if (days > 0 || hours > 0 || minutes > 0) {
+            result.append(minutes).append(minutes == 1 ? " minute" : " minutes");
+            result.append(", ");
+        }
+        result.append(secs).append(secs == 1 ? " second" : " seconds");
+        
+        return result.toString();
     }
 
     /**
@@ -69,9 +100,12 @@ public class TimeUtil {
      * @param timeZone The time zone to use
      * @return a Date object representing that time of day in the nearest future
      */
-    public static @NotNull Date getDateBy24HourTime(String clockTime, TimeZone timeZone) throws IllegalArgumentException {
+    public static @NotNull Date getDateBy24HourTime(@NotNull String clockTime, @NotNull TimeZone timeZone) throws IllegalArgumentException {
+        Preconditions.checkNotNull(clockTime, "Clock time cannot be null");
+        Preconditions.checkNotNull(timeZone, "Time zone cannot be null");
+
         String[] split = clockTime.split(":");
-        if (split.length < 2) {
+        if (split.length < 2 || split.length > 3) {
             throw new IllegalArgumentException("Invalid time format: " + clockTime + " (expected HH:mm:ss or HH:mm)");
         }
 
@@ -89,7 +123,12 @@ public class TimeUtil {
      * @param timeZone The time zone to use
      * @return a Date object representing that time of day in the nearest future
      */
-    public static @NotNull Date getDateBy24HourTime(int hour, int minute, int second, TimeZone timeZone) {
+    public static @NotNull Date getDateBy24HourTime(int hour, int minute, int second, @NotNull TimeZone timeZone) {
+        Preconditions.checkArgument(hour >= 0 && hour <= 23, "Hour must be in the range [0, 23]");
+        Preconditions.checkArgument(minute >= 0 && minute <= 59, "Minute must be in the range [0, 59]");
+        Preconditions.checkArgument(second >= 0 && second <= 59, "Second must be in the range [0, 59]");
+        Preconditions.checkNotNull(timeZone, "Time zone cannot be null");
+
         Calendar cal = Calendar.getInstance();
         cal.setTimeZone(timeZone);
         cal.set(Calendar.HOUR_OF_DAY, hour);
@@ -104,15 +143,5 @@ public class TimeUtil {
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
         return cal.getTime();
-    }
-    private static final SimpleDateFormat DF_FULL = new SimpleDateFormat("MMM dd yyyy hh:mm aa zzz");
-
-    public static void main(String[] args) {
-        String time = "19:00";
-        String tz = "America/Los_Angeles";
-        final SimpleDateFormat df = new SimpleDateFormat("MMM dd yyyy hh:mm aa zzz");
-
-        Date date = getDateBy24HourTime(time, TimeZone.getTimeZone(tz));
-        System.out.println(df.format(date));
     }
 }

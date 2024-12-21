@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util;
 
-import com.kamikazejam.kamicommon.SpigotUtilProvider;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.integrations.PlaceholderAPIIntegration;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
@@ -31,11 +31,11 @@ public class StringUtilP extends StringUtil {
     }
 
     public static String justP(@Nullable OfflinePlayer player, String s) {
-        @Nullable PlaceholderAPIIntegration papi = SpigotUtilProvider.getPlaceholderIntegration();
+        @Nullable PlaceholderAPIIntegration papi = SpigotUtilsSource.getPlaceholderIntegration();
         if (papi != null) {
             return papi.setPlaceholders(player, s);
         }else {
-            SpigotUtilProvider.getPlugin().getLogger().warning("PlaceholderAPI not found! This may cause issues with placeholders!");
+            SpigotUtilsSource.get().getLogger().warning("PlaceholderAPI not found! This may cause issues with placeholders!");
             return s;
         }
     }

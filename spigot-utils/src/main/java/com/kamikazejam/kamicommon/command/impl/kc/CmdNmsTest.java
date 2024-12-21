@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.command.internal;
+package com.kamikazejam.kamicommon.command.impl.kc;
 
 import com.kamikazejam.kamicommon.actions.Action;
 import com.kamikazejam.kamicommon.command.KamiCommand;
