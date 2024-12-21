@@ -4,10 +4,11 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kamikazejam.kamicommon.KamiPlugin;
-import com.kamikazejam.kamicommon.SpigotUtilProvider;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.nms.Logger;
 import com.kamikazejam.kamicommon.util.DiskUtil;
 import com.kamikazejam.kamicommon.util.KUtil;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.adapter.AdapterKamiList;
 import com.kamikazejam.kamicommon.util.adapter.AdapterKamiMap;
 import com.kamikazejam.kamicommon.util.adapter.AdapterKamiSet;
@@ -67,7 +68,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * Console is registered with imaginary and deterministic data values.
  * Non-standard CommandSenders must be manually registered using the register method.
  */
-@SuppressWarnings({"SpellCheckingInspection", "unused", "ResultOfMethodCallIgnored"})
+@SuppressWarnings({"SpellCheckingInspection", "unused", "ResultOfMethodCallIgnored", "UnstableApiUsage"})
 public class IdUtilLocal implements Listener, Runnable {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
@@ -352,11 +353,8 @@ public class IdUtilLocal implements Listener, Runnable {
 	// Do not call this manually.
 	// It should only be called on plugin enable.
 
-	// FIXME deal with this
-	public static void setup(KamiPlugin plugin) {
-		if (!SpigotUtilProvider.isSet()) {
-			SpigotUtilProvider.setPlugin(plugin);
-		}
+	public static void setup(@NotNull KamiPlugin plugin) {
+		Preconditions.checkNotNull(plugin, "plugin cannot be null");
 
 		// Time: Start
 		long start = System.currentTimeMillis();
@@ -466,43 +464,57 @@ public class IdUtilLocal implements Listener, Runnable {
 	@Contract("null -> null")
 	public static IdData getData(Object senderObject) {
 		// Null Return
-		if (senderObject == null) return null;
+        switch (senderObject) {
+            case null -> {
+                return null;
+            }
 
-		// Already Done
-		if (senderObject instanceof IdData) return (IdData) senderObject;
+            // Already Done
+            case IdData idData -> {
+                return idData;
+            }
 
-		// Console Type
-		if (senderObject instanceof ConsoleCommandSender) return CONSOLE_DATA;
+            // Console Type
+            case ConsoleCommandSender consoleCommandSender -> {
+                return CONSOLE_DATA;
+            }
+            default -> {
+            }
+        }
 
-		// Console Id/Name
+        // Console Id/Name
 		if (CONSOLE_ID.equals(senderObject)) return CONSOLE_DATA;
 
 		// Player
 		// CommandSender
-		if (senderObject instanceof CommandSender) {
-			String id = getIdFromSender((CommandSender) senderObject);
-			return getIdToData().get(id);
-		}
+        switch (senderObject) {
+            case CommandSender commandSender -> {
+                String id = getIdFromSender(commandSender);
+                return getIdToData().get(id);
+            }
 
-		// OfflinePlayer (UUID recurse)
-		if (senderObject instanceof OfflinePlayer) {
-			return getData(((OfflinePlayer) senderObject).getUniqueId());
-		}
+            // OfflinePlayer (UUID recurse)
+            case OfflinePlayer offlinePlayer -> {
+                return getData(offlinePlayer.getUniqueId());
+            }
 
-		// UUID
-		if (senderObject instanceof UUID) {
-			String id = getIdFromUuid((UUID) senderObject);
-			return getIdToData().get(id);
-		}
+            // UUID
+            case UUID uuid -> {
+                String id = getIdFromUuid(uuid);
+                return getIdToData().get(id);
+            }
 
-		// String
-		if (senderObject instanceof String) {
-			IdData ret = getIdToData().get(senderObject);
-			if (ret != null) return ret;
-			return getNameToData().get(senderObject);
-		}
+            // String
+            case String s -> {
+                IdData ret = getIdToData().get(senderObject);
+                if (ret != null) return ret;
+                return getNameToData().get(senderObject);
+            }
+            default -> {
+            }
+        }
 
-		// Return Null
+        // Return Null
 		return null;
 	}
 
@@ -536,82 +548,105 @@ public class IdUtilLocal implements Listener, Runnable {
 		// Handled at "Already Done"
 
 		// OfflinePlayer
-		if (senderObject instanceof OfflinePlayer) {
-			return getSender(((OfflinePlayer) senderObject).getUniqueId());
-		}
+        switch (senderObject) {
+            case OfflinePlayer offlinePlayer -> {
+                return getSender(offlinePlayer.getUniqueId());
+            }
 
-		// UUID
-		if (senderObject instanceof UUID) {
-			UUID uuid = (UUID) senderObject;
-			// Attempt finding player
-			Player player = Bukkit.getPlayer(uuid);
-			if (player != null) return player;
+            // UUID
+            case UUID uuid -> {
+                // Attempt finding player
+                Player player = Bukkit.getPlayer(uuid);
+                if (player != null) return player;
 
-			// Otherwise assume registered sender
-			return registryIdToSender.get(uuid.toString());
-		}
+                // Otherwise assume registered sender
+                return registryIdToSender.get(uuid.toString());
 
-		// String
-		if (senderObject instanceof String) {
-			String string = (String) senderObject;
-			// Recurse as UUID
-			UUID uuid = KUtil.asUuid(string);
-			if (uuid != null) return getSender(uuid);
+                // Otherwise assume registered sender
+            }
 
-			// Registry
-			CommandSender sender = registryIdToSender.get(string);
-			if (sender != null) return sender;
 
-			// Bukkit API
-			return Bukkit.getPlayerExact(string);
-		}
+            // String
+            case String string -> {
+                // Recurse as UUID
+                UUID uuid = KUtil.asUuid(string);
+                if (uuid != null) return getSender(uuid);
 
-		// Return Null
+                // Registry
+                CommandSender sender = registryIdToSender.get(string);
+                if (sender != null) return sender;
+
+                // Bukkit API
+                return Bukkit.getPlayerExact(string);
+
+                // Bukkit API
+            }
+            default -> {
+            }
+        }
+
+        // Return Null
 		return null;
 	}
 
 	@Contract("null -> null")
 	public static UUID getUuid(Object senderObject) {
 		// Null Return
-		if (senderObject == null) return null;
+        switch (senderObject) {
+            case null -> {
+                return null;
+            }
 
-		// Already Done
-		if (senderObject instanceof UUID) return (UUID) senderObject;
+            // Already Done
+            case UUID uuid -> {
+                return uuid;
+            }
 
-		// Console Type
-		if (senderObject instanceof ConsoleCommandSender) return null;
+            // Console Type
+            case ConsoleCommandSender consoleCommandSender -> {
+                return null;
+            }
+            default -> {
+            }
+        }
 
-		// Console Id/Name
+        // Console Id/Name
 		if (CONSOLE_ID.equals(senderObject)) return null;
 
 		// Player
-		if (senderObject instanceof Player) return ((Player) senderObject).getUniqueId();
+        switch (senderObject) {
+            case Player player -> {
+                return player.getUniqueId();
+            }
 
-		// CommandSender
-		if (senderObject instanceof CommandSender) {
-			CommandSender sender = (CommandSender) senderObject;
-			String id = sender.getName();
-			return KUtil.asUuid(id);
-		}
+            // CommandSender
+            case CommandSender sender -> {
+                String id = sender.getName();
+                return KUtil.asUuid(id);
+            }
 
-		// OfflinePlayer
-		if (senderObject instanceof OfflinePlayer) return ((OfflinePlayer) senderObject).getUniqueId();
+            // OfflinePlayer
+            case OfflinePlayer offlinePlayer -> {
+                return offlinePlayer.getUniqueId();
+            }
 
-		// UUID
-		// Handled at "Already Done"
+            // UUID
+            // Handled at "Already Done"
 
-		// String
-		if (senderObject instanceof String) {
-			String string = (String) senderObject;
-			// Is UUID
-			UUID uuid = KUtil.asUuid(string);
-			if (uuid != null) return uuid;
+            // String
+            case String string -> {
+                // Is UUID
+                UUID uuid = KUtil.asUuid(string);
+                if (uuid != null) return uuid;
 
-			// Is Name
-			// Handled at "Data"
-		}
+                // Is Name
+                // Handled at "Data"
+            }
+            default -> {
+            }
+        }
 
-		// Data
+        // Data
 		IdData data = getData(senderObject);
 		if (data != null) {
 			String id = data.getId();
@@ -958,6 +993,6 @@ public class IdUtilLocal implements Listener, Runnable {
 	}
 
 	private static @NotNull File getDataFolder() {
-		return SpigotUtilProvider.getPlugin().getDataFolder();
+		return SpigotUtilsSource.get().getDataFolder();
 	}
 }

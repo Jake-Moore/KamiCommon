@@ -1,7 +1,7 @@
-package com.kamikazejam.kamicommon.command.internal;
+package com.kamikazejam.kamicommon.command.impl.kc;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
@@ -52,7 +52,7 @@ public class CmdOpenGUI extends KamiCommand {
             return;
         }
 
-        KamiMenu menu = KamiMenuLoader.loadMenu(PluginSource.getKamiConfig(), guiKey);
+        KamiMenu menu = KamiMenuLoader.loadMenu(SpigotUtilsSource.getKamiConfig(), guiKey);
         for (String id : menu.getMenuItemIDs()) {
             menu.setMenuClick(id, (p, c) -> p.sendMessage(StringUtil.t("&7Menu Item Click (&f" + c.name() + "&7) on &f" + id)));
         }

@@ -7,11 +7,9 @@ dependencies {
     // We should exclude one of them to avoid duplicate classes
     api(project(":shared-jar"))
     api(project(":standalone-utils")) {
+        // Must exclude one copy of shared-utils, since both shared-jar and standalone-utils include it
         exclude(group = "com.kamikazejam.kamicommon", module = "shared-utils")
     }
-
-    // org.json (standalone-utils) and google gson needed for for jedis (in :shared-jar) to work properly
-    api("com.google.code.gson:gson:2.11.0")
 }
 
 tasks {

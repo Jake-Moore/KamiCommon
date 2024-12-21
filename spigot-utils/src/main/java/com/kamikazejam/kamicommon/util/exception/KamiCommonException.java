@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.exception;
 
-import com.kamikazejam.kamicommon.SpigotUtilProvider;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import lombok.Getter;
@@ -42,7 +42,7 @@ public class KamiCommonException extends Exception {
     private static final Pattern pattern = Pattern.compile("<(.+?)>");
     private static void checkForOldTxtFormat(@NotNull String msg) {
         if (!pattern.matcher(msg).find()) { return; }
-        SpigotUtilProvider.getPlugin().getColorLogger().warn(
+        SpigotUtilsSource.get().getColorLogger().warn(
                 "Old Txt format detected in KamiCommonException message: " + msg
         );
     }

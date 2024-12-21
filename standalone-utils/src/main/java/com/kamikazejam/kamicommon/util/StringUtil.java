@@ -1,10 +1,15 @@
 package com.kamikazejam.kamicommon.util;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.kamikazejam.kamicommon.util.nms.NmsVersionParser;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A standalone compatible class for translating strings with color codes
@@ -19,7 +24,7 @@ public class StringUtil {
         String s = translateAlternateColorCodes(msg);
 
         // For 1.16+ translate hex color codes as well
-        if (forceTranslateHex || StringUtilBukkit.supportsHexCodes()) {
+        if (forceTranslateHex || BukkitAdapter.supportsHexCodes()) {
             Pattern hex = Pattern.compile("&(#[A-Fa-f0-9]{6})");
             Matcher matcher = hex.matcher(s);
             while (matcher.find()) {
@@ -99,14 +104,6 @@ public class StringUtil {
         return string.toString();
     }
 
-    public static String repeat(String s, int times) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < times; i++) {
-            sb.append(s);
-        }
-        return sb.toString();
-    }
-
     public static String combine(List<String> parts, String between) {
         return combine(parts.toArray(new String[0]), between);
     }
@@ -162,62 +159,33 @@ public class StringUtil {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static String IntegerToRomanNumeral(int input) {
-        if (input < 1 || input > 3999)
-            return "Invalid Roman Number Value";
-        StringBuilder s = new StringBuilder();
-        while (input >= 1000) {
-            s.append("M");
-            input -= 1000;        }
-        while (input >= 900) {
-            s.append("CM");
-            input -= 900;
+    /**
+     * Converts an integer to a Roman Numeral<br>
+     * Supports ONLY integers in the range [1, 3999] (inclusive)<br>
+     * @throws IllegalArgumentException if the input is not in the range [1, 3999]
+     * @return The Roman Numeral representation of the input integer
+     */
+    @NotNull
+    public static String IntegerToRomanNumeral(int input) throws IllegalArgumentException {
+        if (input < 1 || input > 3999) {
+            throw new IllegalArgumentException("Input must be in the range [1, 3999]");
         }
-        while (input >= 500) {
-            s.append("D");
-            input -= 500;
+
+        // Define Roman numeral mappings
+        final int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        final String[] symbols = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        
+        StringBuilder result = new StringBuilder();
+        
+        // Convert to Roman numerals
+        for (int i = 0; i < values.length; i++) {
+            while (input >= values[i]) {
+                result.append(symbols[i]);
+                input -= values[i];
+            }
         }
-        while (input >= 400) {
-            s.append("CD");
-            input -= 400;
-        }
-        while (input >= 100) {
-            s.append("C");
-            input -= 100;
-        }
-        while (input >= 90) {
-            s.append("XC");
-            input -= 90;
-        }
-        while (input >= 50) {
-            s.append("L");
-            input -= 50;
-        }
-        while (input >= 40) {
-            s.append("XL");
-            input -= 40;
-        }
-        while (input >= 10) {
-            s.append("X");
-            input -= 10;
-        }
-        while (input == 9) {
-            s.append("IX");
-            input -= 9;
-        }
-        while (input >= 5) {
-            s.append("V");
-            input -= 5;
-        }
-        while (input == 4) {
-            s.append("IV");
-            input -= 4;
-        }
-        while (input >= 1) {
-            s.append("I");
-            input -= 1;
-        }
-        return s.toString();
+        
+        return result.toString();
     }
 
     protected static String translateAlternateColorCodes(String textToTranslate) {
@@ -231,5 +199,50 @@ public class StringUtil {
         }
 
         return new String(b);
+    }
+
+
+    /**
+     * A simple class to safely check if the given classpath is bukkit-compatible & supports hex codes<br>
+     * Note: All methods in this class should be error-free, they handle exceptions internally
+     */
+    private static class BukkitAdapter {
+        private static Boolean supportsHexCodes = null;
+        /**
+         * @return if Bukkit is available and the server version supports hex codes
+         */
+        private static boolean supportsHexCodes() {
+            if (supportsHexCodes == null) {
+                try {
+                    // Will throw an exception on standalone instances or servers without bukkit (e.g. Velocity)
+                    Class.forName("org.bukkit.Bukkit");
+
+                    // IFF we have bukkit access, then we can use the NmsManager to check the version
+                    String mcVer = getMCVersion();
+                    supportsHexCodes = NmsVersionParser.getFormattedNmsInteger(mcVer) >= 1160;
+
+                } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
+                    supportsHexCodes = false;
+                }
+            }
+            return supportsHexCodes;
+        }
+
+        private static String mcVersion = null;
+        /**
+         * Returns the MC version of the server (i.e. 1.8.8 or 1.20.4) - via reflection
+         * @return The MC version, Ex: "1.8.8" or "1.20.4"
+         */
+        private static String getMCVersion() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            if (mcVersion != null) { return mcVersion; }
+
+            Class<?> serverClass = Class.forName("org.bukkit.Bukkit");
+            Method getServerMethod = serverClass.getDeclaredMethod("getServer");
+            Object serverObject = getServerMethod.invoke(null);
+            Method getBukkitVersionMethod = serverObject.getClass().getDeclaredMethod("getBukkitVersion");
+            String bukkitVer = (String) getBukkitVersionMethod.invoke(serverObject);
+            mcVersion = bukkitVer.split("-")[0]; // i.e. 1.20.4 or 1.8.8
+            return mcVersion;
+        }
     }
 }

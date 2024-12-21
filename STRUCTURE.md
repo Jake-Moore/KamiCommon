@@ -4,17 +4,53 @@
 **SEE [WIKI](https://github.com/Jake-Moore/KamiCommon/wiki) FOR FEATURE DOCUMENTATION**
 
 # Module Structure
-All 6 modules are published as repository artifacts for use, but only 5 are intended for shading into your project.
-- The 5 modules that can be shaded are:
-  - `shared-utils`, `shared-jar`, `standalone-utils`, `standalone-jar`, `spigot-utils`
-- The last module, `spigot-jar`, compiles the spigot-jar which should not be shaded.
 
-**NMS & Cross Version Compatibility**
+## Inheritance Hierarchy
+![ScreenShot](/docs/screenshots/structure.png)
+
+All 6 modules are published in the maven repository for use, and while all modules can be shaded, some require additional configuration before use.
+- The `spigot-utils` module compiles into a small binary `(<400KB)` with a few transitive dependencies for use in your own projects. Ideally **you should shade this module (and its transitives)** into your own plugin/library.
+- The `spigot-jar` module compiles into a **full spigot plugin jar**, and while it can be shaded, it is recommended to shade `spigot-utils` as has transitive dependencies that can be relocated/removed.
+  - The `spigot-jar` module shades all of those dependencies, making them impossible to remove in the dependency tree.
+
+### Shading Spigot Modules
+The `spigot-utils` can (and should) be shaded into your projects if you are not depending on the `KamiCommon` plugin being present on the classpath.  
+- When shading, you will need to enable and disable this module using the `SpigotUtilsSource` class:
+```java
+public class YourPlugin extends KamiPlugin {
+    @Override
+    public void onEnable() {
+        SpigotUtilsSource.enable(this);
+    }
+    @Override
+    public void onDisable() {
+        SpigotUtilsSource.disable();
+    }
+}
+```
+
+The `spigot-jar` can be shaded into your projects if you don't want a `KamiCommon` plugin dependency.  
+- When shading, you will need to enable and disable this module using the `PluginSource` class:
+```java
+public class YourPlugin extends KamiPlugin {
+    @Override
+    public void onEnable() {
+        PluginSource.enable(this);
+    }
+    @Override
+    public void onDisable() {
+        PluginSource.disable();
+    }
+}
+```
+
+
+### NMS & Cross Version Compatibility
 - NMS (`net.minecraft.server`) support has been extracted into a sister project ([KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS))
   - This module is included in `spigot-utils` & `spigot-jar`
 
-## Module Hierarchy
-![ScreenShot](/docs/screenshots/structure.png)
+### Chart: Module Details
+![ScreenShot](/docs/screenshots/structureDetails.png)
 
 ## Spigot Development
 For developers writing spigot plugins.

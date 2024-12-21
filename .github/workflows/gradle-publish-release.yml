@@ -69,7 +69,11 @@ jobs:
       if: steps.validate_version.outputs.is_release == 'true'
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "spigot-jar/build/libs/*.jar, spigot-utils/build/libs/*.jar, standalone-jar/build/libs/*.jar, standalone-utils/build/libs/*.jar, shared-jar/build/libs/*.jar"
+        # We only want to add the spigot-jar file, since that is the only fully-shaded and runnable jar
+        # All other modules publish api dependencies via their publication, and are meaningless on their own
+        # Those jars should be pulled with a build system, from the luxiouslabs maven repository, such that
+        #  all their dependencies can be fetched as well.
+        artifacts: "spigot-jar/build/libs/*.jar"
         allowUpdates: true
         removeArtifacts: true
         omitBodyDuringUpdate: true
