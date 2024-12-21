@@ -31,12 +31,14 @@ tasks {
     publish.get().dependsOn(build)
 }
 
+@Suppress("UNCHECKED_CAST")
+val getPublishingVersion = rootProject.extra["getPublishingVersion"] as () -> String
 publishing {
     publications {
         create<MavenPublication>("shadow") {
             groupId = rootProject.group.toString()
             artifactId = project.name
-            version = rootProject.version.toString()
+            version = getPublishingVersion()
             from(components["java"])
         }
     }
@@ -47,11 +49,11 @@ publishing {
                 username = System.getenv("LUXIOUS_NEXUS_USER")
                 password = System.getenv("LUXIOUS_NEXUS_PASS")
             }
-            // Select URL based on version (if it's a snapshot or not)
-            url = if (project.version.toString().endsWith("-SNAPSHOT")) {
-                uri("https://repo.luxiouslabs.net/repository/maven-snapshots/")
-            }else {
+            // getPublishingVersion will append "-SNAPSHOT" if the version is not a SemVer release version
+            url = if (!getPublishingVersion().endsWith("-SNAPSHOT")) {
                 uri("https://repo.luxiouslabs.net/repository/maven-releases/")
+            } else {
+                uri("https://repo.luxiouslabs.net/repository/maven-snapshots/")
             }
         }
     }

@@ -40,11 +40,22 @@ jobs:
         version=$(gradle properties -q | grep "^version:" | awk '{print $2}')
         echo "version=$version" >> $GITHUB_OUTPUT
 
-    - name: Display Version
-      run: echo "Version is ${{ steps.extract_version.outputs.version }}"
+    # Step to validate and display the version
+    # We use SemVer to store if the version is a release, otherwise we won't deploy
+    - name: Validate Version
+      id: validate_version
+      run: |
+        echo "Version: ${{ steps.extract_version.outputs.version }}"
+        if [[ "${{ steps.extract_version.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "is_release=true" >> $GITHUB_OUTPUT
+          echo "Version is a release"
+        else
+          echo "is_release=false" >> $GITHUB_OUTPUT
+          echo "Version is not a release (skipping deployment)"
+        fi
 
     - name: Build with Gradle 8.7
-      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
+      if: steps.validate_version.outputs.is_release == 'true'
       run: gradle publish
       env:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
@@ -55,7 +66,7 @@ jobs:
     #--------------------------------------------------------------------------------------------
 
     - name: Create Release (Spigot Jar + Module Jars)
-      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
+      if: steps.validate_version.outputs.is_release == 'true'
       uses: ncipollo/release-action@v1
       with:
         artifacts: "spigot-jar/build/libs/*.jar, spigot-utils/build/libs/*.jar, standalone-jar/build/libs/*.jar, standalone-utils/build/libs/*.jar, shared-jar/build/libs/*.jar"
@@ -69,7 +80,7 @@ jobs:
 
     # Update the README.md Badge with the new version
     - name: Create Version Badge
-      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
+      if: steps.validate_version.outputs.is_release == 'true'
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
@@ -80,7 +91,7 @@ jobs:
         color: blue
 
     - name: Update Download Link Gist
-      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
+      if: steps.validate_version.outputs.is_release == 'true'
       env:
         GIST_ID: 5dfd7c9bb8b81ae5867c81e9a77ee821
         AUTH_KEY: ${{ secrets.GIST_SECRET }}
@@ -92,37 +103,3 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/gists/$GIST_ID \
           -d "{\"files\": {\"kamicommon.txt\": {\"content\": \"$CONTENT\"}}}"
-
-# Will revisit later, repo settings don't allow direct pushes to main from actions atm
-#    # Automatically bump the version
-#    # This will also automatically update the VERSION to -SNAPSHOT
-#    # So that any PRs or commits that are merged to main won't be automatically released
-#    # It will now require an intentional release by changing the version
-#    - name: Increment Version
-#      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
-#      id: increment_version
-#      run: |
-#        # Extract the current version and split it into components
-#        version=$current_version
-#        major=$(echo $version | cut -d'.' -f1)
-#        minor=$(echo $version | cut -d'.' -f2)
-#        patch=$(echo $version | cut -d'.' -f3)
-#        build=$(echo $version | cut -d'.' -f4)
-#
-#        # Increment the patch or minor version (you can customize this logic)
-#        new_build=$((build + 1))
-#        new_version="$major.$minor.$patch.$new_build-SNAPSHOT"
-#
-#        echo "new_version=$new_version" >> $GITHUB_OUTPUT
-#        echo "New Gradle Version: $new_version"
-#
-#    # Push changes to the build.gradle.kts file
-#    - name: Update VERSION in build.gradle.kts
-#      if: "!endsWith(steps.extract_version.outputs.version, 'SNAPSHOT')"
-#      run: |
-#        new_version=${{ steps.increment_version.outputs.new_version }}
-#        sed -i 's/^var VERSION = ".*"/var VERSION = "$new_version"/' build.gradle.kts
-#        git config --global user.name "github-actions[bot]"
-#        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-#        git commit -am "Increment version to $new_version after release"
-#        git push
