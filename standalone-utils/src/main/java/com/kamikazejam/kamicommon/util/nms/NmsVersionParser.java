@@ -41,7 +41,8 @@ public class NmsVersionParser {
         return Integer.parseInt(s);
     }
 
-    public static void main(String[] args) {
+    // Minimal Testing
+    private static void test() {
         System.out.println(getFormattedNmsInteger("1.8"));      // 1080
         System.out.println(getFormattedNmsInteger("1.8.8"));    // 1088
         System.out.println(getFormattedNmsInteger("1.16"));     // 1160

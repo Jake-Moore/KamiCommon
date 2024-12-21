@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.gui.loader;
 
-import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.gui.struct.MenuSize;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryType;
@@ -34,7 +34,7 @@ public class MenuSizeLoader {
 
         // If there is a type string, then we failed to load it properly -> notify about this
         if (section.isString("type")) {
-            PluginSource.get().getLogger().warning("Invalid inventory type in config: '" + section.getString("type") + "' at " + (section.getCurrentPath() + ".type"));
+            SpigotUtilsSource.warning("Invalid inventory type in config: '" + section.getString("type") + "' at " + (section.getCurrentPath() + ".type"));
         }
         throw new IllegalStateException("Invalid inventory size (rows or type) in config at " + section.getCurrentPath());
     }

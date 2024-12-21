@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.engine;
 
-import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -53,6 +53,6 @@ public class EngineTeleportMixinCause extends Engine {
         if (!mixinCausedTeleportIncoming) return;
         mixinCausedTeleportIncoming = false;
         mixinCausedTeleportEvents.add(event);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(PluginSource.get(), () -> mixinCausedTeleportEvents.remove(event));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(SpigotUtilsSource.get(), () -> mixinCausedTeleportEvents.remove(event));
     }
 }

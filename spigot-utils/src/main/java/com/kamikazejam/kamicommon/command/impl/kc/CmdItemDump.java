@@ -1,6 +1,6 @@
-package com.kamikazejam.kamicommon.command.internal;
+package com.kamikazejam.kamicommon.command.impl.kc;
 
-import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
@@ -33,7 +33,7 @@ public class CmdItemDump extends KamiCommand {
 
     @Override
     public void perform() throws KamiCommonException {
-        Logger logger = PluginSource.get().getLogger();
+        Logger logger = SpigotUtilsSource.get().getLogger();
         Player plr = (Player) sender;
 
         ItemStack item = NmsAPI.getItemInMainHand(plr);

@@ -1,11 +1,10 @@
 package com.kamikazejam.kamicommon.gui;
 
-import com.kamikazejam.kamicommon.PluginSource;
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.gui.struct.MenuSize;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;
-import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.HumanEntity;
@@ -45,9 +44,6 @@ public class MenuHolder implements InventoryHolder {
     @Override
     public @NotNull Inventory getInventory() {
         if (this.inventory == null) {
-            if (title.length() > 32) {
-                PluginSource.warning("Inventory name is too long! (" + title.length() + " > 32): '" + title + "'");
-            }
             return this.inventory = this.size.createInventory(this, title);
         }
         return this.inventory;

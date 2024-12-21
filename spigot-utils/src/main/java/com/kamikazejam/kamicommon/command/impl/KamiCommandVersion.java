@@ -1,6 +1,7 @@
-package com.kamikazejam.kamicommon.command;
+package com.kamikazejam.kamicommon.command.impl;
 
-import com.kamikazejam.kamicommon.autoupdate.VersionControl;
+import com.kamikazejam.kamicommon.command.KamiCommand;
+import com.kamikazejam.kamicommon.util.VersionControl;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 

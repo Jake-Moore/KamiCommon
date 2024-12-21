@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.gui.clicks.transform.IClickTransform;
 import com.kamikazejam.kamicommon.gui.items.MenuItem;
 import com.kamikazejam.kamicommon.gui.items.slots.ItemSlot;
@@ -107,7 +107,7 @@ public class MenuManager implements Listener {
         menu.getCloseConsumers().forEach(consumer -> consumer.accept(e));
 
         // Trigger the Post-Close Consumers (1-tick later)
-        Bukkit.getScheduler().runTaskLater(PluginSource.get(), () ->
+        Bukkit.getScheduler().runTaskLater(SpigotUtilsSource.get(), () ->
                 menu.getPostCloseConsumers().forEach(consumer -> consumer.accept(p))
         , 1L);
     }

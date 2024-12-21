@@ -1,7 +1,7 @@
-package com.kamikazejam.kamicommon.command.internal;
+package com.kamikazejam.kamicommon.command.impl.kc;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.command.KamiCommandVersion;
+import com.kamikazejam.kamicommon.command.impl.KamiCommandVersion;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 
 public class KamiCommonCommand extends KamiCommand {

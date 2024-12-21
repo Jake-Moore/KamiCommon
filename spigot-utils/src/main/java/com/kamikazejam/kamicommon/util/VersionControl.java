@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.autoupdate;
+package com.kamikazejam.kamicommon.util;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
@@ -7,9 +7,11 @@ import com.google.gson.JsonParser;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,9 +28,9 @@ public class VersionControl {
     @Getter
     public static class Version {
         private boolean loaded;
-        private String name;
-        private String versionStr;
-        private Instant buildDate;
+        private @Nullable String name;
+        private @Nullable String versionStr;
+        private @Nullable Instant buildDate;
 
         public Version() {
             loaded = false;
@@ -38,17 +40,22 @@ public class VersionControl {
         }
     }
 
-    private static Version version = null;
-
+    private static @Nullable Version version = null;
+    @Contract("null -> null")
+    @Nullable
     public static Version getVersion(Plugin plugin) {
+        if (plugin == null) { return null; }
         if (version == null) {
             setup(plugin.getClass().getClassLoader().getResourceAsStream("version.json"));
         }
         return version;
     }
 
-    public static void setup(InputStream inputStream) {
+    public static void setup(@Nullable InputStream inputStream) {
         version = new Version();
+        if (inputStream == null) {
+            return;
+        }
 
         try (InputStream in = inputStream) {
             Preconditions.checkNotNull(in);
@@ -76,37 +83,39 @@ public class VersionControl {
     }
 
     @SuppressWarnings("unused")
-    public static void sendDetails(Plugin plugin, CommandSender sender) {
-        Version version = getVersion(plugin);
-        if (version.isLoaded()) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bName: " + version.getName()));
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bVersion: " + version.getVersionStr()));
+    public static void sendDetails(@NotNull Plugin plugin, @NotNull CommandSender sender) {
+        Preconditions.checkNotNull(plugin, "Plugin cannot be null");
+        Preconditions.checkNotNull(sender, "Sender cannot be null");
+
+        @Nullable Version version = getVersion(plugin);
+        if (version != null && version.isLoaded()) {
+            sender.sendMessage(StringUtil.t("&bName: " + version.getName()));
+            sender.sendMessage(StringUtil.t("&bVersion: " + version.getVersionStr()));
 
             Instant buildDate = version.getBuildDate();
             if (buildDate != null) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bBuild ago: " + formatDateDiff(buildDate.getEpochSecond())));
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bBuild date: " + formatDate(buildDate)));
+                sender.sendMessage(StringUtil.t("&bBuild ago: " + formatDateDiff(buildDate.getEpochSecond())));
+                sender.sendMessage(StringUtil.t("&bBuild date: " + formatDate(buildDate)));
             }
-
-            if (AutoUpdate.hasPluginUpdates()) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bA new version of the plugin is queued for next restart!"));
-            }
+        }else {
+            sender.sendMessage(StringUtil.t("&cVersion Information not available!"));
         }
     }
 
-    public static String formatDateDiff(long unixTimestamp) {
+
+    //Utility methods below for dates
+
+    @NotNull
+    private static String formatDateDiff(long unixTimestamp) {
         long now = System.currentTimeMillis() / 1000L;
         return format(unixTimestamp - now);
     }
 
-    public static String formatDate(Instant instant) {
+    @NotNull
+    private static String formatDate(Instant instant) {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
         return formatter.format(instant);
     }
-
-
-
-    //Utility methods below for dates
 
     private static String format(long seconds) {
         Calendar from = new GregorianCalendar();
@@ -118,7 +127,6 @@ public class VersionControl {
         final String[] names = new String[]{"year", "years", "month", "months", "day", "days", "hour", "hours", "minute", "minutes", "second", "seconds"};
         return dateDiff(from, to, 4, names, false);
     }
-
 
     private static final int[] CALENDAR_TYPES = new int[]{
             Calendar.YEAR,
