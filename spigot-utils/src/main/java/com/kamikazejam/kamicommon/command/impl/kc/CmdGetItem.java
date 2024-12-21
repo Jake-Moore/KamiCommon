@@ -1,6 +1,6 @@
-package com.kamikazejam.kamicommon.command.internal;
+package com.kamikazejam.kamicommon.command.impl.kc;
 
-import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
@@ -26,7 +26,7 @@ public class CmdGetItem extends KamiCommand {
     public void perform() throws KamiCommonException {
         Player player = (Player) sender;
         String guiKey = readArg();
-        ItemBuilder builder = new ItemBuilder(PluginSource.getKamiConfig().getConfigurationSection(guiKey), player);
+        ItemBuilder builder = new ItemBuilder(SpigotUtilsSource.getKamiConfig().getConfigurationSection(guiKey), player);
         PlayerUtil.giveItem(player, builder.build());
         player.sendMessage(StringUtil.t("&aGave Item: &f" + guiKey));
     }

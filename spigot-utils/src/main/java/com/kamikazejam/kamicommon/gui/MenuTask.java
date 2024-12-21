@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.gui;
 
 import com.google.common.collect.Sets;
-import com.kamikazejam.kamicommon.PluginSource;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import lombok.Getter;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This task is called every tick by {@link PluginSource}
+ * This task is called every tick in a task registered by {@link SpigotUtilsSource}
  */
 public class MenuTask implements Runnable {
 
