@@ -84,7 +84,7 @@ class RabbitMQManager {
     }
 
     @ApiStatus.Internal
-    private Channel getChannel() {
+    protected Channel getChannel() {
         if (channel == null || !channel.isOpen()) {
             try {
                 channel = getConnection().createChannel();
@@ -163,7 +163,7 @@ class RabbitMQManager {
      * @param queueName the name of the queue to declare
      */
     public void declareQueue(@NotNull String queueName) {
-        this.declareQueue(queueName, 60_000);
+        this.declareQueue(queueName, 60_000L);
     }
 
     /**
@@ -171,7 +171,7 @@ class RabbitMQManager {
      * @param queueName the name of the queue to declare
      * @param TTL_MS the time-to-live of the queue (in milliseconds)
      */
-    public void declareQueue(@NotNull String queueName, long TTL_MS) {
+    public void declareQueue(@NotNull String queueName, @Nullable Long TTL_MS) {
         this.declareQueue(queueName, true, false, false, TTL_MS);
     }
 
@@ -183,13 +183,16 @@ class RabbitMQManager {
      * @param autoDelete whether the queue should be auto-deleted when no longer in use
      * @param TTL_MS the time-to-live of the queue (in milliseconds)
      */
-    public void declareQueue(@NotNull String queueName, boolean durable, boolean exclusive, boolean autoDelete, long TTL_MS) {
+    public void declareQueue(@NotNull String queueName, boolean durable, boolean exclusive, boolean autoDelete, @Nullable Long TTL_MS) {
         // Avoid unnecessary re-declarations that cost time
         if (isQueueDeclared(queueName)) { return; }
 
         try {
             Map<String, Object> args = new HashMap<>();
-            args.put("x-message-ttl", TTL_MS); // TTL is time before auto-delete in the queue
+            if (TTL_MS != null) {
+                // TTL is time before auto-delete in the queue
+                args.put("x-message-ttl", TTL_MS);
+            }
             getChannel().queueDeclare(queueName, durable, exclusive, autoDelete, args);
             declaredQueues.add(queueName);
         } catch (IOException e) {
