@@ -9,176 +9,173 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
-@SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Parameter<T> {
-	// -------------------------------------------- //
-	// CONSTANTS
-	// -------------------------------------------- //
+    // -------------------------------------------- //
+    // CONSTANTS
+    // -------------------------------------------- //
 
-	public static final String DEFAULT_DESC_DEFAULT = null;
-	public static final Object DEFAULT_VALUE_DEFAULT = null;
-	public static final boolean REQUIRED_FROM_CONSOLE_DEFAULT = false;
-	public static final String DESCRIPTION_DEFAULT = null;
+    public static final String DEFAULT_DESC_DEFAULT = null;
+    public static final Object DEFAULT_VALUE_DEFAULT = null;
+    public static final boolean REQUIRED_FROM_CONSOLE_DEFAULT = false;
+    public static final String DESCRIPTION_DEFAULT = null;
 
-	// -------------------------------------------- //
-	// FIELDS
-	// -------------------------------------------- //
+    // -------------------------------------------- //
+    // FIELDS
+    // -------------------------------------------- //
 
-	protected Type<T> type;
+    protected Type<T> type;
+    protected String name;
+    protected T defaultValue = null;
+    // A default value can be null.
+    // So we must keep track of this field too.
+    protected boolean defaultValueSet = false;
+    // Default Description (allows for showing different text than the default value in the command template)
+    // For example of a Param's default value is null, but you want it to say (myParam=you) in the command template.
+    protected @Nullable String defaultDesc = null;
+    // Is this arg ALWAYS required from the console?
+    // That might the case if the arg is a player. and default is oneself.
+    protected boolean requiredFromConsole = false;
 
-	@Contract(value = "_ -> this", mutates = "this")
-	public Parameter<T> setType(Type<T> type) {
-		this.type = type;
-		return this;
-	}
+    // All
+    public Parameter(@Nullable T defaultValue, @NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name, @Nullable String defaultDesc) {
+        this.setType(type);
+        this.setRequiredFromConsole(requiredFromConsole);
+        this.setName(name);
+        this.setDefaultDesc(defaultDesc);
+        this.setDefaultValue(defaultValue);
+    }
 
-	protected String name;
+    // Without defaultValue
+    @SuppressWarnings("unchecked")
+    public Parameter(@NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name, @Nullable String defaultDesc) {
+        this((T) DEFAULT_VALUE_DEFAULT, type, requiredFromConsole, name, defaultDesc);
 
-	@Contract(value = "_ -> this", mutates = "this")
-	public Parameter<T> setName(String name) {
-		this.name = name;
-		return this;
-	}
+        // In fact the default value is not set.
+        this.defaultValueSet = false;
+    }
 
-	protected T defaultValue = null;
+    // Without reqFromConsole.
+    public Parameter(@Nullable T defaultValue, @NotNull Type<T> type, @NotNull String name, @Nullable String defaultDesc) {
+        this(defaultValue, type, REQUIRED_FROM_CONSOLE_DEFAULT, name, defaultDesc);
+    }
 
-	@Contract(value = "_ -> this", mutates = "this")
-	public Parameter<T> setDefaultValue(T defaultValue) {
-		this.defaultValue = defaultValue;
-		this.defaultValueSet = true;
-		return this;
-	}
+    // Without defaultDesc.
+    public Parameter(@Nullable T defaultValue, @NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name) {
+        this(defaultValue, type, requiredFromConsole, name, DEFAULT_DESC_DEFAULT);
+    }
 
-	// A default value can be null.
-	// So we must keep track of this field too.
-	protected boolean defaultValueSet = false;
-
-	@Contract(mutates = "this")
-	public void setDefaultValueSet(boolean defaultValueSet) {
-		this.defaultValueSet = defaultValueSet;
-	}
-
-	// Default Description (allows for showing different text than the default value in the command template)
-	// For example of a Param's default value is null, but you want it to say (myParam=you) in the command template.
-	protected @Nullable String defaultDesc = null;
-	@Contract(value = "_ -> this", mutates = "this")
-	public Parameter<T> setDefaultDesc(String defaultDesc) {
-		this.defaultDesc = defaultDesc;
-		return this;
-	}
-	public @Nullable String getDefaultDesc() {
-		if (this.defaultDesc != null) return defaultDesc;
-		if (this.isDefaultValueSet()) return String.valueOf(this.getDefaultValue());
-		return null;
-	}
+    // Without defaultValue & reqFromConsole.
+    public Parameter(@NotNull Type<T> type, @NotNull String name, @Nullable String defaultDesc) {
+        this(type, REQUIRED_FROM_CONSOLE_DEFAULT, name, defaultDesc);
+    }
 
 
-	// Convenience
-	public boolean isRequired() {
-		return this.getDefaultDesc() == null;
-	}
+    // Without defaultValue & defaultDesc.
+    public Parameter(@NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name) {
+        this(type, requiredFromConsole, name, DEFAULT_DESC_DEFAULT);
+    }
 
-	public boolean isOptional() {
-		return !this.isRequired();
-	}
+    // Without reqFromConsole and defaultDesc.
+    public Parameter(T defaultValue, @NotNull Type<T> type, @NotNull String name) {
+        this(defaultValue, type, REQUIRED_FROM_CONSOLE_DEFAULT, name, DEFAULT_DESC_DEFAULT);
+    }
 
-	// Is this arg ALWAYS required from the console?
-	// That might the case if the arg is a player. and default is oneself.
-	protected boolean requiredFromConsole = false;
+    // Without defaultValue, reqFromConsole and defaultDesc.
+    public Parameter(@NotNull Type<T> type, @NotNull String name) {
+        this(type, REQUIRED_FROM_CONSOLE_DEFAULT, name, DEFAULT_DESC_DEFAULT);
+    }
 
-	@Contract(value = "_ -> this", mutates = "this")
-	public Parameter<T> setRequiredFromConsole(boolean requiredFromConsole) {
-		this.requiredFromConsole = requiredFromConsole;
-		return this;
-	}
+    // Without defaultValue, name, reqFromConsole and defaultDesc.
+    public Parameter(@NotNull Type<T> type) {
+        this(type, REQUIRED_FROM_CONSOLE_DEFAULT, type.getName(), DEFAULT_DESC_DEFAULT);
+    }
 
-	// -------------------------------------------- //
-	// CONSTRUCT
-	// -------------------------------------------- //
+    // -------------------------------------------- //
+    // CONSTRUCT
+    // -------------------------------------------- //
 
-	// To minimize confusion and mixing of arguments for the constructor
-	// description must not be set in the constructor.
+    // To minimize confusion and mixing of arguments for the constructor
+    // description must not be set in the constructor.
 
-	// All
-	public Parameter(@Nullable T defaultValue, @NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name, @Nullable String defaultDesc) {
-		this.setType(type);
-		this.setRequiredFromConsole(requiredFromConsole);
-		this.setName(name);
-		this.setDefaultDesc(defaultDesc);
-		this.setDefaultValue(defaultValue);
-	}
+    @Contract(value = "_ -> this", mutates = "this")
+    public Parameter<T> setType(Type<T> type) {
+        this.type = type;
+        return this;
+    }
 
-	// Without defaultValue
-	@SuppressWarnings("unchecked")
-	public Parameter(@NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name, @Nullable String defaultDesc) {
-		this((T) DEFAULT_VALUE_DEFAULT, type, requiredFromConsole, name, defaultDesc);
+    @Contract(value = "_ -> this", mutates = "this")
+    public Parameter<T> setName(String name) {
+        this.name = name;
+        return this;
+    }
 
-		// In fact the default value is not set.
-		this.defaultValueSet = false;
-	}
+    @Contract(value = "_ -> this", mutates = "this")
+    public Parameter<T> setDefaultValue(T defaultValue) {
+        this.defaultValue = defaultValue;
+        this.defaultValueSet = true;
+        return this;
+    }
 
-	// Without reqFromConsole.
-	public Parameter(@Nullable T defaultValue, @NotNull Type<T> type, @NotNull String name, @Nullable String defaultDesc) {
-		this(defaultValue, type, REQUIRED_FROM_CONSOLE_DEFAULT, name, defaultDesc);
-	}
+    @Contract(mutates = "this")
+    public void setDefaultValueSet(boolean defaultValueSet) {
+        this.defaultValueSet = defaultValueSet;
+    }
 
-	// Without defaultDesc.
-	public Parameter(@Nullable T defaultValue, @NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name) {
-		this(defaultValue, type, requiredFromConsole, name, DEFAULT_DESC_DEFAULT);
-	}
+    public @Nullable String getDefaultDesc() {
+        if (this.defaultDesc != null) return defaultDesc;
+        if (this.isDefaultValueSet()) return String.valueOf(this.getDefaultValue());
+        return null;
+    }
 
-	// Without defaultValue & reqFromConsole.
-	public Parameter(@NotNull Type<T> type, @NotNull String name, @Nullable String defaultDesc) {
-		this(type, REQUIRED_FROM_CONSOLE_DEFAULT, name, defaultDesc);
-	}
+    @Contract(value = "_ -> this", mutates = "this")
+    public Parameter<T> setDefaultDesc(String defaultDesc) {
+        this.defaultDesc = defaultDesc;
+        return this;
+    }
 
-	// Without defaultValue & defaultDesc.
-	public Parameter(@NotNull Type<T> type, boolean requiredFromConsole, @NotNull String name) {
-		this(type, requiredFromConsole, name, DEFAULT_DESC_DEFAULT);
-	}
+    // Convenience
+    public boolean isRequired() {
+        return this.getDefaultDesc() == null;
+    }
 
-	// Without reqFromConsole and defaultDesc.
-	public Parameter(T defaultValue, @NotNull Type<T> type, @NotNull String name) {
-		this(defaultValue, type, REQUIRED_FROM_CONSOLE_DEFAULT, name, DEFAULT_DESC_DEFAULT);
-	}
+    public boolean isOptional() {
+        return !this.isRequired();
+    }
 
-	// Without defaultValue, reqFromConsole and defaultDesc.
-	public Parameter(@NotNull Type<T> type, @NotNull String name) {
-		this(type, REQUIRED_FROM_CONSOLE_DEFAULT, name, DEFAULT_DESC_DEFAULT);
-	}
+    @Contract(value = "_ -> this", mutates = "this")
+    public Parameter<T> setRequiredFromConsole(boolean requiredFromConsole) {
+        this.requiredFromConsole = requiredFromConsole;
+        return this;
+    }
 
-	// Without defaultValue, name, reqFromConsole and defaultDesc.
-	public Parameter(@NotNull Type<T> type) {
-		this(type, REQUIRED_FROM_CONSOLE_DEFAULT, type.getName(), DEFAULT_DESC_DEFAULT);
-	}
+    // -------------------------------------------- //
+    // CONVENIENCE
+    // -------------------------------------------- //
 
-	// -------------------------------------------- //
-	// CONVENIENCE
-	// -------------------------------------------- //
+    public boolean isRequiredFor(@Nullable CommandSender sender) {
+        if (this.isRequired()) return true; // Required for everyone.
+        if (!this.isRequiredFromConsole()) return false; // If not required for console. Then not anyone.
+        if (sender == null) return false; // If null we will suppose it is a player.
+        return !(sender instanceof Player); // Required for console.
+        // Not required.
+    }
 
-	public boolean isRequiredFor(@Nullable CommandSender sender) {
-		if (this.isRequired()) return true; // Required for everyone.
-		if (!this.isRequiredFromConsole()) return false; // If not required for console. Then not anyone.
-		if (sender == null) return false; // If null we will suppose it is a player.
-		return !(sender instanceof Player); // Required for console.
-		// Not required.
-	}
+    public boolean isOptionalFor(CommandSender sender) {
+        return !this.isRequiredFor(sender);
+    }
 
-	public boolean isOptionalFor(CommandSender sender) {
-		return !this.isRequiredFor(sender);
-	}
+    @NotNull
+    public String getTemplate(@Nullable CommandSender sender) {
+        String ret;
 
-	@NotNull
-	public String getTemplate(@Nullable CommandSender sender) {
-		String ret;
-
-		if (this.isRequiredFor(sender)) {
-			ret = "<" + this.getName() + ">";
-		} else {
-			@Nullable String def = getDefaultDesc();
-			ret = "[" + this.getName() + (def != null ? "=" + def : "") + "]";
-		}
-		return ret;
-	}
+        if (this.isRequiredFor(sender)) {
+            ret = "<" + this.getName() + ">";
+        } else {
+            @Nullable String def = getDefaultDesc();
+            ret = "[" + this.getName() + (def != null ? "=" + def : "") + "]";
+        }
+        return ret;
+    }
 
 }
