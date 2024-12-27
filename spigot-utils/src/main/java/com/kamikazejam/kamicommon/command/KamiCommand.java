@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "UnstableApiUsage", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "UnusedReturnValue"})
 public class KamiCommand implements Active, PluginIdentifiableCommand {
 	private static final Set<KamiCommand> allInstances = new KamiSet<>();
 
@@ -94,20 +94,20 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	}
 
 	@Override
-	public KamiPlugin getActivePlugin() {
+	public @NotNull KamiPlugin getActivePlugin() {
 		// Automatically fetch from parent if null.
 		if (this.activePlugin == null) {
 			if (parent != null && !Objects.equals(parent, this)) {
-				this.activePlugin = this.getParent().getActivePlugin();
+				this.activePlugin = Objects.requireNonNull(this.getParent().getActivePlugin());
 			}else {
 				throw new RuntimeException("No active plugin set for command " + this.getClass().getSimpleName());
 			}
 		}
-		return this.activePlugin;
+		return Objects.requireNonNull(this.activePlugin);
 	}
 
 	@Override
-	public void setActive(KamiPlugin plugin) {
+	public void setActive(@Nullable KamiPlugin plugin) {
 		this.setActivePlugin(plugin);
 		this.setActive(plugin != null);
 	}
