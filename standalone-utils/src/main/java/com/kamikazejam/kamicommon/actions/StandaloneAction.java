@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.actions;
 
 import com.kamikazejam.kamicommon.util.StringUtil;
-import com.kamikazejam.kamicommon.util.data.ANSI;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +28,8 @@ public class StandaloneAction {
      */
     public StandaloneAction setClickRunCommand(String command) {
         if (!command.startsWith("/")) {
+            // Fix the command, since it is supposed to start with '/'
             command = "/" + command;
-            System.out.println(ANSI.RED + "StandaloneAction: Command does not start with '/'. Attempting to fix." + ANSI.RESET);
         }
         this.click = new ClickCmd(command);
         return this;
