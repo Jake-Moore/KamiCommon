@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command.type.primitive;
 
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class TypeShort extends TypeAbstractNumber<Short> {
 	// -------------------------------------------- //
@@ -22,7 +23,7 @@ public class TypeShort extends TypeAbstractNumber<Short> {
 	// -------------------------------------------- //
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "number";
 	}
 

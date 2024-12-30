@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command.type;
 
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,7 +35,7 @@ public class TypeDate extends TypeAbstractSimple<Date> {
 	// -------------------------------------------- //
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "YYYY-MM-DD date";
 	}
 

@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.command.type.primitive;
 
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +27,7 @@ public class TypeStringConfirmation extends TypeAbstract<String> {
 	// -------------------------------------------- //
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "confirmation text";
 	}
 
