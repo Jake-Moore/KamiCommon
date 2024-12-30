@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.command.type;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +15,7 @@ public interface Type<T> extends Named {
 	// -------------------------------------------- //
 
 	// Human friendly name
-	String getName();
+	@NotNull String getName();
 
 	Class<T> getClazz();
 

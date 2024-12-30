@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command.type;
 
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -27,7 +28,7 @@ public class TypeUUID extends TypeAbstractSimple<UUID> {
 	// -------------------------------------------- //
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "UUID";
 	}
 

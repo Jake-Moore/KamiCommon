@@ -10,6 +10,7 @@ import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageBlock;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.KUtil;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "UnstableApiUsage", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "UnusedReturnValue"})
 public class KamiCommand implements Active, PluginIdentifiableCommand {
 	private static final Set<KamiCommand> allInstances = new KamiSet<>();
 
@@ -94,20 +95,20 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	}
 
 	@Override
-	public KamiPlugin getActivePlugin() {
+	public @NotNull KamiPlugin getActivePlugin() {
 		// Automatically fetch from parent if null.
 		if (this.activePlugin == null) {
 			if (parent != null && !Objects.equals(parent, this)) {
-				this.activePlugin = this.getParent().getActivePlugin();
+				this.activePlugin = Objects.requireNonNull(this.getParent().getActivePlugin());
 			}else {
 				throw new RuntimeException("No active plugin set for command " + this.getClass().getSimpleName());
 			}
 		}
-		return this.activePlugin;
+		return Objects.requireNonNull(this.activePlugin);
 	}
 
 	@Override
-	public void setActive(KamiPlugin plugin) {
+	public void setActive(@Nullable KamiPlugin plugin) {
 		this.setActivePlugin(plugin);
 		this.setActive(plugin != null);
 	}
@@ -538,11 +539,6 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		this.getParameters().set(index, parameter);
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	public void setParameterType(int index, Type<?> type) {
-		this.getParameter(index).setType((Type) type);
-	}
-
 	public boolean hasParameterForIndex(int index) {
 		if (index < 0) return false;
 		if (this.isConcatenating() && this.getConcatenationIndex() < index) index = this.getConcatenationIndex();
@@ -590,15 +586,17 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	// PARAMETERS > ADD
 	// -------------------------------------------- //
 
-	// The actual parameter.
-	@Contract(value = "_, _ -> param1", mutates = "this")
-	public <T> Parameter<T> addParameter(Parameter<T> parameter, boolean concatFromHere) {
-		// Concat safety.
+	@Contract(mutates = "this")
+	@NotNull
+	public <T> Parameter<T> addParameter(@NotNull Parameter<T> parameter) {
+		Preconditions.checkNotNull(parameter, "parameter cannot be null");
+
+		// Concat safety. (throw if addParameter was called after a concatenating parameter was added)
 		if (this.isConcatenating()) {
 			throw new IllegalStateException("You can't add args if a prior one concatenates.");
 		}
 
-		// Req/optional safety.
+		// Req/optional safety. (All 'required' args must come before any 'optional' args)
 		int prior = this.getParameters().size() - 1;
 		if (this.hasParameterForIndex(prior) && this.getParameter(prior).isOptional() && parameter.isRequired()) {
 			throw new IllegalArgumentException("You can't add required args, if a prior one is optional.");
@@ -606,135 +604,19 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
 		// If false no change is made.
 		// If true change is made.
-		this.setConcatenating(concatFromHere);
+		this.setConcatenating(parameter.isConcatFromHere());
 
 		this.getParameters().add(parameter);
 		return parameter;
 	}
 
-	// The actual parameter without concat.
 	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Parameter<T> parameter) {
-		return this.addParameter(parameter, false);
+	@NotNull
+	public <T> Parameter<T> addParameter(@NotNull Parameter.Builder<T> parameter) {
+		return this.addParameter(parameter.build());
 	}
 
-	// All
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(T defaultValue, Type<T> type, boolean requiredFromConsole, String name, String defaultDesc, boolean concatFromHere) {
-		return this.addParameter(new Parameter<>(defaultValue, type, requiredFromConsole, name, defaultDesc), concatFromHere);
-	}
 
-	// WITHOUT 1
-
-	// Without defaultValue
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type, boolean requiredFromConsole, String name, String defaultDesc, boolean concatFromHere) {
-		return this.addParameter(new Parameter<>(type, requiredFromConsole, name, defaultDesc), concatFromHere);
-	}
-
-	// Without reqFromConsole.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(T defaultValue, Type<T> type, String name, String defaultDesc, boolean concatFromHere) {
-		return this.addParameter(new Parameter<>(defaultValue, type, name, defaultDesc), concatFromHere);
-	}
-
-	// Without defaultDesc.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(T defaultValue, Type<T> type, boolean requiredFromConsole, String name, boolean concatFromHere) {
-		return this.addParameter(new Parameter<>(defaultValue, type, requiredFromConsole, name), concatFromHere);
-	}
-
-	// Without concat.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(T defaultValue, Type<T> type, boolean requiredFromConsole, String name, String defaultDesc) {
-		return this.addParameter(new Parameter<>(defaultValue, type, requiredFromConsole, name, defaultDesc), false);
-	}
-
-	// WITHOUT 2
-
-	// Without defaultValue & reqFromConsole
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type, String name, String defaultDesc, boolean concatFromHere) {
-		return this.addParameter(new Parameter<>(type, name, defaultDesc), concatFromHere);
-	}
-
-	// Without defaultValue & defaultDesc
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type, boolean requiredFromConsole, String name, boolean concatFromHere) {
-		return this.addParameter(new Parameter<>(type, requiredFromConsole, name), concatFromHere);
-	}
-
-	// Without defaultValue & concat.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type, boolean requiredFromConsole, String name, String defaultDesc) {
-		return this.addParameter(new Parameter<>(type, requiredFromConsole, name, defaultDesc));
-	}
-
-	// Without reqFromConsole & defaultDesc.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(T defaultValue, Type<T> type, String name, boolean concatFromHere) {
-		return this.addParameter(new Parameter<>(defaultValue, type, name), concatFromHere);
-	}
-
-	// Without reqFromConsole & concat.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(T defaultValue, Type<T> type, String name, String defaultDesc) {
-		return this.addParameter(new Parameter<>(defaultValue, type, name, defaultDesc));
-	}
-
-	// Without defaultDesc & concat.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(T defaultValue, Type<T> type, boolean requiredFromConsole, String name) {
-		return this.addParameter(new Parameter<>(defaultValue, type, requiredFromConsole, name));
-	}
-
-	// WITHOUT 3
-
-	// Without defaultValue, reqFromConsole & defaultDesc.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type, String name, boolean concatFromHere) {
-		return this.addParameter(new Parameter<>(type, name), concatFromHere);
-	}
-
-	// Without defaultValue, reqFromConsole & concat .
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type, String name, String defaultDesc) {
-		return this.addParameter(new Parameter<>(type, name, defaultDesc));
-	}
-
-	// Without defaultValue, defaultDesc & concat .
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type, boolean requiredFromConsole, String name) {
-		return this.addParameter(new Parameter<>(type, requiredFromConsole, name));
-	}
-
-	// Without reqFromConsole, defaultDesc & concat .
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(T defaultValue, Type<T> type, String name) {
-		return this.addParameter(new Parameter<>(defaultValue, type, name));
-	}
-
-	// WITHOUT 4
-
-	// Without defaultValue, reqFromConsole, defaultDesc & concat.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type, String name) {
-		return this.addParameter(new Parameter<>(type, name));
-	}
-
-	// Without defaultValue, name, reqFromConsole & defaultDesc.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type, boolean concatFromHere) {
-		return this.addParameter(new Parameter<>(type), concatFromHere);
-	}
-
-	// Without 5
-
-	// Without defaultValue, name, reqFromConsole, defaultDesc & concat.
-	@Contract(mutates = "this")
-	public <T> Parameter<T> addParameter(Type<T> type) {
-		return this.addParameter(new Parameter<>(type));
-	}
 
 	// -------------------------------------------- //
 	// PREPROCESS
@@ -1282,8 +1164,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		Parameter<T> parameter = (Parameter<T>) this.getParameter(idx);
 
 		// Return the default in the parameter.
-		if (!this.argIsSet(idx) && parameter.isDefaultValueSet()) {
-			return parameter.getDefaultValue();
+		if (!this.argIsSet(idx) && parameter.getDefaultValue() != null) {
+			return parameter.getDefaultValue().getValue();
 		}
 
 		// OLD: Throw error if there was no arg, or default value in the parameter.
