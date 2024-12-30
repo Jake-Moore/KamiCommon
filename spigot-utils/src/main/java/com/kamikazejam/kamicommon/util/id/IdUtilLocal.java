@@ -590,7 +590,7 @@ public class IdUtilLocal implements Listener, Runnable {
 	}
 
 	@Contract("null -> null")
-	public static UUID getUuid(Object senderObject) {
+	public static UUID getUUID(Object senderObject) {
 		// Null Return
         switch (senderObject) {
             case null -> {
@@ -723,10 +723,14 @@ public class IdUtilLocal implements Listener, Runnable {
 		return uuid.toString();
 	}
 
-	@Contract("null -> null")
-	public static String getName(Object senderObject) {
+	/**
+	 * @return the name of the senderObject, or null if the senderObject is null/has no known name.
+	 * @see #getNameOrUUID(Object)
+	 */
+	@NotNull
+	public static Optional<String> getName(@Nullable Object senderObject) {
 		// Null Return
-		if (senderObject == null) return null;
+		if (senderObject == null) return Optional.empty();
 
 		// Already Done
 		// Handled at "Data" (not applicable - names can look differently)
@@ -735,13 +739,13 @@ public class IdUtilLocal implements Listener, Runnable {
 		// Handled at "Command Sender"
 
 		// Console Id/Name
-		if (CONSOLE_ID.equals(senderObject)) return CONSOLE_ID;
+		if (CONSOLE_ID.equals(senderObject)) return Optional.of(CONSOLE_ID);
 
 		// Player
 		// Handled at "Command Sender"
 
 		// CommandSender
-		if (senderObject instanceof CommandSender) return getNameFromSender((CommandSender) senderObject);
+		if (senderObject instanceof CommandSender) return Optional.of(getNameFromSender((CommandSender) senderObject));
 
 		// UUID
 		// Handled at "Data".
@@ -753,15 +757,24 @@ public class IdUtilLocal implements Listener, Runnable {
 		// Data
 		IdData data = getData(senderObject);
 		if (data != null) {
-			return data.getName();
+			return Optional.of(data.getName());
 		}
 
 		// TryFix Behavior
 		// Note: We try to use stored data to fix the capitalization!
-		if (senderObject instanceof String) return (String) senderObject;
+		if (senderObject instanceof String) return Optional.of((String) senderObject);
 
 		// Return Null
-		return null;
+		return Optional.empty();
+	}
+
+	/**
+	 * @return the name of the senderObject, or the UUID if the senderObject is null/has no known name.
+	 */
+	@NotNull
+	public static String getNameOrUUID(@NotNull Object senderObject) {
+		Preconditions.checkNotNull(senderObject, "senderObject cannot be null");
+		return getName(senderObject).orElseGet(() -> getUUID(senderObject).toString());
 	}
 
 	@Contract("null -> null")
@@ -773,7 +786,7 @@ public class IdUtilLocal implements Listener, Runnable {
 		if (senderObject instanceof OfflinePlayer) return (OfflinePlayer) senderObject;
 
 		//
-		UUID uuid = getUuid(senderObject);
+		UUID uuid = getUUID(senderObject);
 		if (uuid == null) return null;
 
 		return Bukkit.getOfflinePlayer(uuid);
@@ -959,8 +972,7 @@ public class IdUtilLocal implements Listener, Runnable {
 			String id = getId(player);
 			if (id == null) throw new NullPointerException("id");
 
-			String name = getName(player);
-			if (name == null) throw new NullPointerException("name");
+			String name = getName(player).orElseThrow(() -> new NullPointerException("name"));
 
 			IdData data = new IdData(id, name, millis);
 
