@@ -41,7 +41,7 @@ public class MixinDisplayName extends Mixin {
 
         // Fixed Name
         if (ret == null) {
-            ret = IdUtilLocal.getName(senderObject);
+            ret = IdUtilLocal.getName(senderObject).orElse(null);
         }
 
         // Id Fallback

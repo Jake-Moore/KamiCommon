@@ -38,7 +38,7 @@ public class MixinPlayed extends Mixin {
     public Long getFirstPlayed(Object senderObject) {
         if (KUtil.isNpc(senderObject)) return null;
 
-        UUID uuid = IdUtilLocal.getUuid(senderObject);
+        UUID uuid = IdUtilLocal.getUUID(senderObject);
         if (uuid == null) return null;
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
@@ -55,7 +55,7 @@ public class MixinPlayed extends Mixin {
 
         if (KUtil.isNpc(senderObject)) return null;
 
-        UUID uuid = IdUtilLocal.getUuid(senderObject);
+        UUID uuid = IdUtilLocal.getUUID(senderObject);
         if (uuid == null) return null;
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
