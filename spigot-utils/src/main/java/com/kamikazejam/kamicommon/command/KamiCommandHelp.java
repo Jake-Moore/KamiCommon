@@ -29,6 +29,12 @@ public class KamiCommandHelp extends KamiCommand {
 		this.addAliases("?", "h", "help");
 
 		// Parameters
+		// TODO
+//		this.addParameter(new Parameter.Builder<>(TypeInteger.get())
+//				.name("page")
+//				.build()
+//		);
+
 		this.addParameter(1, TypeInteger.get(), "page");
 
 		// Other

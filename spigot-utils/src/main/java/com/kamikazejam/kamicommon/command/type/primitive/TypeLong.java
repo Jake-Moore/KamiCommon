@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command.type.primitive;
 
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class TypeLong extends TypeAbstractNumber<Long> {
 	// -------------------------------------------- //
@@ -22,7 +23,7 @@ public class TypeLong extends TypeAbstractNumber<Long> {
 	// -------------------------------------------- //
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "number";
 	}
 

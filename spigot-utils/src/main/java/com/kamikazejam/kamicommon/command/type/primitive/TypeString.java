@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.command.type.primitive;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,7 +28,7 @@ public class TypeString extends TypeAbstract<String> {
 	// -------------------------------------------- //
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "text";
 	}
 
