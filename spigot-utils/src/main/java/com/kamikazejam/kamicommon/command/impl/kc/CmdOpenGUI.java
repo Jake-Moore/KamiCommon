@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.command.impl.kc;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
+import com.kamikazejam.kamicommon.command.Parameter;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
@@ -29,7 +30,7 @@ public class CmdOpenGUI extends KamiCommand {
     public CmdOpenGUI() {
         addAliases("opengui");
 
-        addParameter(TypeString.get(), "config key");
+        addParameter(Parameter.of(TypeString.get()).name("config key"));
 
         addRequirements(RequirementHasPerm.get("kamicommon.command.opengui"));
         addRequirements(RequirementIsPlayer.get());

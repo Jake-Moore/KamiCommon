@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command;
 
 import com.kamikazejam.kamicommon.command.type.Type;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,49 +21,17 @@ public class Parameter<T> {
 
     private final @NotNull Type<T> type;
     private final @NotNull String name;
-    // TODO EXTRACT THE THREE 'DEFAULT' FIELDS INTO A SINGLE DATA CLASS
-    //   The use of the boolean defaultValueSet can be replaced with nullability checks on this new data field
-    private final @Nullable T defaultValue;
-    private final boolean defaultValueSet;
-    private final @Nullable String defaultDesc;
-
+    private final @Nullable DefaultValue<T> defaultValue; // If null, then no default value was supplied, thus the param is required
     private final boolean requiredFromConsole;
+    private final boolean concatFromHere;
 
     // Private constructor only accessible by Builder
     private Parameter(@NotNull Builder<T> builder) {
         this.type = builder.type;
         this.name = builder.name;
         this.defaultValue = builder.defaultValue;
-        this.defaultValueSet = builder.defaultValueSet;
-        this.defaultDesc = builder.defaultDesc;
         this.requiredFromConsole = builder.requiredFromConsole;
-    }
-
-    // -------------------------------------------- //
-    // BUILDER
-    // -------------------------------------------- //
-
-    @Getter @Setter
-    @Accessors(chain = true, fluent = true)
-    public static class Builder<T> {
-        // Required parameters
-        private final @NotNull Type<T> type;
-
-        // Optional parameters - initialized to default values
-        private @NotNull String name;
-        private @Nullable T defaultValue = null;
-        private boolean defaultValueSet = false;
-        private @Nullable String defaultDesc = null;
-        private boolean requiredFromConsole = false;
-
-        public Builder(@NotNull Type<T> type) {
-            this.type = type;
-            this.name = Objects.requireNonNull(type.getName()); // Default name to type name
-        }
-
-        public Parameter<T> build() {
-            return new Parameter<>(this);
-        }
+        this.concatFromHere = builder.concatFromHere;
     }
 
     // -------------------------------------------- //
@@ -70,17 +39,28 @@ public class Parameter<T> {
     // -------------------------------------------- //
 
     public boolean isRequired() {
-        return this.getDefaultDesc() == null;
+        // If null, then no default value was supplied, thus the param is required
+        return this.defaultValue == null;
     }
 
     public boolean isOptional() {
         return !this.isRequired();
     }
 
+    /**
+     * @return IFF a default value is set (may still be null)
+     */
+    public boolean isDefaultValueSet() {
+        return this.defaultValue != null;
+    }
+
+    /**
+     * @return null if no default value is set, or the description of the default value if set, otherwise the default value as a string
+     */
     public @Nullable String getDefaultDesc() {
-        if (this.defaultDesc != null) return defaultDesc;
-        if (this.defaultValueSet) return String.valueOf(this.defaultValue);
-        return null;
+        if (this.defaultValue == null) { return null; }
+        if (this.defaultValue.isDescriptionSet()) { return this.defaultValue.getDescription(); }
+        return String.valueOf(this.defaultValue.getValue());
     }
 
     public boolean isRequiredFor(@Nullable CommandSender sender) {
@@ -97,7 +77,6 @@ public class Parameter<T> {
     @NotNull
     public String getTemplate(@Nullable CommandSender sender) {
         String ret;
-
         if (this.isRequiredFor(sender)) {
             ret = "<" + this.getName() + ">";
         } else {
@@ -105,5 +84,55 @@ public class Parameter<T> {
             ret = "[" + this.getName() + (def != null ? "=" + def : "") + "]";
         }
         return ret;
+    }
+
+
+
+    // -------------------------------------------- //
+    // BUILDER
+    // -------------------------------------------- //
+
+    @Getter @Setter
+    @SuppressWarnings("unused")
+    @Accessors(chain = true, fluent = true)
+    public static class Builder<T> {
+        // Required parameters
+        private final @NotNull Type<T> type;
+
+        // Optional parameters - initialized to default values
+        private @NotNull String name;
+        private @Nullable DefaultValue<T> defaultValue = null;
+        private boolean requiredFromConsole = false;
+        private boolean concatFromHere = false;
+
+        public Builder(@NotNull Type<T> type) {
+            Preconditions.checkNotNull(type, "type cannot be null");
+            this.type = type;
+            this.name = Objects.requireNonNull(type.getName()); // Default name to type name
+        }
+
+        // Other options for the defaultValue setter
+        public Parameter.Builder<T> defaultValue(@Nullable T value) {
+            this.defaultValue = new DefaultValue<>(value, null);
+            return this;
+        }
+        public Parameter.Builder<T> defaultValue(@Nullable T value, @Nullable String description) {
+            this.defaultValue = new DefaultValue<>(value, description);
+            return this;
+        }
+
+        @NotNull
+        public Parameter<T> build() {
+            return new Parameter<>(this);
+        }
+    }
+
+    @NotNull
+    public static <T> Parameter.Builder<T> builder(@NotNull Type<T> type) {
+        return new Parameter.Builder<>(type);
+    }
+    @NotNull
+    public static <T> Parameter.Builder<T> of(@NotNull Type<T> type) {
+        return builder(type);
     }
 }
