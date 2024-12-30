@@ -521,4 +521,15 @@ public abstract class Module implements CoreMethods, ConfigObserver {
     public MessageBuilder getMessage(String key) {
         return buildMessage(key);
     }
+
+    // -------------------------------------------- //
+    // MISCELLANEOUS
+    // -------------------------------------------- //
+    /**
+     * Registers a {@link ConfigObserver} to a {@link KamiConfig} instance.
+     * @return true IFF the observer was registered as a result of this call, false if the observer was already registered to the config.
+     */
+    public final boolean registerConfigObserver(@NotNull ConfigObserver observer, @NotNull KamiConfig config) {
+        return config.registerObserver(observer);
+    }
 }
