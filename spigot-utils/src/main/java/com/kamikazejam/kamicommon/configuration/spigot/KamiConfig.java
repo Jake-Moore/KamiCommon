@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <br>
  * <br>
  * When extending this class, provide the File to the config in the super, and then add all desired comments <br>
- * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link KamiConfig#save()} and {@link KamiConfig#reload()} <br>
+ * Then you can use this object just like a YamlConfiguration, it has all the same methods plus a few others like {@link KamiConfig#reload()} <br>
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class KamiConfig extends AbstractConfig<YamlConfiguration> implements ConfigurationSection {
@@ -66,7 +66,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
 
         this.yamlHandler = new YamlHandler(this, plugin, file);
         this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
-        save();
+        save(true); // Force save since there won't be any changes from load, but we want to write any new comments to file
     }
 
     @Override
