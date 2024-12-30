@@ -33,7 +33,7 @@ import java.util.Set;
  * Another time you may want to store pitch and yaw only.
  * This class is supposed to be usable in all those cases.
  * Hopefully this class will save you from implementing special classes for all those combinations.
- * <p>
+ * <br>
  * # Field Groups
  * velocity: velocityX, velocityY, velocityZ
  * blockCoords: blockX, blockY, blockZ

@@ -10,7 +10,7 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public class PremiumVanishIntegration implements Listener {
     public PremiumVanishIntegration(KamiPlugin plugin) {
-        plugin.registerListener(this);
+        plugin.registerListeners(this);
     }
 
     public boolean isVanished(Player player) {

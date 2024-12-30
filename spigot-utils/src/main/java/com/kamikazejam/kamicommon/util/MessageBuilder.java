@@ -19,9 +19,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A utility class for sending building messages built from a config. <p>
- * The primary function of this class is to grab either a string or string list from the config. <p>
- * It will detect which one to use and the server owner can configure it as either. <p>
+ * A utility class for sending building messages built from a config. <br>
+ * The primary function of this class is to grab either a string or string list from the config. <br>
+ * It will detect which one to use and the server owner can configure it as either. <br>
  * The secondary function of this class is to send messages translated, and with PAPI placeholders replaced
  */
 @Getter @Accessors(chain = true)

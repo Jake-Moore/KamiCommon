@@ -9,19 +9,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This command is used to log unmatched arguments. <p>
- * There is a method {@link #sendSubCommandsMap(Map)} that is called when the subCommandsMap should be logged. <p>
- * You can forward this information wherever you want. <p>
+ * This command is used to log unmatched arguments. <br>
+ * There is a method {@link #sendSubCommandsMap(Map)} that is called when the subCommandsMap should be logged. <br>
+ * You can forward this information wherever you want. <br>
  */
 @SuppressWarnings("unused")
 public abstract class UnmatchedCommand extends KamiCommand implements Disableable {
     private final Map<String, Integer> subCommandMap = new HashMap<>();
 
     public UnmatchedCommand(KamiPlugin plugin) {
-        plugin.registerDisableable(this);
+        plugin.registerDisableables(this);
     }
     public UnmatchedCommand(Module module) {
-        module.registerDisableable(this);
+        module.registerDisableables(this);
     }
 
     @Override
