@@ -8,11 +8,11 @@ import java.io.File;
 
 
 /**
- * A class that represents a configuration file <p>
- * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <p>
- * <p></p>
- * When extending this class, provide the File to the config in the super, and then add all desired comments <p>
- * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link AbstractConfig#save()} and {@link AbstractConfig#reload()} <p>
+ * A class that represents a configuration file <br>
+ * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <br>
+ * <br>
+ * When extending this class, provide the File to the config in the super, and then add all desired comments <br>
+ * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link AbstractConfig#save()} and {@link AbstractConfig#reload()} <br>
  */
 @Setter
 @Getter

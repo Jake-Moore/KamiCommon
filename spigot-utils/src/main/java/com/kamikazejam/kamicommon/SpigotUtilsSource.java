@@ -53,7 +53,7 @@ public class SpigotUtilsSource {
         // Setup Commands
         new KamiCommonCommandRegistration(plugin);
         // SetUp NMS Event Adapters
-        plugin.registerListener(PreSpawnSpawnerAdapter.getSpawnerAdapter());
+        plugin.registerListeners(PreSpawnSpawnerAdapter.getSpawnerAdapter());
         // Register Core Command
         kcCommand.registerCommand(plugin); // Register the KamiCommon command
 

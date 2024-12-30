@@ -15,12 +15,12 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * A class that represents a configuration file (Meant for implementations WITHOUT a JavaPlugin object available) <p>
- * If you have a JavaPlugin object, it is recommended to use @KamiConfig instead <p>
- * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <p>
- * <p></p>
- * IF extending this class, provide the File to the config in the super, and then add all desired comments <p>
- * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link StandaloneConfig#save()} and {@link StandaloneConfig#reload()} <p>
+ * A class that represents a configuration file (Meant for implementations WITHOUT a JavaPlugin object available) <br>
+ * If you have a JavaPlugin object, it is recommended to use @KamiConfig instead <br>
+ * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <br>
+ * <br>
+ * IF extending this class, provide the File to the config in the super, and then add all desired comments <br>
+ * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link StandaloneConfig#save()} and {@link StandaloneConfig#reload()} <br>
  */
 @SuppressWarnings("unused")
 public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone> implements ConfigurationSectionStandalone {
