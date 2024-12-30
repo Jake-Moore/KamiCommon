@@ -110,11 +110,14 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     /**
      * Registers an observer to this config (if not already registered) <br>
      * The observer's {@link ConfigObserver#onConfigLoaded} method will be called immediately, AND every time the config is reloaded
+     * @return If the observer was successfully registered from this call (false if already registered)
      */
-    public void registerObserver(@NotNull ConfigObserver observer) {
+    public boolean registerObserver(@NotNull ConfigObserver observer) {
         if (observers.add(observer)) {
             observer.onConfigLoaded(this);
+            return true;
         }
+        return false;
     }
 
     /**
