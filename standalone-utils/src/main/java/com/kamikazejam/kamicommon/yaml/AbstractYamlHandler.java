@@ -102,25 +102,22 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
         Reader reader = new InputStreamReader(defConfigStream, StandardCharsets.UTF_8);
 
         MemorySectionMethods<?> defConfig = newMemorySection((MappingNode) (YamlUtil.getYaml()).compose(reader));
-        Set<String> defKeys = defConfig.getKeys(true);
 
-        boolean needsNewKeys = false;
-        for (String key : defKeys) {
-            if (!config.contains(key)) { needsNewKeys = true; break; }
-        }
-
-        // This is a very large optimization, because if we need to insert new defaults, it requires a
-        //  full recreate and rewrite of the config file, which is very slow
-        if (!needsNewKeys) { return config; }
+        // TODO: optimize add defaults to skip if no new keys and no new comments are required for a file
+        // We used to skip all the logic below if the config did not need any new keys (based on what keys were in the default file)
+        // HOWEVER, this broke the ability to update or add comments from the default file, since we skipped that logic below
+        // I do not have a good solution for this currently. The penalty of writing the file back will have to be accepted for now
+        // Perhaps we can analyze which part of the below logic is slow, and optimize that part
+        //  maybe with a file contents comparison before writing the file (if file writing is slow)
 
         Pair<List<String>, List<NodePair>> pair2 = YAMLParser.parseOrderedKeys(getIS(defStreamSupplier));
-        List<String> keys = pair2.getA();
+        List<String> defaultKeys = pair2.getA();
         List<NodePair> defaultKeyNodes = pair2.getB();
 
         // Add any existing keys that aren't in the defaults list
         // this will make any keys set by the plugin, that aren't in the defaults, stay
         for (String key : config.getKeys(true)) {
-            if (!keys.contains(key)) { keys.add(key); }
+            if (!defaultKeys.contains(key)) { defaultKeys.add(key); }
         }
 
         T newConfig = newConfig(createNewMappingNode(), configFile);
@@ -128,7 +125,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
         // Compile the Nodes for the user config and default config
         //   We can do this while we update defaults, saving cycles later by using this cached data
         List<NodePair> configKeyNodes = new ArrayList<>();
-        for (String key : keys) {
+        for (String key : defaultKeys) {
             // Fetch the config NodeTuple if it exists, and add it to the list (for copying comments)
             NodeTuple tuple = config.getNodeTuple(key);
             if (tuple != null) { configKeyNodes.add(new NodePair(key, (ScalarNode) tuple.getKeyNode(), true)); }

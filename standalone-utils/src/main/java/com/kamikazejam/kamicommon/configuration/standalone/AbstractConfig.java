@@ -48,4 +48,12 @@ public abstract class AbstractConfig<T extends AbstractYamlConfiguration> {
         return getYamlConfiguration().save();
     }
 
+    /**
+     * Saves the config to the file
+     * @param force If the config should be saved even if no changes were made
+     * @return IFF the config was saved (can be skipped if no changes were made & force is false)
+     */
+    public boolean save(boolean force) {
+        return getYamlConfiguration().save(force);
+    }
 }
