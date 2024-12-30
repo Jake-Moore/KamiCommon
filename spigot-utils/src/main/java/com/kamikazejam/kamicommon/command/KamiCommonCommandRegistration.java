@@ -27,7 +27,7 @@ public class KamiCommonCommandRegistration implements Listener {
         long interval = Long.getLong("KamiCommonCommandRegistrationPeriod", 20L * 60L * 60L);
 
         // Register this task under our KamiPlugin (so it gets shut down automatically)
-        plugin.registerTask(new BukkitRunnable() {
+        plugin.registerTasks(new BukkitRunnable() {
             @Override
             public void run() {
                 updateRegistrations();
@@ -38,6 +38,9 @@ public class KamiCommonCommandRegistration implements Listener {
     // -------------------------------------------- //
     // UPDATE REGISTRATIONS
     // -------------------------------------------- //
+    // TODO MAKE THIS A QUEUED CALL THAT EXECUTES AS NEEDED.
+    //  I.E. IF THE SERVER HAS NOT STARTED, IT GROUPS UP ALL CALLS INTO ONE THAT EXECUTES IN FIRST TICK.
+    //  OTHERWISE IT EXECUTES IMMEDIATELY FOR EACH CALL.
     public static void updateRegistrations() {
         // Step #1: Hack into Bukkit and get the SimpleCommandMap and it's knownCommands.
         SimpleCommandMap simpleCommandMap = getSimpleCommandMap();

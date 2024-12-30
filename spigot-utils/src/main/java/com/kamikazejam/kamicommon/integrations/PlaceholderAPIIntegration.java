@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("unused")
 public class PlaceholderAPIIntegration implements Listener {
     public PlaceholderAPIIntegration(KamiPlugin plugin) {
-        plugin.registerListener(this);
+        plugin.registerListeners(this);
     }
 
     public String setPlaceholders(@Nullable OfflinePlayer player, String s) {
