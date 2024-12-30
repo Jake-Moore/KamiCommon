@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.command.impl.kc;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
+import com.kamikazejam.kamicommon.command.Parameter;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
@@ -16,7 +17,7 @@ public class CmdGetItem extends KamiCommand {
     public CmdGetItem() {
         addAliases("getitem");
 
-        addParameter(TypeString.get(), "config key");
+        addParameter(Parameter.of(TypeString.get()).name("config key"));
 
         addRequirements(RequirementHasPerm.get("kamicommon.command.getitem"));
         addRequirements(RequirementIsPlayer.get());

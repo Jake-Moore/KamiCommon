@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.command.impl.kc;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
+import com.kamikazejam.kamicommon.command.Parameter;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
@@ -21,8 +22,8 @@ public class CmdSaveItem extends KamiCommand {
     public CmdSaveItem() {
         addAliases("saveitem");
 
-        addParameter(TypeString.get(), "config key");
-        addParameter(TypeString.get(), "file name", true);
+        addParameter(Parameter.of(TypeString.get()).name("config key"));
+        addParameter(Parameter.of(TypeString.get()).name("file name").concatFromHere(true));
 
         addRequirements(RequirementHasPerm.get("kamicommon.command.getitem"));
         addRequirements(RequirementIsPlayer.get());
