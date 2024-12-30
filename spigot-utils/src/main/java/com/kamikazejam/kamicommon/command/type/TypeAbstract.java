@@ -35,7 +35,7 @@ public abstract class TypeAbstract<T> implements Type<T> {
 	// -------------------------------------------- //
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		int prefixLength = "Type".length();
 		String name = this.getClass().getSimpleName();
 
