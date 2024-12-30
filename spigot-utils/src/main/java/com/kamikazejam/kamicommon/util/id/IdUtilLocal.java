@@ -45,25 +45,25 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Identification of a CommandSender can be done in 4 different ways.
- * <p>
+ * <br>
  * 1. CommandSender sender (the sender itself)
  * 2. UUID senderUuid (the uuid for the sender)
  * 3. String senderId (the string id for the sender)
  * 4. String senderName (the name for the sender)
  * (5). Object senderObject (any of the four above)
- * <p>
+ * <br>
  * This works very fine for players (instances of the Player class).
  * The UUID would be the Mojang account uuid, the id would be the stringified UUID and the name would be the current player name (it's always unique even though it can be changed).
- * <p>
+ * <br>
  * Then there is the server console command sender (instance of ConsoleCommandSender).
  * This one does not natively have a proper uuid, id or name.
  * I have however given it some.
  * It's very often practical being able to treat the console as any player.
- * <p>
+ * <br>
  * We provide the following features:
  * - Lookup of all the data based on one of the unique parts.
  * - Maintained sets for All, Online and Offline.
- * <p>
+ * <br>
  * Players are registered automatically.
  * Console is registered with imaginary and deterministic data values.
  * Non-standard CommandSenders must be manually registered using the register method.

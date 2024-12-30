@@ -47,8 +47,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	// -------------------------------------------- //
 
 	/**
-	 * If you register a command after the server has started, you must call the following method: <p>
-	 * @see KamiCommonCommandRegistration#updateRegistrations() <p>
+	 * If you register a command after the server has started, you must call the following method: <br>
+	 * {@link KamiCommonCommandRegistration#updateRegistrations()} <br>
 	 * In order for the command to be added to the server.
 	 */
 	public void registerCommand(KamiPlugin plugin) {
@@ -56,8 +56,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	}
 
 	/**
-	 * If you unregister a command after the server has started, you must call the following method: <p>
-	 * @see KamiCommonCommandRegistration#updateRegistrations() <p>
+	 * If you unregister a command after the server has started, you must call the following method: <br>
+	 * @see KamiCommonCommandRegistration#updateRegistrations() <br>
 	 * In order for the command to be removed from the server.
 	 */
 	public void unregisterCommand() {
@@ -81,6 +81,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
 		// Apply
 		if (active) {
+			// add() call is safe, as the 'allInstances' field is a set.
 			getAllInstances().add(this);
 		} else {
 			getAllInstances().remove(this);

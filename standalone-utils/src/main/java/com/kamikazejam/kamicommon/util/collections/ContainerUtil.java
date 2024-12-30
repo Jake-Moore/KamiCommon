@@ -12,11 +12,11 @@ import java.util.Map.Entry;
  * The ContainerUtil provides an imaginary super class to Collection and Map.
  * In Java they do not have a common interface yet many methods are similar and exists in both.
  * This some times results in twice the amount of source code, which we aim to remedy with this utility class.
- * <p>
+ * <br>
  * We take an approach where we largely see a Map as a Collection of entries.
  * The "Container" class is simply an Object.
  * The return values are auto cast generics.
- * <p>
+ * <br>
  * We have also added some information gatherers related to sorting and order.
  */
 @SuppressWarnings("unused")

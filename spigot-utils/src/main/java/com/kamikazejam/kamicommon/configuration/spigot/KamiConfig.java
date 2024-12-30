@@ -9,26 +9,28 @@ import com.kamikazejam.kamicommon.yaml.spigot.YamlConfiguration;
 import com.kamikazejam.kamicommon.yaml.spigot.YamlHandler;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
 
 /**
- * A class that represents a configuration file (Meant for implementations WITH a JavaPlugin object available) <p>
- * If you DO NOT have a JavaPlugin object, it is recommended to use {@link StandaloneConfig} instead <p>
- * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <p>
- * <p></p>
- * When extending this class, provide the File to the config in the super, and then add all desired comments <p>
- * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link KamiConfig#save()} and {@link KamiConfig#reload()} <p>
+ * A class that represents a configuration file (Meant for implementations WITH a JavaPlugin object available) <br>
+ * If you DO NOT have a JavaPlugin object, it is recommended to use {@link StandaloneConfig} instead <br>
+ * This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <br>
+ * <br>
+ * When extending this class, provide the File to the config in the super, and then add all desired comments <br>
+ * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link KamiConfig#save()} and {@link KamiConfig#reload()} <br>
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class KamiConfig extends AbstractConfig<YamlConfiguration> implements ConfigurationSection {
     private final JavaPlugin plugin;
     private final File file;
@@ -36,6 +38,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     private YamlConfiguration config;
     private final boolean addDefaults;
     private final @Nullable Supplier<InputStream> defaultSupplier;
+    private final @NotNull Set<ConfigObserver> observers = new HashSet<>();
 
     public KamiConfig(@Nonnull JavaPlugin plugin, File file) {
         this(plugin, file, true);
@@ -71,6 +74,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         try {
             config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
             save();
+            observers.forEach(observer -> observer.onConfigLoaded(this));
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,10 +107,27 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         }
     }
 
+    /**
+     * Registers an observer to this config (if not already registered) <br>
+     * The observer's {@link ConfigObserver#onConfigLoaded} method will be called immediately, AND every time the config is reloaded
+     * @return If the observer was successfully registered from this call (false if already registered)
+     */
+    public boolean registerObserver(@NotNull ConfigObserver observer) {
+        if (observers.add(observer)) {
+            observer.onConfigLoaded(this);
+            return true;
+        }
+        return false;
+    }
 
-
-
-
+    /**
+     * Unregisters an observer from this config
+     * @param observer The observer to unregister
+     * @return True if the observer was successfully unregistered
+     */
+    public boolean unregisterObserver(@NotNull ConfigObserver observer) {
+        return observers.remove(observer);
+    }
 
 
 
@@ -148,7 +169,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     // Methods to get values
     @Override public Object get(String key) { return getYamlConfiguration().get(key); }
     @Override public Object get(String key, Object def) { return getYamlConfiguration().get(key, def); }
-    @Override public MemorySection getConfigurationSection(String key) { return getYamlConfiguration().getConfigurationSection(key); }
+    @Override public @NotNull MemorySection getConfigurationSection(String key) { return getYamlConfiguration().getConfigurationSection(key); }
 
     @Override public String getString(String key) { return getYamlConfiguration().getString(key); }
     @Override public String getString(String key, String def) { return getYamlConfiguration().getString(key, def); }

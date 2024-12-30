@@ -3,6 +3,8 @@ package com.kamikazejam.kamicommon;
 import com.google.gson.JsonObject;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
+import com.kamikazejam.kamicommon.configuration.spigot.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.modules.Module;
 import com.kamikazejam.kamicommon.modules.ModuleManager;
@@ -16,7 +18,6 @@ import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.util.log.PluginLogger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -26,12 +27,11 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-@SuppressWarnings({"unused", "UnusedReturnValue"})
-public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
+@SuppressWarnings({"unused", "UnusedReturnValue", "DuplicatedCode"})
+public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, CoreMethods, ConfigObserver {
     // -------------------------------------------- //
     // FIELDS
     // -------------------------------------------- //
@@ -44,6 +44,11 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     private @Nullable KamiConfigExt config = null;
     @Getter
     private LoggerService colorLogger;
+    // CoreMethods Fields
+    private final List<Listener> listenerList = new ArrayList<>();
+    private final List<BukkitTask> taskList = new ArrayList<>();
+    private final List<KamiCommand> commandList = new ArrayList<>();
+    private final List<Disableable> disableableList = new ArrayList<>();
 
     // -------------------------------------------- //
     // ENABLE
@@ -80,7 +85,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         this.moduleManager = new ModuleManager(this);
 
         // Load the Config
-        if (loadKamiConfig()) {
+        if (isAutoLoadKamiConfig()) {
             this.getKamiConfig();
         }
 
@@ -92,7 +97,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
 
     public abstract void onEnableInner();
 
-    public boolean loadKamiConfig() {
+    /**
+     * Should we automatically load the KamiConfig on enable?
+     */
+    public boolean isAutoLoadKamiConfig() {
         return true;
     }
 
@@ -115,6 +123,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     public @NotNull KamiConfigExt getKamiConfig() {
         if (config == null) {
             this.config = new KamiConfigExt(this, new File(getDataFolder(), "config.yml"), true);
+            this.config.registerObserver(this);
         }
         return config;
     }
@@ -126,6 +135,12 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     public void reloadConfig() {
         super.reloadConfig();
         reloadKamiConfig();
+    }
+
+    @Override
+    public void saveConfig() {
+        super.saveConfig();
+        getKamiConfig().save();
     }
 
     @Override
@@ -143,9 +158,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         }catch (Throwable ignored) {}
 
         // Cleanup Listeners, Tasks, and Disableables
-        unregisterListener(listeners.toArray(new Listener[0]));
-        unregisterTask(taskList.toArray(new BukkitTask[0]));
-        unregisterDisableable(disableables.toArray(new Disableable[0]));
+        unregisterListeners();
+        unregisterTasks();
+        unregisterDisableables();
+        unregisterCommands();
 
         // Cleanup Modules
         if (moduleManager != null) {
@@ -153,6 +169,14 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
         }
 
         onDisablePost();
+
+        // Delete Config
+        if (config != null) {
+            config.unregisterObserver(this);
+            config = null;
+        }
+
+        // Log Shutdown
         this.colorLogger.logToConsole(this.logPrefixColored + "Disabled", Level.INFO);
     }
 
@@ -162,8 +186,8 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     public abstract void onDisableInner();
 
     /**
-     * Called after both onDisableInner and listeners, tasks, and disableables are unregistered<p>
-     * Also called after modules and commands are unregistered<p>
+     * Called after both onDisableInner and listeners, tasks, and disableables are unregistered<br>
+     * Also called after modules and commands are unregistered<br>
      * You can use this method to cleanup databases or anything else that should come after module shutdowns
      */
     public void onDisablePost() {}
@@ -179,47 +203,212 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
     // -------------------------------------------- //
     // LISTENER REGISTRATION
     // -------------------------------------------- //
-    private final List<Listener> listeners = new ArrayList<>();
-    public void registerListener(Listener... listeners) {
-        List<Listener> list = Arrays.asList(listeners);
-        this.listeners.addAll(list);
-        list.forEach(listener -> Bukkit.getPluginManager().registerEvents(listener, this));
+    /**
+     * Registers one or more listeners for this plugin.<br>
+     * The listeners will be automatically unregistered when the plugin is disabled. <br>
+     * Previously registered listeners will not be registered again. <br>
+     * @param listeners The listeners to register
+     * @return The number of listeners that were registered from this call
+     */
+    @Override
+    public final int registerListeners(Listener... listeners) {
+        int count = 0;
+        for (Listener listener : listeners) {
+            if (listener == null) { continue; }
+            if (listenerList.contains(listener)) { continue; }
+            this.registerListeners(listener);
+            listenerList.add(listener);
+            count++;
+        }
+        return count;
     }
-    public void unregisterListener(Listener... listeners) {
-        List<Listener> list = Arrays.asList(listeners);
-        this.listeners.removeAll(list);
-        list.forEach(HandlerList::unregisterAll);
+
+    /**
+     * Unregisters one or more listeners from this plugin.<br>
+     * @param listeners The listeners to unregister
+     * @return The number of listeners that were unregistered from this call
+     */
+    @Override
+    public final int unregisterListeners(Listener... listeners) {
+        int count = 0;
+        for (Listener listener : listeners) {
+            if (listener == null) { continue; }
+            if (listenerList.remove(listener)) {
+                this.unregisterListeners(listener);
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Unregisters ALL listeners from this plugin.
+     * @return The number of listeners that were unregistered from this call
+     */
+    @Override
+    public final int unregisterListeners() {
+        return unregisterListeners(listenerList.toArray(new Listener[0]));
     }
 
     // -------------------------------------------- //
     // DISABLEABLE REGISTRATION
     // -------------------------------------------- //
-    private final List<Disableable> disableables = new ArrayList<>();
-    public void registerDisableable(Disableable... disableables) {
-        this.disableables.addAll(Arrays.asList(disableables));
-    }
-    public void unregisterDisableable(Disableable... disableables) {
+    /**
+     * Registers one or more disableable objects for this plugin.<br>
+     * The disableables will be automatically disabled when the plugin is disabled. <br>
+     * Previously registered disableables will not be registered again. <br>
+     * @param disableables The disableable objects to register
+     * @return The number of disableables that were registered from this call
+     */
+    @Override
+    public final int registerDisableables(Disableable... disableables) {
+        int count = 0;
         for (Disableable disableable : disableables) {
-            disableable.onDisable();
+            if (disableable == null) { continue; }
+            if (disableableList.contains(disableable)) { continue; }
+            this.registerDisableables(disableable);
+            disableableList.add(disableable);
+            count++;
         }
-        this.disableables.removeAll(Arrays.asList(disableables));
+        return count;
+    }
+
+    /**
+     * Unregisters one or more disableable objects from this plugin.
+     * @param disableables The disableable objects to unregister
+     * @return The number of disableables that were unregistered from this call
+     */
+    @Override
+    public final int unregisterDisableables(Disableable... disableables) {
+        int count = 0;
+        for (Disableable disableable : disableables) {
+            if (disableable == null) { continue; }
+            if (disableableList.remove(disableable)) {
+                this.unregisterDisableables(disableable);
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Unregisters ALL disableable objects from this plugin.
+     * @return The number of disableables that were unregistered from this call
+     */
+    @Override
+    public final int unregisterDisableables() {
+        return unregisterDisableables(disableableList.toArray(new Disableable[0]));
     }
 
     // -------------------------------------------- //
     // TASK REGISTRATION
     // -------------------------------------------- //
-    private final List<BukkitTask> taskList = new ArrayList<>();
-    public void registerTask(BukkitTask... tasks) {
-        this.taskList.addAll(Arrays.asList(tasks));
-    }
-    public void unregisterTask(BukkitTask... tasks) {
-        for (BukkitTask bukkitTask : tasks) {
-            Bukkit.getScheduler().cancelTask(bukkitTask.getTaskId());
+
+    /**
+     * Registers one or more tasks for this plugin.<br>
+     * The tasks will be automatically cancelled when the plugin is disabled. <br>
+     * Previously registered tasks will not be registered again. <br>
+     * @param tasks The tasks to register
+     * @return The number of tasks that were registered from this call
+     */
+    @Override
+    public final int registerTasks(BukkitTask... tasks) {
+        int count = 0;
+        for (BukkitTask task : tasks) {
+            if (task == null) { continue; }
+            if (taskList.contains(task)) { continue; }
+            this.registerTasks(task);
+            taskList.add(task);
+            count++;
         }
-        this.taskList.removeAll(Arrays.asList(tasks));
+        return count;
     }
 
+    /**
+     * Unregisters one or more tasks from this plugin.
+     * @param tasks The tasks to unregister
+     * @return The number of tasks that were unregistered from this call
+     */
+    @Override
+    public final int unregisterTasks(BukkitTask... tasks) {
+        int count = 0;
+        for (BukkitTask task : tasks) {
+            if (task == null) { continue; }
+            if (taskList.remove(task)) {
+                this.unregisterTasks(task);
+                count++;
+            }
+        }
+        return count;
+    }
 
+    /**
+     * Unregisters ALL tasks from this plugin.
+     * @return The number of tasks that were unregistered from this call
+     */
+    @Override
+    public final int unregisterTasks() {
+        return unregisterTasks(taskList.toArray(new BukkitTask[0]));
+    }
+
+    // -------------------------------------------- //
+    // COMMAND REGISTRATION
+    // -------------------------------------------- //
+    /**
+     * Registers the provided commands with this plugin. <br>
+     * Previously registered commands will not be registered again. <br>
+     * @param commands The commands to register
+     * @return The number of commands that were registered with this plugin
+     */
+    @Override
+    public final int registerCommands(KamiCommand... commands) {
+        // Register the provided commands, skipping any that are already registered with this plugin
+        int count = 0;
+        for (KamiCommand command : commands) {
+            if (command == null) { continue; }
+            if (commandList.contains(command)) { continue; }
+            command.registerCommand(this);
+            commandList.add(command);
+            count++;
+        }
+
+        // Ensure a call to update the registrations is queued (if we had commands)
+        if (count > 0) {
+            KamiCommonCommandRegistration.updateRegistrations();
+        }
+        return count;
+    }
+
+    /**
+     * Unregisters the specified commands, if this plugin has registered them prior. <br>
+     * ! If a KamiCommand is passed here that was not registered by this plugin, it will not be unregistered ! <br>
+     * @return The number of commands that were unregistered from this plugin
+     */
+    @Override
+    public final int unregisterCommands(KamiCommand... commands) {
+        // Unregister the commands IFF they were registered by this plugin
+        int count = 0;
+        for (KamiCommand command : commands) {
+            if (command == null) { continue; }
+            if (commandList.remove(command)) {
+                command.unregisterCommand();
+                count++;
+            }
+        }
+
+        // Update the command registrations map, so that bukkit gets rid of them
+        KamiCommonCommandRegistration.updateRegistrations();
+        return count;
+    }
+
+    /**
+     * Unregisters ALL commands that this plugin has registered. <br>
+     * @return The number of commands that were unregistered
+     */
+    @Override
+    public final int unregisterCommands() {
+        return unregisterCommands(commandList.toArray(new KamiCommand[0])); // Will remove from commandList
+    }
 
     // -------------------------------------------- //
     // MODULE MANAGEMENT
@@ -345,5 +534,17 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named {
             this.modulesConfig = new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"), false);
         }
         return modulesConfig;
+    }
+
+
+    // -------------------------------------------- //
+    // MISCELLANEOUS
+    // -------------------------------------------- //
+    /**
+     * Registers a {@link ConfigObserver} to a {@link KamiConfig} instance.
+     * @return true IFF the observer was registered as a result of this call, false if the observer was already registered to the config.
+     */
+    public final boolean registerConfigObserver(@NotNull ConfigObserver observer, @NotNull KamiConfig config) {
+        return config.registerObserver(observer);
     }
 }

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class ModuleManager {
     private final Map<Class<? extends Module>, Module> moduleMap = new HashMap<>();
     @Getter private final List<Module> moduleList = new ArrayList<>();
@@ -25,16 +25,12 @@ public class ModuleManager {
             }
             moduleMap.put(module.getClass(), module);
 
-            // Setup local configs
-            ModuleConfig config = module.getConfig();
-            if (config != null) {
-                // Enable the Module
-                if (module.isEnabledInConfig()) {
-                    module.registerCommands();
-                    module.onConfigLoaded();
-                    module.handleEnable();
-                }
+            // The call to isEnabledByDefault will handle config state appropriately
+            if (module.isEnabledByDefault()) {
+                // Enable the module since we want it to be enabled by default
+                module.handleEnable();
             }
+
         } catch (Throwable e) {
             plugin.getLogger().warning("Can not register the module: " + module.getName());
             e.printStackTrace();

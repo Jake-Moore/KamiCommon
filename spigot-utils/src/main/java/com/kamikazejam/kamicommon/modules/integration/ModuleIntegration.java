@@ -9,6 +9,6 @@ public abstract class ModuleIntegration implements Listener {
     private final KamiPlugin plugin;
     public ModuleIntegration(KamiPlugin plugin) {
         this.plugin = plugin;
-        this.plugin.registerListener(this);
+        this.plugin.registerListeners(this);
     }
 }
