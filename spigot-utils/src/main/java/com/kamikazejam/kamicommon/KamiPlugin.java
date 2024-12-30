@@ -18,6 +18,7 @@ import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.util.log.PluginLogger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -216,7 +217,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         for (Listener listener : listeners) {
             if (listener == null) { continue; }
             if (listenerList.contains(listener)) { continue; }
-            this.registerListeners(listener);
             listenerList.add(listener);
             count++;
         }
@@ -234,7 +234,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         for (Listener listener : listeners) {
             if (listener == null) { continue; }
             if (listenerList.remove(listener)) {
-                this.unregisterListeners(listener);
+                HandlerList.unregisterAll(listener);
                 count++;
             }
         }
@@ -266,7 +266,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         for (Disableable disableable : disableables) {
             if (disableable == null) { continue; }
             if (disableableList.contains(disableable)) { continue; }
-            this.registerDisableables(disableable);
             disableableList.add(disableable);
             count++;
         }
@@ -284,7 +283,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         for (Disableable disableable : disableables) {
             if (disableable == null) { continue; }
             if (disableableList.remove(disableable)) {
-                this.unregisterDisableables(disableable);
                 count++;
             }
         }
@@ -317,7 +315,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         for (BukkitTask task : tasks) {
             if (task == null) { continue; }
             if (taskList.contains(task)) { continue; }
-            this.registerTasks(task);
             taskList.add(task);
             count++;
         }
@@ -335,7 +332,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         for (BukkitTask task : tasks) {
             if (task == null) { continue; }
             if (taskList.remove(task)) {
-                this.unregisterTasks(task);
+                Bukkit.getScheduler().cancelTask(task.getTaskId());
                 count++;
             }
         }
@@ -547,4 +544,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     public final boolean registerConfigObserver(@NotNull ConfigObserver observer, @NotNull KamiConfig config) {
         return config.registerObserver(observer);
     }
+
+    /**
+     * Optional Override (with listening behavior)
+     */
+    @Override
+    public void onConfigLoaded(@NotNull KamiConfig config) { }
 }

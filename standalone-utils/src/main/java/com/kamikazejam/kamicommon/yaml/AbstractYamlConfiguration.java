@@ -8,6 +8,7 @@ import java.util.Set;
 
 public interface AbstractYamlConfiguration {
     boolean save();
+    boolean save(boolean force);
     boolean contains(String key);
     Set<String> getKeys(boolean deep);
     NodeTuple getNodeTuple(String key);

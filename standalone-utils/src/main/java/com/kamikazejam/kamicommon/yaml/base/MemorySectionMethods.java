@@ -473,7 +473,16 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
      * @return true IFF the config was saved successfully (can be skipped if the config is not changed)
      */
     public boolean save(File f) {
-        if (!isChanged()) { return false; }
+        return save(f, false);
+    }
+
+    /**
+     * Saves the config to the file
+     * @param force If the config should be saved even if no changes were made
+     * @return true IFF the config was saved successfully (can be skipped if the config is not changed & force is false)
+     */
+    public boolean save(File f, boolean force) {
+        if (!force && !isChanged()) { return false; }
 
         try {
             // Dump the Node (should keep comments)
