@@ -26,9 +26,9 @@ public class CmdGetItem extends KamiCommand {
     @Override
     public void perform() throws KamiCommonException {
         Player player = (Player) sender;
-        String guiKey = readArg();
-        ItemBuilder builder = new ItemBuilder(SpigotUtilsSource.getKamiConfig().getConfigurationSection(guiKey), player);
+        String itemKey = readArg();
+        ItemBuilder builder = new ItemBuilder(SpigotUtilsSource.getKamiConfig().getConfigurationSection(itemKey), player);
         PlayerUtil.giveItem(player, builder.build());
-        player.sendMessage(StringUtil.t("&aGave Item: &f" + guiKey));
+        player.sendMessage(StringUtil.t("&aGave Item: &f" + itemKey));
     }
 }
