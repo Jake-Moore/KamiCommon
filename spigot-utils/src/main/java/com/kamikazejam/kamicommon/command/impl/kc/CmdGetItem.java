@@ -11,6 +11,7 @@ import com.kamikazejam.kamicommon.util.PlayerUtil;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class CmdGetItem extends KamiCommand {
@@ -27,8 +28,8 @@ public class CmdGetItem extends KamiCommand {
     public void perform() throws KamiCommonException {
         Player player = (Player) sender;
         String itemKey = readArg();
-        ItemBuilder builder = new ItemBuilder(SpigotUtilsSource.getKamiConfig().getConfigurationSection(itemKey), player);
-        PlayerUtil.giveItem(player, builder.build());
+        ItemStack stack = new ItemBuilder(SpigotUtilsSource.getKamiConfig().getConfigurationSection(itemKey), player).build();
+        PlayerUtil.giveItem(player, stack);
         player.sendMessage(StringUtil.t("&aGave Item: &f" + itemKey));
     }
 }

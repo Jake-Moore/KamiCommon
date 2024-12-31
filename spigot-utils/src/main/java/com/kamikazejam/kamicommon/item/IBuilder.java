@@ -1,11 +1,12 @@
 package com.kamikazejam.kamicommon.item;
 
+import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.StringUtilP;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.util.data.TriState;
-import com.cryptomorin.xseries.XEnchantment;
-import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.util.nms.MaterialFlatteningUtil;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import de.tr7zw.changeme.nbtapi.NBT;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public abstract class IBuilder {
 
     @Setter private @Nullable ItemStack base = null;
     private @NotNull XMaterial material = XMaterial.AIR;
+    private @Nullable String originalMaterialString = null;
 
     private int amount = 1;
     private short damage = 0;
@@ -56,11 +58,13 @@ public abstract class IBuilder {
     }
     public IBuilder(@NotNull XMaterial material, ConfigurationSection section) {
         this.material = material;
+        this.originalMaterialString = material.name(); // Use provided XMaterial over any config value
         this.damage = material.getData();
         loadConfigItem(section, null, false);
     }
     public IBuilder(@NotNull XMaterial material, ConfigurationSection section, OfflinePlayer offlinePlayer) {
         this.material = material;
+        this.originalMaterialString = material.name(); // Use provided XMaterial over any config value
         this.damage = material.getData();
         loadConfigItem(section, offlinePlayer, false);
     }
@@ -101,13 +105,24 @@ public abstract class IBuilder {
             itemStack = base;
         }else {
             assert material.parseMaterial() != null;
-            if (damage != 0) {
-                itemStack = new ItemStack(material.parseMaterial(), amount, damage);
-            } else {
+            // We need to evaluate the correct XMaterial, which we can only do if we have an original material string
+            // Why do we need to do this? Because when matching "WOOL" to an XMaterial, it will pick a colored wool i.e. BLACK_WOOL
+            // But if we have a data value (or even data value 0) we know that we want a specific wool color, and need a different enum value
+            if (originalMaterialString == null) {
+                // Without that string, we only have the current XMaterial, so we must use that
                 itemStack = material.parseItem();
-                assert itemStack != null;
-                itemStack.setAmount(amount);
+            }else {
+                // Let's try to fetch an XMaterial that corresponds to this material string & data
+                Optional<XMaterial> o = MaterialFlatteningUtil.findMaterialAndDataMapping(originalMaterialString, (byte) damage);
+                // Fall back to the original XMaterial if we can't find a specific colored match
+                XMaterial xMat = o.orElse(material);
+
+                // We have an XMaterial one way or the other, use it to create the item
+                itemStack = xMat.parseItem();
             }
+            // Update the ItemStack amount
+            assert itemStack != null;
+            itemStack.setAmount(amount);
         }
 
         ItemMeta meta = itemStack.getItemMeta();
@@ -190,6 +205,7 @@ public abstract class IBuilder {
         }
         if (loadMaterial) {
             loadTypes(config);
+
         }
 
         // Load basic values from config
@@ -253,6 +269,7 @@ public abstract class IBuilder {
         if (amount > 64) { amount = 64; }
         assert material.parseMaterial() != null;
         this.material = material;
+        this.originalMaterialString = material.name();
         this.amount = amount;
         this.damage = damage;
     }
@@ -279,6 +296,7 @@ public abstract class IBuilder {
 
     public IBuilder setType(XMaterial m) {
         this.material = m;
+        this.originalMaterialString = m.name();
         return this;
     }
 
@@ -293,6 +311,7 @@ public abstract class IBuilder {
 
     public IBuilder setMaterial(XMaterial material) {
         this.material = material;
+        this.originalMaterialString = material.name();
         return this;
     }
     public IBuilder setMaterial(Material material) {
@@ -441,16 +460,20 @@ public abstract class IBuilder {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     final boolean loadXMaterial(ConfigurationSection section) {
         if (section.isString("material")) {
-            @Nullable XMaterial mat = parseMaterial(section.getString("material"));
+            String strValue = section.getString("material");
+            @Nullable XMaterial mat = parseMaterial(strValue);
             if (mat != null) {
                 this.material = mat;
+                this.originalMaterialString = strValue;
                 return true;
             }
         }
         if (section.isString("type")) {
-            @Nullable XMaterial mat = parseMaterial(section.getString("type"));
+            String strValue = section.getString("type");
+            @Nullable XMaterial mat = parseMaterial(strValue);
             if (mat != null) {
                 this.material = mat;
+                this.originalMaterialString = strValue;
                 return true;
             }
         }
@@ -471,6 +494,7 @@ public abstract class IBuilder {
     public IBuilder loadClone(IBuilder builder) {
         // Basics
         builder.setMaterial(material);
+        builder.originalMaterialString = this.originalMaterialString;
         builder.setAmount(amount);
         builder.setDurability(damage);
 
