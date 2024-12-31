@@ -10,6 +10,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,30 +20,53 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class KamiCommonCommandRegistration implements Listener {
+    private static @Nullable KamiCommonCommandRegistration i = null;
+    public static KamiCommonCommandRegistration get(@NotNull KamiPlugin plugin) {
+        if (i == null) { i = new KamiCommonCommandRegistration(plugin); }
+        return i;
+    }
+
+    private static boolean serverStarted = false;
 
     // -------------------------------------------- //
     // CONSTRUCT
     // -------------------------------------------- //
-    public KamiCommonCommandRegistration(KamiPlugin plugin) {
-        // default to every hour
-        long interval = Long.getLong("KamiCommonCommandRegistrationPeriod", 20L * 60L * 60L);
+    private KamiCommonCommandRegistration(@NotNull KamiPlugin plugin) {
+        // Step 1 - Register a task to run 1 tick after server start, which will register the commands.
+        // And mark the server as started, so all future calls to updateRegistrationsInternal() will be executed immediately.
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                serverStarted = true;
+                updateRegistrations();
+            }
+        }.runTaskLater(plugin, 1L); // 1 tick after boot
 
-        // Register this task under our KamiPlugin (so it gets shut down automatically)
+        // Step 2 - Register a period task to run every 5 minutes to update the registrations.
+        // This is done to ensure that any plugin forgetting to call the update method will still have their commands registered. (eventually)
         plugin.registerTasks(new BukkitRunnable() {
             @Override
             public void run() {
                 updateRegistrations();
             }
-        }.runTaskTimer(plugin, 100, interval)); // 5 seconds before first run, then every hour
+        }.runTaskTimer(plugin, 20L * 10L, 20L * 60L * 15L)); // 10 seconds after boot, then every 15m
     }
 
     // -------------------------------------------- //
     // UPDATE REGISTRATIONS
     // -------------------------------------------- //
-    // TODO MAKE THIS A QUEUED CALL THAT EXECUTES AS NEEDED.
-    //  I.E. IF THE SERVER HAS NOT STARTED, IT GROUPS UP ALL CALLS INTO ONE THAT EXECUTES IN FIRST TICK.
-    //  OTHERWISE IT EXECUTES IMMEDIATELY FOR EACH CALL.
     public static void updateRegistrations() {
+        // During server startup (serverStarted = false)
+        if (!serverStarted) {
+            // Skip execution during startup - our 1 tick delay task will handle registration and updating this boolean after server start.
+            return;
+        }
+
+        // Server has started, execute immediately
+        updateRegistrationsInternal();
+    }
+
+    private static void updateRegistrationsInternal() {
         // Step #1: Hack into Bukkit and get the SimpleCommandMap and it's knownCommands.
         SimpleCommandMap simpleCommandMap = getSimpleCommandMap();
         Map<String, Command> knownCommands = getSimpleCommandMapDotKnownCommands(simpleCommandMap);
