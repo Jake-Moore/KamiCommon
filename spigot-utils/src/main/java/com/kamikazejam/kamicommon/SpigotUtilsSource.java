@@ -15,6 +15,7 @@ import com.kamikazejam.kamicommon.util.engine.EngineScheduledTeleport;
 import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mixin.*;
+import com.kamikazejam.kamicommon.util.nms.MaterialFlatteningUtil;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -52,6 +53,9 @@ public class SpigotUtilsSource {
         if (SpigotUtilsSource.pluginSource != null) { return false; }
         SpigotUtilsSource.pluginSource = plugin;
         enabled = true;
+
+        // BLOCKING - Initialize the Material Flattening Util
+        MaterialFlatteningUtil.initialize();
 
         // Setup Commands
         KamiCommonCommandRegistration.get(plugin); // Will schedule the automatic command registration after server start
