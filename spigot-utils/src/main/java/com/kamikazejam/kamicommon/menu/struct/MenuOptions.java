@@ -25,9 +25,23 @@ public class MenuOptions {
      */
     private boolean allowItemPickup = true;
     /**
-     * If every click event regarding this GUI (including player slot clicks) should be automatically cancelled.
+     * If we should allow the player to drop items while the menu is open.
+     */
+    private boolean allowItemDrop = true;
+    /**
+     * If every click event regarding this GUI (not including player slots) should be automatically cancelled.<br>
+     * To cancel player slot clicks, use {@link #cancelPlayerClickEvent}.
      */
     private boolean cancelClickEvent = true;
+    /**
+     * If every click event regarding the player's inventory (not including menu slots) should be automatically cancelled.<br>
+     * To cancel GUI slot clicks, use {@link #cancelClickEvent}.<br>
+     * <br>
+     * BE CAREFUL SETTING THIS TO FALSE. If you have menu clicks cancelling, and there is at least one empty slot in the menu,
+     * a player can shift_click an item from their inventory into the menu, since that click is on the player inventory. Then, since the
+     * item is in the menu, they cannot get it back.
+     */
+    private boolean cancelPlayerClickEvent = true;
     /**
      * Configure slots that won't be filled by the filler item, even if they are empty.
      */
@@ -46,7 +60,9 @@ public class MenuOptions {
     // Copy Constructor
     public MenuOptions(@NotNull MenuOptions copy) {
         this.allowItemPickup = copy.allowItemPickup;
+        this.allowItemDrop = copy.allowItemDrop;
         this.cancelClickEvent = copy.cancelClickEvent;
+        this.cancelPlayerClickEvent = copy.cancelPlayerClickEvent;
         this.excludedFillSlots = new HashSet<>(copy.excludedFillSlots);
         this.resetVisualsOnOpen = copy.resetVisualsOnOpen;
     }

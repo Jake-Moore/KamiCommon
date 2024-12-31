@@ -17,7 +17,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -119,7 +118,6 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
     public void updateOneTick() {
         // getAndIncrement means we start at 1, since 0th tick should have been the call to open()
         int tick = this.tickCounter.incrementAndGet();
-        Bukkit.getLogger().info("Updating menu for tick " + tick);
         this.placeItems((m) -> m.needsModification(tick));
     }
 
@@ -196,7 +194,6 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
         }
 
         this.menuItems.put("filler", fillerItem);
-        SpigotUtilsSource.get().getColorLogger().info("Set Filler Slots To: " + Arrays.toString(fillerItem.getSlots(this).toArray()));
 
         // Make sure the filler item is updated in the Menu
         this.placeItem(null, fillerItem); // Set the item in the inventory
