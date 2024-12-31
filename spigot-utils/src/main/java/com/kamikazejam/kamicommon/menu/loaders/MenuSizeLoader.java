@@ -1,7 +1,9 @@
 package com.kamikazejam.kamicommon.menu.loaders;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
-import com.kamikazejam.kamicommon.menu.struct.MenuSize;
+import com.kamikazejam.kamicommon.menu.struct.size.MenuSize;
+import com.kamikazejam.kamicommon.menu.struct.size.MenuSizeRows;
+import com.kamikazejam.kamicommon.menu.struct.size.MenuSizeType;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +20,7 @@ public class MenuSizeLoader {
             String s = section.getString("type");
             try {
                 InventoryType type = InventoryType.valueOf(s);
-                return new MenuSize(type);
+                return new MenuSizeType(type);
             }catch (IllegalArgumentException e) {
                 // ignore error, in case there is a valid row count to use instead
             }
@@ -26,10 +28,10 @@ public class MenuSizeLoader {
 
         // Try to load rows (may throw IllegalArgumentException for invalid rows value)
         if (section.isInt("rows")) {
-            return new MenuSize(section.getInt("rows")); // Runs precondition internally
+            return new MenuSizeRows(section.getInt("rows")); // Runs precondition internally
         }
         if (section.isInt("row")) {
-            return new MenuSize(section.getInt("row")); // Runs precondition internally
+            return new MenuSizeRows(section.getInt("row")); // Runs precondition internally
         }
 
         // If there is a type string, then we failed to load it properly -> notify about this

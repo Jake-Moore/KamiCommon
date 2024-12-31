@@ -3,8 +3,11 @@ package com.kamikazejam.kamicommon.menu;
 import com.google.common.collect.Sets;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.menu.clicks.transform.IClickTransform;
+import com.kamikazejam.kamicommon.menu.clicks.transform.paginated.IPaginatedClickTransform;
+import com.kamikazejam.kamicommon.menu.clicks.transform.simple.ISimpleClickTransform;
 import com.kamikazejam.kamicommon.menu.items.MenuItem;
 import com.kamikazejam.kamicommon.menu.items.slots.ItemSlot;
+import com.kamikazejam.kamicommon.menu.struct.MenuEvents;
 import com.kamikazejam.kamicommon.util.ItemUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -25,12 +28,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static com.kamikazejam.kamicommon.menu.OLD_PAGED_KAMI_MENU.META_DATA_KEY;
-
 @Getter
 public class MenuManager implements Listener, Runnable {
-    // TODO with multiple types of menu classes, we need to abstract out the auto updating fields and methods into a common interface
-    protected final Set<OLD_KAMI_MENU> autoUpdateInventories = Sets.newCopyOnWriteArraySet();
+    final Set<UpdatingMenu> autoUpdateInventories = Sets.newCopyOnWriteArraySet();
 
     // ------------------------------------------------------- //
     // --------------------- LISTENERS ----------------------- //
@@ -39,11 +39,12 @@ public class MenuManager implements Listener, Runnable {
     @EventHandler
     public void onClickMenu(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player player)) { return; }
-        if (!(e.getInventory().getHolder() instanceof OLD_KAMI_MENU menu)) { return; }
+        if (!(e.getInventory().getHolder() instanceof Menu menu)) { return; }
 
-        if (menu.isCancelOnClick()) {
+        if (menu.getOptions().isCancelClickEvent()) {
             e.setCancelled(true);
         }
+        MenuEvents menuEvents = menu.getEvents();
 
         // Special Handling for clicks in the player inventory
         if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER) {
@@ -58,10 +59,10 @@ public class MenuManager implements Listener, Runnable {
             if (slot < 0 || slot > 35) { return; }
 
             // If we have a generic slot listener -> call it
-            menu.getPlayerInvClicks().forEach((click) -> click.onClick(player, e.getClick(), slot));
+            menuEvents.getPlayerInvClicks().forEach((click) -> click.onClick(player, e.getClick(), slot));
 
             // If we have a specific-slot listener -> call it (lower priority)
-            menu.getPlayerSlotClicks().getOrDefault(slot, new ArrayList<>()).forEach(
+            menuEvents.getPlayerSlotClicks().getOrDefault(slot, new ArrayList<>()).forEach(
                     (click) -> click.onClick(player, e.getClick(), slot)
             );
 
@@ -70,7 +71,7 @@ public class MenuManager implements Listener, Runnable {
         }
 
         // test the click predicate before the item click handlers
-        for (Predicate<InventoryClickEvent> predicate : menu.getClickPredicates()) {
+        for (Predicate<InventoryClickEvent> predicate : menuEvents.getClickPredicates()) {
             if (!predicate.test(e)) {
                 return;
             }
@@ -79,7 +80,6 @@ public class MenuManager implements Listener, Runnable {
         ItemStack current = e.getCurrentItem();
         if (current == null) { return; }
 
-        int page = getPage(menu);
         for (MenuItem menuItem : menu.getMenuItems().values()) {
             if (menuItem == null) { continue; }
 
@@ -91,50 +91,59 @@ public class MenuManager implements Listener, Runnable {
 
             // We use the cached copy from when it was added to the inventory
             // Since it may change through its lifecycle
-            if (ItemUtil.isSimplySimilar(current, menuItem.getLastItem())) {
-                menuItem.playClickSound(player);
-                click.process(player, e, page);
-                return;
+            if (!ItemUtil.isSimplySimilar(current, menuItem.getLastItem())) { continue; }
+
+            // Play the click sound
+            menuItem.playClickSound(player);
+
+            //      Perform the Click
+            // Handle SimpleMenu Clicks
+            if (click instanceof ISimpleClickTransform simpleClickTransform) {
+                simpleClickTransform.process(player, e);
+            }else if (click instanceof IPaginatedClickTransform paginatedClickTransform) {
+                paginatedClickTransform.process(player, e, getPage(menu));
             }
+            return;
         }
     }
 
     @EventHandler
     public void onCloseMenu(InventoryCloseEvent e) {
         final Player p = (Player) e.getPlayer();
-
-        if (!(e.getInventory().getHolder() instanceof OLD_KAMI_MENU menu)) {
+        if (!(e.getInventory().getHolder() instanceof Menu menu)) {
             return;
         }
+        MenuEvents menuEvents = menu.getEvents();
 
         // Remove this menu from the auto update list
         // We do this before consumers, because some consumers may re-open the menu
-        autoUpdateInventories.remove(menu);
+        if (e.getInventory().getHolder() instanceof UpdatingMenu updatingMenu) {
+            autoUpdateInventories.remove(updatingMenu);
+        }
 
         // Trigger the Close Consumers
-        menu.getCloseConsumers().forEach(consumer -> consumer.accept(e));
+        menuEvents.getCloseConsumers().forEach(consumer -> consumer.accept(e));
 
         // Trigger the Post-Close Consumers (1-tick later)
         Bukkit.getScheduler().runTaskLater(SpigotUtilsSource.get(), () ->
-                menu.getPostCloseConsumers().forEach(consumer -> consumer.accept(p))
+                        menuEvents.getPostCloseConsumers().forEach(consumer -> consumer.accept(p))
         , 1L);
     }
 
     @EventHandler
     public void onPickup(PlayerPickupItemEvent e) {
         if(e.getPlayer().getOpenInventory() == null) { return; }
-        if (!(e.getPlayer().getInventory().getHolder() instanceof OLD_KAMI_MENU menu)) { return; }
+        if (!(e.getPlayer().getInventory().getHolder() instanceof Menu menu)) { return; }
 
-        if (!menu.isAllowItemPickup()) {
+        if (!menu.getOptions().isAllowItemPickup()) {
             e.setCancelled(true);
         }
     }
 
-    // TODO REMOVE AND USE DEDICATED PAGINATED MENU CLASS
-    private int getPage(@NotNull OLD_KAMI_MENU menu) {
-        Object o = menu.getMetaData().get(META_DATA_KEY);
-        if (!(o instanceof OLD_PAGED_KAMI_MENU paged)) { return 0; }
-        return paged.getCurrentPage();
+    private int getPage(@NotNull Menu menu) {
+        if (!(menu instanceof PaginatedMenu paginatedMenu)) { return 0; }
+        return 0;
+        // TODO return paginatedMenu.getCurrentPage();
     }
 
 
@@ -147,14 +156,12 @@ public class MenuManager implements Listener, Runnable {
      */
     @Override
     public void run() {
-        Set<OLD_KAMI_MENU> updated = new HashSet<>();
+        Set<UpdatingMenu> updated = new HashSet<>();
 
         // Check and run any sub-tasks for each inventory
-        for (OLD_KAMI_MENU inv : autoUpdateInventories) {
+        for (UpdatingMenu inv : autoUpdateInventories) {
             if (inv.getInventory().getViewers().isEmpty()) { continue; }
-            inv.getTickCounter().getAndIncrement();
-            // Trigger dynamic item updates on this menu
-            inv.update();
+            inv.updateOneTick(); // Trigger that another tick has passed and we must update
             updated.add(inv);
         }
 

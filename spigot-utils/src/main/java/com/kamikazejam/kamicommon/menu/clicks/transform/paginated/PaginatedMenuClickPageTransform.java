@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.menu.clicks.transform;
+package com.kamikazejam.kamicommon.menu.clicks.transform.paginated;
 
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickPage;
 import org.bukkit.entity.Player;
@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class MenuClickPageTransform implements IClickTransform {
+public class PaginatedMenuClickPageTransform implements IPaginatedClickTransform {
 
     private final @NotNull MenuClickPage click;
-    public MenuClickPageTransform(@NotNull MenuClickPage click) {
+    public PaginatedMenuClickPageTransform(@NotNull MenuClickPage click) {
         this.click = Objects.requireNonNull(click);
     }
 
