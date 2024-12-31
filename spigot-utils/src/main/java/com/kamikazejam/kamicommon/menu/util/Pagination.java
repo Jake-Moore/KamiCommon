@@ -1,10 +1,14 @@
-package com.kamikazejam.kamicommon.menu.page;
+package com.kamikazejam.kamicommon.menu.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Utility class to paginate a list of objects. Supports generic types to paginate any object type.
+ * @param <E> the object type to paginate
+ */
 @SuppressWarnings({"unused", "UnusedReturnValue", "DuplicatedCode"})
 public class Pagination<E> extends ArrayList<E> {
 

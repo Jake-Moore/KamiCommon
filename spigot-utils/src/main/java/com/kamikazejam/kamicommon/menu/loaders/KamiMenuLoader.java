@@ -1,31 +1,31 @@
-package com.kamikazejam.kamicommon.menu.loader;
+package com.kamikazejam.kamicommon.menu.loaders;
 
-import com.kamikazejam.kamicommon.menu.KamiMenu;
+import com.kamikazejam.kamicommon.menu.OLD_KAMI_MENU;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Utility class for loading a {@link KamiMenu} from a {@link ConfigurationSection}.
+ * Utility class for loading a {@link OLD_KAMI_MENU} from a {@link ConfigurationSection}.
  */
 @SuppressWarnings("unused")
 public class KamiMenuLoader {
     /**
-     * Loads a {@link KamiMenu} from a {@link ConfigurationSection} with the given key.<br>
+     * Loads a {@link OLD_KAMI_MENU} from a {@link ConfigurationSection} with the given key.<br>
      * Identical to calling {@link #loadMenu(ConfigurationSection)} with {@link ConfigurationSection#getConfigurationSection(String key)}
-     * @return A new {@link KamiMenu} instance with data (title, size, items, etc.) loaded from the config.
+     * @return A new {@link OLD_KAMI_MENU} instance with data (title, size, items, etc.) loaded from the config.
      */
-    public static @NotNull KamiMenu loadMenu(@NotNull ConfigurationSection section, @NotNull String key) {
+    public static @NotNull OLD_KAMI_MENU loadMenu(@NotNull ConfigurationSection section, @NotNull String key) {
         return loadMenu(section.getConfigurationSection(key));
     }
 
     /**
-     * Loads a {@link KamiMenu} from a {@link ConfigurationSection}.
-     * @return A new {@link KamiMenu} instance with data (title, size, items, etc.) loaded from the config.
+     * Loads a {@link OLD_KAMI_MENU} from a {@link ConfigurationSection}.
+     * @return A new {@link OLD_KAMI_MENU} instance with data (title, size, items, etc.) loaded from the config.
      */
-    public static @NotNull KamiMenu loadMenu(@NotNull ConfigurationSection section) {
+    public static @NotNull OLD_KAMI_MENU loadMenu(@NotNull ConfigurationSection section) {
         // Load title from 'title' or 'name', defaulting to " "
         String title = section.getString("title", section.getString("name", " "));
-        KamiMenu menu = new KamiMenu(title, MenuSizeLoader.load(section));
+        OLD_KAMI_MENU menu = new OLD_KAMI_MENU(title, MenuSizeLoader.load(section));
 
         // Load Filler Item
         if (section.isConfigurationSection("filler")) {

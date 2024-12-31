@@ -5,7 +5,6 @@ import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.command.impl.kc.KamiCommonCommand;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.menu.MenuManager;
-import com.kamikazejam.kamicommon.menu.MenuTask;
 import com.kamikazejam.kamicommon.integrations.PlaceholderAPIIntegration;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
@@ -66,7 +65,7 @@ public class SpigotUtilsSource {
 
         // Register Menus
         plugin.getServer().getPluginManager().registerEvents(menuManager, plugin);
-        menuTask = Bukkit.getScheduler().runTaskTimer(plugin, new MenuTask(), 0L, 1L); // Every tick
+        menuTask = Bukkit.getScheduler().runTaskTimer(plugin, menuManager, 0L, 1L); // Every tick
 
         // Setup IdUtil
         IdUtilLocal.setup(plugin);
@@ -183,5 +182,10 @@ public class SpigotUtilsSource {
             papiIntegration = new PlaceholderAPIIntegration(get());
         }
         return papiIntegration;
+    }
+
+    @NotNull
+    public static MenuManager getMenuManager() {
+        return menuManager;
     }
 }

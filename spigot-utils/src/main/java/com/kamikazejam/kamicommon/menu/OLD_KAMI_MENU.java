@@ -1,6 +1,8 @@
 package com.kamikazejam.kamicommon.menu;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
+import com.kamikazejam.kamicommon.menu.struct.MenuHolder;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickPage;
@@ -9,8 +11,7 @@ import com.kamikazejam.kamicommon.menu.items.MenuItem;
 import com.kamikazejam.kamicommon.menu.items.interfaces.IBuilderModifier;
 import com.kamikazejam.kamicommon.menu.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.menu.items.slots.StaticItemSlot;
-import com.kamikazejam.kamicommon.menu.loader.MenuItemLoader;
-import com.kamikazejam.kamicommon.menu.page.PagedKamiMenu;
+import com.kamikazejam.kamicommon.menu.loaders.MenuItemLoader;
 import com.kamikazejam.kamicommon.menu.struct.MenuSize;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
@@ -41,7 +42,7 @@ import java.util.function.Predicate;
 @Getter @Setter
 @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class KamiMenu extends MenuHolder {
+public class OLD_KAMI_MENU extends MenuHolder {
     public interface MenuOpenCallback {
         void onOpen(@NotNull Player player, @NotNull InventoryView view);
     }
@@ -73,19 +74,19 @@ public class KamiMenu extends MenuHolder {
     
     private boolean cancelOnClick = true;
 
-    public KamiMenu(@NotNull String name, int rows) {
+    public OLD_KAMI_MENU(@NotNull String name, int rows) {
         super(name, rows);
     }
-    public KamiMenu(@NotNull String name, @NotNull InventoryType type) {
+    public OLD_KAMI_MENU(@NotNull String name, @NotNull InventoryType type) {
         super(name, type);
     }
-    public KamiMenu(@NotNull String name, @NotNull MenuSize size) {
+    public OLD_KAMI_MENU(@NotNull String name, @NotNull MenuSize size) {
         super(name, size);
     }
 
     @NotNull
-    public PagedKamiMenu wrapAsPaged() {
-        return new PagedKamiMenu(this);
+    public OLD_PAGED_KAMI_MENU wrapAsPaged() {
+        return new OLD_PAGED_KAMI_MENU(this);
     }
 
     @NotNull
@@ -97,7 +98,7 @@ public class KamiMenu extends MenuHolder {
     public InventoryView openMenu(@NotNull Player player, boolean ignoreCloseHandler) {
         // Place all items into the inventory
         this.placeItems(null);
-        MenuTask.getAutoUpdateInventories().add(this);
+        SpigotUtilsSource.getMenuManager().autoUpdateInventories.add(this);
 
         if (ignoreCloseHandler) {
             getIgnoredClose().add(player.getUniqueId());
@@ -295,27 +296,27 @@ public class KamiMenu extends MenuHolder {
     }
 
     @NotNull
-    public KamiMenu setMenuClick(@NotNull String id, @NotNull MenuClick click) {
+    public OLD_KAMI_MENU setMenuClick(@NotNull String id, @NotNull MenuClick click) {
         this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
         return this;
     }
     @NotNull
-    public KamiMenu setMenuClick(@NotNull String id, @NotNull MenuClickPage click) {
+    public OLD_KAMI_MENU setMenuClick(@NotNull String id, @NotNull MenuClickPage click) {
         this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
         return this;
     }
     @NotNull
-    public KamiMenu setMenuClick(@NotNull String id, @NotNull MenuClickEvent click) {
+    public OLD_KAMI_MENU setMenuClick(@NotNull String id, @NotNull MenuClickEvent click) {
         this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
         return this;
     }
     @NotNull
-    public KamiMenu setModifier(@NotNull String id, @NotNull IBuilderModifier modifier) {
+    public OLD_KAMI_MENU setModifier(@NotNull String id, @NotNull IBuilderModifier modifier) {
         this.getMenuItem(id).ifPresent(item -> item.setModifier(modifier));
         return this;
     }
     @NotNull
-    public KamiMenu setAutoUpdate(@NotNull String id, @NotNull IBuilderModifier modifier, int tickInterval) {
+    public OLD_KAMI_MENU setAutoUpdate(@NotNull String id, @NotNull IBuilderModifier modifier, int tickInterval) {
         this.getMenuItem(id).ifPresent(item -> item.setAutoUpdate(modifier, tickInterval));
         return this;
     }
@@ -336,7 +337,7 @@ public class KamiMenu extends MenuHolder {
      * @param slot The player inventory slot to listen to.
      */
     @NotNull
-    public KamiMenu onPlayerSlotClick(int slot, @NotNull PlayerSlotClick click) {
+    public OLD_KAMI_MENU onPlayerSlotClick(int slot, @NotNull PlayerSlotClick click) {
         this.playerSlotClicks.computeIfAbsent(slot, k -> new ArrayList<>()).add(click);
         return this;
     }
@@ -346,7 +347,7 @@ public class KamiMenu extends MenuHolder {
      * @param click The callback to run when a player clicks a slot in their inventory.
      */
     @NotNull
-    public KamiMenu onPlayerSlotClick(@NotNull PlayerSlotClick click) {
+    public OLD_KAMI_MENU onPlayerSlotClick(@NotNull PlayerSlotClick click) {
         this.playerInvClicks.add(click);
         return this;
     }
@@ -355,7 +356,7 @@ public class KamiMenu extends MenuHolder {
      * Add a predicate on InventoryClickEvent that must pass for click handlers to be called.
      */
     @NotNull
-    public KamiMenu addClickPredicate(@NotNull Predicate<InventoryClickEvent> predicate) {
+    public OLD_KAMI_MENU addClickPredicate(@NotNull Predicate<InventoryClickEvent> predicate) {
         this.clickPredicates.add(predicate);
         return this;
     }
@@ -364,7 +365,7 @@ public class KamiMenu extends MenuHolder {
      * Add a consumer that runs when the inventory is closed, with access to {@link InventoryCloseEvent}.
      */
     @NotNull
-    public KamiMenu addCloseConsumer(@NotNull Consumer<InventoryCloseEvent> consumer) {
+    public OLD_KAMI_MENU addCloseConsumer(@NotNull Consumer<InventoryCloseEvent> consumer) {
         this.closeConsumers.add(consumer);
         return this;
     }
@@ -375,13 +376,13 @@ public class KamiMenu extends MenuHolder {
      * This is the method you should use for Menus that you want to re-open if closed.
      */
     @NotNull
-    public KamiMenu addPostCloseConsumer(@NotNull Consumer<Player> consumer) {
+    public OLD_KAMI_MENU addPostCloseConsumer(@NotNull Consumer<Player> consumer) {
         this.postCloseConsumers.add(consumer);
         return this;
     }
 
 
-    private KamiMenu fill() {
+    private OLD_KAMI_MENU fill() {
         if (this.fillerItem == null || !this.fillerItem.isEnabled()) { return this; }
 
         for (int i = 0; i < getInventory().getSize(); i++) {

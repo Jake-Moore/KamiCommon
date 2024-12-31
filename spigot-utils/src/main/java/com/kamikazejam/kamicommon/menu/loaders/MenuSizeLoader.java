@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.menu.loader;
+package com.kamikazejam.kamicommon.menu.loaders;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.menu.struct.MenuSize;

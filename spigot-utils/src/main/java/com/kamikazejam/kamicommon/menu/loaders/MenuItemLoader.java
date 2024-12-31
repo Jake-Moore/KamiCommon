@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.menu.loader;
+package com.kamikazejam.kamicommon.menu.loaders;
 
 import com.kamikazejam.kamicommon.menu.items.MenuItem;
 import com.kamikazejam.kamicommon.menu.items.slots.ItemSlot;

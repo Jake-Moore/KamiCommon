@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.menu.items.slots;
 
-import com.kamikazejam.kamicommon.menu.KamiMenu;
+import com.kamikazejam.kamicommon.menu.OLD_KAMI_MENU;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -19,7 +19,7 @@ public class StaticItemSlot implements ItemSlot {
     }
 
     @Override
-    public Set<Integer> get(@NotNull KamiMenu menu) {
+    public Set<Integer> get(@NotNull OLD_KAMI_MENU menu) {
         return slots;
     }
 
