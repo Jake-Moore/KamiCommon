@@ -1,7 +1,11 @@
 package com.kamikazejam.kamicommon.command;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.NmsVersion;
+import com.kamikazejam.kamicommon.nms.abstraction.command.CommandMapModifier;
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
+import com.kamikazejam.kamicommon.util.nms.NmsVersionParser;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -15,9 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class KamiCommonCommandRegistration implements Listener {
     private static @Nullable KamiCommonCommandRegistration i = null;
@@ -67,9 +69,10 @@ public class KamiCommonCommandRegistration implements Listener {
     }
 
     private static void updateRegistrationsInternal() {
-        // Step #1: Hack into Bukkit and get the SimpleCommandMap and it's knownCommands.
-        SimpleCommandMap simpleCommandMap = getSimpleCommandMap();
-        Map<String, Command> knownCommands = getSimpleCommandMapDotKnownCommands(simpleCommandMap);
+        CommandMapModifier mapModifier = NmsAPI.getCommandMapModifier();
+
+        // Step #1: Use KamiNMS to fetch the known commands map.
+        Map<String, Command> knownCommands = mapModifier.getKnownCommands();
 
         // Step #2: Create a "name --> target" map that contains the KamiCommands that /should/ be registered in Bukkit. 
         Map<String, KamiCommand> nameTargets = new HashMap<>();
@@ -107,7 +110,7 @@ public class KamiCommonCommandRegistration implements Listener {
             // ... unregister the current command if there is one ...
             if (current != null) {
                 knownCommands.remove(name);
-                current.unregister(simpleCommandMap);
+                mapModifier.unregisterCommand(current);
             }
 
             // ... create a new KamiCommonBukkitCommand ...
@@ -115,29 +118,52 @@ public class KamiCommonCommandRegistration implements Listener {
 
             // ... and finally register it.
             Plugin plugin = command.getPlugin();
-            String pluginName = plugin.getName();
-            simpleCommandMap.register(pluginName, command);
+            mapModifier.registerCommand(command, plugin);
         }
 
         // Step #4: Remove/Unregister KamiCommands from Bukkit that are but should not be that any longer. 
         // For each known command ...
-        Iterator<Map.Entry<String, Command>> iter = knownCommands.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, Command> entry = iter.next();
-            String name = entry.getKey();
-            Command command = entry.getValue();
+        if (NmsVersion.getFormattedNmsInteger() < NmsVersionParser.getFormattedNmsInteger("1.17")) {
+            // Pre 1.17 - use the knownCommands map directly with an iterator.
+            Iterator<Map.Entry<String, Command>> iter = knownCommands.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<String, Command> entry = iter.next();
+                String name = entry.getKey();
+                Command command = entry.getValue();
 
-            // ... that is a KamiCommonBukkitCommand ...
-            KamiCommand kamiCommand = getKamiCommand(command);
-            if (kamiCommand == null) continue;
+                // ... that is a KamiCommonBukkitCommand ...
+                KamiCommand kamiCommand = getKamiCommand(command);
+                if (kamiCommand == null) continue;
 
-            // ... and not a target ...
-            if (nameTargets.containsKey(name)) continue;
+                // ... and not a target ...
+                if (nameTargets.containsKey(name)) continue;
 
-            // ... unregister it.
-            command.unregister(simpleCommandMap);
-            iter.remove();
+                // ... unregister it.
+                mapModifier.unregisterCommand(command);
+                iter.remove();
+            }
+        }else {
+            // 1.17+ - cannot modify the iterator directly, use a cache and remove calls
+            // This iterator change was made sometime around 1.20/1.21, but we can do this as early as 1.17
+            Set<String> commandsToRemove = new HashSet<>();
+            for (Map.Entry<String, Command> entry : knownCommands.entrySet()) {
+                String name = entry.getKey();
+                Command command = entry.getValue();
+
+                // ... that is a KamiCommonBukkitCommand ...
+                KamiCommand kamiCommand = getKamiCommand(command);
+                if (kamiCommand == null) continue;
+
+                // ... and not a target ...
+                if (nameTargets.containsKey(name)) continue;
+
+                // ... unregister it.
+                mapModifier.unregisterCommand(command);
+                commandsToRemove.add(name);
+            }
+            commandsToRemove.forEach(knownCommands::remove);
         }
+
         syncCommands();
     }
 
@@ -170,7 +196,7 @@ public class KamiCommonCommandRegistration implements Listener {
     }
 
     // -------------------------------------------- //
-    // 1.13 SYNC COMMANDS
+    // 1.13+ SYNC COMMANDS
     // -------------------------------------------- //
 
     private static Method CRAFTSERVER_SYNC_COMMANDS = null;
