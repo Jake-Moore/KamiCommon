@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon;
 
+import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.command.impl.kc.KamiCommonCommand;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
@@ -21,6 +22,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class SpigotUtilsSource {
@@ -51,7 +54,7 @@ public class SpigotUtilsSource {
         enabled = true;
 
         // Setup Commands
-        new KamiCommonCommandRegistration(plugin);
+        KamiCommonCommandRegistration.get(plugin); // Will schedule the automatic command registration after server start
         // SetUp NMS Event Adapters
         plugin.registerListeners(PreSpawnSpawnerAdapter.getSpawnerAdapter());
         // Register Core Command
@@ -112,6 +115,15 @@ public class SpigotUtilsSource {
         MixinTeleport.get().setActive(null);
         MixinSenderPs.get().setActive(null);
         MixinWorld.get().setActive(null);
+
+        // Cleanup any commands that were forgotten about
+        // Loop through KamiCommand.getAllInstances() without causing a ConcurrentModificationException
+        for (KamiCommand command : new ArrayList<>(KamiCommand.getAllInstances())) {
+            command.unregisterCommand();
+        }
+        try {
+            KamiCommonCommandRegistration.updateRegistrations();
+        }catch (Throwable ignored) {}
 
         boolean prev = enabled;
         enabled = false;
