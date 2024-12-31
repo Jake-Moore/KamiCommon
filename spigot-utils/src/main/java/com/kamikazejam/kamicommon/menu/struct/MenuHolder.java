@@ -2,12 +2,13 @@ package com.kamikazejam.kamicommon.menu.struct;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.menu.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -20,24 +21,19 @@ import java.util.*;
  * InventoryHolder with constructor parameters for making an Inventory with either a row count or an InventoryType.<br>
  * Also contains a few utility methods for better utilization with the KamiCommon library.
  */
+@Getter @Setter
 @SuppressWarnings("unused")
 public class MenuHolder implements InventoryHolder {
 
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     protected transient @Nullable Inventory inventory;
-    @Getter @Setter private @NotNull String title;
-    @Setter private @NotNull MenuSize size;
 
-    public MenuHolder(@NotNull String name, int rows) {
-        this.title = StringUtil.t(name);
-        this.size = new MenuSize(rows);
-    }
-    public MenuHolder(@NotNull String name, @NotNull InventoryType type) {
-        this.title = StringUtil.t(name);
-        this.size = new MenuSize(type);
-    }
-    public MenuHolder(@NotNull String name, @NotNull MenuSize size) {
-        this.title = StringUtil.t(name);
+    private @NotNull String title;
+    private @NotNull MenuSize size;
+
+    public MenuHolder(@NotNull MenuSize size, @Nullable String name) {
         this.size = size;
+        this.title = (name == null) ? " " : StringUtil.t(name);
     }
 
     @Override
@@ -56,6 +52,8 @@ public class MenuHolder implements InventoryHolder {
         });
     }
 
+    // TODO WE SHOULD BE ABLE TO REMOVE THIS IF WE DO THINGS PROPERLY
+    @Deprecated(forRemoval = true)
     public void recreateInventory() {
         this.inventory = null;
         this.getInventory();
@@ -138,14 +136,6 @@ public class MenuHolder implements InventoryHolder {
         Preconditions.checkNotNull(find, "find cannot be null");
         Preconditions.checkNotNull(replacement, "replacement cannot be null");
         title = title.replace(find, replacement);
-    }
-
-    public void setRows(int rows) {
-        this.size.setRows(rows);
-    }
-
-    public void setType(@NotNull InventoryType type) {
-        this.size.setType(type);
     }
 
     // --------------------------------------------------------------------- //

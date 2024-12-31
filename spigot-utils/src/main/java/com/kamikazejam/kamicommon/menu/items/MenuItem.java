@@ -1,14 +1,14 @@
 package com.kamikazejam.kamicommon.menu.items;
 
 import com.cryptomorin.xseries.XSound;
-import com.kamikazejam.kamicommon.menu.OLD_KAMI_MENU;
+import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickPage;
 import com.kamikazejam.kamicommon.menu.clicks.transform.IClickTransform;
-import com.kamikazejam.kamicommon.menu.clicks.transform.MenuClickEventTransform;
-import com.kamikazejam.kamicommon.menu.clicks.transform.MenuClickPageTransform;
-import com.kamikazejam.kamicommon.menu.clicks.transform.MenuClickTransform;
+import com.kamikazejam.kamicommon.menu.clicks.transform.simple.SimpleMenuClickEventTransform;
+import com.kamikazejam.kamicommon.menu.clicks.transform.paginated.PaginatedMenuClickPageTransform;
+import com.kamikazejam.kamicommon.menu.clicks.transform.simple.SimpleMenuClickTransform;
 import com.kamikazejam.kamicommon.menu.items.interfaces.IBuilderModifier;
 import com.kamikazejam.kamicommon.menu.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.menu.items.slots.StaticItemSlot;
@@ -161,7 +161,7 @@ public class MenuItem {
     }
 
     @NotNull
-    public Set<Integer> getSlots(@NotNull OLD_KAMI_MENU menu) {
+    public Set<Integer> getSlots(@NotNull Menu menu) {
         if (itemSlot == null) { return Collections.emptySet(); }
         return itemSlot.get(menu);
     }
@@ -177,17 +177,17 @@ public class MenuItem {
     }
 
     public @NotNull MenuItem setMenuClick(@NotNull MenuClick click) {
-        this.transform = new MenuClickTransform(click);
+        this.transform = new SimpleMenuClickTransform(click);
         return this;
     }
 
     public @NotNull MenuItem setMenuClick(@NotNull MenuClickPage click) {
-        this.transform = new MenuClickPageTransform(click);
+        this.transform = new PaginatedMenuClickPageTransform(click);
         return this;
     }
 
     public @NotNull MenuItem setMenuClick(@NotNull MenuClickEvent click) {
-        this.transform = new MenuClickEventTransform(click);
+        this.transform = new SimpleMenuClickEventTransform(click);
         return this;
     }
 
