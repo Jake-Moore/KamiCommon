@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.menu.items;
 
 import com.cryptomorin.xseries.XSound;
-import com.kamikazejam.kamicommon.menu.KamiMenu;
+import com.kamikazejam.kamicommon.menu.OLD_KAMI_MENU;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickPage;
@@ -161,7 +161,7 @@ public class MenuItem {
     }
 
     @NotNull
-    public Set<Integer> getSlots(@NotNull KamiMenu menu) {
+    public Set<Integer> getSlots(@NotNull OLD_KAMI_MENU menu) {
         if (itemSlot == null) { return Collections.emptySet(); }
         return itemSlot.get(menu);
     }

@@ -1,7 +1,6 @@
-package com.kamikazejam.kamicommon.menu;
+package com.kamikazejam.kamicommon.menu.struct;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.menu.struct.MenuSize;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;

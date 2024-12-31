@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.menu.impl;
+package com.kamikazejam.kamicommon.menu;
 
 /**
  * This Menu class focuses on providing a simple single-frame menu. This is the most versatile menu type

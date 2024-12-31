@@ -7,11 +7,11 @@ import com.kamikazejam.kamicommon.command.Parameter;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
-import com.kamikazejam.kamicommon.menu.KamiMenu;
+import com.kamikazejam.kamicommon.menu.OLD_KAMI_MENU;
 import com.kamikazejam.kamicommon.menu.items.MenuItem;
 import com.kamikazejam.kamicommon.menu.items.slots.StaticItemSlot;
-import com.kamikazejam.kamicommon.menu.loader.KamiMenuLoader;
-import com.kamikazejam.kamicommon.menu.page.PagedKamiMenu;
+import com.kamikazejam.kamicommon.menu.loaders.KamiMenuLoader;
+import com.kamikazejam.kamicommon.menu.OLD_PAGED_KAMI_MENU;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.util.StringUtil;
@@ -53,7 +53,7 @@ public class CmdOpenMenu extends KamiCommand {
             return;
         }
 
-        KamiMenu menu = KamiMenuLoader.loadMenu(SpigotUtilsSource.getKamiConfig(), menuKey);
+        OLD_KAMI_MENU menu = KamiMenuLoader.loadMenu(SpigotUtilsSource.getKamiConfig(), menuKey);
         for (String id : menu.getMenuItemIDs()) {
             menu.setMenuClick(id, (p, c) -> p.sendMessage(StringUtil.t("&7Menu Item Click (&f" + c.name() + "&7) on &f" + id)));
         }
@@ -62,7 +62,7 @@ public class CmdOpenMenu extends KamiCommand {
 
     private void openPaged(@NotNull Player player) {
         // Add paged items
-        PagedKamiMenu paged = new PagedKamiMenu(new KamiMenu("&8&lSample Paged Menu", 5));
+        OLD_PAGED_KAMI_MENU paged = new OLD_PAGED_KAMI_MENU(new OLD_KAMI_MENU("&8&lSample Paged Menu", 5));
         for (int i = 1; i < 45; i++) {
             String id = "Item" + i;
             IBuilder builder = new ItemBuilder(XMaterial.STONE).setName("&fItem &7#" + i);
@@ -70,7 +70,7 @@ public class CmdOpenMenu extends KamiCommand {
                     p.sendMessage(StringUtil.t("&7Paged Item Click (&f" + c.name() + "&7) on &f" + id))
             );
         }
-        KamiMenu menu = paged.applyToParent(0);
+        OLD_KAMI_MENU menu = paged.applyToParent(0);
         ItemStack stackWithMeta = new ItemStack(Material.STONE);
         ItemMeta meta = stackWithMeta.getItemMeta();
         meta.setDisplayName(StringUtil.t("&a&lRandom Name: " + UUID.randomUUID()));
@@ -85,7 +85,7 @@ public class CmdOpenMenu extends KamiCommand {
 
     private void openPaged2(@NotNull Player player) {
         // Add paged items
-        PagedKamiMenu paged = new PagedKamiMenu(new KamiMenu("&8&lSample Paged Menu", 6));
+        OLD_PAGED_KAMI_MENU paged = new OLD_PAGED_KAMI_MENU(new OLD_KAMI_MENU("&8&lSample Paged Menu", 6));
         paged.setPageSlots(List.of(14, 15, 16, 23, 24, 25, 32, 33, 34, 41, 42, 43));
         paged.getNextPageIcon().setItemSlot(new StaticItemSlot(52));
         paged.getPrevPageIcon().setItemSlot(new StaticItemSlot(50));
@@ -101,7 +101,7 @@ public class CmdOpenMenu extends KamiCommand {
     }
 
     private void openTest1(@NotNull Player player) {
-        KamiMenu menu = new KamiMenu("&8&lTest Menu", 3);
+        OLD_KAMI_MENU menu = new OLD_KAMI_MENU("&8&lTest Menu", 3);
 
         // Add an item with rotating builders
         List<IBuilder> builders = List.of(

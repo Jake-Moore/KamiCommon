@@ -1,6 +1,5 @@
-package com.kamikazejam.kamicommon.menu.page;
+package com.kamikazejam.kamicommon.menu;
 
-import com.kamikazejam.kamicommon.menu.KamiMenu;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickPage;
@@ -9,9 +8,10 @@ import com.kamikazejam.kamicommon.menu.items.interfaces.IBuilderModifier;
 import com.kamikazejam.kamicommon.menu.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.menu.items.slots.LastRowItemSlot;
 import com.kamikazejam.kamicommon.menu.items.slots.StaticItemSlot;
-import com.kamikazejam.kamicommon.menu.loader.MenuItemLoader;
+import com.kamikazejam.kamicommon.menu.loaders.MenuItemLoader;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
+import com.kamikazejam.kamicommon.menu.util.Pagination;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
@@ -28,12 +28,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 /**
- * A wrapper class for {@link KamiMenu} that adds paged functionality to the existing Menu.<br>
- * Note: Slots configured as page icons will override existing items configured from {@link KamiMenu}.<br>
- * Note: {@link KamiMenu} handles all UI logic, this class just manages pagination options and appearance.
+ * A wrapper class for {@link OLD_KAMI_MENU} that adds paged functionality to the existing Menu.<br>
+ * Note: Slots configured as page icons will override existing items configured from {@link OLD_KAMI_MENU}.<br>
+ * Note: {@link OLD_KAMI_MENU} handles all UI logic, this class just manages pagination options and appearance.
  */
 @SuppressWarnings("unused")
-public class PagedKamiMenu {
+public class OLD_PAGED_KAMI_MENU {
     @AllArgsConstructor @Getter
     public static class IndexedMenuItem {
         public final @NotNull MenuItem item;
@@ -43,7 +43,7 @@ public class PagedKamiMenu {
     public static final String META_DATA_KEY = "PagedKamiMenu";
 
     // PagedKamiMenu Data. We use KamiMenu as a 'parent' for UI logic
-    private final @NotNull KamiMenu parent;
+    private final @NotNull OLD_KAMI_MENU parent;
     @Getter private final Map<String, IndexedMenuItem> pagedItems = new HashMap<>(); // Uses IndexedMenuItem for ordering
     @Getter public int currentPage = 0;
 
@@ -53,28 +53,28 @@ public class PagedKamiMenu {
     @Getter @Setter private @NotNull MenuItem prevPageIcon = new MenuItem(true, new LastRowItemSlot(1), new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page"));
     @Getter @Setter private boolean appendTitleWithPage = true;
 
-    public PagedKamiMenu(@NotNull KamiMenu parent) {
+    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent) {
         this(parent, new ArrayList<MenuItem>());
     }
-    public PagedKamiMenu(@NotNull KamiMenu parent, @NotNull List<MenuItem> pagedItems) {
+    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, @NotNull List<MenuItem> pagedItems) {
         this.parent = parent;
         pagedItems.forEach(this::addPagedItem);
         this.pageSlots = defaultPageSlots(parent);
     }
 
-    public PagedKamiMenu(@NotNull KamiMenu parent, @NotNull Collection<Integer> slots) {
+    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, @NotNull Collection<Integer> slots) {
         this(parent, new ArrayList<>(), slots);
     }
-    public PagedKamiMenu(@NotNull KamiMenu parent, @NotNull List<MenuItem> pagedItems, @NotNull Collection<Integer> slots) {
+    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, @NotNull List<MenuItem> pagedItems, @NotNull Collection<Integer> slots) {
         this.parent = parent;
 
         this.pageSlots = slots;
     }
 
-    public PagedKamiMenu(@NotNull KamiMenu parent, int[] slots) {
+    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, int[] slots) {
         this(parent, new ArrayList<>(), slots);
     }
-    public PagedKamiMenu(@NotNull KamiMenu parent, @NotNull List<MenuItem> pagedItems, int[] slots) {
+    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, @NotNull List<MenuItem> pagedItems, int[] slots) {
         this.parent = parent;
         pagedItems.forEach(this::addPagedItem);
         this.pageSlots = new ArrayList<>();
@@ -174,27 +174,27 @@ public class PagedKamiMenu {
     }
 
     @NotNull
-    public PagedKamiMenu setMenuClick(@NotNull String id, @NotNull MenuClick click) {
+    public OLD_PAGED_KAMI_MENU setMenuClick(@NotNull String id, @NotNull MenuClick click) {
         this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
         return this;
     }
     @NotNull
-    public PagedKamiMenu setMenuClick(@NotNull String id, @NotNull MenuClickPage click) {
+    public OLD_PAGED_KAMI_MENU setMenuClick(@NotNull String id, @NotNull MenuClickPage click) {
         this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
         return this;
     }
     @NotNull
-    public PagedKamiMenu setMenuClick(@NotNull String id, @NotNull MenuClickEvent click) {
+    public OLD_PAGED_KAMI_MENU setMenuClick(@NotNull String id, @NotNull MenuClickEvent click) {
         this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
         return this;
     }
     @NotNull
-    public PagedKamiMenu setModifier(@NotNull String id, @NotNull IBuilderModifier modifier) {
+    public OLD_PAGED_KAMI_MENU setModifier(@NotNull String id, @NotNull IBuilderModifier modifier) {
         this.getMenuItem(id).ifPresent(item -> item.setModifier(modifier));
         return this;
     }
     @NotNull
-    public PagedKamiMenu setAutoUpdate(@NotNull String id, @NotNull IBuilderModifier modifier, int tickInterval) {
+    public OLD_PAGED_KAMI_MENU setAutoUpdate(@NotNull String id, @NotNull IBuilderModifier modifier, int tickInterval) {
         this.getMenuItem(id).ifPresent(item -> item.setAutoUpdate(modifier, tickInterval));
         return this;
     }
@@ -222,7 +222,7 @@ public class PagedKamiMenu {
      * @param pageIndex The 0-indexed page to open
      */
     @NotNull
-    public KamiMenu applyToParent(int pageIndex) {
+    public OLD_KAMI_MENU applyToParent(int pageIndex) {
         if (this.pageSlots.isEmpty()) {
             throw new IllegalStateException("No page slots have been configured for a PagedKamiMenu, cannot open a page without slots!!!");
         }
@@ -296,7 +296,7 @@ public class PagedKamiMenu {
         return this.parent;
     }
 
-    private int firstEmpty(@NotNull Collection<Integer> placeableSlots, @NotNull KamiMenu menu) {
+    private int firstEmpty(@NotNull Collection<Integer> placeableSlots, @NotNull OLD_KAMI_MENU menu) {
         for (int i : placeableSlots) {
             if (i < 0 || i >= menu.getSize()) { continue; }
             if (menu.getInventory().getItem(i) == null) {
@@ -307,7 +307,7 @@ public class PagedKamiMenu {
     }
 
     @NotNull
-    public static List<Integer> defaultPageSlots(@NotNull KamiMenu parent) {
+    public static List<Integer> defaultPageSlots(@NotNull OLD_KAMI_MENU parent) {
         int rows = (int) Math.ceil(parent.getSize() / 9.0);
         List<Integer> slots = new ArrayList<>();
         // We exclude the top row and bottom 2 rows for nice formatting

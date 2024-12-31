@@ -1,12 +1,14 @@
 package com.kamikazejam.kamicommon.menu;
 
-import com.cryptomorin.xseries.XMaterial;
+import com.google.common.collect.Sets;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.menu.clicks.transform.IClickTransform;
 import com.kamikazejam.kamicommon.menu.items.MenuItem;
 import com.kamikazejam.kamicommon.menu.items.slots.ItemSlot;
-import com.kamikazejam.kamicommon.menu.page.PagedKamiMenu;
+import com.kamikazejam.kamicommon.util.ItemUtil;
+import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,23 +17,29 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
-import static com.kamikazejam.kamicommon.menu.page.PagedKamiMenu.META_DATA_KEY;
+import static com.kamikazejam.kamicommon.menu.OLD_PAGED_KAMI_MENU.META_DATA_KEY;
 
-public class MenuManager implements Listener {
+@Getter
+public class MenuManager implements Listener, Runnable {
+    // TODO with multiple types of menu classes, we need to abstract out the auto updating fields and methods into a common interface
+    protected final Set<OLD_KAMI_MENU> autoUpdateInventories = Sets.newCopyOnWriteArraySet();
+
+    // ------------------------------------------------------- //
+    // --------------------- LISTENERS ----------------------- //
+    // ------------------------------------------------------- //
 
     @EventHandler
     public void onClickMenu(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player player)) { return; }
-        if (!(e.getInventory().getHolder() instanceof KamiMenu menu)) { return; }
+        if (!(e.getInventory().getHolder() instanceof OLD_KAMI_MENU menu)) { return; }
 
         if (menu.isCancelOnClick()) {
             e.setCancelled(true);
@@ -83,7 +91,7 @@ public class MenuManager implements Listener {
 
             // We use the cached copy from when it was added to the inventory
             // Since it may change through its lifecycle
-            if (compareItemStacks(current, menuItem.getLastItem())) {
+            if (ItemUtil.isSimplySimilar(current, menuItem.getLastItem())) {
                 menuItem.playClickSound(player);
                 click.process(player, e, page);
                 return;
@@ -95,13 +103,13 @@ public class MenuManager implements Listener {
     public void onCloseMenu(InventoryCloseEvent e) {
         final Player p = (Player) e.getPlayer();
 
-        if (!(e.getInventory().getHolder() instanceof KamiMenu menu)) {
+        if (!(e.getInventory().getHolder() instanceof OLD_KAMI_MENU menu)) {
             return;
         }
 
         // Remove this menu from the auto update list
         // We do this before consumers, because some consumers may re-open the menu
-        MenuTask.getAutoUpdateInventories().remove(menu);
+        autoUpdateInventories.remove(menu);
 
         // Trigger the Close Consumers
         menu.getCloseConsumers().forEach(consumer -> consumer.accept(e));
@@ -115,50 +123,47 @@ public class MenuManager implements Listener {
     @EventHandler
     public void onPickup(PlayerPickupItemEvent e) {
         if(e.getPlayer().getOpenInventory() == null) { return; }
-        if (!(e.getPlayer().getInventory().getHolder() instanceof KamiMenu menu)) { return; }
+        if (!(e.getPlayer().getInventory().getHolder() instanceof OLD_KAMI_MENU menu)) { return; }
 
         if (!menu.isAllowItemPickup()) {
             e.setCancelled(true);
         }
     }
 
-    public static boolean compareItemStacks(ItemStack item1, ItemStack item2) {
-        //Check null, material types, and amounts
-        if (item1 == null || item2 == null) { return false; }
-        if (item1.getType() != item2.getType()) { return false; }
-        if (item1.getAmount() != item2.getAmount()) { return false; }
-        if (item1.hasItemMeta() != item2.hasItemMeta()) { return false; }
-
-        if (XMaterial.matchXMaterial(item1).equals(XMaterial.POTION) && XMaterial.matchXMaterial(item2).equals(XMaterial.POTION) || item1.getDurability() == item2.getDurability()) {
-            ItemMeta meta1 = item1.getItemMeta();
-            ItemMeta meta2 = item2.getItemMeta();
-
-            // Higher versions can have null metas
-            if (meta1 != null && meta2 != null) {
-                //Compare leather colors
-                if (meta1 instanceof LeatherArmorMeta && meta2 instanceof LeatherArmorMeta && !((LeatherArmorMeta) meta1).getColor().equals(((LeatherArmorMeta) meta2).getColor())) {
-                    return false;
-                }
-
-                //Compare display names
-                if (!meta1.hasDisplayName() || !meta2.hasDisplayName() || !meta1.getDisplayName().equals(meta2.getDisplayName())) {
-                    if (meta1.hasDisplayName() && meta2.hasDisplayName()) { return false; }
-                }
-
-                //Compare lore
-                if (!meta1.hasLore() || !meta2.hasLore() || !Objects.equals(meta1.getLore(), meta2.getLore())) {
-                    if (meta1.hasLore() && meta2.hasLore()) { return false; }
-                }
-            }
-
-            return item1.getEnchantments().equals(item2.getEnchantments());
-        }
-        return false;
+    // TODO REMOVE AND USE DEDICATED PAGINATED MENU CLASS
+    private int getPage(@NotNull OLD_KAMI_MENU menu) {
+        Object o = menu.getMetaData().get(META_DATA_KEY);
+        if (!(o instanceof OLD_PAGED_KAMI_MENU paged)) { return 0; }
+        return paged.getCurrentPage();
     }
 
-    private int getPage(@NotNull KamiMenu menu) {
-        Object o = menu.getMetaData().get(META_DATA_KEY);
-        if (!(o instanceof PagedKamiMenu paged)) { return 0; }
-        return paged.getCurrentPage();
+
+
+    // ------------------------------------------------------- //
+    // ---------------------- RUNNABLE ----------------------- //
+    // ------------------------------------------------------- //
+    /**
+     * This task is called every tick in a task registered by {@link SpigotUtilsSource}
+     */
+    @Override
+    public void run() {
+        Set<OLD_KAMI_MENU> updated = new HashSet<>();
+
+        // Check and run any sub-tasks for each inventory
+        for (OLD_KAMI_MENU inv : autoUpdateInventories) {
+            if (inv.getInventory().getViewers().isEmpty()) { continue; }
+            inv.getTickCounter().getAndIncrement();
+            // Trigger dynamic item updates on this menu
+            inv.update();
+            updated.add(inv);
+        }
+
+        // Send updates to all players affected by modified menus
+        updated.forEach((inv) -> {
+            for (HumanEntity entity : inv.getInventory().getViewers()) {
+                if (!(entity instanceof Player p)) { continue; }
+                p.updateInventory();
+            }
+        });
     }
 }
