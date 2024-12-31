@@ -18,13 +18,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -42,13 +43,15 @@ public class MenuManager implements Listener, Runnable {
         if (!(e.getWhoClicked() instanceof Player player)) { return; }
         if (!(e.getInventory().getHolder() instanceof Menu menu)) { return; }
 
-        if (menu.getOptions().isCancelClickEvent()) {
-            e.setCancelled(true);
-        }
         MenuEvents menuEvents = menu.getEvents();
 
         // Special Handling for clicks in the player inventory
         if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER) {
+            // It is a click in the player inventory, so let's enforce the player inv rules
+            if (menu.getOptions().isCancelPlayerClickEvent()) {
+                e.setCancelled(true);
+            }
+
             // Get the player inventory slot that was clicked. This should be in range [0, 35]
             // Where 0-8 are the hotbar slots from left to right.
             // Then slot 9 starts at the top left of the player inventory, and goes right and down to 35.
@@ -78,6 +81,11 @@ public class MenuManager implements Listener, Runnable {
             return;
         }
 
+        // It wasn't a click in the player inventory, so let's assume it's in the menu inventory and enforce the menu rules
+        if (menu.getOptions().isCancelClickEvent()) {
+            e.setCancelled(true);
+        }
+
         // test the predicates before the item click handlers
         for (Predicate<InventoryClickEvent> predicate : menuEvents.getClickPredicates()) {
             if (!predicate.test(e)) {
@@ -89,29 +97,18 @@ public class MenuManager implements Listener, Runnable {
         if (current == null) { return; }
 
         for (MenuItem menuItem : menu.getMenuItems().values()) {
-            SpigotUtilsSource.get().getColorLogger().info(" ");
             if (menuItem == null) { continue; }
-            SpigotUtilsSource.get().getColorLogger().info("Checking menu item: " + menuItem.getId());
 
             IClickTransform click = menuItem.getTransform();
             if (click == null) { continue; }
-            SpigotUtilsSource.get().getColorLogger().info("Click transform: " + click.getClass().getSimpleName());
 
             // Skip the item if the slot doesn't align & it's not the filler item (filler item is possible everywhere, we rely on similarity check for it)
             @Nullable ItemSlot itemSlot = menuItem.getItemSlot();
-            SpigotUtilsSource.get().getColorLogger().info("Item Slot null? " + (itemSlot == null));
-            if (itemSlot != null) {
-                SpigotUtilsSource.get().getColorLogger().info("Item Slot: " + itemSlot.getClass().getSimpleName() + " values " + Arrays.toString(itemSlot.get(menu).toArray()));
-            }
-
-//            if (!menuItem.getId().startsWith("filler") && (itemSlot == null || !itemSlot.get(menu).contains(e.getSlot()))) { continue; }
             if ((itemSlot == null || !itemSlot.get(menu).contains(e.getSlot()))) { continue; }
-            SpigotUtilsSource.get().getColorLogger().info("Item Slot contains slot: " + e.getSlot());
 
             // We use the cached copy from when it was added to the inventory
             // Since it may change through its lifecycle
             if (!ItemUtil.isSimplySimilar(current, menuItem.getLastItem())) { continue; }
-            SpigotUtilsSource.get().getColorLogger().info("Item is similar");
 
             // Play the click sound
             menuItem.playClickSound(player);
@@ -152,10 +149,24 @@ public class MenuManager implements Listener, Runnable {
 
     @EventHandler
     public void onPickup(PlayerPickupItemEvent e) {
-        if(e.getPlayer().getOpenInventory() == null) { return; }
-        if (!(e.getPlayer().getInventory().getHolder() instanceof Menu menu)) { return; }
+        if (e.getPlayer().getOpenInventory() == null || e.getPlayer().getOpenInventory().getTopInventory() == null) { return; }
+
+        Inventory topInventory = e.getPlayer().getOpenInventory().getTopInventory();
+        if (!(topInventory.getHolder() instanceof Menu menu)) { return; }
 
         if (!menu.getOptions().isAllowItemPickup()) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent e) {
+        if (e.getPlayer().getOpenInventory() == null || e.getPlayer().getOpenInventory().getTopInventory() == null) { return; }
+
+        Inventory topInventory = e.getPlayer().getOpenInventory().getTopInventory();
+        if (!(topInventory.getHolder() instanceof Menu menu)) { return; }
+
+        if (!menu.getOptions().isAllowItemDrop()) {
             e.setCancelled(true);
         }
     }
