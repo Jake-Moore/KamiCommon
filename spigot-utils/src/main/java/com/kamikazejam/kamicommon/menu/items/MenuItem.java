@@ -1,6 +1,8 @@
 package com.kamikazejam.kamicommon.menu.items;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
+import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.clicks.MenuClickEvent;
@@ -277,6 +279,11 @@ public class MenuItem {
     @Override
     public int hashCode() {
         return Objects.hash(enabled, iBuilders, itemSlot, transform, updateInterval, modifier);
+    }
+
+
+    public static MenuItem getDefaultFillerItem() {
+        return new MenuItem(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" "), -1).setId("filler");
     }
 }
 

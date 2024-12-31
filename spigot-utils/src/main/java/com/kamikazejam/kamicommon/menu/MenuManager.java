@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -53,6 +54,13 @@ public class MenuManager implements Listener, Runnable {
             // Then slot 9 starts at the top left of the player inventory, and goes right and down to 35.
             int slot = e.getSlot();
 
+            // test the predicates before the player click handlers
+            for (Predicate<InventoryClickEvent> predicate : menuEvents.getPlayerInvClickPredicates()) {
+                if (!predicate.test(e)) {
+                    return;
+                }
+            }
+
             // Assume standard 36 slot core inventory container
             // Note: they have an inventory open, they should not be able to click
             //  armor or offhand slots, if we receive that event, we should ignore it
@@ -70,7 +78,7 @@ public class MenuManager implements Listener, Runnable {
             return;
         }
 
-        // test the click predicate before the item click handlers
+        // test the predicates before the item click handlers
         for (Predicate<InventoryClickEvent> predicate : menuEvents.getClickPredicates()) {
             if (!predicate.test(e)) {
                 return;
@@ -81,17 +89,29 @@ public class MenuManager implements Listener, Runnable {
         if (current == null) { return; }
 
         for (MenuItem menuItem : menu.getMenuItems().values()) {
+            SpigotUtilsSource.get().getColorLogger().info(" ");
             if (menuItem == null) { continue; }
+            SpigotUtilsSource.get().getColorLogger().info("Checking menu item: " + menuItem.getId());
 
             IClickTransform click = menuItem.getTransform();
             if (click == null) { continue; }
+            SpigotUtilsSource.get().getColorLogger().info("Click transform: " + click.getClass().getSimpleName());
 
+            // Skip the item if the slot doesn't align & it's not the filler item (filler item is possible everywhere, we rely on similarity check for it)
             @Nullable ItemSlot itemSlot = menuItem.getItemSlot();
-            if (itemSlot == null || !itemSlot.get(menu).contains(e.getSlot())) { continue; }
+            SpigotUtilsSource.get().getColorLogger().info("Item Slot null? " + (itemSlot == null));
+            if (itemSlot != null) {
+                SpigotUtilsSource.get().getColorLogger().info("Item Slot: " + itemSlot.getClass().getSimpleName() + " values " + Arrays.toString(itemSlot.get(menu).toArray()));
+            }
+
+//            if (!menuItem.getId().startsWith("filler") && (itemSlot == null || !itemSlot.get(menu).contains(e.getSlot()))) { continue; }
+            if ((itemSlot == null || !itemSlot.get(menu).contains(e.getSlot()))) { continue; }
+            SpigotUtilsSource.get().getColorLogger().info("Item Slot contains slot: " + e.getSlot());
 
             // We use the cached copy from when it was added to the inventory
             // Since it may change through its lifecycle
             if (!ItemUtil.isSimplySimilar(current, menuItem.getLastItem())) { continue; }
+            SpigotUtilsSource.get().getColorLogger().info("Item is similar");
 
             // Play the click sound
             menuItem.playClickSound(player);
@@ -122,11 +142,11 @@ public class MenuManager implements Listener, Runnable {
         }
 
         // Trigger the Close Consumers
-        menuEvents.getCloseConsumers().forEach(consumer -> consumer.accept(e));
+        menuEvents.getCloseCallbacks().forEach(callback -> callback.onClose(p, e));
 
         // Trigger the Post-Close Consumers (1-tick later)
         Bukkit.getScheduler().runTaskLater(SpigotUtilsSource.get(), () ->
-                        menuEvents.getPostCloseConsumers().forEach(consumer -> consumer.accept(p))
+                        menuEvents.getPostCloseCallbacks().forEach(callback -> callback.onPostClose(p))
         , 1L);
     }
 
