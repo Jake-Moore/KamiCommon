@@ -1,16 +1,10 @@
 package com.kamikazejam.kamicommon.menu;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
-import com.kamikazejam.kamicommon.item.IBuilder;
-import com.kamikazejam.kamicommon.item.ItemBuilder;
-import com.kamikazejam.kamicommon.menu.clicks.MenuClick;
-import com.kamikazejam.kamicommon.menu.clicks.MenuClickEvent;
-import com.kamikazejam.kamicommon.menu.clicks.MenuClickPage;
 import com.kamikazejam.kamicommon.menu.items.MenuItem;
-import com.kamikazejam.kamicommon.menu.items.interfaces.IBuilderModifier;
+import com.kamikazejam.kamicommon.menu.items.access.MenuItemsAccess;
 import com.kamikazejam.kamicommon.menu.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.menu.items.slots.StaticItemSlot;
-import com.kamikazejam.kamicommon.menu.loaders.MenuItemLoader;
 import com.kamikazejam.kamicommon.menu.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.struct.MenuHolder;
 import com.kamikazejam.kamicommon.menu.struct.MenuOptions;
@@ -19,11 +13,11 @@ import com.kamikazejam.kamicommon.menu.struct.size.MenuSizeRows;
 import com.kamikazejam.kamicommon.menu.struct.size.MenuSizeType;
 import com.kamikazejam.kamicommon.util.PlayerUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -35,12 +29,10 @@ import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -77,10 +69,21 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
     public InventoryView open() {
         if (!PlayerUtil.isFullyValidPlayer(player)) { return null; }
 
+        // Reset the tick counter for items that auto update if necessary
+        if (options.isResetVisualsOnOpen()) {
+            tickCounter.set(0);
+        }
+
         // Place all items into the inventory
         this.placeItems(null);
+        // After the initial placement of icons, run a fill
+        // any AIR that's left after normal items gets assumed by the filler ItemSlot
+        this.fill();
+
+        // Register this menu for auto-updating
         SpigotUtilsSource.getMenuManager().autoUpdateInventories.add(this);
 
+        // Open the Menu for the Player
         InventoryView view = Objects.requireNonNull(player.openInventory(this.getInventory()));
         events.getOpenCallbacks().forEach(callback -> callback.onOpen(player, view));
         return view;
@@ -102,121 +105,11 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
     //                        Item Management                       //
     // ------------------------------------------------------------ //
 
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull IBuilder builder, int slot) {
-        return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), builder));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull IBuilder builder, @NotNull ItemSlot slot) {
-        return this.addMenuItem(new MenuItem(true, slot, builder));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull ItemStack stack, int slot) {
-        return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), new ItemBuilder(stack)));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull ItemStack stack, @NotNull ItemSlot slot) {
-        return this.addMenuItem(new MenuItem(true, slot, new ItemBuilder(stack)));
-    }
-
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull IBuilder builder, int slot) {
-        return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), builder).setId(id));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull ItemStack stack, int slot) {
-        return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), new ItemBuilder(stack)).setId(id));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull IBuilder builder, @NotNull ItemSlot slot) {
-        return this.addMenuItem(new MenuItem(true, slot, builder).setId(id));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull ItemStack stack, @NotNull ItemSlot slot) {
-        return this.addMenuItem(new MenuItem(true, slot, new ItemBuilder(stack)).setId(id));
-    }
-
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section, @NotNull String key, @Nullable Player player) {
-        return this.addMenuItem(MenuItemLoader.load(section.getConfigurationSection(key), player));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section, @NotNull String key) {
-        return this.addMenuItem(MenuItemLoader.load(section.getConfigurationSection(key)));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section, @Nullable Player player) {
-        return this.addMenuItem(MenuItemLoader.load(section, player));
-    }
-    @CheckReturnValue
-    public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section) {
-        return this.addMenuItem(MenuItemLoader.load(section));
-    }
-
-    public @NotNull MenuItem addMenuItem(@NotNull MenuItem menuItem) {
-        this.menuItems.put(menuItem.getId(), menuItem);
-        return menuItem;
-    }
-
-    public void removeMenuItem(@NotNull String id) {
-        MenuItem item = this.menuItems.remove(id);
-        if (item != null) {
-            // We removed a MenuItem -> remove the item from the inventory
-            item.getSlots(this).forEach(slot -> this.setItem(slot, (ItemStack) null));
-        }
-    }
-
-    @Override
-    public void clear() {
-        super.clear();
-        this.menuItems.clear();
-    }
-
-    // ------------------------------------------------------------ //
-    //                   Item Management (by ID)                    //
-    // ------------------------------------------------------------ //
-    /**
-     * Retrieve a menu item by its id
-     */
     @NotNull
-    public Optional<MenuItem> getMenuItem(@NotNull String id) {
-        if (!menuItems.containsKey(id)) { return Optional.empty(); }
-        return Optional.ofNullable(menuItems.get(id));
-    }
-
-    @NotNull
-    public SimpleMenu setMenuClick(@NotNull String id, @NotNull MenuClick click) {
-        this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
+    public SimpleMenu modifyItems(@NotNull Consumer<MenuItemsAccess> consumer) {
+        consumer.accept(new MenuItemsAccess(this.menuItems));
         return this;
     }
-    @NotNull
-    public SimpleMenu setMenuClick(@NotNull String id, @NotNull MenuClickPage click) {
-        this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
-        return this;
-    }
-    @NotNull
-    public SimpleMenu setMenuClick(@NotNull String id, @NotNull MenuClickEvent click) {
-        this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
-        return this;
-    }
-    @NotNull
-    public SimpleMenu setModifier(@NotNull String id, @NotNull IBuilderModifier modifier) {
-        this.getMenuItem(id).ifPresent(item -> item.setModifier(modifier));
-        return this;
-    }
-    @NotNull
-    public SimpleMenu setAutoUpdate(@NotNull String id, @NotNull IBuilderModifier modifier, int tickInterval) {
-        this.getMenuItem(id).ifPresent(item -> item.setAutoUpdate(modifier, tickInterval));
-        return this;
-    }
-    public boolean isValidMenuItemID(@NotNull String id) {
-        return menuItems.containsKey(id);
-    }
-    @NotNull
-    public Set<String> getMenuItemIDs() {
-        return menuItems.keySet();
-    }
-
 
     // ------------------------------------------------------------ //
     //                   Item Update Management                     //
@@ -226,13 +119,13 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
     public void updateOneTick() {
         // getAndIncrement means we start at 1, since 0th tick should have been the call to open()
         int tick = this.tickCounter.incrementAndGet();
+        Bukkit.getLogger().info("Updating menu for tick " + tick);
         this.placeItems((m) -> m.needsModification(tick));
     }
 
     private void placeItems(@Nullable Predicate<MenuItem> filter) {
+        // After filler items have possibly been added to the menuItems, we should place all items
         this.menuItems.values().forEach(item -> this.placeItem(filter, item));
-        // Automatically fill using filler item, which can be set to null to disable
-        this.fill();
     }
 
     private void placeItem(@Nullable Predicate<MenuItem> filter, @NotNull MenuItem menuItem) {
@@ -249,7 +142,7 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
     }
 
     public void updateItem(@NotNull String id) {
-        this.getMenuItem(id).ifPresent(this::updateItem);
+        this.modifyItems((access) -> access.getMenuItem(id).ifPresent(this::updateItem));
     }
 
     public void updateItem(@NotNull MenuItem menuItem) {
@@ -279,21 +172,34 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
         }
     }
 
-    private SimpleMenu fill() {
-        @Nullable MenuItem fillerItem = this.options.getFillerItem();
-        if (fillerItem == null || !fillerItem.isEnabled()) { return this; }
+    private void fill() {
+        @Nullable MenuItem fillerItem = this.menuItems.getOrDefault("filler", null);
+        if (fillerItem == null || !fillerItem.isEnabled()) { return; }
 
+        // Find the slots that need to be filled
+        List<Integer> slotsToFill = new ArrayList<>();
         for (int i = 0; i < getInventory().getSize(); i++) {
             if (this.options.getExcludedFillSlots().contains(i)) { continue; }
             ItemStack here = getInventory().getItem(i);
-            if (here == null || here.getType() == Material.AIR) {
-                MenuItem item = fillerItem.copy().setItemSlot(new StaticItemSlot(i));
-                this.addMenuItem(item); // Cache so it gets updated like other items
-                this.placeItem(null, item); // Set the item in the inventory
-            }
+            if (here != null && here.getType() != Material.AIR) { continue; }
+
+            slotsToFill.add(i);
+        }
+        // Update the filler's ItemSlot value
+        if (fillerItem.getItemSlot() instanceof StaticItemSlot staticSlots) {
+            // This will occur if we reopen the menu, and when we do we need to re-evaluate the slots
+            List<Integer> newSlots = new ArrayList<>(slotsToFill);
+            newSlots.addAll(staticSlots.getSlots());
+            fillerItem.setItemSlot(new StaticItemSlot(newSlots));
+        }else {
+            fillerItem.setItemSlot(new StaticItemSlot(slotsToFill));
         }
 
-        return this;
+        this.menuItems.put("filler", fillerItem);
+        SpigotUtilsSource.get().getColorLogger().info("Set Filler Slots To: " + Arrays.toString(fillerItem.getSlots(this).toArray()));
+
+        // Make sure the filler item is updated in the Menu
+        this.placeItem(null, fillerItem); // Set the item in the inventory
     }
 
 
@@ -305,17 +211,11 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
 
 
 
-
-
-    @Getter @Setter
-    @Accessors(fluent = true, chain = true)
     public static final class Builder {
         // Menu Details
-        @Setter(AccessLevel.NONE)
         private @NotNull MenuSize size;
         private @Nullable String title;
         // Menu Items
-        @Getter(AccessLevel.NONE)
         private final Map<String, MenuItem> menuItems = new ConcurrentHashMap<>();
         // Additional Configuration
         private final MenuEvents events = new MenuEvents();
@@ -324,6 +224,9 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
         public Builder(@NotNull MenuSize size) {
             Preconditions.checkNotNull(size, "Size must not be null.");
             this.size = size;
+            // Add the default filler item
+            this.menuItems.put("filler", MenuItem.getDefaultFillerItem());
+
         }
         public Builder(int rows) {
             this(new MenuSizeRows(rows));
@@ -332,125 +235,49 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
             this(new MenuSizeType(type));
         }
 
-        public void size(@NotNull MenuSize size) {
+        @NotNull
+        public Builder size(@NotNull MenuSize size) {
             Preconditions.checkNotNull(size, "Size must not be null.");
             this.size = size;
-        }
-
-        // ------------------------------------------------------------ //
-        //                        Item Management                       //
-        // ------------------------------------------------------------ //
-
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull IBuilder builder, int slot) {
-            return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), builder));
-        }
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull IBuilder builder, @NotNull ItemSlot slot) {
-            return this.addMenuItem(new MenuItem(true, slot, builder));
-        }
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull ItemStack stack, int slot) {
-            return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), new ItemBuilder(stack)));
-        }
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull ItemStack stack, @NotNull ItemSlot slot) {
-            return this.addMenuItem(new MenuItem(true, slot, new ItemBuilder(stack)));
-        }
-
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull IBuilder builder, int slot) {
-            return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), builder).setId(id));
-        }
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull ItemStack stack, int slot) {
-            return this.addMenuItem(new MenuItem(true, new StaticItemSlot(slot), new ItemBuilder(stack)).setId(id));
-        }
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull IBuilder builder, @NotNull ItemSlot slot) {
-            return this.addMenuItem(new MenuItem(true, slot, builder).setId(id));
-        }
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull String id, @NotNull ItemStack stack, @NotNull ItemSlot slot) {
-            return this.addMenuItem(new MenuItem(true, slot, new ItemBuilder(stack)).setId(id));
-        }
-
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section, @NotNull String key, @Nullable Player player) {
-            return this.addMenuItem(MenuItemLoader.load(section.getConfigurationSection(key), player));
-        }
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section, @NotNull String key) {
-            return this.addMenuItem(MenuItemLoader.load(section.getConfigurationSection(key)));
-        }
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section, @Nullable Player player) {
-            return this.addMenuItem(MenuItemLoader.load(section, player));
-        }
-        @CheckReturnValue
-        public @NotNull MenuItem addMenuItem(@NotNull ConfigurationSection section) {
-            return this.addMenuItem(MenuItemLoader.load(section));
-        }
-
-        public @NotNull MenuItem addMenuItem(@NotNull MenuItem menuItem) {
-            this.menuItems.put(menuItem.getId(), menuItem);
-            return menuItem;
-        }
-
-        public @Nullable MenuItem removeMenuItem(@NotNull String id) {
-            return this.menuItems.remove(id);
-        }
-
-        public void clearMenuItems() {
-            this.menuItems.clear();
-        }
-
-
-        // ------------------------------------------------------------ //
-        //                   Item Management (by ID)                    //
-        // ------------------------------------------------------------ //
-        /**
-         * Retrieve a menu item by its id
-         */
-        @NotNull
-        public Optional<MenuItem> getMenuItem(@NotNull String id) {
-            if (!menuItems.containsKey(id)) { return Optional.empty(); }
-            return Optional.ofNullable(menuItems.get(id));
-        }
-
-        @NotNull
-        public Builder setMenuClick(@NotNull String id, @NotNull MenuClick click) {
-            this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
             return this;
         }
+
         @NotNull
-        public Builder setMenuClick(@NotNull String id, @NotNull MenuClickPage click) {
-            this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
+        public Builder title(@Nullable String title) {
+            this.title = title;
             return this;
-        }
-        @NotNull
-        public Builder setMenuClick(@NotNull String id, @NotNull MenuClickEvent click) {
-            this.getMenuItem(id).ifPresent(item -> item.setMenuClick(click));
-            return this;
-        }
-        @NotNull
-        public Builder setModifier(@NotNull String id, @NotNull IBuilderModifier modifier) {
-            this.getMenuItem(id).ifPresent(item -> item.setModifier(modifier));
-            return this;
-        }
-        @NotNull
-        public Builder setAutoUpdate(@NotNull String id, @NotNull IBuilderModifier modifier, int tickInterval) {
-            this.getMenuItem(id).ifPresent(item -> item.setAutoUpdate(modifier, tickInterval));
-            return this;
-        }
-        public boolean isValidMenuItemID(@NotNull String id) {
-            return menuItems.containsKey(id);
-        }
-        @NotNull
-        public Set<String> getMenuItemIDs() {
-            return menuItems.keySet();
         }
 
+        @NotNull
+        public Builder options(@NotNull MenuOptions.MenuOptionsModification modification) {
+            Preconditions.checkNotNull(modification, "Modification must not be null.");
+            modification.modify(this.options);
+            return this;
+        }
+
+        @NotNull
+        public Builder events(@NotNull MenuEvents.MenuEventsModification modification) {
+            Preconditions.checkNotNull(modification, "Modification must not be null.");
+            modification.modify(this.events);
+            return this;
+        }
+
+        @NotNull
+        public Builder fillerItem(@Nullable MenuItem fillerItem) {
+            if (fillerItem == null) {
+                this.menuItems.remove("filler");
+                return this;
+            }
+            fillerItem.setId("filler");
+            this.menuItems.put("filler", fillerItem);
+            return this;
+        }
+
+        @NotNull
+        public Builder modifyItems(@NotNull Consumer<MenuItemsAccess> consumer) {
+            consumer.accept(new MenuItemsAccess(this.menuItems));
+            return this;
+        }
 
         @NotNull
         @CheckReturnValue

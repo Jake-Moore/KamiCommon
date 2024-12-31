@@ -1,6 +1,8 @@
 package com.kamikazejam.kamicommon.menu.struct;
 
+import com.kamikazejam.kamicommon.menu.callbacks.MenuCloseCallback;
 import com.kamikazejam.kamicommon.menu.callbacks.MenuOpenCallback;
+import com.kamikazejam.kamicommon.menu.callbacks.MenuPostCloseCallback;
 import com.kamikazejam.kamicommon.menu.clicks.PlayerSlotClick;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -25,35 +26,44 @@ import java.util.function.Predicate;
 @Getter @Setter
 @SuppressWarnings("unused")
 public class MenuEvents {
+    public interface MenuEventsModification {
+        void modify(@NotNull MenuEvents events);
+    }
+
     // All events are stored in a basic list, there is a getter if a user needs to remove or update the underlying list.
     private final @NotNull List<Predicate<InventoryClickEvent>> clickPredicates;
-    private final @NotNull List<Consumer<InventoryCloseEvent>> closeConsumers;
-    private final @NotNull List<Consumer<Player>> postCloseConsumers;
+    private final @NotNull List<MenuCloseCallback> closeCallbacks;
+    private final @NotNull List<MenuPostCloseCallback> postCloseCallbacks;
     private final @NotNull List<MenuOpenCallback> openCallbacks;
     // Player Clicks
-    private final List<PlayerSlotClick> playerInvClicks;                    // List<Click>
-    private final Map<Integer, List<PlayerSlotClick>> playerSlotClicks;     // Map<Slot, List<Click>>
+    private final List<PlayerSlotClick> playerInvClicks;                            // List<Click>
+    private final Map<Integer, List<PlayerSlotClick>> playerSlotClicks;             // Map<Slot, List<Click>>
+    private final List<Predicate<InventoryClickEvent>> playerInvClickPredicates;
 
     public MenuEvents() {
         this.clickPredicates = new ArrayList<>();
-        this.closeConsumers = new ArrayList<>();
-        this.postCloseConsumers = new ArrayList<>();
+        this.closeCallbacks = new ArrayList<>();
+        this.postCloseCallbacks = new ArrayList<>();
         this.openCallbacks = new ArrayList<>();
         this.playerInvClicks = new ArrayList<>();
         this.playerSlotClicks = new ConcurrentHashMap<>();
+        this.playerInvClickPredicates = new ArrayList<>();
     }
     // Copy Constructor
     public MenuEvents(@NotNull MenuEvents copy) {
         this.clickPredicates = new ArrayList<>(copy.clickPredicates);
-        this.closeConsumers = new ArrayList<>(copy.closeConsumers);
-        this.postCloseConsumers = new ArrayList<>(copy.postCloseConsumers);
+        this.closeCallbacks = new ArrayList<>(copy.closeCallbacks);
+        this.postCloseCallbacks = new ArrayList<>(copy.postCloseCallbacks);
         this.openCallbacks = new ArrayList<>(copy.openCallbacks);
         this.playerInvClicks = new ArrayList<>(copy.playerInvClicks);
         this.playerSlotClicks = new ConcurrentHashMap<>(copy.playerSlotClicks);
+        this.playerInvClickPredicates = new ArrayList<>(copy.playerInvClickPredicates);
     }
 
     /**
-     * Add a predicate on {@link InventoryClickEvent} that must pass for any/all click handlers to be executed.
+     * Add a predicate on {@link InventoryClickEvent} that must pass for the click handlers on that slot to be executed.<br>
+     * This applies to the {@link com.kamikazejam.kamicommon.menu.Menu}'s inventory only, not the player's inventory.<br>
+     * For adding a predicate for player inventory clicks, use {@link #addPlayerClickPredicate(Predicate)}
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
@@ -63,24 +73,24 @@ public class MenuEvents {
     }
 
     /**
-     * Add a consumer that runs when the inventory is closed, with access to {@link InventoryCloseEvent}.
+     * Add a callback that runs when the inventory is closed, with access to {@link Player} and {@link InventoryCloseEvent}.
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addCloseConsumer(@NotNull Consumer<InventoryCloseEvent> consumer) {
-        this.closeConsumers.add(consumer);
+    public MenuEvents addCloseCallback(@NotNull MenuCloseCallback callback) {
+        this.closeCallbacks.add(callback);
         return this;
     }
 
     /**
-     * Add a consumer that runs 1 tick after the inventory is closed, with access to {@link Player}.<br>
+     * Add a callback that runs 1 tick after the inventory is closed, with access to {@link Player}.<br>
      * Note: This 1 tick delay is technically enough time for a player to log out. This event is guaranteed to run, but the player may not be online.<br>
-     * This is the method you must use for Menus that you want to re-open when closed. Using {@link #addCloseConsumer(Consumer)} will cause recursion.
+     * This is the method you must use for Menus that you want to re-open when closed. Using {@link #addCloseCallback(MenuCloseCallback)} will cause recursion.
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addPostCloseConsumer(@NotNull Consumer<Player> consumer) {
-        this.postCloseConsumers.add(consumer);
+    public MenuEvents addPostCloseCallback(@NotNull MenuPostCloseCallback callback) {
+        this.postCloseCallbacks.add(callback);
         return this;
     }
 
@@ -113,6 +123,18 @@ public class MenuEvents {
     @NotNull
     public MenuEvents addPlayerSlotClick(@NotNull PlayerSlotClick click) {
         this.playerInvClicks.add(click);
+        return this;
+    }
+
+    /**
+     * Add a predicate on {@link InventoryClickEvent} that must pass for the click handlers on that slot to be executed.<br>
+     * This applies to the {@link Player}'s inventory only, not the menu's inventory.<br>
+     * For adding a predicate for the Menu inventory clicks, use {@link #addClickPredicate(Predicate)}
+     * @return this {@link MenuEvents} object for chaining
+     */
+    @NotNull
+    public MenuEvents addPlayerClickPredicate(@NotNull Predicate<InventoryClickEvent> predicate) {
+        this.playerInvClickPredicates.add(predicate);
         return this;
     }
 

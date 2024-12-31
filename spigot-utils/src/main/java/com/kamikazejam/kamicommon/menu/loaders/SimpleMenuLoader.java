@@ -32,13 +32,15 @@ public class SimpleMenuLoader {
 
         // Load Filler Item
         if (section.isConfigurationSection("filler")) {
-            builder.options().setFillerItem(MenuItemLoader.load(section.getConfigurationSection("filler")));
+            builder.fillerItem(MenuItemLoader.load(section.getConfigurationSection("filler")));
         }
 
         // Load Icons
         ConfigurationSection icons = section.getConfigurationSection("icons");
         for (String key : icons.getKeys(false)) {
-            builder.addMenuItem(MenuItemLoader.load(icons.getConfigurationSection(key)).setId(key));
+            builder.modifyItems((access) -> {
+                access.addMenuItem(MenuItemLoader.load(icons.getConfigurationSection(key)).setId(key));
+            });
         }
 
         return builder;

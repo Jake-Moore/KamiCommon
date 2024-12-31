@@ -1,10 +1,12 @@
 package com.kamikazejam.kamicommon.menu.items.slots;
 
 import com.kamikazejam.kamicommon.menu.Menu;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+@Getter
 @SuppressWarnings("unused")
 public class StaticItemSlot implements ItemSlot {
     private final @NotNull Set<Integer> slots;
