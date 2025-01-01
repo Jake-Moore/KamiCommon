@@ -151,7 +151,7 @@ public final class MenuManager implements Listener, Runnable {
 
         // Trigger the Post-Close Consumers (1-tick later)
         Bukkit.getScheduler().runTaskLater(SpigotUtilsSource.get(), () ->
-                        menuEvents.getPostCloseCallbacks().forEach(callback -> callback.onPostClose(p))
+                        menuEvents.getPostCloseCallbacks().forEach(callback -> callback.onPostClose(p, menu))
         , 1L);
     }
 
