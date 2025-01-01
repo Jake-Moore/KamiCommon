@@ -5,7 +5,8 @@ import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
-import com.kamikazejam.kamicommon.menu.api.icons.interfaces.IBuilderModifier;
+import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StatefulIconModifier;
+import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StaticIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
@@ -106,12 +107,22 @@ public interface IMenuIconsAccess {
         return this;
     }
     @NotNull
-    default IMenuIconsAccess setModifier(@NotNull String id, @NotNull IBuilderModifier modifier) {
+    default IMenuIconsAccess setModifier(@NotNull String id, @NotNull StaticIconModifier modifier) {
         this.getMenuIcon(id).ifPresent(icon -> icon.setModifier(modifier));
         return this;
     }
     @NotNull
-    default IMenuIconsAccess setAutoUpdate(@NotNull String id, @NotNull IBuilderModifier modifier, int tickInterval) {
+    default IMenuIconsAccess setModifier(@NotNull String id, @NotNull StatefulIconModifier modifier) {
+        this.getMenuIcon(id).ifPresent(icon -> icon.setModifier(modifier));
+        return this;
+    }
+    @NotNull
+    default IMenuIconsAccess setAutoUpdate(@NotNull String id, @NotNull StaticIconModifier modifier, int tickInterval) {
+        this.getMenuIcon(id).ifPresent(icon -> icon.setAutoUpdate(modifier, tickInterval));
+        return this;
+    }
+    @NotNull
+    default IMenuIconsAccess setAutoUpdate(@NotNull String id, @NotNull StatefulIconModifier modifier, int tickInterval) {
         this.getMenuIcon(id).ifPresent(icon -> icon.setAutoUpdate(modifier, tickInterval));
         return this;
     }
