@@ -2,26 +2,27 @@ package com.kamikazejam.kamicommon.menu.api.icons;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
+import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClickPage;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.IClickTransform;
-import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.SimpleMenuClickEventTransform;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.paginated.PaginatedMenuClickPageTransform;
+import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.SimpleMenuClickEventTransform;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.SimpleMenuClickTransform;
-import com.kamikazejam.kamicommon.menu.api.icons.interfaces.IBuilderModifier;
+import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StatefulIconModifier;
+import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StaticIconModifier;
+import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.MenuIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
-import com.kamikazejam.kamicommon.item.IBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +42,7 @@ public class MenuIcon {
     private @Nullable ItemStack lastItem;
     private @Nullable IClickTransform transform = null;
     private @Nullable Integer updateInterval = null;
-    private @Nullable IBuilderModifier modifier = null;
+    private @Nullable MenuIconModifier modifier = null;
 
     // Allow this icon to be enabled or disabled (if it should be put in the menu)
     private boolean enabled;
@@ -168,7 +169,12 @@ public class MenuIcon {
         return iconSlot.get(menu);
     }
 
-    public @NotNull MenuIcon setAutoUpdate(@NotNull IBuilderModifier modifier, int tickInterval) {
+    public @NotNull MenuIcon setAutoUpdate(@NotNull StaticIconModifier modifier, int tickInterval) {
+        this.updateInterval = tickInterval;
+        this.modifier = modifier;
+        return this;
+    }
+    public @NotNull MenuIcon setAutoUpdate(@NotNull StatefulIconModifier modifier, int tickInterval) {
         this.updateInterval = tickInterval;
         this.modifier = modifier;
         return this;
@@ -189,9 +195,12 @@ public class MenuIcon {
         return this;
     }
 
-    public @NotNull MenuIcon setModifier(@Nullable IBuilderModifier modifier) {
+    public @NotNull MenuIcon setModifier(@Nullable StaticIconModifier modifier) {
         this.modifier = modifier;
-        this.updateInterval = null;
+        return this;
+    }
+    public @NotNull MenuIcon setModifier(@Nullable StatefulIconModifier modifier) {
+        this.modifier = modifier;
         return this;
     }
 
@@ -201,14 +210,22 @@ public class MenuIcon {
 
     public final @Nullable ItemStack buildItem(boolean cycleToNextBuilder) {
         final int pre = this.builderIndex;
-        @Nullable IBuilder base = cycleToNextBuilder ? getNextBuilder() : getCurrentBuilder();
-        if (base == null) { return null; }
+
+        // Find the existing ItemStack (if available) so that modifications can reference the current item
+        //  while building the new state on the IBuilder (which is based on the initial state)
+        @Nullable IBuilder current = this.getCurrentBuilder();
+        @Nullable ItemStack currentItem = current != null ? current.build() : null;
+
+        @Nullable IBuilder initialBuilder = cycleToNextBuilder ? getNextBuilder() : getCurrentBuilder();
+        if (initialBuilder == null) { return null; }
 
         // Modify the builder if needed
-        if (modifier != null) {
-            modifier.modify(base);
+        if (modifier instanceof StaticIconModifier builderModifier) {
+            builderModifier.modify(initialBuilder);
+        }else if (modifier instanceof StatefulIconModifier updateModifier) {
+            updateModifier.modify(initialBuilder, currentItem);
         }
-        return base.build();
+        return initialBuilder.build();
     }
 
     public boolean isCycleBuilderForTick(int tick) {
@@ -249,11 +266,6 @@ public class MenuIcon {
             this.builderIndex = 0;
         }
         return iBuilders.get(this.builderIndex).clone();
-    }
-
-    @ApiStatus.Internal
-    public void directModifyBuilders(@NotNull IBuilderModifier modifier) {
-        iBuilders.forEach(modifier::modify);
     }
 
     // --------------------------------------------- //
