@@ -23,6 +23,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -207,37 +208,35 @@ public class MenuIcon {
     // --------------------------------------------- //
     //        Methods Regarding Auto Updating        //
     // --------------------------------------------- //
-
-    public final @Nullable ItemStack buildItem(boolean cycleToNextBuilder) {
+    @ApiStatus.Internal
+    public final @Nullable ItemStack buildItem(boolean cycleToNextBuilder, @Nullable ItemStack previousItem) {
         final int pre = this.builderIndex;
 
-        // Find the existing ItemStack (if available) so that modifications can reference the current item
-        //  while building the new state on the IBuilder (which is based on the initial state)
-        @Nullable IBuilder current = this.getCurrentBuilder();
-        @Nullable ItemStack currentItem = current != null ? current.build() : null;
+        @Nullable IBuilder next = cycleToNextBuilder ? getNextBuilder() : getCurrentBuilder();
+        if (next == null) { return null; }
 
-        @Nullable IBuilder initialBuilder = cycleToNextBuilder ? getNextBuilder() : getCurrentBuilder();
-        if (initialBuilder == null) { return null; }
-
-        // Modify the builder if needed
+        // Modify the builder
         if (modifier instanceof StaticIconModifier builderModifier) {
-            builderModifier.modify(initialBuilder);
+            builderModifier.modify(next);
         }else if (modifier instanceof StatefulIconModifier updateModifier) {
-            updateModifier.modify(initialBuilder, currentItem);
+            // Use the existing ItemStack (if available) so that stateful modifications can reference it
+            //  while building the state of the new IBuilder (which is a copy of the initial configuration)
+            updateModifier.modify(next, previousItem);
         }
-        return initialBuilder.build();
-    }
 
-    public boolean isCycleBuilderForTick(int tick) {
+        return next.build();
+    }
+    @ApiStatus.Internal
+    public final boolean isCycleBuilderForTick(int tick) {
         // If we need to supply a new IBuilder from MenuIcon, then we should update
         return this.iBuilders.size() > 1 && this.getBuilderRotateTicks() > 0 && tick % this.getBuilderRotateTicks() == 0;
     }
-
-    public boolean isAutoUpdateForTick(int tick) {
+    @ApiStatus.Internal
+    public final boolean isAutoUpdateForTick(int tick) {
         return updateInterval != null && updateInterval > 0 && tick % updateInterval == 0;
     }
-
-    public boolean needsModification(int tick) {
+    @ApiStatus.Internal
+    public final boolean needsModification(int tick) {
         return isCycleBuilderForTick(tick) || isAutoUpdateForTick(tick);
     }
 

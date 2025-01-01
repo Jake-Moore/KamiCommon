@@ -2,11 +2,11 @@ package com.kamikazejam.kamicommon.menu.simple;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.menu.Menu;
-import com.kamikazejam.kamicommon.menu.api.icons.interfaces.UpdatingMenu;
 import com.kamikazejam.kamicommon.menu.api.MenuHolder;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.icons.access.MenuIconsAccess;
+import com.kamikazejam.kamicommon.menu.api.icons.interfaces.UpdatingMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
@@ -47,7 +47,7 @@ import java.util.function.Predicate;
 @Getter
 @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
+public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
     // Fields
     private final Player player;
     private final Map<String, MenuIcon> menuIcons = new ConcurrentHashMap<>();
@@ -127,45 +127,49 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
         this.placeIcons((m) -> m.needsModification(tick));
     }
 
-    private void placeIcons(@Nullable Predicate<MenuIcon> filter) {
+    /**
+     * Manually trigger an update for all icons matching this predicate.<br>
+     * If the predicate is passed, the icon will be re-built and set in the inventory.<br>
+     * If the predicate is null, it will always update all icons.
+     * @param filter An optional predicate to filter which icons are updated.
+     */
+    public void placeIcons(@Nullable Predicate<MenuIcon> filter) {
         this.menuIcons.values().forEach(icon -> this.placeIcon(filter, icon));
     }
 
-    private void placeIcon(@Nullable Predicate<MenuIcon> filter, @NotNull MenuIcon menuIcon) {
+    /**
+     * Manually trigger an update for a specific icon.<br>
+     * If the predicate is passed, the icon will be re-built and set in the inventory.<br>
+     * If the predicate is null, it will always update the icon.
+     * @param filter An optional predicate, that if failed, will not update the icon.
+     * @param menuIcon The icon to update.
+     */
+    public void placeIcon(@Nullable Predicate<MenuIcon> filter, @NotNull MenuIcon menuIcon) {
         if (!menuIcon.isEnabled() || (filter != null && !filter.test(menuIcon))) { return; }
         int tick = this.tickCounter.get();
 
         @Nullable IconSlot iconSlot = menuIcon.getIconSlot();
         if (iconSlot == null) { return; }
 
-        // The tick determines if we should cycle the builder
-        // We also skip tick 0 since the modulo operation will always be true
-        @Nullable ItemStack item = menuIcon.buildItem(tick > 0 && menuIcon.isCycleBuilderForTick(tick));
+        // Sort (deterministically) the slots to ensure the same ordering of the list, from the unordered set
+        List<Integer> sortedSlots = new ArrayList<>(iconSlot.get(this));
+        sortedSlots.sort(Integer::compareTo);
+        if (sortedSlots.isEmpty()) { return; } // No work to do
+
+        // Fetch the last (previous) ItemStack we placed for this icon (null if not placed yet)
+        // This is used for any stateful MenuIcon modifiers that rely on the previous item state
+        @Nullable ItemStack previousItem = menuIcon.getLastItem();
+
+        // Calculate the new item (one time) for this icon & place it in all slots
+        @Nullable ItemStack item = menuIcon.buildItem(tick > 0 && menuIcon.isCycleBuilderForTick(tick), previousItem);
         this.placeItemStack(item, menuIcon, iconSlot);
-    }
 
-    public void updateIcon(@NotNull String id) {
-        this.modifyIcons((access) -> access.getMenuIcon(id).ifPresent(this::updateIcon));
-    }
-
-    public void updateIcon(@NotNull MenuIcon menuIcon) {
-        this.updateIcon(null, menuIcon);
-    }
-
-    public void updateIcon(@Nullable Predicate<MenuIcon> filter, @NotNull MenuIcon menuIcon) {
-        if (!menuIcon.isEnabled() || (filter != null && !filter.test(menuIcon))) { return; }
-        @Nullable IconSlot iconSlot = menuIcon.getIconSlot();
-        if (iconSlot == null) { return; }
-
-        // Build the new item, storing it back in the MenuIcon for comparison on clicks
-        @Nullable ItemStack item = menuIcon.buildItem(false);
-        this.placeItemStack(item, menuIcon, iconSlot);
+        // Store the new item as the previous item for the next update
+        menuIcon.setLastItem(item);
     }
 
     private void placeItemStack(@Nullable ItemStack item, @NotNull MenuIcon menuIcon, @NotNull IconSlot iconSlot) {
         if (item != null && item.getAmount() > 64) { item.setAmount(64); }
-        // Store the item back in the MenuIcon for comparison on clicks
-        menuIcon.setLastItem(item);
 
         // Update the inventory slots
         int size = this.getSize();
