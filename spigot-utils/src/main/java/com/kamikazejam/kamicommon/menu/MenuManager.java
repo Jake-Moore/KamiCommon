@@ -2,12 +2,14 @@ package com.kamikazejam.kamicommon.menu;
 
 import com.google.common.collect.Sets;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
-import com.kamikazejam.kamicommon.menu.clicks.transform.IClickTransform;
-import com.kamikazejam.kamicommon.menu.clicks.transform.paginated.IPaginatedClickTransform;
-import com.kamikazejam.kamicommon.menu.clicks.transform.simple.ISimpleClickTransform;
-import com.kamikazejam.kamicommon.menu.items.MenuItem;
-import com.kamikazejam.kamicommon.menu.items.slots.ItemSlot;
-import com.kamikazejam.kamicommon.menu.struct.MenuEvents;
+import com.kamikazejam.kamicommon.menu.api.clicks.transform.IClickTransform;
+import com.kamikazejam.kamicommon.menu.api.clicks.transform.paginated.IPaginatedClickTransform;
+import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.ISimpleClickTransform;
+import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
+import com.kamikazejam.kamicommon.menu.api.icons.interfaces.UpdatingMenu;
+import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
+import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
+import com.kamikazejam.kamicommon.menu.paginated.PaginatedMenu;
 import com.kamikazejam.kamicommon.util.ItemUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -86,7 +88,7 @@ public class MenuManager implements Listener, Runnable {
             e.setCancelled(true);
         }
 
-        // test the predicates before the item click handlers
+        // test the predicates before the icon click handlers
         for (Predicate<InventoryClickEvent> predicate : menuEvents.getClickPredicates()) {
             if (!predicate.test(e)) {
                 return;
@@ -96,22 +98,22 @@ public class MenuManager implements Listener, Runnable {
         ItemStack current = e.getCurrentItem();
         if (current == null) { return; }
 
-        for (MenuItem menuItem : menu.getMenuItems().values()) {
-            if (menuItem == null) { continue; }
+        for (MenuIcon menuIcon : menu.getMenuIcons().values()) {
+            if (menuIcon == null) { continue; }
 
-            IClickTransform click = menuItem.getTransform();
+            IClickTransform click = menuIcon.getTransform();
             if (click == null) { continue; }
 
-            // Skip the item if the slot doesn't align & it's not the filler item (filler item is possible everywhere, we rely on similarity check for it)
-            @Nullable ItemSlot itemSlot = menuItem.getItemSlot();
-            if ((itemSlot == null || !itemSlot.get(menu).contains(e.getSlot()))) { continue; }
+            // Skip the icon if the slot doesn't align
+            @Nullable IconSlot iconSlot = menuIcon.getIconSlot();
+            if ((iconSlot == null || !iconSlot.get(menu).contains(e.getSlot()))) { continue; }
 
             // We use the cached copy from when it was added to the inventory
             // Since it may change through its lifecycle
-            if (!ItemUtil.isSimplySimilar(current, menuItem.getLastItem())) { continue; }
+            if (!ItemUtil.isSimplySimilar(current, menuIcon.getLastItem())) { continue; }
 
             // Play the click sound
-            menuItem.playClickSound(player);
+            menuIcon.playClickSound(player);
 
             //      Perform the Click
             // Handle SimpleMenu Clicks
