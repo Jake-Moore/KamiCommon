@@ -6,6 +6,7 @@ import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.menu.paginated.PaginatedMenu;
 import com.kamikazejam.kamicommon.menu.simple.SimpleMenu;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -16,9 +17,16 @@ import java.util.Map;
  * <br>
  * Use specific menus classes like {@link SimpleMenu} or {@link PaginatedMenu}
  */
+@SuppressWarnings("unused")
 public interface Menu {
     @NotNull MenuEvents getEvents();
     @NotNull MenuOptions getOptions();
     @NotNull MenuSize getMenuSize();
     @NotNull Map<String, MenuIcon> getMenuIcons();
+
+    /**
+     * Attempt to reopen the menu for the given player. Depending on the menu type, this may not be possible for all possible
+     * {@link Player} objects. For instance, the {@link SimpleMenu} requires that the same player from that menu be passed.
+     */
+    void reopenMenu(@NotNull Player player);
 }

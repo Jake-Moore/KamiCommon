@@ -66,6 +66,13 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
         this.options = builder.options.copy();
     }
 
+    @Override
+    public void reopenMenu(@NotNull Player player) {
+        // Sanity Checks
+        if (!PlayerUtil.isFullyValidPlayer(player) || !player.getUniqueId().equals(this.player.getUniqueId())) { return; }
+        this.open();
+    }
+
     /**
      * Open the {@link Inventory} for the {@link Player} that this menu was created for.
      * @return The {@link InventoryView} for the new menu, or null if the player was not online to open the menu for.

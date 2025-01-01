@@ -52,13 +52,6 @@ public class MenuHolder implements InventoryHolder {
         });
     }
 
-    // TODO WE SHOULD BE ABLE TO REMOVE THIS IF WE DO THINGS PROPERLY
-    @Deprecated(forRemoval = true)
-    public void recreateInventory() {
-        this.inventory = null;
-        this.getInventory();
-    }
-
     @NotNull
     public List<HumanEntity> getViewers() {
         if (this.inventory == null) {
