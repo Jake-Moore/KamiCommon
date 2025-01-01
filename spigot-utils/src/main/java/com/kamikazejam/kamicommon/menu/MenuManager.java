@@ -10,6 +10,7 @@ import com.kamikazejam.kamicommon.menu.api.icons.interfaces.UpdatingMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.paginated.PaginatedMenu;
+import com.kamikazejam.kamicommon.menu.simple.SimpleMenu;
 import com.kamikazejam.kamicommon.util.ItemUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -32,8 +33,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
+/**
+ * This manager is responsible for handling all {@link Menu} interactions.<br>
+ * Developers should not need to interact with this class directly, only through specific menu classes
+ * like {@link SimpleMenu} or {@link PaginatedMenu}.
+ */
 @Getter
-public class MenuManager implements Listener, Runnable {
+public final class MenuManager implements Listener, Runnable {
     final Set<UpdatingMenu> autoUpdateInventories = Sets.newCopyOnWriteArraySet();
 
     // ------------------------------------------------------- //
