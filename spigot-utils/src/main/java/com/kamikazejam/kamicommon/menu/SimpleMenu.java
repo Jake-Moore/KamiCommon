@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.menu;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.menu.items.MenuItem;
+import com.kamikazejam.kamicommon.menu.items.access.IMenuItemsAccess;
 import com.kamikazejam.kamicommon.menu.items.access.MenuItemsAccess;
 import com.kamikazejam.kamicommon.menu.items.slots.ItemSlot;
 import com.kamikazejam.kamicommon.menu.items.slots.StaticItemSlot;
@@ -105,7 +106,7 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
     // ------------------------------------------------------------ //
 
     @NotNull
-    public SimpleMenu modifyItems(@NotNull Consumer<MenuItemsAccess> consumer) {
+    public SimpleMenu modifyItems(@NotNull Consumer<IMenuItemsAccess> consumer) {
         consumer.accept(new MenuItemsAccess(this.menuItems));
         return this;
     }
@@ -271,7 +272,7 @@ public class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
         }
 
         @NotNull
-        public Builder modifyItems(@NotNull Consumer<MenuItemsAccess> consumer) {
+        public Builder modifyItems(@NotNull Consumer<IMenuItemsAccess> consumer) {
             consumer.accept(new MenuItemsAccess(this.menuItems));
             return this;
         }
