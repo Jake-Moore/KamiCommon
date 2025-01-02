@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+// NOTE: This class does not set the MenuIcon ID to the section key, that is handled only if we're loading a MenuIcon for a specific Menu
+// I.E. in the SimpleMenuLoader class, which will update the id when loading keys from the 'icons' section
 public class MenuIconLoader {
     @NotNull
     public static MenuIcon load(@NotNull ConfigurationSection section) {
@@ -30,11 +32,8 @@ public class MenuIconLoader {
         Collection<IBuilder> iBuilders = loadIBuilders(section, player);
         if (section.getBoolean("hideAttributes", true)) { iBuilders.forEach(IBuilder::hideAttributes); }
 
-        // Load the IconSlot
-        @Nullable IconSlot iconSlot = loadSlots(section);
-
         // Create the MenuIcon
-        MenuIcon icon = new MenuIcon(enabled, iconSlot, iBuilders);
+        MenuIcon icon = new MenuIcon(enabled, iBuilders);
 
         // Apply additional settings
         if (section.isSet("typeCycleTicks")) {
@@ -63,48 +62,5 @@ public class MenuIconLoader {
 
         // Method2: Default to single item logic
         return Collections.singletonList(new IAItemBuilder(section, player));
-    }
-
-    @Nullable
-    private static IconSlot loadSlots(ConfigurationSection section) {
-
-        // Try to load a relative slot (high priority).
-        // If set to -1, ignore this key
-        if (section.isInt("slotInLastRow")) {
-            int slotInLast = section.getInt("slotInLastRow");
-            if (slotInLast >= 0) {
-                return new LastRowIconSlot(slotInLast);
-            }
-        }
-
-        // Load Static Slots (if found).
-        // If a slot is -1, ignore it
-        List<Integer> slots = new ArrayList<>();
-        if (section.isInt("slot")) {
-            int s = section.getInt("slot");
-            if (s >= 0) {
-                slots.add(s);
-            }
-        }else if (section.isList("slot")) {
-            List<Integer> s = section.getIntegerList("slot");
-            s.forEach(slot -> {
-                if (slot < 0) { return; }
-                slots.add(slot);
-            });
-        }else if (section.isList("slots")) {
-            List<Integer> s = section.getIntegerList("slots");
-            s.forEach(slot -> {
-                if (slot < 0) { return; }
-                slots.add(slot);
-            });
-        }else if (section.isInt("slots")) {
-            int s = section.getInt("slots");
-            if (s >= 0) {
-                slots.add(s);
-            }
-        }
-
-        // Return null if we didn't find any valid slots
-        return (slots.isEmpty()) ? null : new StaticIconSlot(slots);
     }
 }

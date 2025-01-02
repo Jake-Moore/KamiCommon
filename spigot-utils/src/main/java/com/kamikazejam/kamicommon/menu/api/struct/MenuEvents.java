@@ -36,8 +36,8 @@ public class MenuEvents {
     private final @NotNull List<MenuPostCloseCallback> postCloseCallbacks;
     private final @NotNull List<MenuOpenCallback> openCallbacks;
     // Player Clicks
-    private final List<PlayerSlotClick> playerInvClicks;                            // List<Click>
-    private final Map<Integer, List<PlayerSlotClick>> playerSlotClicks;             // Map<Slot, List<Click>>
+    private final List<PlayerSlotClick> playerInvClicks;                            // List<Click>              (processed before per-slot clicks)
+    private final Map<Integer, List<PlayerSlotClick>> playerSlotClicks;             // Map<Slot, List<Click>>   (processed after global clicks)
     private final List<Predicate<InventoryClickEvent>> playerInvClickPredicates;
 
     public MenuEvents() {

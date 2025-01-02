@@ -1,5 +1,7 @@
 package com.kamikazejam.kamicommon.menu.api.loaders;
 
+import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
+import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.simple.SimpleMenu;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
@@ -39,7 +41,10 @@ public class SimpleMenuLoader {
         ConfigurationSection icons = section.getConfigurationSection("icons");
         for (String key : icons.getKeys(false)) {
             builder.modifyIcons((access) -> {
-                access.addMenuIcon(MenuIconLoader.load(icons.getConfigurationSection(key)).setId(key));
+                ConfigurationSection iconSection = icons.getConfigurationSection(key);
+                MenuIcon icon = MenuIconLoader.load(iconSection).setId(key);
+                IconSlot slot = IconSlotLoader.load(iconSection);
+                access.addMenuIcon(icon, slot);
             });
         }
 

@@ -31,4 +31,9 @@ public final class MenuSizeRows implements MenuSize {
     public @NotNull MenuSize copy() {
         return new MenuSizeRows(rows);
     }
+
+    @Override
+    public int getNumberOfSlots() {
+        return rows * 9;
+    }
 }

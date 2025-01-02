@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.menu;
 
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
+import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
@@ -23,6 +24,7 @@ public interface Menu {
     @NotNull MenuOptions getOptions();
     @NotNull MenuSize getMenuSize();
     @NotNull Map<String, MenuIcon> getMenuIcons();
+    @NotNull IMenuIconsAccess getMenuIconsAccess();
 
     /**
      * Attempt to reopen the menu for the given player. Depending on the menu type, this may not be possible for all possible

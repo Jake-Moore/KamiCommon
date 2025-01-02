@@ -7,10 +7,9 @@ import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.icons.access.MenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.UpdatingMenu;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
+import com.kamikazejam.kamicommon.menu.api.struct.SlotData;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeRows;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeType;
@@ -20,7 +19,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -31,10 +29,7 @@ import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -51,6 +46,8 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
     // Fields
     private final Player player;
     private final Map<String, MenuIcon> menuIcons = new ConcurrentHashMap<>();
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private final Map<Integer, SlotData> menuSlots = new ConcurrentHashMap<>();
     private final MenuEvents events;
     private final MenuOptions options;
     // Internal Data
@@ -62,6 +59,7 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
         super(builder.size.copy(), builder.title);
         this.player = player;
         builder.menuIcons.forEach((id, icon) -> this.menuIcons.put(id, icon.copy()));
+        builder.menuSlots.forEach((slot, data) -> this.menuSlots.put(slot, data.copy()));
         this.events = builder.events.copy();
         this.options = builder.options.copy();
     }
@@ -87,10 +85,8 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
         }
 
         // Place all icons into the inventory
+        // This method will also handle the filler icon placement
         this.placeIcons(null);
-        // After the initial placement of icons, run a fill
-        // any slots with AIR that are left after normal icons are added to the filler's IconSlot
-        this.fill();
 
         // Register this menu for auto-updating
         SpigotUtilsSource.getMenuManager().getAutoUpdateInventories().add(this);
@@ -113,14 +109,28 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
         return true;
     }
 
+    @Override
+    public void setSize(@NotNull MenuSize size) {
+        this.resizeMenu(size);
+    }
+
+    public void resizeMenu(@NotNull MenuSize newSize) {
+
+    }
+
     // ------------------------------------------------------------ //
     //                        Icon Management                       //
     // ------------------------------------------------------------ //
 
     @NotNull
     public SimpleMenu modifyIcons(@NotNull Consumer<IMenuIconsAccess> consumer) {
-        consumer.accept(new MenuIconsAccess(this.menuIcons));
+        consumer.accept(this.getMenuIconsAccess());
         return this;
+    }
+
+    @Override
+    public @NotNull IMenuIconsAccess getMenuIconsAccess() {
+        return new MenuIconsAccess(this.getMenuSize(), this.menuIcons, this.menuSlots);
     }
 
     // ------------------------------------------------------------ //
@@ -138,81 +148,84 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
      * Manually trigger an update for all icons matching this predicate.<br>
      * If the predicate is passed, the icon will be re-built and set in the inventory.<br>
      * If the predicate is null, it will always update all icons.
-     * @param filter An optional predicate to filter which icons are updated.
+     * @param needsUpdate An optional predicate to filter which icons need new builders.
      */
-    public void placeIcons(@Nullable Predicate<MenuIcon> filter) {
-        this.menuIcons.values().forEach(icon -> this.placeIcon(filter, icon));
-    }
-
-    /**
-     * Manually trigger an update for a specific icon.<br>
-     * If the predicate is passed, the icon will be re-built and set in the inventory.<br>
-     * If the predicate is null, it will always update the icon.
-     * @param filter An optional predicate, that if failed, will not update the icon.
-     * @param menuIcon The icon to update.
-     */
-    public void placeIcon(@Nullable Predicate<MenuIcon> filter, @NotNull MenuIcon menuIcon) {
-        if (!menuIcon.isEnabled() || (filter != null && !filter.test(menuIcon))) { return; }
+    private void placeIcons(@Nullable Predicate<MenuIcon> needsUpdate) {
         int tick = this.tickCounter.get();
+        Map<String, Boolean> needsUpdateMap = new HashMap<>(); // Store <ID, Included>
+        Map<String, ItemStack> itemStackMap = new HashMap<>(); // Store <ID, ItemStack>
 
-        @Nullable IconSlot iconSlot = menuIcon.getIconSlot();
-        if (iconSlot == null) { return; }
+        // Compile a list of all icons that need to be updated, based on the filter
+        // Also generate the ItemStack for each icon, if it needs to be updated
+        this.menuIcons.forEach((id, icon) -> {
+            if (!icon.isEnabled()) { return; } // If not enabled, don't process it
 
-        // Sort (deterministically) the slots to ensure the same ordering of the list, from the unordered set
-        List<Integer> sortedSlots = new ArrayList<>(iconSlot.get(this));
-        sortedSlots.sort(Integer::compareTo);
-        if (sortedSlots.isEmpty()) { return; } // No work to do
+            // Store if the icon needs to be updated
+            if ((needsUpdate != null && !needsUpdate.test(icon))) {
+                needsUpdateMap.put(id, false);
+                return; // We return so that we don't put a stack in the stack map, we should leave the item alone
+            }
+            needsUpdateMap.put(id, true);
+            // Generate the new ItemStack (one calculation) for this icon
+            // We pass the last item, which is used for any stateful MenuIcon modifiers that rely on the previous item state
+            @Nullable ItemStack item = icon.buildItem(tick > 0 && icon.isCycleBuilderForTick(tick), icon.getLastItem());
+            if (item != null) {
+                itemStackMap.put(id, item);
+            }
+            // Store for state next update
+            icon.setLastItem(item);
+        });
 
-        // Fetch the last (previous) ItemStack we placed for this icon (null if not placed yet)
-        // This is used for any stateful MenuIcon modifiers that rely on the previous item state
-        @Nullable ItemStack previousItem = menuIcon.getLastItem();
+        // Update the inventory slots, keep track of which slots we don't fill
+        Set<Integer> forFillerSlots = new HashSet<>();
+        for (int i = 0; i < this.getSize(); i++) {
+            // Fetch our icon for this slot, skipping the slot if we don't have an icon or it failed the filter
+            @Nullable String iconID = Optional.ofNullable(this.menuSlots.get(i)).map(SlotData::getId).orElse(null);
 
-        // Calculate the new item (one time) for this icon & place it in all slots
-        @Nullable ItemStack item = menuIcon.buildItem(tick > 0 && menuIcon.isCycleBuilderForTick(tick), previousItem);
-        this.placeItemStack(item, menuIcon, iconSlot);
+            // 1. If there is no icon for this slot, we need to fill it with the filler icon
+            if (iconID == null) {
+                forFillerSlots.add(i);
+                continue;
+            }
 
-        // Store the new item as the previous item for the next update
-        menuIcon.setLastItem(item);
+            // 2. If there is an icon here, and it does not need updating, we skip it
+            if (!needsUpdateMap.getOrDefault(iconID, false)) {
+                continue;
+            }
+
+            // 3. Retrieve the ItemStack for this icon, and place it in the slot
+            @Nullable ItemStack item = itemStackMap.get(iconID);
+            super.setItem(i, item);
+            // Note the behavior here. the Icon can return a null builder, which we will assume
+            // was intended, and set the slot to null (making it an empty inventory slot)
+            // We do not add the slot to the emptySlots set, because we don't want to fill it with the filler icon
+        }
+
+        // Place the filler icon in the slots that are needed
+        placeFiller(needsUpdateMap, itemStackMap, forFillerSlots, tick);
     }
 
-    private void placeItemStack(@Nullable ItemStack item, @NotNull MenuIcon menuIcon, @NotNull IconSlot iconSlot) {
-        if (item != null && item.getAmount() > 64) { item.setAmount(64); }
+    private void placeFiller(Map<String, Boolean> needsUpdateMap, Map<String, ItemStack> itemStackMap, Set<Integer> slots, int tick) {
+        // Skip fill if the filler icon is disabled or not found
+        @Nullable MenuIcon icon = this.menuIcons.getOrDefault("filler", null);
+        if (icon == null || !icon.isEnabled()) { return; }
 
-        // Update the inventory slots
-        int size = this.getSize();
-        for (int slot : iconSlot.get(this)) {
-            if (slot < 0 || slot >= size) { continue; }
-            super.setItem(slot, item);
-        }
-    }
+        // First, apply the excluded slots filter to the slots set
+        slots.removeAll(this.options.getExcludedFillSlots());
 
-    private void fill() {
-        @Nullable MenuIcon fillerIcon = this.menuIcons.getOrDefault("filler", null);
-        if (fillerIcon == null || !fillerIcon.isEnabled()) { return; }
-
-        // Find the slots that need to be filled
-        List<Integer> slotsToFill = new ArrayList<>();
-        for (int i = 0; i < getInventory().getSize(); i++) {
-            if (this.options.getExcludedFillSlots().contains(i)) { continue; }
-            ItemStack here = getInventory().getItem(i);
-            if (here != null && here.getType() != Material.AIR) { continue; }
-
-            slotsToFill.add(i);
-        }
-        // Update the filler's IconSlot value
-        if (fillerIcon.getIconSlot() instanceof StaticIconSlot staticSlots) {
-            // This will occur if we reopen the menu, and when we do we need to re-evaluate the slots
-            List<Integer> newSlots = new ArrayList<>(slotsToFill);
-            newSlots.addAll(staticSlots.getSlots());
-            fillerIcon.setIconSlot(new StaticIconSlot(newSlots));
+        // Determine if we need to update this filler icon
+        boolean needsUpdate = needsUpdateMap.getOrDefault("filler", false);
+        @Nullable ItemStack fillerItem;
+        if (needsUpdate) {
+            // Pull from the item stack map (which already did the rebuild)
+            fillerItem = itemStackMap.get("filler");
         }else {
-            fillerIcon.setIconSlot(new StaticIconSlot(slotsToFill));
+            // Use the last item, since we don't want to update
+            fillerItem = icon.getLastItem();
         }
 
-        this.menuIcons.put("filler", fillerIcon);
-
-        // Make sure the filler icon is placed in the Menu
-        this.placeIcon(null, fillerIcon);
+        // Place the filler icon in the slots
+        slots.forEach(slot -> super.setItem(slot, fillerItem));
     }
 
 
@@ -224,12 +237,17 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
 
 
 
+    // ------------------------------------------------------------ //
+    //                        Builder Pattern                       //
+    // ------------------------------------------------------------ //
     public static final class Builder {
         // Menu Details
         private @NotNull MenuSize size;
         private @Nullable String title;
         // Menu Icons
         private final Map<String, MenuIcon> menuIcons = new ConcurrentHashMap<>();
+        @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+        private final Map<Integer, SlotData> menuSlots = new ConcurrentHashMap<>();
         // Additional Configuration
         private final MenuEvents events = new MenuEvents();
         private final MenuOptions options = new MenuOptions();
@@ -288,7 +306,7 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
 
         @NotNull
         public Builder modifyIcons(@NotNull Consumer<IMenuIconsAccess> consumer) {
-            consumer.accept(new MenuIconsAccess(this.menuIcons));
+            consumer.accept(new MenuIconsAccess(this.size, this.menuIcons, this.menuSlots));
             return this;
         }
 

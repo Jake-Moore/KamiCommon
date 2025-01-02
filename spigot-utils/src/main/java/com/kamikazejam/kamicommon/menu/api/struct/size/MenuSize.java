@@ -24,5 +24,10 @@ public sealed interface MenuSize permits MenuSizeRows, MenuSizeType {
      * Deep copies this {@link MenuSize} into an identical object clone.
      */
     @NotNull MenuSize copy();
+
+    /**
+     * @return the 1-index number of slots in this menu size.
+     */
+    int getNumberOfSlots();
 }
 
