@@ -1,13 +1,14 @@
 package com.kamikazejam.kamicommon.item;
 
-import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class ItemBuilder extends IBuilder {
@@ -16,40 +17,40 @@ public class ItemBuilder extends IBuilder {
     private final @NotNull List<XMaterial> materialCycle = new ArrayList<>();
 
     private ItemBuilder() {} // Private for Clone
-    public ItemBuilder(ConfigurationSection section) {
+    public ItemBuilder(@NotNull ConfigurationSection section) {
         super(section);
     }
-    public ItemBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
+    public ItemBuilder(@NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
         super(section, offlinePlayer);
     }
-    public ItemBuilder(XMaterial mat, ConfigurationSection section) {
+    public ItemBuilder(@NotNull XMaterial mat, @NotNull ConfigurationSection section) {
         super(mat, section);
     }
-    public ItemBuilder(XMaterial mat, ConfigurationSection section, OfflinePlayer offlinePlayer) {
+    public ItemBuilder(@NotNull XMaterial mat, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
         super(mat, section, offlinePlayer);
     }
-    public ItemBuilder(ItemStack base, ConfigurationSection section) {
+    public ItemBuilder(@NotNull ItemStack base, @NotNull ConfigurationSection section) {
         super(base, section);
     }
-    public ItemBuilder(ItemStack base, ConfigurationSection section, OfflinePlayer offlinePlayer) {
+    public ItemBuilder(@NotNull ItemStack base, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
         super(base, section, offlinePlayer);
     }
-    public ItemBuilder(XMaterial m) {
+    public ItemBuilder(@NotNull XMaterial m) {
         super(m);
     }
-    public ItemBuilder(XMaterial m, short damage) {
+    public ItemBuilder(@NotNull XMaterial m, short damage) {
         super(m, damage);
     }
-    public ItemBuilder(XMaterial m, int amount) {
+    public ItemBuilder(@NotNull XMaterial m, int amount) {
         super(m, amount);
     }
-    public ItemBuilder(XMaterial material, int amount, short damage) {
+    public ItemBuilder(@NotNull XMaterial material, int amount, short damage) {
         super(material, amount, damage);
     }
-    public ItemBuilder(ItemStack is) {
+    public ItemBuilder(@NotNull ItemStack is) {
         super(is);
     }
-    public ItemBuilder(ItemStack is, boolean clone) {
+    public ItemBuilder(@NotNull ItemStack is, boolean clone) {
         super(is, clone);
     }
 

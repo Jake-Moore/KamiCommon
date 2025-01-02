@@ -11,7 +11,7 @@ V4 will be a complete rewrite of several sections of this project, and will make
 I will provide basic bug fix support for the v3 branch, but no new features will be added.  
 
 **ROADMAP**: https://github.com/users/Jake-Moore/projects/3
-- **TLDR**: v4 aims to rewrite GUIs, stick to semver practices, improve commands, improve usability of the `spigot-utils` module, add global configuration, and much more.
+- **TLDR**: v4 aims to rewrite Menus, stick to semver practices, improve commands, improve usability of the `spigot-utils` module, add global configuration, and much more.
 
 
 # KamiCommon
