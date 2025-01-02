@@ -9,8 +9,6 @@ import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.UpdatingMenu;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
-import com.kamikazejam.kamicommon.menu.paginated.PaginatedMenu;
-import com.kamikazejam.kamicommon.menu.simple.SimpleMenu;
 import com.kamikazejam.kamicommon.util.ItemUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -73,7 +71,13 @@ public final class MenuManager implements Listener, Runnable {
 
         // Fetch the MenuIcon that should be in our slot
         IMenuIconsAccess iconsAccess = menu.getMenuIconsAccess();
-        @Nullable MenuIcon iconForSlot = iconsAccess.getMenuIcon(e.getSlot()).orElse(null);
+        @Nullable MenuIcon iconForSlot = iconsAccess.getMenuIcon(e.getSlot()).orElseGet(() -> {
+           // Attempt to use the filler icon if that is enabled and nonnull
+            if (menu.getOptions().getExcludedFillSlots().contains(e.getSlot())) { return null; }
+            @Nullable MenuIcon fillerIcon = menu.getFillerIcon();
+            if (fillerIcon == null || !fillerIcon.isEnabled()) { return null; }
+            return fillerIcon;
+        });
         @Nullable IClickTransform click = iconForSlot != null ? iconForSlot.getTransform() : null;
 
         // If there is no icon in the slot (or no click), we don't need to do anything
@@ -100,6 +104,7 @@ public final class MenuManager implements Listener, Runnable {
             return;
         }
         MenuEvents menuEvents = menu.getEvents();
+        if (menuEvents.getIgnoreNextInventoryCloseEvent().get()) { return; }
 
         // Remove this menu from the auto update list
         // We do this before consumers, because some consumers may re-open the menu
@@ -113,8 +118,8 @@ public final class MenuManager implements Listener, Runnable {
         // Trigger the Post-Close Consumers (1-tick later)
         final Menu finalMenu = menu;
         Bukkit.getScheduler().runTaskLater(SpigotUtilsSource.get(), () ->
-                menuEvents.getPostCloseCallbacks().forEach(callback -> callback.onPostClose(p, finalMenu))
-        , 1L);
+                        menuEvents.getPostCloseCallbacks().forEach(callback -> callback.onPostClose(p, finalMenu))
+                , 1L);
     }
 
     @EventHandler
@@ -143,8 +148,7 @@ public final class MenuManager implements Listener, Runnable {
 
     private int getPage(@NotNull Menu menu) {
         if (!(menu instanceof PaginatedMenu paginatedMenu)) { return 0; }
-        return 0;
-        // TODO return paginatedMenu.getCurrentPage();
+        return paginatedMenu.getCurrentPage();
     }
 
 

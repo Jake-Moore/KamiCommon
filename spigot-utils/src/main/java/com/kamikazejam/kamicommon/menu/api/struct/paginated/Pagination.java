@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.menu.api;
+package com.kamikazejam.kamicommon.menu.api.struct.paginated;
 
 import java.util.ArrayList;
 import java.util.Arrays;

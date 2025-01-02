@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.menu.api.clicks.transform.paginated;
 
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.IClickTransform;
-import com.kamikazejam.kamicommon.menu.paginated.PaginatedMenu;
+import com.kamikazejam.kamicommon.menu.PaginatedMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;

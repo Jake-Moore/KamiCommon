@@ -31,9 +31,9 @@ public sealed interface MenuSize permits MenuSizeRows, MenuSizeType {
     int getNumberOfSlots();
 
     /**
-     * Maps a position to a slot number. For example position (0, 0) maps to slot 0 in a traditional inventory.
-     * @param row The row (top to bottom) of the position. (0-indexed)
-     * @param col The column (left to right) of the position. (0-indexed)
+     * Maps a position to a slot number. For example position (1, 1) maps to slot 0 (top-left) in a traditional inventory.
+     * @param row The row (top to bottom) of the position. (1-indexed)
+     * @param col The column (left to right) of the position. (1-indexed)
      * @throws IllegalArgumentException if the given position is outside the bounds of this MenuSize.
      * @throws IllegalStateException if this method is called on an unsupported MenuSize (including some {@link MenuSizeType}s using non-standard {@link org.bukkit.event.inventory.InventoryType} configurations.)
      * @return The bukkit slot number corresponding to the given position.

@@ -11,6 +11,12 @@ import java.util.*;
 public class PointSlot implements IconSlot {
     private final int row;
     private final int col;
+
+    /**
+     * Create a new PointSlot, from a row/col format
+     * @param row The row (1 indexed)
+     * @param col The column (1 indexed)
+     */
     public PointSlot(int row, int col) {
         this.row = row;
         this.col = col;

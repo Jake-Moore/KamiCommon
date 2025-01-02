@@ -174,8 +174,8 @@ public interface IMenuIconsAccess {
     /**
      * Retrieve a {@link MenuIcon} by a point. If the filler MenuIcon has been configured and is enabled,
      * it will be returned if no other MenuIcon is found for the point.
-     * @param row The row of the point (top to bottom) (0-indexed)
-     * @param col The column of the point (left to right) (0-indexed)
+     * @param row The row of the point (top to bottom) (1-indexed)
+     * @param col The column of the point (left to right) (1-indexed)
      */
     @NotNull
     default Optional<MenuIcon> getMenuIcon(int row, int col) {
@@ -191,8 +191,8 @@ public interface IMenuIconsAccess {
     Optional<MenuIcon> getMenuIcon(@NotNull PointSlot slot);
 
     /**
-     * @param row The row of the point (top to bottom) (0-indexed)
-     * @param col The column of the point (left to right) (0-indexed)
+     * @param row The row of the point (top to bottom) (1-indexed)
+     * @param col The column of the point (left to right) (1-indexed)
      */
     default boolean hasMenuIcon(int row, int col) {
         return this.hasMenuIcon(new PointSlot(row, col));

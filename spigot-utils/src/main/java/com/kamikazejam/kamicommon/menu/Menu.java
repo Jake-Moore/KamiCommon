@@ -5,10 +5,9 @@ import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
-import com.kamikazejam.kamicommon.menu.paginated.PaginatedMenu;
-import com.kamikazejam.kamicommon.menu.simple.SimpleMenu;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -25,6 +24,7 @@ public interface Menu {
     @NotNull MenuSize getMenuSize();
     @NotNull Map<String, MenuIcon> getMenuIcons();
     @NotNull IMenuIconsAccess getMenuIconsAccess();
+    @Nullable MenuIcon getFillerIcon();
 
     /**
      * Attempt to reopen the menu for the given player. Depending on the menu type, this may not be possible for all possible
