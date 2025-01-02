@@ -1,16 +1,12 @@
 package com.kamikazejam.kamicommon.item;
 
-import com.cryptomorin.xseries.XEnchantment;
-import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.util.StringUtilP;
-import com.kamikazejam.kamicommon.util.data.Pair;
-import com.kamikazejam.kamicommon.util.data.TriState;
-import com.kamikazejam.kamicommon.util.nms.MaterialFlatteningUtil;
-import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
-import de.tr7zw.changeme.nbtapi.NBT;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -22,7 +18,18 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.util.StringUtilP;
+import com.kamikazejam.kamicommon.util.data.Pair;
+import com.kamikazejam.kamicommon.util.data.TriState;
+import com.kamikazejam.kamicommon.util.nms.MaterialFlatteningUtil;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+
+import de.tr7zw.changeme.nbtapi.NBT;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -50,21 +57,21 @@ public abstract class IBuilder {
 
     public IBuilder() {}
 
-    public IBuilder(ConfigurationSection section) {
+    public IBuilder(@NotNull ConfigurationSection section) {
         loadConfigItem(section, null, true);
     }
-    public IBuilder(ConfigurationSection section, OfflinePlayer offlinePlayer) {
+    public IBuilder(@NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
         loadConfigItem(section, offlinePlayer, true);
     }
-    public IBuilder(@NotNull XMaterial material, ConfigurationSection section) {
+    public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section) {
         this.material = material;
-        this.originalMaterialString = material.name(); // Use provided XMaterial over any config value
+        this.originalMaterialString = material.name();
         this.damage = material.getData();
         loadConfigItem(section, null, false);
     }
-    public IBuilder(@NotNull XMaterial material, ConfigurationSection section, OfflinePlayer offlinePlayer) {
+    public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
         this.material = material;
-        this.originalMaterialString = material.name(); // Use provided XMaterial over any config value
+        this.originalMaterialString = material.name();
         this.damage = material.getData();
         loadConfigItem(section, offlinePlayer, false);
     }
@@ -412,6 +419,16 @@ public abstract class IBuilder {
 
     public IBuilder addGlow() {
         this.addGlow = true;
+        return this;
+    }
+
+    public IBuilder disableGlow() {
+        this.addGlow = false;
+        return this;
+    }
+
+    public IBuilder addGlow(boolean glow) {
+        this.addGlow = glow;
         return this;
     }
 
