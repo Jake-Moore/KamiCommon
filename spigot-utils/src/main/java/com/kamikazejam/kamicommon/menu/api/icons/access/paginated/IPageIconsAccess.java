@@ -13,7 +13,7 @@ import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,38 +25,38 @@ public interface IPageIconsAccess {
     // ------------------------------------------------------------ //
     //                        Icon Management                       //
     // ------------------------------------------------------------ //
-    @CheckReturnValue
-    default @NotNull MenuIcon addPagedIcon(@NotNull IBuilder builder) {
+    @NotNull
+    default MenuIcon addPagedIcon(@NotNull IBuilder builder) {
         return this.addPagedIcon(new MenuIcon(true, builder));
     }
-    @CheckReturnValue
-    default @NotNull MenuIcon addPagedIcon(@NotNull ItemStack stack) {
+    @NotNull
+    default MenuIcon addPagedIcon(@NotNull ItemStack stack) {
         return this.addPagedIcon(new MenuIcon(true, new ItemBuilder(stack)));
     }
 
-    @CheckReturnValue
-    default @NotNull MenuIcon addPagedIcon(@NotNull String id, @NotNull IBuilder builder) {
+    @NotNull
+    default MenuIcon addPagedIcon(@NotNull String id, @NotNull IBuilder builder) {
         return this.addPagedIcon(new MenuIcon(true, builder).setId(id));
     }
-    @CheckReturnValue
-    default @NotNull MenuIcon addPagedIcon(@NotNull String id, @NotNull ItemStack stack) {
+    @NotNull
+    default MenuIcon addPagedIcon(@NotNull String id, @NotNull ItemStack stack) {
         return this.addPagedIcon(new MenuIcon(true, new ItemBuilder(stack)).setId(id));
     }
 
-    @CheckReturnValue
-    default @NotNull MenuIcon addPagedIcon(@NotNull ConfigurationSection section, @NotNull String key, @Nullable Player player) {
+    @NotNull
+    default MenuIcon addPagedIcon(@NotNull ConfigurationSection section, @NotNull String key, @Nullable Player player) {
         return this.addPagedIcon(MenuIconLoader.load(section.getConfigurationSection(key), player));
     }
-    @CheckReturnValue
-    default @NotNull MenuIcon addPagedIcon(@NotNull ConfigurationSection section, @NotNull String key) {
+    @NotNull
+    default MenuIcon addPagedIcon(@NotNull ConfigurationSection section, @NotNull String key) {
         return this.addPagedIcon(MenuIconLoader.load(section.getConfigurationSection(key)));
     }
-    @CheckReturnValue
-    default @NotNull MenuIcon addPagedIcon(@NotNull ConfigurationSection section, @Nullable Player player) {
+    @NotNull
+    default MenuIcon addPagedIcon(@NotNull ConfigurationSection section, @Nullable Player player) {
         return this.addPagedIcon(MenuIconLoader.load(section, player));
     }
-    @CheckReturnValue
-    default @NotNull MenuIcon addPagedIcon(@NotNull ConfigurationSection section) {
+    @NotNull
+    default MenuIcon addPagedIcon(@NotNull ConfigurationSection section) {
         return this.addPagedIcon(MenuIconLoader.load(section));
     }
 

@@ -232,7 +232,7 @@ public sealed class SimpleMenu<T extends SimpleMenu<T>> extends MenuHolder imple
         placeFiller(needsUpdateMap, itemStackMap, forFillerSlots, tick);
     }
 
-    private void placeFiller(Map<String, Boolean> needsUpdateMap, Map<String, ItemStack> itemStackMap, Set<Integer> slots, int tick) {
+    protected void placeFiller(Map<String, Boolean> needsUpdateMap, Map<String, ItemStack> itemStackMap, Set<Integer> slots, int tick) {
         // Skip fill if the filler icon is disabled or not found
         @Nullable MenuIcon icon = this.menuIcons.getOrDefault("filler", null);
         if (icon == null || !icon.isEnabled()) { return; }

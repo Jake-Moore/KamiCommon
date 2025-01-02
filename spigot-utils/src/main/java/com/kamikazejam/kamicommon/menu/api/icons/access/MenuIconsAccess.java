@@ -72,7 +72,7 @@ public class MenuIconsAccess implements IMenuIconsAccess {
     }
 
     // ------------------------------------------------------------ //
-    //                  Icon Management (by position)                  //
+    //                  Icon Management (by position)               //
     // ------------------------------------------------------------ //
     @Override
     public @NotNull Optional<MenuIcon> getMenuIcon(@NotNull PositionSlot slot) {
