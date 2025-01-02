@@ -9,7 +9,7 @@ import com.kamikazejam.kamicommon.menu.api.struct.icons.PrioritizedMenuIconMap;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.PaginatedMenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.Pagination;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.layout.PaginationLayout;
-import com.kamikazejam.kamicommon.menu.api.struct.paginated.title.DefaultPaginatedMenuTitle;
+import com.kamikazejam.kamicommon.menu.api.struct.paginated.title.AbstractPaginatedMenuTitle;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeRows;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeType;
@@ -91,7 +91,7 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
         if (this.pageIndex >= totalPages) { this.pageIndex = totalPages - 1; }
 
         // Evaluate the title
-        DefaultPaginatedMenuTitle menuTitle = getOptions().getTitleFormat();
+        AbstractPaginatedMenuTitle menuTitle = getOptions().getTitleFormat();
         super.setTitle(menuTitle.getMenuTitle(this, (this.pageIndex+1), totalPages));
 
         // Add the Control Icons
@@ -150,7 +150,6 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
 
     @Override
     protected void placeFiller(Map<String, Boolean> needsUpdateMap, Map<String, ItemStack> itemStackMap, Set<Integer> slots, int tick) {
-        // If we don't want the filler to fill empty page slots, remove all page slots from the filler's slots
         if (!this.getOptions().isFillerFillsEmptyPageIconSlots()) {
             slots.removeAll(this.getOptions().getLayout().getSlots(this.getMenuSize()));
         }

@@ -34,4 +34,7 @@ public abstract class AbstractPaginatedMenuTitle {
      * @param maxPages The total number of pages (1-indexed)
      */
     protected abstract @NotNull String getMenuTitleWithPage(@NotNull String baseTitle, int currentPage, int maxPages);
+
+    @NotNull
+    public abstract AbstractPaginatedMenuTitle copy();
 }

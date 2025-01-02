@@ -5,6 +5,7 @@ import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.layout.PaginationLayout;
+import com.kamikazejam.kamicommon.menu.api.struct.paginated.title.AbstractPaginatedMenuTitle;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.title.DefaultPaginatedMenuTitle;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import lombok.Getter;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class PaginatedMenuOptions extends MenuOptions {
     // Both Fields are not final, since they can be extended and then set, so long as they are an instance of the correct class
     private @NotNull PaginationLayout layout;
-    private @NotNull DefaultPaginatedMenuTitle titleFormat = new DefaultPaginatedMenuTitle();
+    private @NotNull AbstractPaginatedMenuTitle titleFormat = new DefaultPaginatedMenuTitle();
     /**
      * Should the filler fill any empty page icon slots? For instance on the last page if we don't have enough icons to fill the page,
      * should we fill the last slots with filler (true) or leave them empty (false)?
@@ -39,6 +40,14 @@ public class PaginatedMenuOptions extends MenuOptions {
     public PaginatedMenuOptions(@NotNull PaginationLayout layout) {
         Preconditions.checkNotNull(layout, "layout cannot be null");
         this.layout = layout;
+    }
+    // Copy Constructor
+    private PaginatedMenuOptions(@NotNull PaginatedMenuOptions copy) {
+        this.layout = copy.layout.copy();
+        this.titleFormat = copy.titleFormat.copy();
+        this.fillerFillsEmptyPageIconSlots = copy.fillerFillsEmptyPageIconSlots;
+        this.nextPageIcon = copy.nextPageIcon == null ? null : copy.nextPageIcon.copy();
+        this.prevPageIcon = copy.prevPageIcon == null ? null : copy.prevPageIcon.copy();
     }
 
     public void setLayout(@NotNull PaginationLayout layout) {
@@ -57,7 +66,7 @@ public class PaginatedMenuOptions extends MenuOptions {
 
     @Override
     public @NotNull PaginatedMenuOptions copy() {
-        PaginatedMenuOptions copy = new PaginatedMenuOptions(this.layout);
+        PaginatedMenuOptions copy = new PaginatedMenuOptions(this);
         this.copyInto(copy);
         return copy;
     }
