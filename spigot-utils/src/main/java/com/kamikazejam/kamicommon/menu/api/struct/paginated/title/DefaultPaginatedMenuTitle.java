@@ -7,4 +7,9 @@ public final class DefaultPaginatedMenuTitle extends AbstractPaginatedMenuTitle 
     protected @NotNull String getMenuTitleWithPage(@NotNull String base, int currentPage, int maxPages) {
         return base + (maxPages > 1 ? " (Page " + (currentPage) + "/" + maxPages + ")" : "");
     }
+
+    @Override
+    public @NotNull AbstractPaginatedMenuTitle copy() {
+        return new DefaultPaginatedMenuTitle();
+    }
 }

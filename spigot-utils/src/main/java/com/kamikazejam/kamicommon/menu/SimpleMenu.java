@@ -88,7 +88,7 @@ public sealed class SimpleMenu<T extends SimpleMenu<T>> extends MenuHolder imple
 
         // Place all icons into the inventory
         // This method will also handle the filler icon placement
-        this.placeIcons(null);
+        placeIcons(null);
 
         // Register this menu for auto-updating
         SpigotUtilsSource.getMenuManager().getAutoUpdateInventories().add(this);
