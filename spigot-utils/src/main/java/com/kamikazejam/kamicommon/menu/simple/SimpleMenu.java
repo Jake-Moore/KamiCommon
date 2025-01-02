@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.menu.simple;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.MenuHolder;
+import com.kamikazejam.kamicommon.menu.api.callbacks.MenuTitleCallback;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.icons.access.MenuIconsAccess;
@@ -56,7 +57,7 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
 
     // Constructor (Deep Copying from Builder)
     private SimpleMenu(@NotNull Builder builder, @NotNull Player player) {
-        super(builder.size.copy(), builder.title);
+        super(builder.size.copy(), Optional.ofNullable(builder.titleCallback).map(t -> t.getTitle(player)).orElse(" "));
         this.player = player;
         builder.menuIcons.forEach((id, icon) -> this.menuIcons.put(id, icon.copy()));
         builder.menuSlots.forEach((slot, data) -> this.menuSlots.put(slot, data.copy()));
@@ -168,7 +169,7 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
             needsUpdateMap.put(id, true);
             // Generate the new ItemStack (one calculation) for this icon
             // We pass the last item, which is used for any stateful MenuIcon modifiers that rely on the previous item state
-            @Nullable ItemStack item = icon.buildItem(tick > 0 && icon.isCycleBuilderForTick(tick), icon.getLastItem());
+            @Nullable ItemStack item = icon.buildItem(tick > 0 && icon.isCycleBuilderForTick(tick), icon.getLastItem(), this.player);
             if (item != null) {
                 itemStackMap.put(id, item);
             }
@@ -243,7 +244,7 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
     public static final class Builder {
         // Menu Details
         private @NotNull MenuSize size;
-        private @Nullable String title;
+        private @Nullable MenuTitleCallback titleCallback;
         // Menu Icons
         private final Map<String, MenuIcon> menuIcons = new ConcurrentHashMap<>();
         @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
@@ -275,7 +276,13 @@ public final class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu {
 
         @NotNull
         public Builder title(@Nullable String title) {
-            this.title = title;
+            this.titleCallback = (p) -> (title != null) ? title : " ";
+            return this;
+        }
+        @NotNull
+        public Builder title(@NotNull MenuTitleCallback titleCallback) {
+            Preconditions.checkNotNull(titleCallback, "Title callback must not be null.");
+            this.titleCallback = titleCallback;
             return this;
         }
 

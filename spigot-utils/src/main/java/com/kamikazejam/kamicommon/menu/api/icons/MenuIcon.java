@@ -138,7 +138,7 @@ public class MenuIcon {
     //        Methods Regarding Auto Updating        //
     // --------------------------------------------- //
     @ApiStatus.Internal
-    public final @Nullable ItemStack buildItem(boolean cycleToNextBuilder, @Nullable ItemStack previousItem) {
+    public final @Nullable ItemStack buildItem(boolean cycleToNextBuilder, @Nullable ItemStack previousItem, @NotNull Player player) {
         final int pre = this.builderIndex;
 
         @Nullable IBuilder next = cycleToNextBuilder ? getNextBuilder() : getCurrentBuilder();
@@ -150,7 +150,7 @@ public class MenuIcon {
         }else if (modifier instanceof StatefulIconModifier updateModifier) {
             // Use the existing ItemStack (if available) so that stateful modifications can reference it
             //  while building the state of the new IBuilder (which is a copy of the initial configuration)
-            updateModifier.modify(next, previousItem);
+            updateModifier.modify(next, previousItem, player);
         }
 
         ItemStack stack = next.build();
