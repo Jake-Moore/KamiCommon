@@ -36,4 +36,18 @@ public final class MenuSizeRows implements MenuSize {
     public int getNumberOfSlots() {
         return rows * 9;
     }
+
+    @Override
+    public int mapPositionToSlot(int row, int col) throws IllegalStateException {
+        return mapPositionToSlot(row, col, rows);
+    }
+
+    // Public for use in MenuSizeType since some InventoryTypes use 9-slot rows.
+    public static int mapPositionToSlot(int row, int col, int rows) throws IllegalArgumentException {
+        if (row < 0 || row >= 9 || col < 0 || col >= rows) {
+            throw new IllegalArgumentException("Cannot map position to slot for row=" + row + ", col=" + col + " in a " + rows + " row menu.");
+        }
+        // Fun maths that maps our 2D position to a slot number, since our inventory in this class is always a 9 by X grid.
+        return col * 9 + row;
+    }
 }

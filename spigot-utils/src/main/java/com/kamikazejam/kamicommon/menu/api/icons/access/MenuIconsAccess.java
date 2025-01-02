@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.menu.api.icons.access;
 
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
+import com.kamikazejam.kamicommon.menu.api.icons.slots.PointSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.SlotData;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,7 @@ public class MenuIconsAccess implements IMenuIconsAccess {
     //                        Icon Management                       //
     // ------------------------------------------------------------ //
     @Override
-    public @NotNull MenuIcon addMenuIcon(@NotNull MenuIcon menuIcon, @Nullable IconSlot iconSlot) {
+    public @NotNull MenuIcon setMenuIcon(@NotNull MenuIcon menuIcon, @Nullable IconSlot iconSlot) {
         this.menuIcons.put(menuIcon.getId(), menuIcon);
         // Add this icon to the slots it corresponds to
         if (iconSlot == null) { return menuIcon; }
@@ -53,16 +54,17 @@ public class MenuIconsAccess implements IMenuIconsAccess {
     // ------------------------------------------------------------ //
     //                   Icon Management (by ID)                    //
     // ------------------------------------------------------------ //
-    @NotNull
-    public Optional<MenuIcon> getMenuIcon(@NotNull String id) {
+    @Override
+    public @NotNull Optional<MenuIcon> getMenuIcon(@NotNull String id) {
         if (!this.menuIcons.containsKey(id)) { return Optional.empty(); }
         return Optional.ofNullable(this.menuIcons.get(id));
     }
+    @Override
     public boolean isValidMenuIconID(@NotNull String id) {
         return this.menuIcons.containsKey(id);
     }
-    @NotNull
-    public Set<String> getMenuIconIDs() {
+    @Override
+    public @NotNull Set<String> getMenuIconIDs() {
         return this.menuIcons.keySet();
     }
 
@@ -72,7 +74,7 @@ public class MenuIconsAccess implements IMenuIconsAccess {
     // ------------------------------------------------------------ //
 
     @Override
-    public @NotNull Optional<MenuIcon> getMenuIconForSlot(int slot) {
+    public @NotNull Optional<MenuIcon> getMenuIcon(int slot) {
         @Nullable SlotData slotData = this.menuSlots.get(slot);
         if (slotData == null) {
             // We don't have a specific MenuIcon for this slot, so see if the filler is going to be used
@@ -85,7 +87,19 @@ public class MenuIconsAccess implements IMenuIconsAccess {
     }
 
     @Override
-    public boolean hasMenuIconForSlot(int slot) {
+    public boolean hasMenuIcon(int slot) {
         return this.menuSlots.containsKey(slot);
+    }
+
+    // ------------------------------------------------------------ //
+    //                  Icon Management (by point)                  //
+    // ------------------------------------------------------------ //
+    @Override
+    public @NotNull Optional<MenuIcon> getMenuIcon(@NotNull PointSlot slot) {
+        return this.getMenuIcon(this.menuSize.mapPositionToSlot(slot.getRow(), slot.getCol()));
+    }
+    @Override
+    public boolean hasMenuIcon(@NotNull PointSlot slot) {
+        return this.hasMenuIcon(this.menuSize.mapPositionToSlot(slot.getRow(), slot.getCol()));
     }
 }

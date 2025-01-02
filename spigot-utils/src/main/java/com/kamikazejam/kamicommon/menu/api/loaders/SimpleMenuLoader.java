@@ -44,7 +44,7 @@ public class SimpleMenuLoader {
                 ConfigurationSection iconSection = icons.getConfigurationSection(key);
                 MenuIcon icon = MenuIconLoader.load(iconSection).setId(key);
                 IconSlot slot = IconSlotLoader.load(iconSection);
-                access.addMenuIcon(icon, slot);
+                access.setMenuIcon(icon, slot);
             });
         }
 
