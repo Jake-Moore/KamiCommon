@@ -8,6 +8,7 @@ import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StatefulIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StaticIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
+import com.kamikazejam.kamicommon.menu.api.icons.slots.PointSlot;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
 import com.kamikazejam.kamicommon.menu.api.loaders.IconSlotLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
@@ -20,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.Set;
 
-// TODO ADD METHODS RETRIEVING ICONS BY SLOT
-// TODO ADD METHODS TO BOTH SET AND RETRIEVE ICONS BY POINT
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface IMenuIconsAccess {
     // ------------------------------------------------------------ //
@@ -29,61 +28,64 @@ public interface IMenuIconsAccess {
     // ------------------------------------------------------------ //
 
     @NotNull
-    default MenuIcon addMenuIcon(@NotNull IBuilder builder, int slot) {
-        return this.addMenuIcon(new MenuIcon(true, builder), new StaticIconSlot(slot));
+    default MenuIcon setMenuIcon(@NotNull IBuilder builder, int slot) {
+        return this.setMenuIcon(new MenuIcon(true, builder), new StaticIconSlot(slot));
     }
     @NotNull
-    default MenuIcon addMenuIcon(@NotNull IBuilder builder, @NotNull IconSlot slot) {
-        return this.addMenuIcon(new MenuIcon(true, builder), slot);
+    default MenuIcon setMenuIcon(@NotNull IBuilder builder, @NotNull IconSlot slot) {
+        return this.setMenuIcon(new MenuIcon(true, builder), slot);
     }
     @NotNull
-    default MenuIcon addMenuIcon(@NotNull ItemStack stack, int slot) {
-        return this.addMenuIcon(new MenuIcon(true, new ItemBuilder(stack)), new StaticIconSlot(slot));
+    default MenuIcon setMenuIcon(@NotNull ItemStack stack, int slot) {
+        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)), new StaticIconSlot(slot));
     }
     @NotNull
-    default MenuIcon addMenuIcon(@NotNull ItemStack stack, @NotNull IconSlot slot) {
-        return this.addMenuIcon(new MenuIcon(true, new ItemBuilder(stack)), slot);
-    }
-
-    @NotNull
-    default MenuIcon addMenuIcon(@NotNull String id, @NotNull IBuilder builder, int slot) {
-        return this.addMenuIcon(new MenuIcon(true, builder).setId(id), new StaticIconSlot(slot));
-    }
-    @NotNull
-    default MenuIcon addMenuIcon(@NotNull String id, @NotNull ItemStack stack, int slot) {
-        return this.addMenuIcon(new MenuIcon(true, new ItemBuilder(stack)).setId(id), new StaticIconSlot(slot));
-    }
-    @NotNull
-    default MenuIcon addMenuIcon(@NotNull String id, @NotNull IBuilder builder, @NotNull IconSlot slot) {
-        return this.addMenuIcon(new MenuIcon(true, builder).setId(id), slot);
-    }
-    @NotNull
-    default MenuIcon addMenuIcon(@NotNull String id, @NotNull ItemStack stack, @NotNull IconSlot slot) {
-        return this.addMenuIcon(new MenuIcon(true, new ItemBuilder(stack)).setId(id), slot);
+    default MenuIcon setMenuIcon(@NotNull ItemStack stack, @NotNull IconSlot slot) {
+        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)), slot);
     }
 
     @NotNull
-    default MenuIcon addMenuIcon(@NotNull ConfigurationSection section, @NotNull String key, @Nullable Player player) {
+    default MenuIcon setMenuIcon(@NotNull String id, @NotNull IBuilder builder, int slot) {
+        return this.setMenuIcon(new MenuIcon(true, builder).setId(id), new StaticIconSlot(slot));
+    }
+    @NotNull
+    default MenuIcon setMenuIcon(@NotNull String id, @NotNull ItemStack stack, int slot) {
+        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)).setId(id), new StaticIconSlot(slot));
+    }
+    @NotNull
+    default MenuIcon setMenuIcon(@NotNull String id, @NotNull IBuilder builder, @NotNull IconSlot slot) {
+        return this.setMenuIcon(new MenuIcon(true, builder).setId(id), slot);
+    }
+    @NotNull
+    default MenuIcon setMenuIcon(@NotNull String id, @NotNull ItemStack stack, @NotNull IconSlot slot) {
+        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)).setId(id), slot);
+    }
+
+    @NotNull
+    default MenuIcon setMenuIcon(@NotNull ConfigurationSection section, @NotNull String key, @Nullable Player player) {
         ConfigurationSection iconSection = section.getConfigurationSection(key);
-        return this.addMenuIcon(section, player);
+        return this.setMenuIcon(section, player);
     }
     @NotNull
-    default MenuIcon addMenuIcon(@NotNull ConfigurationSection section, @NotNull String key) {
-        return this.addMenuIcon(section, key, null);
+    default MenuIcon setMenuIcon(@NotNull ConfigurationSection section, @NotNull String key) {
+        return this.setMenuIcon(section, key, null);
     }
     @NotNull
-    default MenuIcon addMenuIcon(@NotNull ConfigurationSection section, @Nullable Player player) {
+    default MenuIcon setMenuIcon(@NotNull ConfigurationSection section, @Nullable Player player) {
         MenuIcon icon = MenuIconLoader.load(section, player);
         IconSlot slot = IconSlotLoader.load(section);
-        return this.addMenuIcon(icon, slot);
+        return this.setMenuIcon(icon, slot);
     }
     @NotNull
-    default MenuIcon addMenuIcon(@NotNull ConfigurationSection section) {
-        return this.addMenuIcon(section, (Player) null);
+    default MenuIcon setMenuIcon(@NotNull ConfigurationSection section) {
+        return this.setMenuIcon(section, (Player) null);
     }
 
+    /**
+     * @return The same {@link MenuIcon} for chaining.
+     */
     @NotNull
-    MenuIcon addMenuIcon(@NotNull MenuIcon menuIcon, @Nullable IconSlot slot);
+    MenuIcon setMenuIcon(@NotNull MenuIcon menuIcon, @Nullable IconSlot slot);
 
     @Nullable
     MenuIcon removeMenuIcon(@NotNull String id);
@@ -136,8 +138,6 @@ public interface IMenuIconsAccess {
     @NotNull
     Set<String> getMenuIconIDs();
 
-
-
     // ------------------------------------------------------------ //
     //                  Icon Management (by slot)                   //
     // ------------------------------------------------------------ //
@@ -146,38 +146,61 @@ public interface IMenuIconsAccess {
      * it will be returned if no other MenuIcon is found for the slot.
      */
     @NotNull
-    Optional<MenuIcon> getMenuIconForSlot(int slot);
+    Optional<MenuIcon> getMenuIcon(int slot);
 
+    boolean hasMenuIcon(int slot);
+
+
+    // ------------------------------------------------------------ //
+    //                  Icon Management (by point)                  //
+    // ------------------------------------------------------------ //
     @NotNull
-    default IMenuIconsAccess setMenuClickForSlot(int slot, @NotNull MenuClick click) {
-        this.getMenuIconForSlot(slot).ifPresent(icon -> icon.setMenuClick(click));
-        return this;
+    default MenuIcon setMenuIcon(@NotNull IBuilder builder, int row, int col) {
+        return this.setMenuIcon(new MenuIcon(true, builder), new PointSlot(row, col));
     }
     @NotNull
-    default IMenuIconsAccess setMenuClickForSlot(int slot, @NotNull MenuClickEvent click) {
-        this.getMenuIconForSlot(slot).ifPresent(icon -> icon.setMenuClick(click));
-        return this;
+    default MenuIcon setMenuIcon(@NotNull ItemStack stack, int row, int col) {
+        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)), new PointSlot(row, col));
     }
     @NotNull
-    default IMenuIconsAccess setModifierForSlot(int slot, @NotNull StaticIconModifier modifier) {
-        this.getMenuIconForSlot(slot).ifPresent(icon -> icon.setModifier(modifier));
-        return this;
+    default MenuIcon setMenuIcon(@NotNull String id, @NotNull IBuilder builder, int row, int col) {
+        return this.setMenuIcon(new MenuIcon(true, builder).setId(id), new PointSlot(row, col));
     }
     @NotNull
-    default IMenuIconsAccess setModifierForSlot(int slot, @NotNull StatefulIconModifier modifier) {
-        this.getMenuIconForSlot(slot).ifPresent(icon -> icon.setModifier(modifier));
-        return this;
+    default MenuIcon setMenuIcon(@NotNull String id, @NotNull ItemStack stack, int row, int col) {
+        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)).setId(id), new PointSlot(row, col));
     }
+
+    /**
+     * Retrieve a {@link MenuIcon} by a point. If the filler MenuIcon has been configured and is enabled,
+     * it will be returned if no other MenuIcon is found for the point.
+     * @param row The row of the point (top to bottom) (0-indexed)
+     * @param col The column of the point (left to right) (0-indexed)
+     */
     @NotNull
-    default IMenuIconsAccess setAutoUpdateForSlot(int slot, @NotNull StaticIconModifier modifier, int tickInterval) {
-        this.getMenuIconForSlot(slot).ifPresent(icon -> icon.setAutoUpdate(modifier, tickInterval));
-        return this;
+    default Optional<MenuIcon> getMenuIcon(int row, int col) {
+        return this.getMenuIcon(new PointSlot(row, col));
     }
+
+    /**
+     * Retrieve a {@link MenuIcon} by a point. If the filler MenuIcon has been configured and is enabled,
+     * it will be returned if no other MenuIcon is found for the point.
+     * @param slot The point slot
+     */
     @NotNull
-    default IMenuIconsAccess setAutoUpdateForSlot(int slot, @NotNull StatefulIconModifier modifier, int tickInterval) {
-        this.getMenuIconForSlot(slot).ifPresent(icon -> icon.setAutoUpdate(modifier, tickInterval));
-        return this;
+    Optional<MenuIcon> getMenuIcon(@NotNull PointSlot slot);
+
+    /**
+     * @param row The row of the point (top to bottom) (0-indexed)
+     * @param col The column of the point (left to right) (0-indexed)
+     */
+    default boolean hasMenuIcon(int row, int col) {
+        return this.hasMenuIcon(new PointSlot(row, col));
     }
-    boolean hasMenuIconForSlot(int slot);
+
+    /**
+     * @param slot The point slot
+     */
+    boolean hasMenuIcon(@NotNull PointSlot slot);
 
 }

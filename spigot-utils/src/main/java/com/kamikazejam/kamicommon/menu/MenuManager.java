@@ -73,7 +73,7 @@ public final class MenuManager implements Listener, Runnable {
 
         // Fetch the MenuIcon that should be in our slot
         IMenuIconsAccess iconsAccess = menu.getMenuIconsAccess();
-        @Nullable MenuIcon iconForSlot = iconsAccess.getMenuIconForSlot(e.getSlot()).orElse(null);
+        @Nullable MenuIcon iconForSlot = iconsAccess.getMenuIcon(e.getSlot()).orElse(null);
         @Nullable IClickTransform click = iconForSlot != null ? iconForSlot.getTransform() : null;
 
         // If there is no icon in the slot (or no click), we don't need to do anything

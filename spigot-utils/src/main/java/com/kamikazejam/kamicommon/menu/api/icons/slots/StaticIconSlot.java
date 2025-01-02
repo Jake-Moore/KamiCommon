@@ -16,6 +16,12 @@ public class StaticIconSlot implements IconSlot {
     public StaticIconSlot(int slot) {
         this.slots = Set.of(slot);
     }
+    public StaticIconSlot(int... slot) {
+        this.slots = new HashSet<>();
+        for (int i : slot) {
+            this.slots.add(i);
+        }
+    }
     public StaticIconSlot(@NotNull Integer... slots) {
         this(Arrays.asList(slots));
     }
