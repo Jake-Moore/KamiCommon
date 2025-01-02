@@ -1,8 +1,11 @@
-package com.kamikazejam.kamicommon.menu.api.loaders;
+package com.kamikazejam.kamicommon.menu.api.loaders.menu;
 
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.SimpleMenu;
+import com.kamikazejam.kamicommon.menu.api.loaders.IconSlotLoader;
+import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
+import com.kamikazejam.kamicommon.menu.api.loaders.MenuSizeLoader;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Utility class for loading a {@link SimpleMenu.Builder} from a {@link ConfigurationSection}.
  */
-@SuppressWarnings("unused")
-
-// TODO CREATE LOADER FOR PaginatedMenu
+@SuppressWarnings({"unused", "DuplicatedCode"})
 public class SimpleMenuLoader {
     /**
      * Loads a {@link SimpleMenu.Builder} from a {@link ConfigurationSection} with the given key.<br>
