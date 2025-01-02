@@ -6,8 +6,8 @@ import com.kamikazejam.kamicommon.menu.api.clicks.transform.IClickTransform;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.paginated.IPaginatedClickTransform;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.ISimpleClickTransform;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
+import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.UpdatingMenu;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.paginated.PaginatedMenu;
 import com.kamikazejam.kamicommon.menu.simple.SimpleMenu;
@@ -51,43 +51,9 @@ public final class MenuManager implements Listener, Runnable {
         if (!(e.getWhoClicked() instanceof Player player)) { return; }
         if (!(e.getInventory().getHolder() instanceof Menu menu)) { return; }
 
-        MenuEvents menuEvents = menu.getEvents();
-
-        // Special Handling for clicks in the player inventory
-        if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER) {
-            // It is a click in the player inventory, so let's enforce the player inv rules
-            if (menu.getOptions().isCancelPlayerClickEvent()) {
-                e.setCancelled(true);
-            }
-
-            // Get the player inventory slot that was clicked. This should be in range [0, 35]
-            // Where 0-8 are the hotbar slots from left to right.
-            // Then slot 9 starts at the top left of the player inventory, and goes right and down to 35.
-            int slot = e.getSlot();
-
-            // test the predicates before the player click handlers
-            for (Predicate<InventoryClickEvent> predicate : menuEvents.getPlayerInvClickPredicates()) {
-                if (!predicate.test(e)) {
-                    return;
-                }
-            }
-
-            // Assume standard 36 slot core inventory container
-            // Note: they have an inventory open, they should not be able to click
-            //  armor or offhand slots, if we receive that event, we should ignore it
-            if (slot < 0 || slot > 35) { return; }
-
-            // If we have a generic slot listener -> call it
-            menuEvents.getPlayerInvClicks().forEach((click) -> click.onClick(player, e.getClick(), slot));
-
-            // If we have a specific-slot listener -> call it (lower priority)
-            menuEvents.getPlayerSlotClicks().getOrDefault(slot, new ArrayList<>()).forEach(
-                    (click) -> click.onClick(player, e.getClick(), slot)
-            );
-
-            // Return (we handled the player click, and are done)
-            return;
-        }
+        // Handle player inventory clicks
+        // If this method returns true, it means it has handled the event and we should not do anything else
+        if (handlePlayerInventoryClick(e, menu, player)) { return; }
 
         // It wasn't a click in the player inventory, so let's assume it's in the menu inventory and enforce the menu rules
         if (menu.getOptions().isCancelClickEvent()) {
@@ -95,6 +61,7 @@ public final class MenuManager implements Listener, Runnable {
         }
 
         // test the predicates before the icon click handlers
+        MenuEvents menuEvents = menu.getEvents();
         for (Predicate<InventoryClickEvent> predicate : menuEvents.getClickPredicates()) {
             if (!predicate.test(e)) {
                 return;
@@ -104,31 +71,25 @@ public final class MenuManager implements Listener, Runnable {
         ItemStack current = e.getCurrentItem();
         if (current == null) { return; }
 
-        for (MenuIcon menuIcon : menu.getMenuIcons().values()) {
-            if (menuIcon == null) { continue; }
+        // Fetch the MenuIcon that should be in our slot
+        IMenuIconsAccess iconsAccess = menu.getMenuIconsAccess();
+        @Nullable MenuIcon iconForSlot = iconsAccess.getMenuIconForSlot(e.getSlot()).orElse(null);
+        @Nullable IClickTransform click = iconForSlot != null ? iconForSlot.getTransform() : null;
 
-            IClickTransform click = menuIcon.getTransform();
-            if (click == null) { continue; }
+        // If there is no icon in the slot (or no click), we don't need to do anything
+        if (iconForSlot == null || click == null) { return; }
 
-            // Skip the icon if the slot doesn't align
-            @Nullable IconSlot iconSlot = menuIcon.getIconSlot();
-            if ((iconSlot == null || !iconSlot.get(menu).contains(e.getSlot()))) { continue; }
+        // Sanity check - ensure the ItemStack in the slot matches the icon
+        if (!ItemUtil.isSimplySimilar(current, iconForSlot.getLastItem())) { return; }
 
-            // We use the cached copy from when it was added to the inventory
-            // Since it may change through its lifecycle
-            if (!ItemUtil.isSimplySimilar(current, menuIcon.getLastItem())) { continue; }
+        // Play the click sound
+        iconForSlot.playClickSound(player);
 
-            // Play the click sound
-            menuIcon.playClickSound(player);
-
-            //      Perform the Click
-            // Handle SimpleMenu Clicks
-            if (click instanceof ISimpleClickTransform simpleClickTransform) {
-                simpleClickTransform.process(player, e);
-            }else if (click instanceof IPaginatedClickTransform paginatedClickTransform) {
-                paginatedClickTransform.process(player, e, getPage(menu));
-            }
-            return;
+        // Perform the Click
+        if (click instanceof ISimpleClickTransform simpleClickTransform) {
+            simpleClickTransform.process(player, e);
+        }else if (click instanceof IPaginatedClickTransform paginatedClickTransform) {
+            paginatedClickTransform.process(player, e, getPage(menu));
         }
     }
 
@@ -150,8 +111,9 @@ public final class MenuManager implements Listener, Runnable {
         menuEvents.getCloseCallbacks().forEach(callback -> callback.onClose(p, e));
 
         // Trigger the Post-Close Consumers (1-tick later)
+        final Menu finalMenu = menu;
         Bukkit.getScheduler().runTaskLater(SpigotUtilsSource.get(), () ->
-                        menuEvents.getPostCloseCallbacks().forEach(callback -> callback.onPostClose(p, menu))
+                menuEvents.getPostCloseCallbacks().forEach(callback -> callback.onPostClose(p, finalMenu))
         , 1L);
     }
 
@@ -211,5 +173,49 @@ public final class MenuManager implements Listener, Runnable {
                 p.updateInventory();
             }
         });
+    }
+
+    /**
+     * @return true IFF the click was a player inventory click and it was handled by this method
+     */
+    private boolean handlePlayerInventoryClick(@NotNull InventoryClickEvent e, @NotNull Menu menu, @NotNull Player player) {
+        final MenuEvents menuEvents = menu.getEvents();
+
+        if (e.getClickedInventory() == null || e.getClickedInventory().getType() != InventoryType.PLAYER) {
+            return false;
+        }
+
+        // It is a click in the player inventory, so let's enforce the player inv rules
+        if (menu.getOptions().isCancelPlayerClickEvent()) {
+            e.setCancelled(true);
+        }
+
+        // Get the player inventory slot that was clicked. This should be in range [0, 35]
+        // Where 0-8 are the hotbar slots from left to right.
+        // Then slot 9 starts at the top left of the player inventory, and goes right and down to 35.
+        int slot = e.getSlot();
+
+        // test the predicates before the player click handlers
+        for (Predicate<InventoryClickEvent> predicate : menuEvents.getPlayerInvClickPredicates()) {
+            if (!predicate.test(e)) {
+                return true;
+            }
+        }
+
+        // Assume standard 36 slot core inventory container
+        // Note: they have an inventory open, they should not be able to click
+        //  armor or offhand slots, if we receive that event, we should ignore it
+        if (slot < 0 || slot > 35) { return true; }
+
+        // If we have a generic slot listener -> call it
+        menuEvents.getPlayerInvClicks().forEach((click) -> click.onClick(player, e.getClick(), slot));
+
+        // If we have a specific-slot listener -> call it (lower priority)
+        menuEvents.getPlayerSlotClicks().getOrDefault(slot, new ArrayList<>()).forEach(
+                (click) -> click.onClick(player, e.getClick(), slot)
+        );
+
+        // Return (we handled the player click, and are done)
+        return true;
     }
 }

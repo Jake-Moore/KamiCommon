@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
-import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClickEvent;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClickPage;
@@ -12,11 +11,9 @@ import com.kamikazejam.kamicommon.menu.api.clicks.transform.IClickTransform;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.paginated.PaginatedMenuClickPageTransform;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.SimpleMenuClickEventTransform;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.SimpleMenuClickTransform;
+import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.MenuIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StatefulIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StaticIconModifier;
-import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.MenuIconModifier;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 /**
- * Represents a menu icon that can have several builders and slots<br>
- * This class also holds the click data for the icon, if one is set
+ * Represents a menu icon that can contains the {@link ItemStack} data as {@link IBuilder}<br>
+ * This class also holds the click data for the icon, and the auto updating logic for the icon
  */
 @Getter @Setter
 @Accessors(chain = true)
@@ -50,8 +47,6 @@ public class MenuIcon {
     // Allow multiple possible builders, which can be cycled through
     private final @NotNull List<IBuilder> iBuilders = new ArrayList<>();
     private int builderRotateTicks = 20; // Default to 1 second
-    // Allow multiple possible slots
-    private @Nullable IconSlot iconSlot;
 
     // Icon Click Sound Fields
     private @NotNull XSound clickSound = XSound.UI_BUTTON_CLICK;
@@ -62,85 +57,25 @@ public class MenuIcon {
     //                  Constructors                 //
     // --------------------------------------------- //
 
-    public MenuIcon(@NotNull IBuilder builder, int slot) {
-        this(true, builder, slot);
+    public MenuIcon(@NotNull IBuilder builder) {
+        this(true, builder);
     }
-    public MenuIcon(boolean enabled, @NotNull IBuilder builder, int slot) {
+    public MenuIcon(boolean enabled, @NotNull IBuilder builder) {
         this.enabled = enabled;
         this.iBuilders.add(builder);
-        this.iconSlot = new StaticIconSlot(slot);
     }
-    public MenuIcon(@NotNull IBuilder builder, @NotNull List<Integer> slots) {
-        this(true, builder, slots);
-    }
-    public MenuIcon(boolean enabled, @NotNull IBuilder builder, @NotNull List<Integer> slots) {
-        this.enabled = enabled;
-        this.iBuilders.add(builder);
-        this.iconSlot = new StaticIconSlot(slots);
-    }
-    public MenuIcon(@NotNull IBuilder builder, @NotNull Integer... slots) {
-        this(true, builder, slots);
-    }
-    public MenuIcon(boolean enabled, @NotNull IBuilder builder, @NotNull Integer... slots) {
-        this(enabled, builder, Arrays.asList(slots));
-    }
-    public MenuIcon(int slot, @NotNull IBuilder... builders) {
-        this(true, slot, builders);
-    }
-    public MenuIcon(boolean enabled, int slot, @NotNull IBuilder... builders) {
+    public MenuIcon(boolean enabled, @NotNull IBuilder... builders) {
         this.enabled = enabled;
         this.iBuilders.addAll(Arrays.asList(builders));
-        this.iconSlot = new StaticIconSlot(slot);
     }
-    public MenuIcon(@NotNull List<Integer> slots, @NotNull IBuilder... builders) {
-        this(true, slots, builders);
-    }
-    public MenuIcon(boolean enabled, @NotNull List<Integer> slots, @NotNull IBuilder... builders) {
+    public MenuIcon(boolean enabled, @NotNull Collection<IBuilder> builders) {
         this.enabled = enabled;
-        this.iBuilders.addAll(Arrays.asList(builders));
-        this.iconSlot = new StaticIconSlot(slots);
-    }
-    public MenuIcon(@Nullable IconSlot slot, @NotNull IBuilder... builders) {
-        this(true, slot, builders);
-    }
-    public MenuIcon(boolean enabled, @Nullable IconSlot slot, @NotNull IBuilder... builders) {
-        this.enabled = enabled;
-        this.iconSlot = slot;
-        this.iBuilders.addAll(Arrays.asList(builders));
-    }
-    public MenuIcon(int slot, @NotNull Collection<IBuilder> builders) {
-        this(true, slot, builders);
-    }
-    public MenuIcon(boolean enabled, int slot, @NotNull Collection<IBuilder> builders) {
-        this.enabled = enabled;
-        this.iBuilders.addAll(builders);
-        this.iconSlot = new StaticIconSlot(slot);
-    }
-    public MenuIcon(@NotNull List<Integer> slots, @NotNull Collection<IBuilder> builders) {
-        this(true, slots, builders);
-    }
-    public MenuIcon(boolean enabled, @NotNull List<Integer> slots, @NotNull Collection<IBuilder> builders) {
-        this.enabled = enabled;
-        this.iBuilders.addAll(builders);
-        this.iconSlot = new StaticIconSlot(slots);
-    }
-    public MenuIcon(@Nullable IconSlot slot, @NotNull Collection<IBuilder> builders) {
-        this(true, slot, builders);
-    }
-    public MenuIcon(boolean enabled, @Nullable IconSlot slot, @NotNull Collection<IBuilder> builders) {
-        this.enabled = enabled;
-        this.iconSlot = slot;
         this.iBuilders.addAll(builders);
     }
 
     @NotNull
     public MenuIcon copy() {
-        MenuIcon copy;
-        if (this.iconSlot != null) {
-            copy = new MenuIcon(this.enabled, this.iconSlot.copy(), this.iBuilders);
-        }else {
-            copy = new MenuIcon(this.enabled, (IconSlot) null, this.iBuilders);
-        }
+        MenuIcon copy = new MenuIcon(this.enabled, this.iBuilders);
         copy.id = this.id;
         copy.lastItem = this.lastItem;
         copy.transform = this.transform;
@@ -162,12 +97,6 @@ public class MenuIcon {
     public @NotNull MenuIcon setId(@NotNull String id) {
         this.id = id;
         return this;
-    }
-
-    @NotNull
-    public Set<Integer> getSlots(@NotNull Menu menu) {
-        if (iconSlot == null) { return Collections.emptySet(); }
-        return iconSlot.get(menu);
     }
 
     public @NotNull MenuIcon setAutoUpdate(@NotNull StaticIconModifier modifier, int tickInterval) {
@@ -224,7 +153,9 @@ public class MenuIcon {
             updateModifier.modify(next, previousItem);
         }
 
-        return next.build();
+        ItemStack stack = next.build();
+        if (stack != null && stack.getAmount() > 64) { stack.setAmount(64); }
+        return stack;
     }
     @ApiStatus.Internal
     public final boolean isCycleBuilderForTick(int tick) {
@@ -277,7 +208,6 @@ public class MenuIcon {
         if (!(obj instanceof MenuIcon menuIcon)) { return false; }
         return enabled == menuIcon.enabled
                 && iBuilders.equals(menuIcon.iBuilders)
-                && Objects.equals(iconSlot, menuIcon.iconSlot)
                 && Objects.equals(transform, menuIcon.transform)
                 && Objects.equals(updateInterval, menuIcon.updateInterval)
                 && Objects.equals(modifier, menuIcon.modifier);
@@ -285,12 +215,12 @@ public class MenuIcon {
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabled, iBuilders, iconSlot, transform, updateInterval, modifier);
+        return Objects.hash(enabled, iBuilders, transform, updateInterval, modifier);
     }
 
 
     public static MenuIcon getDefaultFillerIcon() {
-        return new MenuIcon(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" "), -1).setId("filler");
+        return new MenuIcon(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" ")).setId("filler");
     }
 }
 

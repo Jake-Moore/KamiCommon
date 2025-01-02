@@ -43,4 +43,9 @@ public final class MenuSizeType implements MenuSize {
     public @NotNull MenuSize copy() {
         return new MenuSizeType(type);
     }
+
+    @Override
+    public int getNumberOfSlots() {
+        return type.getDefaultSize();
+    }
 }

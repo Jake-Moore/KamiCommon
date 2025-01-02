@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.menu.api.icons.slots;
 
-import com.kamikazejam.kamicommon.menu.Menu;
+import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ public class StaticIconSlot implements IconSlot {
     }
 
     @Override
-    public Set<Integer> get(@NotNull Menu menu) {
+    public Set<Integer> get(@NotNull MenuSize size) {
         return slots;
     }
 
