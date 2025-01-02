@@ -58,7 +58,7 @@ public class MenuOptions {
         this.excludedFillSlots = new HashSet<>();
     }
     // Copy Constructor
-    public MenuOptions(@NotNull MenuOptions copy) {
+    private MenuOptions(@NotNull MenuOptions copy) {
         this.allowItemPickup = copy.allowItemPickup;
         this.allowItemDrop = copy.allowItemDrop;
         this.cancelClickEvent = copy.cancelClickEvent;

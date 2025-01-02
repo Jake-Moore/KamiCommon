@@ -16,6 +16,10 @@ public abstract class AbstractPaginatedMenuTitle {
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     private transient @Nullable String cachedTitle = null;
 
+    /**
+     * @param currentPage The current page (1-indexed)
+     * @param maxPages The total number of pages (1-indexed)
+     */
     public final @NotNull String getMenuTitle(@NotNull MenuHolder menu, int currentPage, int maxPages) {
         String base = (cachedTitle == null) ? cachedTitle = menu.getTitle() : cachedTitle;
         if (!isAppendTitleWithPage()) {
@@ -25,5 +29,9 @@ public abstract class AbstractPaginatedMenuTitle {
         return getMenuTitleWithPage(base, currentPage, maxPages);
     }
 
+    /**
+     * @param currentPage The current page (1-indexed)
+     * @param maxPages The total number of pages (1-indexed)
+     */
     protected abstract @NotNull String getMenuTitleWithPage(@NotNull String baseTitle, int currentPage, int maxPages);
 }

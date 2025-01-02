@@ -20,7 +20,7 @@ public class PrioritizedMenuIcon {
         this.priority = priority;
     }
     // Copy Constructor
-    public PrioritizedMenuIcon(@NotNull PrioritizedMenuIcon icon) {
+    private PrioritizedMenuIcon(@NotNull PrioritizedMenuIcon icon) {
         this.icon = icon.getIcon().copy();
         this.slot = (icon.getSlot() == null) ? null : icon.getSlot().copy();
         this.priority = icon.getPriority();

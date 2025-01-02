@@ -146,6 +146,9 @@ public final class MenuManager implements Listener, Runnable {
         }
     }
 
+    /**
+     * @return The current page (0-indexed)
+     */
     private int getPage(@NotNull Menu menu) {
         if (!(menu instanceof PaginatedMenu paginatedMenu)) { return 0; }
         return paginatedMenu.getCurrentPage();

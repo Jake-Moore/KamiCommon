@@ -1,10 +1,20 @@
 package com.kamikazejam.kamicommon.menu;
 
+import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
+import com.kamikazejam.kamicommon.menu.api.icons.access.paginated.IPageIconsAccess;
+import com.kamikazejam.kamicommon.menu.api.icons.access.paginated.PageIconsAccess;
+import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.icons.PrioritizedMenuIconMap;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.PaginatedMenuOptions;
+import com.kamikazejam.kamicommon.menu.api.struct.paginated.Pagination;
+import com.kamikazejam.kamicommon.menu.api.struct.paginated.layout.PaginationLayout;
+import com.kamikazejam.kamicommon.menu.api.struct.paginated.title.DefaultPaginatedMenuTitle;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
+import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeRows;
+import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeType;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.bukkit.entity.Player;
@@ -13,27 +23,37 @@ import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
  * This Menu class focuses on providing an easy way of creating a menu with multiple pages. This menu allows you to
  * provide all the items you want to display, and it will automatically paginate them for you.<br>
- * Pagination configuration is available (TODO DOCS)
+ * Pagination configuration is available by creating your own {@link PaginationLayout} or by modifying a pre-built one.
  */
 @Getter
 @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public final class PaginatedMenu extends SimpleMenu {
+public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
+    private static final String nextIconId = "paginated_menu_next";
+    private static final String prevIconId = "paginated_menu_prev";
+
     // Fields
     //  Uses priorities for ordering (higher = earlier)
     //  Map<IconId, IconWrappedWithPriority>
-    private final PrioritizedMenuIconMap pagedIcons = new PrioritizedMenuIconMap();
-    private int currentPage;
+    private final @NotNull PrioritizedMenuIconMap pagedIcons = new PrioritizedMenuIconMap();
+    @Getter(AccessLevel.NONE)
+    private int pageIndex; // 0-indexed
 
     // Internal Data
 
     // Constructor (Deep Copying from Builder)
     PaginatedMenu(@NotNull Builder<?> builder, @NotNull Player player) {
         super(builder, player);
-        this.currentPage = 0;
+        builder.pagedIcons.values().forEach((icon) -> this.pagedIcons.add(icon.copy()));
+        this.pageIndex = 0;
     }
 
     @Override
@@ -43,16 +63,96 @@ public final class PaginatedMenu extends SimpleMenu {
 
     @Override
     public @Nullable InventoryView open() {
+        return this.open(0);
+    }
 
+    public @Nullable InventoryView open(int pageIndex) {
+        this.pageIndex = pageIndex;
+        final MenuSize size = this.getMenuSize();
+        final PaginationLayout layout = this.getOptions().getLayout();
 
-        // TODO
-        // DefaultPaginatedMenuTitle menuTitle = getOptions().getTitleFormat();
-        // String title = menuTitle.getMenuTitle(this, currentPage, MAX_PAGES??);
+        // Fetch the slots per page
+        Collection<Integer> pageSlots = layout.getSlots(size);
+        if (pageSlots.isEmpty()) {
+            throw new IllegalStateException("[PaginatedMenu] No slots were found for the given layout and size. Cannot open menu!");
+        }
+        pageSlots.removeIf(s -> s < 0 || s >= size.getNumberOfSlots()); // Remove invalid slots
 
+        // We need ascending order because the priority is calculated based on the order of insertion
+        // So the lower the priority, the earlier it was inserted, and the earlier we want it to be displayed
+        List<MenuIcon> icons = pagedIcons.getAllByAscendingPriority(true);
+        Pagination<MenuIcon> pagination = new Pagination<>(pageSlots.size(), icons); // use pageSlots as per-page size
+
+        // Evaluate the title
+        int totalPages = pagination.totalPages(); // 1-indexed
+        DefaultPaginatedMenuTitle menuTitle = getOptions().getTitleFormat();
+        String title = menuTitle.getMenuTitle(this, (this.pageIndex +1), totalPages);
+
+        // Add the Control Icons
+        modifyIcons((access) -> {
+            access.removeMenuIcon(nextIconId);
+            access.removeMenuIcon(prevIconId);
+            // Add the Next Icon
+            @Nullable MenuIcon nextIcon = this.getOptions().getNextPageIcon();
+            if ((this.pageIndex + 1 < totalPages) && nextIcon != null && nextIcon.isEnabled()) {
+                access.setMenuIcon(nextIcon.setId(nextIconId), layout.getNextIconSlot(size));
+                access.setMenuClick(nextIconId, (p, c) -> {
+                    if (this.pageIndex + 1 < totalPages) {
+                        this.pageIndex++;
+                    }
+                    this.getEvents().getIgnoreNextInventoryCloseEvent().set(true);
+                    this.open(this.pageIndex);
+                });
+            }
+            // Add the Prev Icon
+            @Nullable MenuIcon prevIcon = this.getOptions().getPrevPageIcon();
+            if (this.pageIndex > 0 && prevIcon != null && prevIcon.isEnabled()) {
+                access.setMenuIcon(prevIcon.setId(prevIconId), layout.getPrevIconSlot(size));
+                access.setMenuClick(prevIconId, (p, c) -> {
+                    if (this.pageIndex > 0) {
+                        this.pageIndex--;
+                    }
+                    this.getEvents().getIgnoreNextInventoryCloseEvent().set(true);
+                    this.open(this.pageIndex);
+                });
+            }
+        });
+
+        // Add all page items
+        if (pagination.pageExist(this.pageIndex)) {
+            List<Integer> placeableSlots = new ArrayList<>(pageSlots);
+            List<MenuIcon> pageIcons = pagination.getPage(this.pageIndex);
+            for (int i = 0; i < placeableSlots.size(); i++) {
+                if (i >= pageIcons.size()) { break; }
+
+                int slot = placeableSlots.get(i);
+                MenuIcon menuIcon = pageIcons.get(i);
+
+                // Place the icon in the slot
+                modifyIcons((access) -> access.setMenuIcon(menuIcon, new StaticIconSlot(slot)));
+            }
+        }
+
+        // Make sure the inventory is empty / deleted so the title & size are used properly
+        super.deleteInventory();
         return super.open();
     }
 
+    // ------------------------------------------------------------ //
+    //                     PaginatedMenu Methods                    //
+    // ------------------------------------------------------------ //
 
+    /**
+     * @return The current page (0-indexed)
+     */
+    public int getCurrentPage() {
+        return pageIndex;
+    }
+
+    public @NotNull PaginatedMenu modifyPageIcons(@NotNull Consumer<IPageIconsAccess> consumer) {
+        consumer.accept(new PageIconsAccess(this.pagedIcons));
+        return this;
+    }
 
     // ------------------------------------------------------------ //
     //                        Builder Pattern                       //
@@ -60,20 +160,26 @@ public final class PaginatedMenu extends SimpleMenu {
     @SuppressWarnings("unchecked")
     public static final class Builder<T extends Builder<T>> extends SimpleMenu.Builder<T> {
         // Pagination Specific Fields
+        private final @NotNull PrioritizedMenuIconMap pagedIcons = new PrioritizedMenuIconMap();
 
-        public Builder(@NotNull MenuSize size) {
-            super(size, new MenuEvents(), new PaginatedMenuOptions());
+        public Builder(@NotNull PaginationLayout layout, @NotNull MenuSize size) {
+            super(size, new MenuEvents(), new PaginatedMenuOptions(layout));
         }
-        public Builder(int rows) {
-            super(rows);
+        public Builder(@NotNull PaginationLayout layout, int rows) {
+            this(layout, new MenuSizeRows(rows));
         }
-        public Builder(@NotNull InventoryType type) {
-            super(type);
+        public Builder(@NotNull PaginationLayout layout, @NotNull InventoryType type) {
+            this(layout, new MenuSizeType(type));
         }
 
         public @NotNull T paginationOptions(PaginatedMenuOptions.@NotNull PaginatedMenuOptionsModification modification) {
             Preconditions.checkNotNull(modification, "Modification must not be null.");
             modification.modify((PaginatedMenuOptions) this.options);
+            return (T) this;
+        }
+
+        public @NotNull T modifyPageIcons(@NotNull Consumer<IPageIconsAccess> consumer) {
+            consumer.accept(new PageIconsAccess(this.pagedIcons));
             return (T) this;
         }
 
