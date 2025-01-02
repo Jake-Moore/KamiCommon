@@ -17,6 +17,7 @@ public non-sealed interface StatefulIconModifier extends MenuIconModifier {
      * @param initialBuilder is the initial builder of the icon, as configured prior to opening the menu.
      * @param currentItem is the current item in the menu, if it exists. (null if the icon has not been placed yet)
      * @param player is the player who is viewing the menu.
+     * @param tickCounter is the number of ticks since the menu was opened.
      */
-    void modify(@NotNull IBuilder initialBuilder, @Nullable ItemStack currentItem, @NotNull Player player);
+    void modify(@NotNull IBuilder initialBuilder, @Nullable ItemStack currentItem, @NotNull Player player, int tickCounter);
 }

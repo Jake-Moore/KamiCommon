@@ -28,8 +28,8 @@ public class MenuHolder implements InventoryHolder {
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     protected transient @Nullable Inventory inventory;
 
-    private @NotNull String title;
-    private @NotNull MenuSize size;
+    protected @NotNull String title;
+    protected @NotNull MenuSize size;
 
     public MenuHolder(@NotNull MenuSize size, @Nullable String name) {
         this.size = size;
@@ -41,6 +41,15 @@ public class MenuHolder implements InventoryHolder {
         if (this.inventory == null) {
             return this.inventory = this.size.createInventory(this, title);
         }
+        return this.inventory;
+    }
+
+    public void deleteInventory() {
+        this.inventory = null;
+    }
+
+    @Nullable
+    public Inventory getRawInventory() {
         return this.inventory;
     }
 

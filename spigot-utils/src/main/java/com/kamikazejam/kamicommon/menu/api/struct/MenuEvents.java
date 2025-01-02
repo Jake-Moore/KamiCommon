@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 /**
@@ -39,6 +40,8 @@ public class MenuEvents {
     private final List<PlayerSlotClick> playerInvClicks;                            // List<Click>              (processed before per-slot clicks)
     private final Map<Integer, List<PlayerSlotClick>> playerSlotClicks;             // Map<Slot, List<Click>>   (processed after global clicks)
     private final List<Predicate<InventoryClickEvent>> playerInvClickPredicates;
+    // Ability to ignore upcoming events
+    private final @NotNull AtomicBoolean ignoreNextInventoryCloseEvent;
 
     public MenuEvents() {
         this.clickPredicates = new ArrayList<>();
@@ -48,6 +51,7 @@ public class MenuEvents {
         this.playerInvClicks = new ArrayList<>();
         this.playerSlotClicks = new ConcurrentHashMap<>();
         this.playerInvClickPredicates = new ArrayList<>();
+        this.ignoreNextInventoryCloseEvent = new AtomicBoolean(false);
     }
     // Copy Constructor
     public MenuEvents(@NotNull MenuEvents copy) {
@@ -58,6 +62,7 @@ public class MenuEvents {
         this.playerInvClicks = new ArrayList<>(copy.playerInvClicks);
         this.playerSlotClicks = new ConcurrentHashMap<>(copy.playerSlotClicks);
         this.playerInvClickPredicates = new ArrayList<>(copy.playerInvClickPredicates);
+        this.ignoreNextInventoryCloseEvent = new AtomicBoolean(copy.ignoreNextInventoryCloseEvent.get());
     }
 
     /**

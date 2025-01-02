@@ -1,5 +1,6 @@
 //package com.kamikazejam.kamicommon.menu;
 //
+//import com.kamikazejam.kamicommon.menu.api.icons.PrioritizedMenuIcon;
 //import com.kamikazejam.kamicommon.menu.clicks.MenuClick;
 //import com.kamikazejam.kamicommon.menu.clicks.MenuClickEvent;
 //import com.kamikazejam.kamicommon.menu.clicks.MenuClickPage;
@@ -13,12 +14,7 @@
 //import com.kamikazejam.kamicommon.item.ItemBuilder;
 //import com.kamikazejam.kamicommon.menu.util.Pagination;
 //import com.kamikazejam.kamicommon.util.StringUtil;
-//import com.cryptomorin.xseries.XMaterial;
 //import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
-//import lombok.AccessLevel;
-//import lombok.AllArgsConstructor;
-//import lombok.Getter;
-//import lombok.Setter;
 //import org.bukkit.entity.Player;
 //import org.bukkit.inventory.ItemStack;
 //import org.jetbrains.annotations.CheckReturnValue;
@@ -27,72 +23,7 @@
 //
 //import java.util.*;
 //
-///**
-// * A wrapper class for {@link OLD_KAMI_MENU} that adds paged functionality to the existing Menu.<br>
-// * Note: Slots configured as page icons will override existing items configured from {@link OLD_KAMI_MENU}.<br>
-// * Note: {@link OLD_KAMI_MENU} handles all UI logic, this class just manages pagination options and appearance.
-// */
-//@Deprecated(forRemoval = true)
-//@SuppressWarnings("unused")
 //public class OLD_PAGED_KAMI_MENU {
-//    @AllArgsConstructor @Getter
-//    public static class IndexedMenuItem {
-//        public final @NotNull MenuItem item;
-//        public final int index;
-//    }
-//
-//    public static final String META_DATA_KEY = "PagedKamiMenu";
-//
-//    // PagedKamiMenu Data. We use KamiMenu as a 'parent' for UI logic
-//    private final @NotNull OLD_KAMI_MENU parent;
-//    @Getter private final Map<String, IndexedMenuItem> pagedItems = new HashMap<>(); // Uses IndexedMenuItem for ordering
-//    @Getter public int currentPage = 0;
-//
-//    // Configuration Options
-//    @Setter @Getter private @NotNull Collection<Integer> pageSlots;
-//    @Getter @Setter private @NotNull MenuItem nextPageIcon = new MenuItem(true, new LastRowItemSlot(7), new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶"));
-//    @Getter @Setter private @NotNull MenuItem prevPageIcon = new MenuItem(true, new LastRowItemSlot(1), new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page"));
-//    @Getter @Setter private boolean appendTitleWithPage = true;
-//
-//    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent) {
-//        this(parent, new ArrayList<MenuItem>());
-//    }
-//    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, @NotNull List<MenuItem> pagedItems) {
-//        this.parent = parent;
-//        pagedItems.forEach(this::addPagedItem);
-//        this.pageSlots = defaultPageSlots(parent);
-//    }
-//
-//    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, @NotNull Collection<Integer> slots) {
-//        this(parent, new ArrayList<>(), slots);
-//    }
-//    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, @NotNull List<MenuItem> pagedItems, @NotNull Collection<Integer> slots) {
-//        this.parent = parent;
-//
-//        this.pageSlots = slots;
-//    }
-//
-//    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, int[] slots) {
-//        this(parent, new ArrayList<>(), slots);
-//    }
-//    public OLD_PAGED_KAMI_MENU(@NotNull OLD_KAMI_MENU parent, @NotNull List<MenuItem> pagedItems, int[] slots) {
-//        this.parent = parent;
-//        pagedItems.forEach(this::addPagedItem);
-//        this.pageSlots = new ArrayList<>();
-//        for (int slot : slots) {
-//            this.pageSlots.add(slot);
-//        }
-//    }
-//
-//    // Overridable (currentPage is 1 indexed, maxPages is 1 indexed)
-//    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
-//    private transient @Nullable String cachedTitle = null;
-//    public @NotNull String getMenuName(int currentPage, int maxPages) {
-//        // We use a cached title, since after the first modification to include page information
-//        // We no longer can request the original title
-//        String base = (cachedTitle == null) ? cachedTitle = this.parent.getTitle() : cachedTitle;
-//        return base + (maxPages > 1 ? " (Page " + (currentPage) + "/" + maxPages + ")" : "");
-//    }
 //
 //    // Utility methods to make it easier to configure the slots of page icons
 //    public void setPreviousIconSlot(int slot) {
@@ -147,9 +78,9 @@
 //    }
 //
 //    public @NotNull MenuItem addPagedItem(@NotNull MenuItem menuItem) {
-//        return this.addPagedItem(new IndexedMenuItem(menuItem, this.pagedItems.size()));
+//        return this.addPagedItem(new PrioritizedMenuIcon(menuItem, this.pagedItems.size()));
 //    }
-//    public @NotNull MenuItem addPagedItem(@NotNull IndexedMenuItem indexed) {
+//    public @NotNull MenuItem addPagedItem(@NotNull PrioritizedMenuIcon indexed) {
 //        if (this.pagedItems.containsKey(indexed.item.getId())) {
 //            // throw error so the developer can fix it
 //            throw new IllegalArgumentException("Duplicate MenuItem ID in PagedKamiMenu: '" + indexed.item.getId() + "'. Existing IDs are: " + Arrays.toString(this.getPagedItemIDs().toArray(new String[0])));
@@ -171,7 +102,7 @@
 //    @NotNull
 //    public Optional<MenuItem> getMenuItem(@NotNull String id) {
 //        if (!pagedItems.containsKey(id)) { return Optional.empty(); }
-//        return Optional.ofNullable(pagedItems.get(id)).map(IndexedMenuItem::getItem);
+//        return Optional.ofNullable(pagedItems.get(id)).map(PrioritizedMenuIcon::getItem);
 //    }
 //
 //    @NotNull
@@ -238,8 +169,8 @@
 //        // Calculate the current pagination, this allows the items list to be modified before opening
 //        List<MenuItem> ordered = this.pagedItems.values().stream()
 //                        .filter(Objects::nonNull)
-//                        .sorted(Comparator.comparingInt(IndexedMenuItem::getIndex))
-//                        .map(IndexedMenuItem::getItem)
+//                        .sorted(Comparator.comparingInt(PrioritizedMenuIcon::getPriority))
+//                        .map(PrioritizedMenuIcon::getItem)
 //                        .toList();
 //        Pagination<MenuItem> pagination = new Pagination<>(this.pageSlots.size(), ordered);
 //

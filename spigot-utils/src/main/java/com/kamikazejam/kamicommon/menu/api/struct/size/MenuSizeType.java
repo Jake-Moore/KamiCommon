@@ -64,11 +64,15 @@ public final class MenuSizeType implements MenuSize {
     }
 
     @Override
-    public int mapPositionToSlot(int row, int col) throws IllegalArgumentException, IllegalStateException {
+    public int mapPositionToSlot(int r, int c) throws IllegalArgumentException, IllegalStateException {
+        // Row and Col are 1-indexed, but all the math was written for 0-indexed, use temporary variables to make this easier
+        int row = r - 1;
+        int col = c - 1;
+
         return switch (type.name()) {
             // Our 9x3 menus
             case "CHEST", "ENDER_CHEST", "BARREL", "SHULKER_BOX":
-                yield MenuSizeRows.mapPositionToSlot(row, col, 3);
+                yield MenuSizeRows.mapPositionToSlot(r, c, 3); // pass original 1-indexed values
             case "PLAYER":
                 // Player inventory is 4 rows, with weird mapping (hotbar is the first 9 indexes)
                 if (row < 0 || row >= 4 || col < 0 || col >= 9) {
