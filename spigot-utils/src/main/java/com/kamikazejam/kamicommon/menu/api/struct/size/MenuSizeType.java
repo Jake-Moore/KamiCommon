@@ -71,21 +71,21 @@ public final class MenuSizeType implements MenuSize {
                 yield MenuSizeRows.mapPositionToSlot(row, col, 3);
             case "PLAYER":
                 // Player inventory is 4 rows, with weird mapping (hotbar is the first 9 indexes)
-                if (row < 0 || row >= 9 || col < 0 || col >= 4) {
+                if (row < 0 || row >= 4 || col < 0 || col >= 9) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in a 4 row player inventory.");
                 }
                 // If we're on row 3, we use hotbar slot numbers
-                if (col == 3) {
-                    yield row; // Hotbar slots are 0-8
+                if (row == 3) {
+                    yield col; // Hotbar slots are 0-8
                 }
                 // Otherwise we use the normal 9-slot rows, but where the first one is 9 in bukkit math
-                yield (col * 9) + row + 9;
+                yield row * 9 + col + 9;
             // Our 3x3 menus
             case "DISPENSER", "DROPPER", "CRAFTER":
                 if (row < 0 || row >= 3 || col < 0 || col >= 3) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in a 3x3 menu.");
                 }
-                yield col * 3 + row;
+                yield row * 3 + col;
             case "WORKBENCH":
                 // We support (1, 3) as an exception to mark the crafting result slot
                 // (0, 3) and (2, 3) are not allowed though, as there is only 1 possible 4th column slot (result slot)
@@ -97,7 +97,7 @@ public final class MenuSizeType implements MenuSize {
                     yield 0;
                 }
                 // The other slots are shifted by 1 but in a normal 3x3 layout
-                yield col * 3 + row + 1;
+                yield row * 3 + col + 1;
             case "ENCHANTING": // 2 slots horizontally
                 if (row != 0 || col < 0 || col >= 2) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in an enchanting table.");
