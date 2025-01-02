@@ -7,7 +7,7 @@ import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
 import com.kamikazejam.kamicommon.menu.SimpleMenu;
-import com.kamikazejam.kamicommon.menu.api.loaders.SimpleMenuLoader;
+import com.kamikazejam.kamicommon.menu.api.loaders.menu.SimpleMenuLoader;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.entity.Player;
