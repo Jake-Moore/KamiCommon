@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.menu.api.icons.slots;
 
-import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import org.jetbrains.annotations.NotNull;
 

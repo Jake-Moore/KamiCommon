@@ -40,8 +40,8 @@ import java.util.function.Predicate;
  */
 @Getter
 @Accessors(chain = true)
-@SuppressWarnings({"unused", "UnusedReturnValue"})
-public sealed class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu permits PaginatedMenu {
+@SuppressWarnings({"unused", "unchecked", "UnusedReturnValue"})
+public sealed class SimpleMenu<T extends SimpleMenu<T>> extends MenuHolder implements Menu, UpdatingMenu permits PaginatedMenu {
     // Fields
     private final Player player;
     // priority icon is used to keep track of the order icons were registered, which is necessary when resizing
@@ -145,9 +145,9 @@ public sealed class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu 
     }
 
     @NotNull
-    public SimpleMenu modifyIcons(@NotNull Consumer<IMenuIconsAccess> consumer) {
+    public T modifyIcons(@NotNull Consumer<IMenuIconsAccess> consumer) {
         consumer.accept(this.getMenuIconsAccess());
-        return this;
+        return (T) this;
     }
 
     @Override
@@ -349,9 +349,9 @@ public sealed class SimpleMenu extends MenuHolder implements Menu, UpdatingMenu 
 
         @NotNull
         @CheckReturnValue
-        public SimpleMenu build(@NotNull Player player) {
+        public SimpleMenu<?> build(@NotNull Player player) {
             Preconditions.checkNotNull(player, "Player must not be null.");
-            return new SimpleMenu(this, player);
+            return new SimpleMenu<>(this, player);
         }
     }
 }

@@ -54,7 +54,7 @@ public class MenuEvents {
         this.ignoreNextInventoryCloseEvent = new AtomicBoolean(false);
     }
     // Copy Constructor
-    public MenuEvents(@NotNull MenuEvents copy) {
+    private MenuEvents(@NotNull MenuEvents copy) {
         this.clickPredicates = new ArrayList<>(copy.clickPredicates);
         this.closeCallbacks = new ArrayList<>(copy.closeCallbacks);
         this.postCloseCallbacks = new ArrayList<>(copy.postCloseCallbacks);

@@ -4,11 +4,12 @@ import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClickEvent;
+import com.kamikazejam.kamicommon.menu.api.clicks.MenuClickPage;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StatefulIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StaticIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.PointSlot;
+import com.kamikazejam.kamicommon.menu.api.icons.slots.PositionSlot;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
 import com.kamikazejam.kamicommon.menu.api.loaders.IconSlotLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
@@ -115,6 +116,11 @@ public interface IMenuIconsAccess {
         return this;
     }
     @NotNull
+    default IMenuIconsAccess setMenuClick(@NotNull String id, @NotNull MenuClickPage click) {
+        this.getMenuIcon(id).ifPresent(icon -> icon.setMenuClick(click));
+        return this;
+    }
+    @NotNull
     default IMenuIconsAccess setModifier(@NotNull String id, @NotNull StaticIconModifier modifier) {
         this.getMenuIcon(id).ifPresent(icon -> icon.setModifier(modifier));
         return this;
@@ -152,55 +158,55 @@ public interface IMenuIconsAccess {
 
 
     // ------------------------------------------------------------ //
-    //                  Icon Management (by point)                  //
+    //                  Icon Management (by position)                  //
     // ------------------------------------------------------------ //
     @NotNull
     default MenuIcon setMenuIcon(@NotNull IBuilder builder, int row, int col) {
-        return this.setMenuIcon(new MenuIcon(true, builder), new PointSlot(row, col));
+        return this.setMenuIcon(new MenuIcon(true, builder), new PositionSlot(row, col));
     }
     @NotNull
     default MenuIcon setMenuIcon(@NotNull ItemStack stack, int row, int col) {
-        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)), new PointSlot(row, col));
+        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)), new PositionSlot(row, col));
     }
     @NotNull
     default MenuIcon setMenuIcon(@NotNull String id, @NotNull IBuilder builder, int row, int col) {
-        return this.setMenuIcon(new MenuIcon(true, builder).setId(id), new PointSlot(row, col));
+        return this.setMenuIcon(new MenuIcon(true, builder).setId(id), new PositionSlot(row, col));
     }
     @NotNull
     default MenuIcon setMenuIcon(@NotNull String id, @NotNull ItemStack stack, int row, int col) {
-        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)).setId(id), new PointSlot(row, col));
+        return this.setMenuIcon(new MenuIcon(true, new ItemBuilder(stack)).setId(id), new PositionSlot(row, col));
     }
 
     /**
-     * Retrieve a {@link MenuIcon} by a point. If the filler MenuIcon has been configured and is enabled,
-     * it will be returned if no other MenuIcon is found for the point.
-     * @param row The row of the point (top to bottom) (1-indexed)
-     * @param col The column of the point (left to right) (1-indexed)
+     * Retrieve a {@link MenuIcon} by a position. If the filler MenuIcon has been configured and is enabled,
+     * it will be returned if no other MenuIcon is found for the position.
+     * @param row The row of the position (top to bottom) (1-indexed)
+     * @param col The column of the position (left to right) (1-indexed)
      */
     @NotNull
     default Optional<MenuIcon> getMenuIcon(int row, int col) {
-        return this.getMenuIcon(new PointSlot(row, col));
+        return this.getMenuIcon(new PositionSlot(row, col));
     }
 
     /**
-     * Retrieve a {@link MenuIcon} by a point. If the filler MenuIcon has been configured and is enabled,
-     * it will be returned if no other MenuIcon is found for the point.
-     * @param slot The point slot
+     * Retrieve a {@link MenuIcon} by a position. If the filler MenuIcon has been configured and is enabled,
+     * it will be returned if no other MenuIcon is found for the position.
+     * @param slot The position slot
      */
     @NotNull
-    Optional<MenuIcon> getMenuIcon(@NotNull PointSlot slot);
+    Optional<MenuIcon> getMenuIcon(@NotNull PositionSlot slot);
 
     /**
-     * @param row The row of the point (top to bottom) (1-indexed)
-     * @param col The column of the point (left to right) (1-indexed)
+     * @param row The row of the position (top to bottom) (1-indexed)
+     * @param col The column of the position (left to right) (1-indexed)
      */
     default boolean hasMenuIcon(int row, int col) {
-        return this.hasMenuIcon(new PointSlot(row, col));
+        return this.hasMenuIcon(new PositionSlot(row, col));
     }
 
     /**
-     * @param slot The point slot
+     * @param slot The position slot
      */
-    boolean hasMenuIcon(@NotNull PointSlot slot);
+    boolean hasMenuIcon(@NotNull PositionSlot slot);
 
 }

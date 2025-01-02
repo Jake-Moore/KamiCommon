@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 public interface IPaginatedClickTransform extends IClickTransform {
 
+    /**
+     * @param page The current page (0-indexed)
+     */
     void process(@NotNull Player player, @NotNull InventoryClickEvent event, int page);
 
 }

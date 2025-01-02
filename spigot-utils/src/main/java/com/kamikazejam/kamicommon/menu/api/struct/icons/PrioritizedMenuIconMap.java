@@ -99,4 +99,17 @@ public class PrioritizedMenuIconMap {
                 .filter(icon -> icon.getSlot().get(size).contains(slot))
                 .collect(Collectors.toSet());
     }
+
+    @NotNull
+    public List<MenuIcon> getAllByAscendingPriority(boolean filterEnabled) {
+        return this.menuIcons.values().stream()
+                .filter(icon -> !filterEnabled || icon.getIcon().isEnabled())
+                .sorted(Comparator.comparingInt(PrioritizedMenuIcon::getPriority))
+                .map(PrioritizedMenuIcon::getIcon)
+                .collect(Collectors.toList());
+    }
+
+    public int size() {
+        return this.menuIcons.size();
+    }
 }
