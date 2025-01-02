@@ -24,6 +24,12 @@ public class PaginatedMenuOptions extends MenuOptions {
     // Both Fields are not final, since they can be extended and then set, so long as they are an instance of the correct class
     private @NotNull PaginationLayout layout;
     private @NotNull DefaultPaginatedMenuTitle titleFormat = new DefaultPaginatedMenuTitle();
+    /**
+     * Should the filler fill any empty page icon slots? For instance on the last page if we don't have enough icons to fill the page,
+     * should we fill the last slots with filler (true) or leave them empty (false)?
+     */
+    @Setter
+    private boolean fillerFillsEmptyPageIconSlots = true;
     // Icons
     @Setter
     private @Nullable MenuIcon nextPageIcon = new MenuIcon(true, new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶"));
@@ -47,5 +53,12 @@ public class PaginatedMenuOptions extends MenuOptions {
 
     public interface PaginatedMenuOptionsModification {
         void modify(@NotNull PaginatedMenuOptions options);
+    }
+
+    @Override
+    public @NotNull PaginatedMenuOptions copy() {
+        PaginatedMenuOptions copy = new PaginatedMenuOptions(this.layout);
+        this.copyInto(copy);
+        return copy;
     }
 }

@@ -20,12 +20,11 @@ import lombok.experimental.Accessors;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -50,7 +49,7 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
     // Internal Data
 
     // Constructor (Deep Copying from Builder)
-    PaginatedMenu(@NotNull Builder<?> builder, @NotNull Player player) {
+    private PaginatedMenu(@NotNull Builder<?> builder, @NotNull Player player) {
         super(builder, player);
         builder.pagedIcons.values().forEach((icon) -> this.pagedIcons.add(icon.copy()));
         this.pageIndex = 0;
@@ -66,8 +65,11 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
         return this.open(0);
     }
 
-    public @Nullable InventoryView open(int pageIndex) {
-        this.pageIndex = pageIndex;
+    /**
+     * @param p The page index to open (0-indexed)
+     */
+    public @Nullable InventoryView open(int p) {
+        this.pageIndex = p;
         final MenuSize size = this.getMenuSize();
         final PaginationLayout layout = this.getOptions().getLayout();
 
@@ -83,10 +85,14 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
         List<MenuIcon> icons = pagedIcons.getAllByAscendingPriority(true);
         Pagination<MenuIcon> pagination = new Pagination<>(pageSlots.size(), icons); // use pageSlots as per-page size
 
-        // Evaluate the title
+        // Clamp the page index
         int totalPages = pagination.totalPages(); // 1-indexed
+        if (this.pageIndex < 0) { this.pageIndex = 0; }
+        if (this.pageIndex >= totalPages) { this.pageIndex = totalPages - 1; }
+
+        // Evaluate the title
         DefaultPaginatedMenuTitle menuTitle = getOptions().getTitleFormat();
-        String title = menuTitle.getMenuTitle(this, (this.pageIndex +1), totalPages);
+        super.setTitle(menuTitle.getMenuTitle(this, (this.pageIndex+1), totalPages));
 
         // Add the Control Icons
         modifyIcons((access) -> {
@@ -96,7 +102,7 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
             @Nullable MenuIcon nextIcon = this.getOptions().getNextPageIcon();
             if ((this.pageIndex + 1 < totalPages) && nextIcon != null && nextIcon.isEnabled()) {
                 access.setMenuIcon(nextIcon.setId(nextIconId), layout.getNextIconSlot(size));
-                access.setMenuClick(nextIconId, (p, c) -> {
+                access.setMenuClick(nextIconId, (plr, c) -> {
                     if (this.pageIndex + 1 < totalPages) {
                         this.pageIndex++;
                     }
@@ -108,7 +114,7 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
             @Nullable MenuIcon prevIcon = this.getOptions().getPrevPageIcon();
             if (this.pageIndex > 0 && prevIcon != null && prevIcon.isEnabled()) {
                 access.setMenuIcon(prevIcon.setId(prevIconId), layout.getPrevIconSlot(size));
-                access.setMenuClick(prevIconId, (p, c) -> {
+                access.setMenuClick(prevIconId, (plr, c) -> {
                     if (this.pageIndex > 0) {
                         this.pageIndex--;
                     }
@@ -117,6 +123,10 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
                 });
             }
         });
+
+        // Remove the IDs of all paged icons, since we don't want old icons to show
+        // Without this step, if the last page has less than the full layout slots, old icons from the previous page will show at the end
+        modifyIcons((access) -> icons.forEach((icon) -> access.removeMenuIcon(icon.getId())));
 
         // Add all page items
         if (pagination.pageExist(this.pageIndex)) {
@@ -136,6 +146,16 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
         // Make sure the inventory is empty / deleted so the title & size are used properly
         super.deleteInventory();
         return super.open();
+    }
+
+    @Override
+    protected void placeFiller(Map<String, Boolean> needsUpdateMap, Map<String, ItemStack> itemStackMap, Set<Integer> slots, int tick) {
+        // If we don't want the filler to fill empty page slots, remove all page slots from the filler's slots
+        if (!this.getOptions().isFillerFillsEmptyPageIconSlots()) {
+            slots.removeAll(this.getOptions().getLayout().getSlots(this.getMenuSize()));
+        }
+
+        super.placeFiller(needsUpdateMap, itemStackMap, slots, tick);
     }
 
     // ------------------------------------------------------------ //

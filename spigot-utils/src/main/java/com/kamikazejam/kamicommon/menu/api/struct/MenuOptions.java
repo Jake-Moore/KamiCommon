@@ -57,18 +57,21 @@ public class MenuOptions {
     public MenuOptions() {
         this.excludedFillSlots = new HashSet<>();
     }
-    // Copy Constructor
-    private MenuOptions(@NotNull MenuOptions copy) {
-        this.allowItemPickup = copy.allowItemPickup;
-        this.allowItemDrop = copy.allowItemDrop;
-        this.cancelClickEvent = copy.cancelClickEvent;
-        this.cancelPlayerClickEvent = copy.cancelPlayerClickEvent;
-        this.excludedFillSlots = new HashSet<>(copy.excludedFillSlots);
-        this.resetVisualsOnOpen = copy.resetVisualsOnOpen;
-    }
 
     @NotNull
     public MenuOptions copy() {
-        return new MenuOptions(this);
+        MenuOptions copy = new MenuOptions();
+        copyInto(copy);
+        return copy;
+    }
+
+    protected void copyInto(@NotNull MenuOptions options) {
+        options.allowItemDrop = this.allowItemDrop;
+        options.allowItemPickup = this.allowItemPickup;
+        options.cancelClickEvent = this.cancelClickEvent;
+        options.cancelPlayerClickEvent = this.cancelPlayerClickEvent;
+        options.excludedFillSlots.clear();
+        options.excludedFillSlots.addAll(this.excludedFillSlots);
+        options.resetVisualsOnOpen = this.resetVisualsOnOpen;
     }
 }
