@@ -297,6 +297,10 @@ public sealed class SimpleMenu<T extends SimpleMenu<T>> extends MenuHolder imple
             this(new MenuSizeType(type));
         }
 
+        public @NotNull MenuSize getSize() {
+            return size;
+        }
+
         @NotNull
         public T size(@NotNull MenuSize size) {
             Preconditions.checkNotNull(size, "Size must not be null.");
