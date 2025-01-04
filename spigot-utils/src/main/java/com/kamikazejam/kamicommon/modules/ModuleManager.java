@@ -25,8 +25,8 @@ public class ModuleManager {
             }
             moduleMap.put(module.getClass(), module);
 
-            // The call to isEnabledByDefault will handle config state appropriately
-            if (module.isEnabledByDefault()) {
+            // The call to isEnabledInConfig will handle config state appropriately
+            if (module.isEnabledInConfig()) {
                 // Enable the module since we want it to be enabled by default
                 module.handleEnable();
             }
