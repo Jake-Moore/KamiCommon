@@ -21,6 +21,9 @@ public abstract class CachedConfig<T extends KamiConfig> implements ConfigObserv
     private final @NotNull T config;
     public CachedConfig(@NotNull T config) {
         this.config = config;
+    }
+
+    public void registerObserver() {
         // Register this class as an observer of the config
         //  so the onConfigLoaded method is called automatically
         config.registerObserver(this);
