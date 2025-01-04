@@ -179,7 +179,7 @@ public sealed class SimpleMenu<T extends SimpleMenu<T>> extends MenuHolder imple
      * If the predicate is null, it will always update all icons.
      * @param needsUpdate An optional predicate to filter which icons need new builders.
      */
-    private void placeIcons(@Nullable Predicate<MenuIcon> needsUpdate) {
+    public void placeIcons(@Nullable Predicate<MenuIcon> needsUpdate) {
         int tick = this.tickCounter.get();
         Map<String, Boolean> needsUpdateMap = new HashMap<>(); // Store <ID, Included>
         Map<String, ItemStack> itemStackMap = new HashMap<>(); // Store <ID, ItemStack>
