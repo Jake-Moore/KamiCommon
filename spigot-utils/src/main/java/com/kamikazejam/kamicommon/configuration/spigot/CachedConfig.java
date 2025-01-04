@@ -34,7 +34,6 @@ public abstract class CachedConfig<T extends KamiConfig> implements ConfigObserv
     public final void reloadConfig() {
         try {
             this.onConfigLoaded(this.config);
-            this.loaded = true;
         }catch (Throwable t) {
             t.printStackTrace();
             if (shutdownOnFailure) {
@@ -48,6 +47,7 @@ public abstract class CachedConfig<T extends KamiConfig> implements ConfigObserv
     @SuppressWarnings("unchecked")
     public final void onConfigLoaded(@NotNull KamiConfig config) {
         loadConfig((T) config);
+        this.loaded = true;
     }
 
     protected abstract void loadConfig(@NotNull T config);
