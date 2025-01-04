@@ -2,7 +2,8 @@ package com.kamikazejam.kamicommon.menu;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.menu.api.MenuHolder;
-import com.kamikazejam.kamicommon.menu.api.callbacks.MenuTitleCallback;
+import com.kamikazejam.kamicommon.menu.api.title.MenuTitleCalculator;
+import com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.icons.access.MenuIconsAccess;
@@ -13,6 +14,7 @@ import com.kamikazejam.kamicommon.menu.api.struct.icons.PrioritizedMenuIconMap;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeRows;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeType;
+import com.kamikazejam.kamicommon.menu.api.title.MenuTitleReplacement;
 import com.kamikazejam.kamicommon.util.PlayerUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import lombok.AccessLevel;
@@ -55,7 +57,7 @@ public sealed class SimpleMenu<T extends SimpleMenu<T>> extends MenuHolder imple
 
     // Constructor (Deep Copying from Builder)
     SimpleMenu(@NotNull Builder<?> builder, @NotNull Player player) {
-        super(builder.size.copy(), Optional.ofNullable(builder.titleCallback).map(t -> t.getTitle(player)).orElse(" "));
+        super(builder.size.copy(), builder.titleCalculator.buildTitle(player));
         this.player = player;
         builder.menuIcons.values().forEach((pIcon) -> this.menuIcons.add(pIcon.copy()));
         this.events = builder.events.copy();
@@ -271,7 +273,7 @@ public sealed class SimpleMenu<T extends SimpleMenu<T>> extends MenuHolder imple
     public static sealed class Builder<T extends Builder<T>> permits PaginatedMenu.Builder {
         // Menu Details
         protected @NotNull MenuSize size;
-        protected @Nullable MenuTitleCallback titleCallback;
+        protected final @NotNull MenuTitleCalculator titleCalculator = new MenuTitleCalculator();
         // Menu Icons
         protected final PrioritizedMenuIconMap menuIcons = new PrioritizedMenuIconMap();
         // Additional Configuration
@@ -310,13 +312,20 @@ public sealed class SimpleMenu<T extends SimpleMenu<T>> extends MenuHolder imple
 
         @NotNull
         public T title(@Nullable String title) {
-            this.titleCallback = (p) -> (title != null) ? title : " ";
+            this.titleCalculator.setProvider((p) -> (title != null) ? title : " ");
             return (T) this;
         }
         @NotNull
-        public T title(@NotNull MenuTitleCallback titleCallback) {
-            Preconditions.checkNotNull(titleCallback, "Title callback must not be null.");
-            this.titleCallback = titleCallback;
+        public T title(@NotNull MenuTitleProvider titleProvider) {
+            Preconditions.checkNotNull(titleProvider, "Title callback must not be null.");
+            this.titleCalculator.setProvider(titleProvider);
+            return (T) this;
+        }
+        @NotNull
+        public T titleReplacement(@NotNull CharSequence target, @NotNull CharSequence replacement) {
+            Preconditions.checkNotNull(target, "Target must not be null.");
+            Preconditions.checkNotNull(replacement, "Replacement must not be null.");
+            this.titleCalculator.getReplacements().add(new MenuTitleReplacement(target, replacement));
             return (T) this;
         }
 
