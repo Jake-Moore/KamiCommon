@@ -82,11 +82,13 @@ public interface IMenuIconsAccess {
         return this.setMenuIcon(section, (Player) null);
     }
 
-    /**
-     * @return The same {@link MenuIcon} for chaining.
-     */
     @NotNull
     MenuIcon setMenuIcon(@NotNull MenuIcon menuIcon, @Nullable IconSlot slot);
+
+    @NotNull
+    default MenuIcon setMenuIcon(@NotNull String id, @NotNull MenuIcon menuIcon, @Nullable IconSlot slot) {
+        return this.setMenuIcon(menuIcon.setId(id), slot);
+    }
 
     @Nullable
     MenuIcon removeMenuIcon(@NotNull String id);
