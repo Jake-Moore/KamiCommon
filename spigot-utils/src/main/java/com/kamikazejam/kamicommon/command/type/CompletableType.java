@@ -31,29 +31,47 @@ public class CompletableType<T> {
      * @param consumer The consumer to handle the successful result (called ASYNC - NOT ON MAIN THREAD)
      */
     public void whenParsedAsync(Consumer<T> consumer) {
-        future.whenComplete((result, throwable) -> {
-            if (throwable != null) {
-                // Unwrap the exception if it's wrapped in a CompletionException
-                Throwable cause = throwable.getCause() != null ? throwable.getCause() : throwable;
+        whenComplete(true, consumer);
+    }
 
-                // Go Sync for message sending purposes
-                Bukkit.getScheduler().runTask(SpigotUtilsSource.get(), () -> {
-                    if (cause instanceof KamiCommonException ex) {
-                        // Handle KamiCommonException by sending the message to the sender
-                        KMessageSingle message = ex.getKMessage();
-                        if (message != null) {
-                            NmsAPI.getMessageManager().processAndSend(sender, message);
-                        }
-                    } else {
-                        // For other exceptions, wrap in KamiCommonException and send generic error
-                        KMessageSingle message = new KMessageSingle("&cAn unexpected error occurred while processing your request.");
-                        NmsAPI.getMessageManager().processAndSend(sender, message);
-                        throwable.printStackTrace();
-                    }
-                });
-            } else {
-                consumer.accept(result);
+    /**
+     * Handle the successful completion of the future with the provided consumer.
+     * Any {@link KamiCommonException}s that occur during the async operation will be handled automatically.
+     * @param consumer The consumer to handle the successful result (called ASYNC - NOT ON MAIN THREAD)
+     */
+    public void whenParsedSync(Consumer<T> consumer) {
+        whenComplete(false, consumer);
+    }
+
+    private void whenComplete(boolean async, Consumer<T> consumer) {
+        future.whenComplete((result, throwable) -> {
+            if (throwable == null) {
+                if (async) {
+                    consumer.accept(result);
+                }else {
+                    Bukkit.getScheduler().runTask(SpigotUtilsSource.get(), () -> consumer.accept(result));
+                }
+                return;
             }
+
+            // Unwrap the exception if it's wrapped in a CompletionException
+            Throwable cause = throwable.getCause() != null ? throwable.getCause() : throwable;
+
+            // Go Sync for message sending purposes
+            Bukkit.getScheduler().runTask(SpigotUtilsSource.get(), () -> {
+                if (cause instanceof KamiCommonException ex) {
+                    // Handle KamiCommonException by sending the message to the sender
+                    KMessageSingle message = ex.getKMessage();
+                    if (message != null) {
+                        NmsAPI.getMessageManager().processAndSend(sender, message);
+                    }
+                } else {
+                    // For other exceptions, wrap in KamiCommonException and send generic error
+                    KMessageSingle message = new KMessageSingle("&cAn unexpected error occurred while processing your request.");
+                    NmsAPI.getMessageManager().processAndSend(sender, message);
+                    throwable.printStackTrace();
+                }
+            });
         });
     }
 
