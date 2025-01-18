@@ -284,7 +284,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		return ret;
 	}
 
-	// The parents is like a stack trace.
+	// The parents are like a stack trace.
 	// We start with ourselves. The root is at the end.
 	public List<KamiCommand> getParents(boolean includeSelf) {
 		// Create
@@ -338,25 +338,24 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		parent.addChild(this);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Contract(value = "_ -> this", mutates = "this")
-	public <T extends KamiCommand> T addChild(KamiCommand child) {
+	@Contract(mutates = "this")
+	public void addChild(KamiCommand child) {
 		// NoChange
-		if (this.getChildren().contains(child)) return (T) this;
+		if (this.getChildren().contains(child)) return;
 
 		// Apply
-		return this.addChild(child, this.getChildren().size());
+		this.addChild(child, this.getChildren().size());
 	}
 
-	@Contract(value = "_, _ -> this", mutates = "this")
-	public <T extends KamiCommand> T addChildAfter(KamiCommand child, KamiCommand after) {
+	@Contract(mutates = "this")
+	public void addChildAfter(KamiCommand child, KamiCommand after) {
 		int index = this.getChildren().indexOf(after);
 		if (index == -1) {
 			index = this.getChildren().size();
 		} else {
 			index++;
 		}
-		return this.addChild(child, index);
+		this.addChild(child, index);
 	}
 
 	public int replaceChild(KamiCommand child, KamiCommand replaced) {
@@ -376,8 +375,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		return index;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends KamiCommand> T addChild(KamiCommand child, int index) {
+	public void addChild(KamiCommand child, int index) {
 		if (!this.hasChildren() && !(child instanceof KamiCommandHelp)) {
 			this.getHelpCommand();
 			index++;
@@ -387,8 +385,6 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		children.add(index, child);
 		this.children = Collections.unmodifiableList(children);
 		child.setParent(this);
-
-		return (T) this;
 	}
 
 	public KamiCommandHelp getHelpCommand() {
@@ -405,7 +401,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	// Returns a set of child commands with similar aliases.
 	//
 	// token - the full alias or an alias prefix.
-	// onlyRelevantToSender - if non null only returns commands relevant to specific sender
+	// onlyRelevantToSender - if non-null only returns commands relevant to specific sender
 	// prioritize - only return commands with the highest priority
 
 	// 
@@ -497,28 +493,24 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	// ALIASES
 	// -------------------------------------------- //
 
-	@SuppressWarnings("unchecked")
-	@Contract(value = "_ -> this", mutates = "this")
-	public <T extends KamiCommand> T setAliases(Collection<String> aliases) {
+	@Contract(mutates = "this")
+	public void setAliases(Collection<String> aliases) {
 		this.aliases = new KamiList<>(aliases);
-		return (T) this;
 	}
 
-	@Contract(value = "_ -> this", mutates = "this")
-	public <T extends KamiCommand> T setAliases(String @NotNull ... aliases) {
-		return this.setAliases(Arrays.asList(aliases));
+	@Contract(mutates = "this")
+	public void setAliases(String @NotNull ... aliases) {
+		this.setAliases(Arrays.asList(aliases));
 	}
 
-	@SuppressWarnings("unchecked")
-	@Contract(value = "_ -> this", mutates = "this")
-	public <T extends KamiCommand> T addAliases(Collection<String> aliases) {
+	@Contract( mutates = "this")
+	public void addAliases(Collection<String> aliases) {
 		this.aliases.addAll(aliases);
-		return (T) this;
 	}
 
-	@Contract(value = "_ -> this", mutates = "this")
-	public <T extends KamiCommand> T addAliases(String @NotNull ... aliases) {
-		return this.addAliases(Arrays.asList(aliases));
+	@Contract(mutates = "this")
+	public void addAliases(String @NotNull ... aliases) {
+		this.addAliases(Arrays.asList(aliases));
 	}
 
 	// -------------------------------------------- //
@@ -673,25 +665,19 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	// REQUIREMENTS
 	// -------------------------------------------- //
 
-	@SuppressWarnings("unchecked")
-	@Contract(value = "_ -> this", mutates = "this")
-	public <T extends KamiCommand> T setRequirements(List<Requirement> requirements) {
+	@Contract(mutates = "this")
+	public void setRequirements(List<Requirement> requirements) {
 		this.requirements = requirements;
-		return (T) this;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Contract(value = "_ -> this", mutates = "this")
-	public <T extends KamiCommand> T addRequirements(Collection<Requirement> requirements) {
+	@Contract(mutates = "this")
+	public void addRequirements(Collection<Requirement> requirements) {
 		this.requirements.addAll(requirements);
-		return (T) this;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Contract(value = "_ -> this", mutates = "this")
-	public <T extends KamiCommand> T addRequirements(Requirement @NotNull ... requirements) {
+	@Contract(mutates = "this")
+	public void addRequirements(Requirement @NotNull ... requirements) {
 		this.addRequirements(Arrays.asList(requirements));
-		return (T) this;
 	}
 
 	public boolean isRequirementsMet(@NotNull CommandSender sender, boolean verbose) {
@@ -846,7 +832,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
 	// This is where the command action is performed.
 	public void perform() throws KamiCommonException {
-		// Per default we just run the help command!
+		// Per default, we just run the help command!
 		this.getHelpCommand().execute(this.sender, this.getArgs());
 	}
 
@@ -867,7 +853,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		// are already concatenated and thus cannot be too many.
 		if (args.size() > this.getParameterCount(sender) && this.isOverflowSensitive()) {
 			if (sender != null) {
-				// Get the too many string slice
+				// Get the 'too many' string slice
 				List<String> theTooMany = args.subList(this.getParameterCount(sender), args.size());
 				sender.sendMessage(StringUtil.t(String.format(Lang.COMMAND_TOO_MANY_ARGUMENTS, Txt.implodeCommaAndDot(
 						theTooMany, StringUtil.t("&b%s"), StringUtil.t("&c, "), StringUtil.t("&c and "), "")
@@ -1020,7 +1006,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 			ret.append(' ');
 		}
 
-		// Then ourself
+		// Then ourselves
 		if (this.getAliases().isEmpty())
 			throw new IllegalStateException(this.getClass().getSimpleName() + " has no aliases.");
 		ret.append(this.getAliases().getFirst());
