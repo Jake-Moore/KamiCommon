@@ -36,11 +36,11 @@ public abstract class TypeAbstract<T> implements Type<T> {
 
 	@Override
 	public @NotNull String getName() {
-		int prefixLength = "Type".length();
 		String name = this.getClass().getSimpleName();
-
-		// We don't want the "Type" part
-		name = name.substring(prefixLength);
+		if (name.toLowerCase().startsWith("type")) {
+			// We don't want the "Type" part
+			name = name.substring("type".length());
+		}
 
 		// We split at uppercase letters, because most class names are camel-case.
 		final List<String> words = Txt.camelSplit(name);
