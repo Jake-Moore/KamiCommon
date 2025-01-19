@@ -1,9 +1,11 @@
 package com.kamikazejam.kamicommon.command.impl;
 
+import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.util.VersionControl;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
+import com.kamikazejam.kamicommon.util.VersionControl;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class KamiCommandVersion extends KamiCommand {
@@ -24,7 +26,7 @@ public class KamiCommandVersion extends KamiCommand {
 	// OVERRIDE
 	// -------------------------------------------- //
 	@Override
-	public void perform() throws KamiCommonException {
-		VersionControl.sendDetails(getPlugin(), sender);
+	public void perform(@NotNull CommandContext context) throws KamiCommonException {
+		VersionControl.sendDetails(getPlugin(), context.getSender());
 	}
 }

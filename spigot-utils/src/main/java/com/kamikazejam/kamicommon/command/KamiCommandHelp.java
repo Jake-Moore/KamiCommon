@@ -9,6 +9,7 @@ import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class KamiCommandHelp extends KamiCommand {
 	// -------------------------------------------- //
 
 	@Override
-	public void perform() throws KamiCommonException {
+	public void perform(@NotNull CommandContext context) throws KamiCommonException {
 		// Args
 		int page = this.readArg();
 
@@ -60,6 +61,7 @@ public class KamiCommandHelp extends KamiCommand {
 			lines.add(new KMessageSingle(StringUtil.t("&6# ") + single.getLine()));
 		}
 
+		CommandSender sender = context.getSender();
 		for (KamiCommand child : parent.getChildren()) {
 			if (!child.isVisibleTo(sender)) continue;
 

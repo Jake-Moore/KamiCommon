@@ -1,9 +1,11 @@
 package com.kamikazejam.kamicommon.modules.commands;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
+import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.modules.Module;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,13 +27,13 @@ public abstract class UnmatchedCommand extends KamiCommand implements Disableabl
     }
 
     @Override
-    public void onUnmatchedArg() {
-        if (this.args.isEmpty()) { return; }
-        String arg1 = this.args.getFirst().toLowerCase();
+    public void onUnmatchedArg(@NotNull CommandContext context) {
+        if (context.getArgs().isEmpty()) { return; }
+        String arg1 = context.getArgs().getFirst().toLowerCase();
 
         int count = subCommandMap.getOrDefault(arg1, 0);
         subCommandMap.put(arg1, count + 1);
-        if (subCommandMap.keySet().size() >= 50) {
+        if (subCommandMap.size() >= 50) {
             sendSubCommandsMap(subCommandMap);
             subCommandMap.clear();
         }
