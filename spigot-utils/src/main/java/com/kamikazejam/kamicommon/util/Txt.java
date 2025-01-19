@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.util;
 
+import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommandHelp;
 import com.kamikazejam.kamicommon.command.Parameter;
@@ -236,7 +237,9 @@ public class Txt {
     }
 
     public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, @NotNull KamiCommand command) {
-        return getPage(lines, pageHumanBased, title, (command.sender == null || command.sender instanceof Player) ? Txt.PAGEHEIGHT_PLAYER : Txt.PAGEHEIGHT_CONSOLE, command, command.getArgs());
+        CommandContext context = command.getContext();
+        Preconditions.checkNotNull(context, "Txt.getPage must be called synchronously to a command's perform execution, where CommandContext is available");
+        return getPage(lines, pageHumanBased, title, (context.getSender() instanceof Player) ? Txt.PAGEHEIGHT_PLAYER : Txt.PAGEHEIGHT_CONSOLE, command, context.getArgs());
     }
 
     public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, @Nullable CommandSender sender, @Nullable KamiCommand command, @NotNull List<String> args) {

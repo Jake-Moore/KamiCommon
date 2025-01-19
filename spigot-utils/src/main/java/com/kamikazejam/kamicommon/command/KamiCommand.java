@@ -25,7 +25,6 @@ import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -139,96 +138,79 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
 	// The parent command.
 	@Getter
-	protected KamiCommand parent = null;
+	private KamiCommand parent = null;
 
 	// The child commands.
 	@Getter
-	protected List<KamiCommand> children = Collections.emptyList();
+	private List<KamiCommand> children = Collections.emptyList();
 
 	// === ALIASES ===
 
 	// The different names this commands will react to  
 	@Getter
-	protected List<String> aliases = new KamiList<>();
+	private List<String> aliases = new KamiList<>();
 
 	// === PARAMETERS ===
 
 	// The command parameters.
-	@Setter
-    @Getter
-	protected List<Parameter<?>> parameters = new KamiList<>();
+	@Setter @Getter
+	private List<Parameter<?>> parameters = new KamiList<>();
 
 	// === PREPROCESS ===
 
 	// Should the arguments be parsed considering quotes and backslashes and such?
 	@Getter
-	protected boolean tokenizing = true;
+	private boolean tokenizing = true;
 
 	// Are "smart" quotes replaced with normal characters?
 	@Getter
-	protected boolean unsmart = true;
+	private boolean unsmart = true;
 
 	// === PUZZLER ===
 
 	// Should an error be thrown if "too many" arguments are provided?
 	@Getter
-	protected boolean overflowSensitive = true;
+	private boolean overflowSensitive = true;
 
 	// Should the last parameter concatenate all surplus arguments?
 	@Getter
-	protected boolean concatenating = false;
+	private boolean concatenating = false;
 
 	// Should we try to automatically swap the arguments around if they were typed in invalid order?
 	@Getter
-	protected boolean swapping = true;
+	private boolean swapping = true;
 
 	// === REQUIREMENTS ===
 
 	// All these requirements must be met for the command to be executable;
 	@Getter
-	protected List<Requirement> requirements = new KamiList<>();
+	private List<Requirement> requirements = new KamiList<>();
 
 	// === HELP ===
 
 	// A short description of what the command does. Such as "eat hamburgers" or "do admin stuff".
-	protected String desc = null;
+	private String desc = null;
 
 	// A specific permission node to use for description if desc is null.
 	@Setter
-    protected String descPermission = null;
+    private String descPermission = null;
 
 	// Free text displayed at the top of the help command.
     @Getter
-	protected @NotNull List<KMessageSingle> help = new KamiList<>();
+	private @NotNull List<KMessageSingle> help = new KamiList<>();
 
 	// The visibility of this command in help command.
 	@Setter
     @Getter
-	protected Visibility visibility = Visibility.VISIBLE;
+	private Visibility visibility = Visibility.VISIBLE;
 
 	// The priority of this command when aliases are ambiguous.
-	@Setter
-    @Getter
-	protected long priority = 0;
+	@Setter @Getter
+	private long priority = 0;
 
 	// === EXECUTION ===
-
-	// The raw string arguments passed upon execution. An empty list if there are none.
-	@Setter
-    @Getter @NotNull
-	protected List<String> args = new KamiList<>();
-
-	// The index of the next arg to read.
-	public int nextArg = 0;
-
-	// ...
-	public CommandSender sender = null;
-
-	// ...
-	public Player me = null;
-
-	// ...
-	public boolean senderIsConsole = false;
+	@Getter
+	private @Nullable CommandContext context = null;
 
 	// -------------------------------------------- //
 	// HIERARCHY
@@ -725,14 +707,13 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	// EXECUTOR
 	// -------------------------------------------- //
 
-	public void execute(CommandSender sender, List<String> args) {
+	public void execute(@NotNull CommandSender sender, @NotNull List<String> args) {
 		try {
-			// Sender Field - Setup
-			this.senderFieldsOuter(sender);
-
 			// Apply Puzzler
 			args = this.applyPuzzler(args, sender);
-			this.setArgs(args);
+
+			// Initialize Execution State (run context)
+			this.context = new CommandContext(args, sender);
 
 			// Requirements
 			if (!this.isRequirementsMet(sender, true)) return;
@@ -758,7 +739,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 					if (matches.isEmpty()) {
 						base = Lang.COMMAND_CHILD_NONE;
 						suggestions = this.getChildren(token, true, sender, false);
-						onUnmatchedArg();
+						onUnmatchedArg(context);
 					} else {
 						base = Lang.COMMAND_CHILD_AMBIGUOUS;
 						suggestions = this.getChildren(token, false, sender, false);
@@ -794,10 +775,10 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 			}
 
 			// Self Execution > Arguments Valid
-			if (!this.isArgsValid(this.getArgs(), this.sender)) return;
+			if (!this.isArgsValid(context.getArgs(), context.getSender())) return;
 
 			// Self Execution > Perform
-			this.perform();
+			this.perform(context);
 		} catch (KamiCommonException ex) {
 			// Sometimes Types (or commands themselves) throw exceptions, to stop executing and notify the user.
 			KMessageSingle message = ex.getKMessage();
@@ -807,33 +788,20 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		} catch (Throwable other) {
 			other.printStackTrace();
 		} finally {
-			// Sender Sender - Cleanup
-			this.senderFieldsOuter(null);
+			// Reset Execution Fields - Cleanup
+			this.resetExecutionState();
 		}
 	}
 
-	public void senderFieldsOuter(CommandSender sender) {
-		this.nextArg = 0;
-		this.sender = sender;
-		this.senderIsConsole = true;
-		this.me = null;
-		if (sender instanceof Player) {
-			this.me = (Player) sender;
-			this.senderIsConsole = false;
-		}
-
-		boolean set = (sender != null);
-		this.senderFields(set);
-	}
-
-	public void senderFields(boolean set) {
-
+	private void resetExecutionState() {
+		this.context = null;
 	}
 
 	// This is where the command action is performed.
-	public void perform() throws KamiCommonException {
+	public void perform(@NotNull CommandContext context) throws KamiCommonException {
 		// Per default, we just run the help command!
-		this.getHelpCommand().execute(this.sender, this.getArgs());
+		Preconditions.checkNotNull(context, "context cannot be null");
+		this.getHelpCommand().execute(context.getSender(), context.getArgs());
 	}
 
 	// -------------------------------------------- //
@@ -968,9 +936,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 		return true;
 	}
 
-	public void onUnmatchedArg() {
-
-	}
+	// Intended to be overriden
+	public void onUnmatchedArg(@NotNull CommandContext context) {}
 
 	@NotNull
 	protected List<String> getTemplateParameters(@Nullable CommandSender sender) {
@@ -1106,46 +1073,39 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 	// Util
 
 	public boolean argIsSet(int idx) {
+		if (this.context == null) return false;
 		if (idx < 0) return false;
-		if (idx + 1 > this.getArgs().size()) return false;
-		return this.getArgs().get(idx) != null;
+		if (idx + 1 > this.context.getArgs().size()) return false;
+		return this.context.getArgs().get(idx) != null;
 	}
 
 	public boolean argIsSet() {
-		return this.argIsSet(nextArg);
+		return this.context != null && this.argIsSet(context.getNextArg());
 	}
 
 	// Implicit index
 
-	public String arg() {
-		return this.argAt(nextArg);
-	}
-
 	public <T> T readArg() throws KamiCommonException {
-		return this.readArgAt(nextArg);
+		Preconditions.checkNotNull(this.context, "context cannot be null");
+		return this.readArgAt(this.context.getNextArg());
 	}
 
 	public <T> T readArg(T defaultNotSet) throws KamiCommonException {
-		return this.readArgAt(nextArg, defaultNotSet);
-	}
-
-	// Index logic
-
-	public String argAt(int idx) {
-		nextArg = idx + 1;
-		if (!this.argIsSet(idx)) return null;
-		return this.getArgs().get(idx);
+		Preconditions.checkNotNull(this.context, "context cannot be null");
+		return this.readArgAt(this.context.getNextArg(), defaultNotSet);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T readArgAt(int idx) throws KamiCommonException {
+	private <T> T readArgAt(int idx) throws KamiCommonException {
+		Preconditions.checkNotNull(this.context, "context cannot be null");
+
 		// Make sure that a Parameter is present.
 		if (!this.hasParameterForIndex(idx)) {
 			throw new IllegalArgumentException(idx + " is out of range. Parameters size: " + this.getParameters().size());
 		}
 
 		// Increment
-		nextArg = idx + 1;
+		this.context.setNextArg(idx + 1);
 
 		// Get the parameter
 		Parameter<T> parameter = (Parameter<T>) this.getParameter(idx);
@@ -1162,17 +1122,19 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
 		// Get the arg.
 		String arg = null;
-		if (this.argIsSet(idx)) arg = this.getArgs().get(idx);
+		if (this.argIsSet(idx)) arg = this.context.getArgs().get(idx);
 
 		// Read and return the arg.
-		return parameter.getType().read(arg, sender);
+		return parameter.getType().read(arg, this.context.getSender());
 	}
 
-	public <T> T readArgAt(int idx, T defaultNotSet) throws KamiCommonException {
+	private <T> T readArgAt(int idx, T defaultNotSet) throws KamiCommonException {
+		Preconditions.checkNotNull(this.context, "context cannot be null");
+
 		// Return the default passed.
 		if (!this.argIsSet(idx)) {
 			// Increment
-			nextArg = idx + 1;
+			this.context.setNextArg(idx + 1);
 
 			// Use default
 			return defaultNotSet;

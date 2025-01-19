@@ -1,20 +1,22 @@
 package com.kamikazejam.kamicommon.command.impl.kc;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
+import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.item.NbtType;
-import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTType;
-import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBTType;
+import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -32,9 +34,9 @@ public class CmdItemDump extends KamiCommand {
     }
 
     @Override
-    public void perform() throws KamiCommonException {
+    public void perform(@NotNull CommandContext context) throws KamiCommonException {
         Logger logger = SpigotUtilsSource.get().getLogger();
-        Player plr = (Player) sender;
+        Player plr = (Player) context.getSender();
 
         ItemStack item = NmsAPI.getItemInMainHand(plr);
         if (item == null || item.getType() == Material.AIR) {

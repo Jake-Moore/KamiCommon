@@ -1,6 +1,8 @@
 package com.kamikazejam.kamicommon.command.impl.kc;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.actions.Action;
+import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
@@ -11,7 +13,6 @@ import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
 import com.kamikazejam.kamicommon.nms.provider.BlockUtilProvider;
 import com.kamikazejam.kamicommon.nms.provider.ChatColorProvider;
 import com.kamikazejam.kamicommon.util.StringUtil;
-import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -20,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
@@ -116,8 +118,8 @@ public class CmdNmsTest extends KamiCommand {
     );
 
     @Override
-    public void perform() {
-        Player player = (Player) sender;
+    public void perform(@NotNull CommandContext context) {
+        Player player = (Player) context.getSender();
         player.sendMessage(StringUtil.t("&7NMS Version: &f" + NmsVersion.getMCVersion() + " &7(&f" + NmsVersion.getFormattedNmsInteger() + "&7)"));
         player.sendMessage(StringUtil.t("  &7WineSpigot?: &f" + NmsVersion.isWineSpigot()));
 
