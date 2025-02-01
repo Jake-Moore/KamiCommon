@@ -24,7 +24,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -35,7 +39,7 @@ import java.util.function.Consumer;
 @Getter
 @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
+public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
     private static final String nextIconId = "paginated_menu_next";
     private static final String prevIconId = "paginated_menu_prev";
 
@@ -49,7 +53,7 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
     // Internal Data
 
     // Constructor (Deep Copying from Builder)
-    private PaginatedMenu(@NotNull Builder<?> builder, @NotNull Player player) {
+    private PaginatedMenu(@NotNull Builder builder, @NotNull Player player) {
         super(builder, player);
         builder.pagedIcons.values().forEach((icon) -> this.pagedIcons.add(icon.copy()));
         this.pageIndex = 0;
@@ -176,8 +180,7 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
     // ------------------------------------------------------------ //
     //                        Builder Pattern                       //
     // ------------------------------------------------------------ //
-    @SuppressWarnings("unchecked")
-    public static final class Builder<T extends Builder<T>> extends SimpleMenu.Builder<T> {
+    public static final class Builder extends AbstractMenuBuilder<PaginatedMenu, Builder> {
         // Pagination Specific Fields
         private final @NotNull PrioritizedMenuIconMap pagedIcons = new PrioritizedMenuIconMap();
 
@@ -191,15 +194,15 @@ public final class PaginatedMenu extends SimpleMenu<PaginatedMenu> {
             this(layout, new MenuSizeType(type));
         }
 
-        public @NotNull T paginationOptions(PaginatedMenuOptions.@NotNull PaginatedMenuOptionsModification modification) {
+        public @NotNull Builder paginationOptions(PaginatedMenuOptions.@NotNull PaginatedMenuOptionsModification modification) {
             Preconditions.checkNotNull(modification, "Modification must not be null.");
             modification.modify((PaginatedMenuOptions) this.options);
-            return (T) this;
+            return this;
         }
 
-        public @NotNull T modifyPageIcons(@NotNull Consumer<IPageIconsAccess> consumer) {
+        public @NotNull Builder modifyPageIcons(@NotNull Consumer<IPageIconsAccess> consumer) {
             consumer.accept(new PageIconsAccess(this.pagedIcons));
-            return (T) this;
+            return this;
         }
 
         @Override
