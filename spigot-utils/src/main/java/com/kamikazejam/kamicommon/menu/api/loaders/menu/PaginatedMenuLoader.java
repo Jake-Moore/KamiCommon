@@ -21,7 +21,7 @@ public class PaginatedMenuLoader {
      * Identical to calling {@link #loadMenu(ConfigurationSection)} with {@link ConfigurationSection#getConfigurationSection(String key)}
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
-    public static @NotNull PaginatedMenu.Builder<?> loadMenu(@NotNull ConfigurationSection section, @NotNull String key) {
+    public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section, @NotNull String key) {
         return loadMenu(section.getConfigurationSection(key));
     }
 
@@ -29,10 +29,10 @@ public class PaginatedMenuLoader {
      * Loads a {@link PaginatedMenu.Builder} from a {@link ConfigurationSection}.
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
-    public static @NotNull PaginatedMenu.Builder<?> loadMenu(@NotNull ConfigurationSection section) {
+    public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section) {
         // Load title from 'title' or 'name', defaulting to " "
         String title = section.getString("title", section.getString("name", " "));
-        PaginatedMenu.Builder<?> builder = new PaginatedMenu.Builder<>(new SimplePaginationLayout(), MenuSizeLoader.load(section)).title(StringUtil.t(title));
+        PaginatedMenu.Builder builder = new PaginatedMenu.Builder(new SimplePaginationLayout(), MenuSizeLoader.load(section)).title(StringUtil.t(title));
 
         // Load Filler Icon
         if (section.isConfigurationSection("filler")) {
