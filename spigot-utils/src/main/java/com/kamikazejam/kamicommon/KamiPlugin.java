@@ -207,6 +207,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         int count = 0;
         for (Listener listener : listeners) {
             if (listener == null) { continue; }
+            Bukkit.getPluginManager().registerEvents(listener, this);
             if (listenerList.contains(listener)) { continue; }
             listenerList.add(listener);
             count++;
