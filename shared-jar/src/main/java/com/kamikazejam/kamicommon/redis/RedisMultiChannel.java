@@ -37,4 +37,17 @@ public class RedisMultiChannel<T> {
         }
         manager.publish(channel, message, sync);
     }
+
+    public void publishRawSync(@NotNull String channel, @NotNull String message) {
+        this.publishRaw(channel, message, true);
+    }
+    public void publishRawAsync(@NotNull String channel, @NotNull String message) {
+        this.publishRaw(channel, message, false);
+    }
+    public void publishRaw(@NotNull String channel, @NotNull String message, boolean sync) {
+        if (!channels.contains(channel)) {
+            throw new IllegalArgumentException("Channel " + channel + " is not part of this RedisMultiChannel");
+        }
+        manager.publishRaw(channel, message, sync);
+    }
 }

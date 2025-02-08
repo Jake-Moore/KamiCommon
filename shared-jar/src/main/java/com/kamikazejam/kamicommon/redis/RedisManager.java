@@ -203,4 +203,13 @@ class RedisManager implements Service {
             redis.async().publish(channel, JacksonUtil.serialize(message));
         }
     }
+
+    void publishRaw(@NotNull String channel, @NotNull String message, boolean sync) {
+        // Publish a message to the channel
+        if (sync) {
+            redis.sync().publish(channel, message);
+        }else {
+            redis.async().publish(channel, message);
+        }
+    }
 }
