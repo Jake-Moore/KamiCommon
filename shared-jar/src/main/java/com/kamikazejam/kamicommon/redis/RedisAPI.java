@@ -34,6 +34,9 @@ public class RedisAPI {
     public <T> @NotNull RedisMultiChannel<T> registerMultiChannel(@NotNull Class<T> clazz, @NotNull String... channels) {
         return new RedisMultiChannel<>(manager, clazz, channels);
     }
+    public @NotNull RedisChannelRaw registerChannelRaw(@NotNull String channel) {
+        return new RedisChannelRaw(manager, channel);
+    }
 
     public RedisCommands<String, String> getCmdsSync() {
         return manager.getRedis().sync();
