@@ -37,7 +37,6 @@ public abstract class IBuilder {
 
     @Setter private @Nullable ItemStack base = null;
     private @NotNull XMaterial material = XMaterial.AIR;
-    private @Nullable String originalMaterialString = null;
 
     private int amount = 1;
     private short damage = 0;
@@ -65,13 +64,11 @@ public abstract class IBuilder {
     }
     public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section) {
         this.material = material;
-        this.originalMaterialString = material.name();
         this.damage = material.getData();
         loadConfigItem(section, null, false);
     }
     public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
         this.material = material;
-        this.originalMaterialString = material.name();
         this.damage = material.getData();
         loadConfigItem(section, offlinePlayer, false);
     }
@@ -112,21 +109,7 @@ public abstract class IBuilder {
             itemStack = base;
         }else {
             assert material.parseMaterial() != null;
-            // We need to evaluate the correct XMaterial, which we can only do if we have an original material string
-            // Why do we need to do this? Because when matching "WOOL" to an XMaterial, it will pick a colored wool i.e. BLACK_WOOL
-            // But if we have a data value (or even data value 0) we know that we want a specific wool color, and need a different enum value
-            if (originalMaterialString == null) {
-                // Without that string, we only have the current XMaterial, so we must use that
-                itemStack = material.parseItem();
-            }else {
-                // Let's try to fetch an XMaterial that corresponds to this material string & data
-                Optional<XMaterial> o = MaterialFlatteningUtil.findMaterialAndDataMapping(originalMaterialString, (byte) damage);
-                // Fall back to the original XMaterial if we can't find a specific colored match
-                XMaterial xMat = o.orElse(material);
-
-                // We have an XMaterial one way or the other, use it to create the item
-                itemStack = xMat.parseItem();
-            }
+            itemStack = material.parseItem();
             // Update the ItemStack amount
             assert itemStack != null;
             itemStack.setAmount(amount);
@@ -210,14 +193,16 @@ public abstract class IBuilder {
         if (offlinePlayer != null) {
             this.skullOwner = offlinePlayer.getName();
         }
+        // Load Damage, so it's available in the Type Search
+        this.setDurability(config.getInt("damage", 0));
+
+        // Load Types, which is complicated due to the 1.13 flattening
         if (loadMaterial) {
             loadTypes(config);
-
         }
 
         // Load basic values from config
         this.setAmount(config.getInt("amount", 1));
-        this.setDurability(config.getInt("damage", 0));
         this.setName(config.getString("name"));
         this.setLore(config.getStringList("lore"));
         // Load Enchantments
@@ -276,7 +261,6 @@ public abstract class IBuilder {
         if (amount > 64) { amount = 64; }
         assert material.parseMaterial() != null;
         this.material = material;
-        this.originalMaterialString = material.name();
         this.amount = amount;
         this.damage = damage;
     }
@@ -303,7 +287,6 @@ public abstract class IBuilder {
 
     public IBuilder setType(XMaterial m) {
         this.material = m;
-        this.originalMaterialString = m.name();
         return this;
     }
 
@@ -318,7 +301,6 @@ public abstract class IBuilder {
 
     public IBuilder setMaterial(XMaterial material) {
         this.material = material;
-        this.originalMaterialString = material.name();
         return this;
     }
     public IBuilder setMaterial(Material material) {
@@ -476,32 +458,73 @@ public abstract class IBuilder {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     final boolean loadXMaterial(ConfigurationSection section) {
+        @Nullable String strValue = null;
         if (section.isString("material")) {
-            String strValue = section.getString("material");
-            @Nullable XMaterial mat = parseMaterial(strValue);
-            if (mat != null) {
-                this.material = mat;
-                this.originalMaterialString = strValue;
-                return true;
-            }
+            strValue = section.getString("material");
+        } else if (section.isString("type")) {
+            strValue = section.getString("type");
         }
-        if (section.isString("type")) {
-            String strValue = section.getString("type");
-            @Nullable XMaterial mat = parseMaterial(strValue);
-            if (mat != null) {
-                this.material = mat;
-                this.originalMaterialString = strValue;
-                return true;
-            }
+        if (strValue == null) { return false; }
+        strValue = strValue.toUpperCase().strip();
+
+        // Parse this string into a Material (if available)
+        @Nullable Material mat = parseMaterial(strValue);
+        if (mat != null && damage == 0) {
+            // As long as we don't want a data value, we're done & we can use this Material
+            this.material = XMaterial.matchXMaterial(mat);
+            return true;
         }
+
+        // Parse this string into an XMaterial, this is used as a last resort
+        @Nullable XMaterial defaultParse = parseXMaterial(strValue);
+
+        // XMaterial names are latest (i.e. 1.21 or whatever) Material values, meaning if our string was "WOOL"
+        // It won't return an XMaterial.WOOL (that doesn't exist)
+        // Meaning materials with colors should never pass this check, and this is only for simple materials like
+        // XMaterial.BUCKET which has a Material.BUCKET to match
+        if (defaultParse != null && defaultParse.name().equalsIgnoreCase(strValue) && damage == 0) {
+            this.material = defaultParse;
+            return true;
+        }
+
+        // Now, we have a weird material name, or a material with a data value
+        // We need to evaluate the correct XMaterial, which we can only do if we have an original material string
+        // Why do we need to do this? Because when matching "WOOL" to an XMaterial, xseries will pick a colored wool i.e. BLACK_WOOL
+        //   (due to the way they handle legacy names, all wool colors are mapped to "WOOL" and it just picks the first one it finds)
+        // But if we have a data value (or even data value 0) we know that we want a specific wool color, and need a different enum value
+        //   i.e. XMaterial.RED_WOOL
+
+        // Let's try to fetch an XMaterial that corresponds to this material string & data
+        // Data should have already been loaded prior to calling this
+        Optional<XMaterial> o = MaterialFlatteningUtil.findMaterialAndDataMapping(strValue, (byte) damage);
+        // Fall back to the original XMaterial if we can't find a specific colored match
+        @Nullable XMaterial xMat = o.orElse(defaultParse);
+
+        if (xMat != null) {
+            this.material = xMat;
+            return true;
+        }
+
         return false;
     }
 
     /**
      * Nullable because the material string may be another IBuilder format (like ItemsAdder namespacedID)
      */
-    public @Nullable XMaterial parseMaterial(String mat) {
-        return XMaterial.matchXMaterial(mat).orElse(null);
+    public @Nullable XMaterial parseXMaterial(String mat) {
+        try {
+            return XMaterial.matchXMaterial(mat).orElse(null);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    public @Nullable Material parseMaterial(String mat) {
+        try {
+            return Material.getMaterial(mat);
+        } catch (Throwable t) {
+            return null;
+        }
     }
 
     public abstract void loadTypes(ConfigurationSection config);
@@ -511,7 +534,6 @@ public abstract class IBuilder {
     public IBuilder loadClone(IBuilder builder) {
         // Basics
         builder.setMaterial(material);
-        builder.originalMaterialString = this.originalMaterialString;
         builder.setAmount(amount);
         builder.setDurability(damage);
 
