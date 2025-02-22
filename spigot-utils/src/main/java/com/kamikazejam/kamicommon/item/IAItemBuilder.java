@@ -73,7 +73,7 @@ public class IAItemBuilder extends IBuilder {
 
         try {
             // Try the string as a Material
-            this.setMaterial(parseMaterial(matOrNamespacedID));
+            this.setMaterial(parseXMaterial(matOrNamespacedID));
         }catch (IllegalArgumentException ignored) {
             // Try the string as a namespacedID
             CustomStack stack = CustomStack.getInstance(matOrNamespacedID);

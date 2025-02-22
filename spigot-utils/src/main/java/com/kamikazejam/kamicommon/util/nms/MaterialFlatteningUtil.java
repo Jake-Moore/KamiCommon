@@ -1,7 +1,9 @@
 package com.kamikazejam.kamicommon.util.nms;
 
 import com.cryptomorin.xseries.XMaterial;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,15 @@ public class MaterialFlatteningUtil {
 
     @NotNull
     public static Optional<XMaterial> findMaterialAndDataMapping(@NotNull String matName, byte data) {
+        // If we have no data value, and just want a material, try to find a matching Material directly
+        if (data == 0) {
+            // If found, convert it to XMaterial (safe/guaranteed conversion with XMaterial)
+            @Nullable Material baseMaterial = Material.getMaterial(matName);
+            if (baseMaterial != null) {
+                return Optional.of(XMaterial.matchXMaterial(baseMaterial));
+            }
+        }
+
         String key = matName + ":" + data;
         return Optional.ofNullable(unflattenedToNewMaterialMap.get(key));
     }
