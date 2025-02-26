@@ -91,7 +91,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
 
         // Open the Menu for the Player
         InventoryView view = Objects.requireNonNull(player.openInventory(this.getInventory()));
-        events.getOpenCallbacks().forEach(callback -> callback.onOpen(player, view));
+        events.getOpenCallbacks().values().forEach(callback -> callback.onOpen(player, view));
         return view;
     }
 

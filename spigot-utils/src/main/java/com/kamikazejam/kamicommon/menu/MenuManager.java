@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -63,7 +63,7 @@ public final class MenuManager implements Listener, Runnable {
 
         // test the predicates before the icon click handlers
         MenuEvents menuEvents = menu.getEvents();
-        for (Predicate<InventoryClickEvent> predicate : menuEvents.getClickPredicates()) {
+        for (Predicate<InventoryClickEvent> predicate : menuEvents.getClickPredicates().values()) {
             if (!predicate.test(e)) {
                 return;
             }
@@ -119,12 +119,12 @@ public final class MenuManager implements Listener, Runnable {
         }
 
         // Trigger the Close Consumers
-        menuEvents.getCloseCallbacks().forEach(callback -> callback.onClose(p, e));
+        menuEvents.getCloseCallbacks().values().forEach(callback -> callback.onClose(p, e));
 
         // Trigger the Post-Close Consumers (1-tick later)
         final Menu finalMenu = menu;
         Bukkit.getScheduler().runTaskLater(SpigotUtilsSource.get(), () ->
-                        menuEvents.getPostCloseCallbacks().forEach(callback -> callback.onPostClose(p, finalMenu))
+                        menuEvents.getPostCloseCallbacks().values().forEach(callback -> callback.onPostClose(p, finalMenu))
                 , 1L);
     }
 
@@ -201,7 +201,7 @@ public final class MenuManager implements Listener, Runnable {
         int slot = e.getSlot();
 
         // test the predicates before the player click handlers
-        for (Predicate<InventoryClickEvent> predicate : menuEvents.getPlayerInvClickPredicates()) {
+        for (Predicate<InventoryClickEvent> predicate : menuEvents.getPlayerInvClickPredicates().values()) {
             if (!predicate.test(e)) {
                 return true;
             }
@@ -213,10 +213,10 @@ public final class MenuManager implements Listener, Runnable {
         if (slot < 0 || slot > 35) { return true; }
 
         // If we have a generic slot listener -> call it
-        menuEvents.getPlayerInvClicks().forEach((click) -> click.onClick(player, e.getClick(), slot));
+        menuEvents.getPlayerInvClicks().values().forEach((click) -> click.onClick(player, e.getClick(), slot));
 
         // If we have a specific-slot listener -> call it (lower priority)
-        menuEvents.getPlayerSlotClicks().getOrDefault(slot, new ArrayList<>()).forEach(
+        menuEvents.getPlayerSlotClicks().getOrDefault(slot, new HashMap<>()).values().forEach(
                 (click) -> click.onClick(player, e.getClick(), slot)
         );
 
