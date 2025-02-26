@@ -39,7 +39,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
     protected final Player player;
     // priority icon is used to keep track of the order icons were registered, which is necessary when resizing
     // The data type PriorityMenuIcon also keeps track of the slot data
-    protected final PrioritizedMenuIconMap menuIcons = new PrioritizedMenuIconMap();
+    protected final PrioritizedMenuIconMap menuIcons;
     // Configuration
     protected final MenuEvents events;
     protected final MenuOptions options;
@@ -52,7 +52,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
     protected AbstractMenu(@NotNull AbstractMenuBuilder<?,?> builder, @NotNull Player player) {
         super(builder.size.copy(), builder.titleCalculator.buildTitle(player));
         this.player = player;
-        builder.menuIcons.values().forEach((pIcon) -> this.menuIcons.add(pIcon.copy()));
+        this.menuIcons = builder.menuIcons.copy();
         this.events = builder.events.copy();
         this.options = builder.options.copy();
     }
@@ -167,6 +167,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
         this.placeIcons((m) -> m.needsModification(tick));
     }
 
+    private final Map<Integer, String> lastPlaceIdMap = new HashMap<>();
     /**
      * Manually trigger an update for all icons matching this predicate.<br>
      * If the predicate is passed, the icon will be re-built and set in the inventory.<br>
@@ -212,12 +213,15 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
             }
 
             // 2. If there is an icon here, and it does not need updating, we skip it
-            if (!needsUpdateMap.getOrDefault(forHere.getId(), false)) {
+            // - also requires that the last item placed here is of the same ID, otherwise we swapped items and must place
+            String lastId = lastPlaceIdMap.getOrDefault(i, null);
+            if (!needsUpdateMap.getOrDefault(forHere.getId(), false) && (lastId != null && lastId.equals(forHere.getId()))) {
                 continue;
             }
+            lastPlaceIdMap.put(i, forHere.getId());
 
             // 3. Retrieve the ItemStack for this icon, and place it in the slot
-            @Nullable ItemStack item = itemStackMap.get(forHere.getId());
+            @Nullable ItemStack item = itemStackMap.getOrDefault(forHere.getId(), forHere.buildItem(tick, this.player));
             super.setItem(i, item);
             // Note the behavior here. the Icon can return a null builder, which we will assume
             // was intended, and set the slot to null (making it an empty inventory slot)

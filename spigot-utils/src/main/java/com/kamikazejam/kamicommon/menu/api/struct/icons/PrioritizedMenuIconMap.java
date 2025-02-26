@@ -3,12 +3,20 @@ package com.kamikazejam.kamicommon.menu.api.struct.icons;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.PrioritizedMenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
+import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
@@ -19,6 +27,10 @@ public class PrioritizedMenuIconMap {
     private final Map<String, PrioritizedMenuIcon> menuIcons = new ConcurrentHashMap<>();
     private final AtomicInteger priorityCounter = new AtomicInteger(0);
     public PrioritizedMenuIconMap() {}
+    public PrioritizedMenuIconMap(@NotNull Map<String, PrioritizedMenuIcon> menuIcons, int priorityCounter) {
+        this.menuIcons.putAll(menuIcons);
+        this.priorityCounter.set(priorityCounter);
+    }
 
     @NotNull
     public Map<String, MenuIcon> getMenuIcons() {
@@ -30,7 +42,7 @@ public class PrioritizedMenuIconMap {
     }
 
     public void add(@NotNull MenuIcon icon, @Nullable IconSlot slot) {
-        this.add(icon, slot, this.priorityCounter.getAndIncrement());
+        this.add(icon, slot, this.priorityCounter.incrementAndGet());
     }
 
     public void add(@NotNull MenuIcon icon, @Nullable IconSlot slot, int priority) {
@@ -40,6 +52,29 @@ public class PrioritizedMenuIconMap {
     @Nullable
     public MenuIcon remove(@NotNull String id) {
         return Optional.ofNullable(this.menuIcons.remove(id)).map(PrioritizedMenuIcon::getIcon).orElse(null);
+    }
+
+    @NotNull
+    public Set<MenuIcon> remove(int slot, @NotNull MenuSize size) {
+        Set<MenuIcon> removed = new HashSet<>();
+        Map<String, PrioritizedMenuIcon> insertions = new HashMap<>();
+
+        for (Map.Entry<String, PrioritizedMenuIcon> entry : this.menuIcons.entrySet() ) {
+            @Nullable IconSlot iconSlot = entry.getValue().getSlot();
+            @Nullable Set<Integer> slots = iconSlot != null ? iconSlot.get(size) : null;
+            if (slots == null || !slots.contains(slot)) continue;
+
+            // Indicate this MenuIcon had a slot removed
+            removed.add(entry.getValue().getIcon());
+
+            // Remove JUST this slot from the icon
+            Set<Integer> newSlots = slots.stream().filter(s -> s != slot).collect(Collectors.toSet());
+            PrioritizedMenuIcon newIcon = entry.getValue().copy(new StaticIconSlot(newSlots));
+            insertions.put(entry.getKey(), newIcon);
+        }
+
+        this.menuIcons.putAll(insertions);
+        return removed;
     }
 
     public void clear() {
@@ -111,5 +146,13 @@ public class PrioritizedMenuIconMap {
 
     public int size() {
         return this.menuIcons.size();
+    }
+
+    public @NotNull PrioritizedMenuIconMap copy() {
+        Map<String, PrioritizedMenuIcon> menuIcons = new HashMap<>();
+        for (Map.Entry<String, PrioritizedMenuIcon> entry : this.menuIcons.entrySet()) {
+            menuIcons.put(entry.getKey(), entry.getValue().copy());
+        }
+        return new PrioritizedMenuIconMap(new HashMap<>(menuIcons), this.priorityCounter.get());
     }
 }

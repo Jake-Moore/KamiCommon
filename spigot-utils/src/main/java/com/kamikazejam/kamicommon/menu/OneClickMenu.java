@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.menu;
 
 import com.kamikazejam.kamicommon.menu.api.clicks.OneClickMenuTransform;
+import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.oneclick.OneClickMenuOptions;
@@ -39,6 +40,23 @@ public final class OneClickMenu extends AbstractMenu<OneClickMenu> {
         // reopen calls this, so reopening will also reset the click
         clicked = false;
         return super.open();
+    }
+
+    @SuppressWarnings("RedundantIfStatement")
+    public boolean countsForClick(@NotNull MenuIcon icon, int slot) {
+        Preconditions.checkNotNull(icon, "Icon must not be null.");
+        if (!(options instanceof OneClickMenuOptions menuOptions)) { return true; }
+
+        // 1. Check if filler icon counts
+        if (menuOptions.isExcludeFillerClickFromOneClick()) {
+            @Nullable MenuIcon filler = this.getFillerIcon();
+            if (filler != null && filler.equals(icon)) {
+                return false;
+            }
+        }
+
+        // LGTM! Allow this as the "one click"
+        return true;
     }
 
     // ------------------------------------------------------------ //

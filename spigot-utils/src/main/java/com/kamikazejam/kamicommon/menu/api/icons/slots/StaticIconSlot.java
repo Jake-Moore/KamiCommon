@@ -10,7 +10,7 @@ import java.util.*;
 @SuppressWarnings("unused")
 public class StaticIconSlot implements IconSlot {
     private final @NotNull Set<Integer> slots;
-    public StaticIconSlot(@NotNull List<Integer> slots) {
+    public StaticIconSlot(@NotNull Collection<Integer> slots) {
         this.slots = new HashSet<>(slots);
     }
     public StaticIconSlot(int slot) {

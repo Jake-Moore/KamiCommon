@@ -93,6 +93,9 @@ public interface IMenuIconsAccess {
     @Nullable
     MenuIcon removeMenuIcon(@NotNull String id);
 
+    @Nullable
+    Set<MenuIcon> removeMenuIcon(int slot);
+
     void clearMenuIcons();
 
 

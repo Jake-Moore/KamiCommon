@@ -3,13 +3,10 @@ package com.kamikazejam.kamicommon.menu;
 import com.google.common.collect.Sets;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.IClickTransform;
-import com.kamikazejam.kamicommon.menu.api.clicks.transform.paginated.IPaginatedClickTransform;
-import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.ISimpleClickTransform;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.UpdatingMenu;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
-import com.kamikazejam.kamicommon.menu.api.struct.oneclick.OneClickMenuOptions;
 import com.kamikazejam.kamicommon.util.ItemUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -49,7 +46,11 @@ public final class MenuManager implements Listener, Runnable {
     public void onClickMenu(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player player)) { return; }
         if (!(e.getInventory().getHolder() instanceof Menu menu)) { return; }
-        if ((menu instanceof OneClickMenu oneClickMenu) && oneClickMenu.clicked) { return; }
+        if ((menu instanceof OneClickMenu oneClickMenu) && oneClickMenu.clicked) {
+            // OneClickMenu has already been clicked -> cancel all future clicks
+            e.setCancelled(true);
+            return;
+        }
 
         // Handle player inventory clicks
         // If this method returns true, it means it has handled the event and we should not do anything else
@@ -92,14 +93,10 @@ public final class MenuManager implements Listener, Runnable {
         iconForSlot.playClickSound(player);
 
         // Perform the Click
-        if (click instanceof ISimpleClickTransform simpleClickTransform) {
-            simpleClickTransform.process(player, e);
-        }else if (click instanceof IPaginatedClickTransform paginatedClickTransform) {
-            paginatedClickTransform.process(player, e, getPage(menu));
-        }
+        click.process(e, menu, player, iconForSlot, e.getSlot());
 
         // For One Click Menu -> Disable future clicks
-        if (menu instanceof OneClickMenu oneClickMenu) {
+        if (menu instanceof OneClickMenu oneClickMenu && oneClickMenu.countsForClick(iconForSlot, e.getSlot())) {
             oneClickMenu.clicked = true;
             oneClickMenu.getTransform().onClick(oneClickMenu, e, player, iconForSlot, e.getSlot());
         }
@@ -110,13 +107,6 @@ public final class MenuManager implements Listener, Runnable {
         final Player p = (Player) e.getPlayer();
         if (!(e.getInventory().getHolder() instanceof Menu menu)) {
             return;
-        }
-        if ((menu instanceof OneClickMenu oneClickMenu) && oneClickMenu.clicked) {
-            if ((oneClickMenu.options instanceof OneClickMenuOptions o2) && o2.isPreventAfterClick()) {
-                // force the inventory to remain open (we can't cancel this event, but we can tell them to open the same inventory)
-                p.openInventory(e.getInventory());
-                return;
-            }
         }
 
         MenuEvents menuEvents = menu.getEvents();
@@ -160,14 +150,6 @@ public final class MenuManager implements Listener, Runnable {
         if (!menu.getOptions().isAllowItemDrop()) {
             e.setCancelled(true);
         }
-    }
-
-    /**
-     * @return The current page (0-indexed)
-     */
-    private int getPage(@NotNull Menu menu) {
-        if (!(menu instanceof PaginatedMenu paginatedMenu)) { return 0; }
-        return paginatedMenu.getCurrentPage();
     }
 
 
