@@ -11,15 +11,13 @@ import com.kamikazejam.kamicommon.menu.api.title.MenuTitleCalculator;
 import com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider;
 import com.kamikazejam.kamicommon.menu.api.title.MenuTitleReplacement;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public sealed abstract class AbstractMenuBuilder<M extends Menu, T extends AbstractMenuBuilder<M, T>> permits SimpleMenu.Builder, PaginatedMenu.Builder {
+public sealed abstract class AbstractMenuBuilder<M extends Menu, T extends AbstractMenuBuilder<M, T>> permits SimpleMenu.Builder, PaginatedMenu.Builder, OneClickMenu.Builder {
     // Menu Details
     protected @NotNull MenuSize size;
     protected final @NotNull MenuTitleCalculator titleCalculator = new MenuTitleCalculator();
@@ -105,9 +103,5 @@ public sealed abstract class AbstractMenuBuilder<M extends Menu, T extends Abstr
         consumer.accept(new MenuIconsAccess(this.size, this.menuIcons));
         return (T) this;
     }
-
-    @NotNull
-    @CheckReturnValue
-    public abstract M build(@NotNull Player player);
 }
 
