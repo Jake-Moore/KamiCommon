@@ -33,6 +33,10 @@ public class MenuIconsAccess implements IMenuIconsAccess {
         return this.menuIcons.remove(id);
     }
 
+    public @Nullable Set<MenuIcon> removeMenuIcon(int slot) {
+        return this.menuIcons.remove(slot, this.menuSize);
+    }
+
     @Override
     public void clearMenuIcons() {
         this.menuIcons.clear();

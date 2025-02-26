@@ -25,9 +25,20 @@ public class PrioritizedMenuIcon {
         this.slot = (icon.getSlot() == null) ? null : icon.getSlot().copy();
         this.priority = icon.getPriority();
     }
+    // Copy Constructor
+    private PrioritizedMenuIcon(@NotNull PrioritizedMenuIcon icon, @Nullable IconSlot slot) {
+        this.icon = icon.getIcon().copy();
+        this.slot = slot;
+        this.priority = icon.getPriority();
+    }
 
     @NotNull
     public PrioritizedMenuIcon copy() {
         return new PrioritizedMenuIcon(this);
+    }
+
+    @NotNull
+    public PrioritizedMenuIcon copy(@NotNull IconSlot newSlot) {
+        return new PrioritizedMenuIcon(this, newSlot);
     }
 }

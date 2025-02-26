@@ -14,9 +14,22 @@ import org.jetbrains.annotations.NotNull;
 @Accessors(chain = true)
 @SuppressWarnings("unused")
 public class OneClickMenuOptions extends MenuOptions {
-    private boolean preventAfterClick = true;
+    private boolean excludeFillerClickFromOneClick = true;
+
+    public OneClickMenuOptions() {}
+    // Copy Constructor
+    public OneClickMenuOptions(@NotNull OneClickMenuOptions copy) {
+        this.excludeFillerClickFromOneClick = copy.excludeFillerClickFromOneClick;
+    }
 
     public interface OneClickMenuOptionsModification {
         void modify(@NotNull OneClickMenuOptions options);
+    }
+
+    @Override
+    public @NotNull OneClickMenuOptions copy() {
+        OneClickMenuOptions copy = new OneClickMenuOptions(this);
+        this.copyInto(copy);
+        return copy;
     }
 }
