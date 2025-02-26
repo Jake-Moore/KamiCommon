@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 @Getter
 @Accessors(chain = true)
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends MenuHolder implements Menu, UpdatingMenu permits SimpleMenu, PaginatedMenu {
+public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends MenuHolder implements Menu, UpdatingMenu permits SimpleMenu, PaginatedMenu, OneClickMenu {
     protected final Player player;
     // priority icon is used to keep track of the order icons were registered, which is necessary when resizing
     // The data type PriorityMenuIcon also keeps track of the slot data

@@ -9,6 +9,7 @@ import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.access.IMenuIconsAccess;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.UpdatingMenu;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
+import com.kamikazejam.kamicommon.menu.api.struct.oneclick.OneClickMenuOptions;
 import com.kamikazejam.kamicommon.util.ItemUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -48,6 +49,7 @@ public final class MenuManager implements Listener, Runnable {
     public void onClickMenu(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player player)) { return; }
         if (!(e.getInventory().getHolder() instanceof Menu menu)) { return; }
+        if ((menu instanceof OneClickMenu oneClickMenu) && oneClickMenu.clicked) { return; }
 
         // Handle player inventory clicks
         // If this method returns true, it means it has handled the event and we should not do anything else
@@ -95,6 +97,12 @@ public final class MenuManager implements Listener, Runnable {
         }else if (click instanceof IPaginatedClickTransform paginatedClickTransform) {
             paginatedClickTransform.process(player, e, getPage(menu));
         }
+
+        // For One Click Menu -> Disable future clicks
+        if (menu instanceof OneClickMenu oneClickMenu) {
+            oneClickMenu.clicked = true;
+            oneClickMenu.getTransform().onClick(oneClickMenu, e, player, iconForSlot, e.getSlot());
+        }
     }
 
     @EventHandler
@@ -103,6 +111,14 @@ public final class MenuManager implements Listener, Runnable {
         if (!(e.getInventory().getHolder() instanceof Menu menu)) {
             return;
         }
+        if ((menu instanceof OneClickMenu oneClickMenu) && oneClickMenu.clicked) {
+            if ((oneClickMenu.options instanceof OneClickMenuOptions o2) && o2.isPreventAfterClick()) {
+                // force the inventory to remain open (we can't cancel this event, but we can tell them to open the same inventory)
+                p.openInventory(e.getInventory());
+                return;
+            }
+        }
+
         MenuEvents menuEvents = menu.getEvents();
         if (menuEvents.getIgnoreNextInventoryCloseEvent().get()) { return; }
 

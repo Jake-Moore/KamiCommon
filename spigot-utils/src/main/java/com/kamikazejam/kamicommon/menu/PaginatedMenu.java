@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -205,7 +206,7 @@ public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
             return this;
         }
 
-        @Override
+        @CheckReturnValue
         public @NotNull PaginatedMenu build(@NotNull Player player) {
             return new PaginatedMenu(this, player);
         }
