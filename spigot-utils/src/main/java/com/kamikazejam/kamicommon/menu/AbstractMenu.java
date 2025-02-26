@@ -10,6 +10,7 @@ import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.icons.PrioritizedMenuIconMap;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
+import com.kamikazejam.kamicommon.util.ItemUtil;
 import com.kamikazejam.kamicommon.util.PlayerUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -167,7 +168,6 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
         this.placeIcons((m) -> m.needsModification(tick));
     }
 
-    private final Map<Integer, String> lastPlaceIdMap = new HashMap<>();
     /**
      * Manually trigger an update for all icons matching this predicate.<br>
      * If the predicate is passed, the icon will be re-built and set in the inventory.<br>
@@ -176,35 +176,21 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
      */
     public void placeIcons(@Nullable Predicate<MenuIcon> needsUpdate) {
         int tick = this.tickCounter.get();
-        Map<String, Boolean> needsUpdateMap = new HashMap<>(); // Store <ID, Included>
-        Map<String, ItemStack> itemStackMap = new HashMap<>(); // Store <ID, ItemStack>
 
-        // Compile a list of all icons that need to be updated, based on the filter
-        // Also generate the ItemStack for each icon, if it needs to be updated
-        this.menuIcons.forEach((id, icon) -> {
-            if (!icon.isEnabled()) { return; } // If not enabled, don't process it
+        // Keep track of the current state of the menu (as a map of each slot to an ItemStack)
+        // Initialize to all nulls (i.e. all empty slots)
+        Map<Integer, @Nullable ItemStack> newMenuState = new HashMap<>();
+        for (int i = 0; i < this.getSize(); i++) {
+            newMenuState.put(i, null);
+        }
 
-            // Store if the icon needs to be updated
-            if ((needsUpdate != null && !needsUpdate.test(icon))) {
-                needsUpdateMap.put(id, false);
-                return; // We return so that we don't put a stack in the stack map, we should leave the item alone
-            }
-            needsUpdateMap.put(id, true);
-            // Generate the new ItemStack (one calculation) for this icon
-            // We pass the last item, which is used for any stateful MenuIcon modifiers that rely on the previous item state
-            @Nullable ItemStack item = icon.buildItem(tick, this.player);
-            if (item != null) {
-                itemStackMap.put(id, item);
-            }
-            // Store for state next update
-            icon.setLastItem(item);
-        });
-
-        // Update the inventory slots, keep track of which slots we don't fill
+        // Fill Inventory Slots with Known MenuIcons
         final MenuSize size = this.getMenuSize();
         Set<Integer> forFillerSlots = new HashSet<>();
         for (int i = 0; i < this.getSize(); i++) {
+            // If forHere is not null, then it is guaranteed to be enabled
             @Nullable MenuIcon forHere = this.menuIcons.getActiveIconForSlot(size, i);
+            @Nullable ItemStack lastItem = (forHere == null) ? null : forHere.getLastItem();
 
             // 1. If there is no icon for this slot, we need to fill it with the filler icon
             if (forHere == null) {
@@ -213,45 +199,49 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
             }
 
             // 2. If there is an icon here, and it does not need updating, we skip it
-            // - also requires that the last item placed here is of the same ID, otherwise we swapped items and must place
-            String lastId = lastPlaceIdMap.getOrDefault(i, null);
-            if (!needsUpdateMap.getOrDefault(forHere.getId(), false) && (lastId != null && lastId.equals(forHere.getId()))) {
+            // "does not need updating" = needs no tick update AND is still in the GUI as expected
+            boolean stillItemHere = lastItem != null && ItemUtil.isSimplySimilar(lastItem, this.getItem(i));
+            if (needsUpdate != null && !needsUpdate.test(forHere) && stillItemHere) {
+                // by removing from new state, it won't get included in the loop that places items
+                // therefore skipping it entirely and leaving that slot alone
+                newMenuState.remove(i);
                 continue;
             }
-            lastPlaceIdMap.put(i, forHere.getId());
 
-            // 3. Retrieve the ItemStack for this icon, and place it in the slot
-            @Nullable ItemStack item = itemStackMap.getOrDefault(forHere.getId(), forHere.buildItem(tick, this.player));
-            super.setItem(i, item);
-            // Note the behavior here. the Icon can return a null builder, which we will assume
-            // was intended, and set the slot to null (making it an empty inventory slot)
-            // We do not add the slot to the emptySlots set, because we don't want to fill it with the filler icon
+            // 3. Rebuild the ItemStack for this icon, and record this item
+            //  Note the behavior here. the Icon can return a null builder, which we will assume
+            //   was intended, and set the slot to null (making it an empty inventory slot)
+            //  We do not add the slot to the emptySlots set, because we don't want to fill it with the filler icon
+            @Nullable ItemStack item = forHere.buildItem(tick, this.player);
+            forHere.setLastItem(item);
+
+            // 4. Record the new item in the new menu state
+            newMenuState.put(i, item);
         }
 
-        // Place the filler icon in the slots that are needed
-        placeFiller(needsUpdateMap, itemStackMap, forFillerSlots, tick);
+        // Fill with filler (always - ignores predicate) in the slots that do not have a MenuIcon
+        placeFiller(newMenuState, forFillerSlots, tick);
+
+        // Update the inventory with the new menu state
+        for (Map.Entry<Integer, @Nullable ItemStack> entry : newMenuState.entrySet()) {
+            this.setItem(entry.getKey(), entry.getValue());
+        }
     }
 
-    protected void placeFiller(Map<String, Boolean> needsUpdateMap, Map<String, ItemStack> itemStackMap, Set<Integer> slots, int tick) {
-        // Skip fill if the filler icon is disabled or not found
-        @Nullable MenuIcon icon = this.menuIcons.getOrDefault("filler", null);
-        if (icon == null || !icon.isEnabled()) { return; }
-
+    protected void placeFiller(Map<Integer, @Nullable ItemStack> newMenuState, Set<Integer> slots, int tick) {
         // First, apply the excluded slots filter to the slots set
         slots.removeAll(this.options.getExcludedFillSlots());
 
-        // Determine if we need to update this filler icon
-        boolean needsUpdate = needsUpdateMap.getOrDefault("filler", false);
-        @Nullable ItemStack fillerItem;
-        if (needsUpdate) {
-            // Pull from the item stack map (which already did the rebuild)
-            fillerItem = itemStackMap.get("filler");
-        }else {
-            // Use the last item, since we don't want to update
-            fillerItem = icon.getLastItem();
+        // Skip fill if the filler icon is disabled or not found
+        @Nullable MenuIcon icon = this.menuIcons.getOrDefault("filler", null);
+        if (icon == null || !icon.isEnabled()) {
+            return;
         }
 
+        // Determine if we need to update this filler icon
+        @Nullable ItemStack fillerItem = icon.buildItem(tick, this.player);
+
         // Place the filler icon in the slots
-        slots.forEach(slot -> super.setItem(slot, fillerItem));
+        slots.forEach(slot -> newMenuState.put(slot, fillerItem));
     }
 }

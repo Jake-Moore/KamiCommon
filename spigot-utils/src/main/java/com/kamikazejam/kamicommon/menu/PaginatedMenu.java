@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -154,12 +155,13 @@ public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
     }
 
     @Override
-    protected void placeFiller(Map<String, Boolean> needsUpdateMap, Map<String, ItemStack> itemStackMap, Set<Integer> slots, int tick) {
+    protected void placeFiller(Map<Integer, @Nullable ItemStack> newMenuState, Set<Integer> slots, int tick) {
+        Set<Integer> newSlots = new HashSet<>(slots);
         if (!this.getOptions().isFillerFillsEmptyPageIconSlots()) {
-            slots.removeAll(this.getOptions().getLayout().getSlots(this.getMenuSize()));
+            newSlots.removeAll(this.getOptions().getLayout().getSlots(this.getMenuSize()));
         }
 
-        super.placeFiller(needsUpdateMap, itemStackMap, slots, tick);
+        super.placeFiller(newMenuState, newSlots, tick);
     }
 
     // ------------------------------------------------------------ //
