@@ -47,7 +47,6 @@ public abstract class CachedModuleConfig<M extends Module> implements ICachedCon
     }
 
     @Override
-    @ApiStatus.Internal
     public abstract void loadConfig(@NotNull ModuleConfig config);
 
     @Override

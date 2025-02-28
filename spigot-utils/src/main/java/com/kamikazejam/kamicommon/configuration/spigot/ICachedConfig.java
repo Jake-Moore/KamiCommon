@@ -3,7 +3,6 @@ package com.kamikazejam.kamicommon.configuration.spigot;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.modules.ModuleConfig;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 public interface ICachedConfig<T extends KamiConfig> extends ConfigObserver {
     // API
-    @Internal
     void loadConfig(@NotNull T config);
 
     // Implementation
