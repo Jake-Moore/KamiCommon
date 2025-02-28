@@ -55,8 +55,8 @@ public abstract class CachedConfig<T extends KamiConfig> implements ICachedConfi
     /**
      * Constructs a new {@link MessageBuilder} with the given key and this config.
      */
-    @NotNull
-    public MessageBuilder msg(@NotNull String key) {
+    @Override
+    public @NotNull MessageBuilder msg(@NotNull String key) {
         return new MessageBuilder(config, key);
     }
 }

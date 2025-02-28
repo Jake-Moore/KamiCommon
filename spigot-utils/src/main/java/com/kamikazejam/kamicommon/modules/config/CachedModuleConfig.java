@@ -4,6 +4,7 @@ import com.kamikazejam.kamicommon.configuration.spigot.ICachedConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.modules.Module;
 import com.kamikazejam.kamicommon.modules.ModuleConfig;
+import com.kamikazejam.kamicommon.util.MessageBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -52,5 +53,10 @@ public abstract class CachedModuleConfig<M extends Module> implements ICachedCon
     @Override
     public void warn(@NotNull String message) {
         module.warn(message);
+    }
+
+    @Override
+    public MessageBuilder msg(@NotNull String key) {
+        return new MessageBuilder(module.getConfig(), key);
     }
 }
