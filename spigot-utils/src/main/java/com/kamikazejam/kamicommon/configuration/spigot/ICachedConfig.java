@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.configuration.spigot;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.modules.ModuleConfig;
+import com.kamikazejam.kamicommon.util.MessageBuilder;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,4 +42,6 @@ public interface ICachedConfig<T extends KamiConfig> extends ConfigObserver {
                 .map(Optional::get)
                 .toList();
     }
+
+    MessageBuilder msg(@NotNull String key);
 }
