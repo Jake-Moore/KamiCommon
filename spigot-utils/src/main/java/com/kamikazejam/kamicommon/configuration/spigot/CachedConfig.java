@@ -47,7 +47,6 @@ public abstract class CachedConfig<T extends KamiConfig> implements ICachedConfi
     }
 
     @Override
-    @ApiStatus.Internal
     public abstract void loadConfig(@NotNull T config);
 
     // ------------------------------------ //
