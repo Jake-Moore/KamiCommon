@@ -27,6 +27,7 @@ public abstract class Module implements CoreMethods, ConfigObserver {
     private final List<BukkitTask> taskList = new ArrayList<>();
     private final List<KamiCommand> commandList = new ArrayList<>();
     private final List<Disableable> disableableList = new ArrayList<>();
+    private final List<ConfigObserver> moduleConfigObservers = new ArrayList<>();
 
     @Getter private boolean successfullyEnabled = false;
     @Getter private boolean enabled = false;
@@ -50,6 +51,8 @@ public abstract class Module implements CoreMethods, ConfigObserver {
     public final void onConfigLoaded(@NotNull KamiConfig config) {
         // Call the module's onConfigLoaded method, since our config should always be a ModuleConfig
         onConfigLoaded((ModuleConfig) config);
+        // Call all observers of this config
+        moduleConfigObservers.forEach(observer -> observer.onConfigLoaded(config));
     }
 
     /**
@@ -531,5 +534,12 @@ public abstract class Module implements CoreMethods, ConfigObserver {
      */
     public final boolean registerConfigObserver(@NotNull ConfigObserver observer, @NotNull KamiConfig config) {
         return config.registerObserver(observer);
+    }
+
+    /**
+     * Registers a {@link ConfigObserver} to this {@link Module} instance to receive reloads automatically from {@link #onConfigLoaded(ModuleConfig)}
+     */
+    public final void registerConfigObserver(@NotNull ConfigObserver observer) {
+        this.moduleConfigObservers.add(observer);
     }
 }
