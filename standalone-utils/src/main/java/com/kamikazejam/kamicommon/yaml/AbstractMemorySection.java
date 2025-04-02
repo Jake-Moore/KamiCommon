@@ -191,11 +191,13 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
     // Internal recursive method to get an object from a MappingNode
     @Nullable
     protected Object getObject(MappingNode node, String search) {
-        Node n = getNodeInternal(node, search, "");
+        @Nullable Node n = getNodeInternal(node, search, "");
         return getNodeValue(n);
     }
 
-    public static @Nullable Object getNodeValue(Node node) {
+    public static @Nullable Object getNodeValue(@Nullable Node node) {
+        if (node == null) { return null; }
+
         if (node instanceof ScalarNode) {
             return ((ScalarNode) node).getValue();
         }
