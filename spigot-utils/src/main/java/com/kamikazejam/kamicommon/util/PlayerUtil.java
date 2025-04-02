@@ -161,6 +161,7 @@ public class PlayerUtil {
     /**
      * @return true IFF (player != null AND player.isOnline() AND player.isValid())
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isFullyValidPlayer(@Nullable Player player) {
         return player != null && player.isOnline() && player.isValid();
     }
