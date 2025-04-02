@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.modules;
 
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -8,30 +9,27 @@ import org.bukkit.World;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
-import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class ModuleConfig extends KamiConfigExt {
     private final Module module;
 
     // Filename is in form: "moduleYmlPath + <module>.yml"
-    public ModuleConfig(Module module, Supplier<InputStream> defaultSupplier) {
+    public ModuleConfig(Module module, String fileName) {
         super(
                 // Plugin
                 module.getPlugin(),
                 // File on server filesystem
                 new File(module.getPlugin().getDataFolder() + File.separator + "modules" + File.separator + module.getName() + ".yml"),
                 // Supplier for config resource input stream
-                defaultSupplier
+                () -> ModuleConfig.getIS(module, fileName)
         );
         this.module = module;
         loadDefaultConfig();
     }
 
     public static @Nonnull InputStream getIS(Module module, String fileName) {
-        InputStream moduleStream = module.getPlugin().getResource(fileName);
-        assert moduleStream != null;
-        return moduleStream;
+        return Preconditions.checkNotNull(module.getPlugin().getResource(fileName), "Module resource stream is null");
     }
 
     public void loadDefaultConfig() {
