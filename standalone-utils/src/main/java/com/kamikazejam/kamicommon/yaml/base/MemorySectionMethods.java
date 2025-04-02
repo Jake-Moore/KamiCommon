@@ -334,28 +334,8 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public List<?> getList(String key, final List<?> def) {
-        @Nullable Node node = getNode(key);
-        if (node == null) {
-            return def;
-        }
-        // We may receive only one scalar --> wrap it in a list
-        if (node instanceof ScalarNode scalarNode) {
-            // If the node is a ScalarNode, we need to convert it to a list
-            return List.of(scalarNode.getValue());
-        }
-
-        // We may receive a SequenceNode --> extract all ScalarNode values from it
-        if (node instanceof SequenceNode sequenceNode) {
-            List<Object> list = new ArrayList<>();
-            for (Node child : sequenceNode.getValue()) {
-                if (child instanceof ScalarNode scalarNode) {
-                    list.add(scalarNode.getValue());
-                }
-            }
-            return list;
-        }
-
-        throw new IllegalStateException("Unexpected node type: " + node.getClass().getName());
+        Object val = get(key, def);
+        return (List<?>) ((val instanceof List) ? val : def);
     }
 
     public boolean isList(String key) {
