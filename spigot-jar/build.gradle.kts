@@ -31,6 +31,10 @@ tasks {
         exclude("LICENSE*", "META-INF/LICENSE*")
         exclude("License*", "META-INF/License*")
 
+        // Versions differ and can break builds if old copies get included here
+        exclude("org/intellij/lang/annotations/**")
+        exclude("org/jetbrains/annotations/**")
+
         // KamiCommonNMS
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
         relocate("com.github.fierioziy.particlenativeapi", "com.kamikazejam.kamicommon.particleapi")
