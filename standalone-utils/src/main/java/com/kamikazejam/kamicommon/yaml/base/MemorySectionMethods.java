@@ -4,6 +4,9 @@ import com.kamikazejam.kamicommon.yaml.AbstractMemorySection;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.SequenceNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +22,8 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> extends AbstractMemorySection<T> {
 
-    public MemorySectionMethods(@Nullable MappingNode node) {
-        super(node);
+    public MemorySectionMethods(@Nullable MappingNode node, @Nullable ConfigurationMethods<?> parent) {
+        super(node, parent);
     }
 
     public Object get(String key) {
@@ -332,6 +335,17 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
 
     public List<?> getList(String key, final List<?> def) {
         Object val = get(key, def);
+        // We may receive a SequenceNode, so we need to extract all ScalarNode values from it
+        if (val instanceof SequenceNode sequenceNode) {
+            List<Object> list = new ArrayList<>();
+            for (Node node : sequenceNode.getValue()) {
+                if (node instanceof ScalarNode scalarNode) {
+                    list.add(scalarNode.getValue());
+                }
+            }
+            return list;
+        }
+
         return (List<?>) ((val instanceof List) ? val : def);
     }
 

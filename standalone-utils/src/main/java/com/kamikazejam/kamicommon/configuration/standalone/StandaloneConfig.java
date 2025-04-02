@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.configuration.standalone;
 
 import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSectionStandalone;
+import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSequenceStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.MemorySectionStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlConfigurationStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlHandlerStandalone;
@@ -139,6 +140,7 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
     @Override public Object get(String key) { return getYamlConfiguration().get(key); }
     @Override public Object get(String key, Object def) { return getYamlConfiguration().get(key, def); }
     @Override public @NotNull MemorySectionStandalone getConfigurationSection(String key) { return getYamlConfiguration().getConfigurationSection(key); }
+    @Override public @NotNull ConfigurationSequenceStandalone getConfigurationSequence(String key) { return getYamlConfiguration().getConfigurationSequence(key); }
 
     @Override public String getString(String key) { return getYamlConfiguration().getString(key); }
     @Override public String getString(String key, String def) { return getYamlConfiguration().getString(key, def); }

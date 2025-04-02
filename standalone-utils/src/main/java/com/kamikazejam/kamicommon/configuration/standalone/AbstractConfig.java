@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.configuration.standalone;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlConfiguration;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 import java.io.File;
 
@@ -55,5 +56,17 @@ public abstract class AbstractConfig<T extends AbstractYamlConfiguration> {
      */
     public boolean save(boolean force) {
         return getYamlConfiguration().save(force);
+    }
+
+    /**
+     * @return If this config has detected changes to its structure that need saving
+     */
+    public boolean isChanged() {
+        return getYamlConfiguration().isChanged();
+    }
+
+    @Internal
+    public void setChanged(boolean changed) {
+        getYamlConfiguration().setChanged(changed);
     }
 }
