@@ -17,7 +17,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -229,12 +228,12 @@ public abstract class Module implements CoreMethods, ConfigObserver {
         // Load the config from the path
         if (!moduleYmlPath.endsWith("/")) { moduleYmlPath += "/"; }
         String fileName = moduleYmlPath + getConfigName();
-        InputStream inputStream = Preconditions.checkNotNull(
-                this.getPlugin().getResource(fileName),
-                "Module YML Path is invalid! ('" + fileName + "') This module config cannot be loaded!"
+        Preconditions.checkNotNull(
+                ModuleConfig.getIS(this, fileName),
+                "Module YML resource is invalid! ('" + fileName + "') This module config cannot be loaded!"
         );
 
-        moduleConfig = new ModuleConfig(this, () -> inputStream);
+        moduleConfig = new ModuleConfig(this, fileName);
         return Objects.requireNonNull(moduleConfig);
     }
 
