@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
 @Getter
@@ -32,10 +33,10 @@ public class MemorySectionStandalone extends MemorySectionMethods<MemorySectionS
 
     @Override
     public @NotNull ConfigurationSequenceStandalone getConfigurationSequence(String key) {
-        Object o = get(key);
+        @Nullable Node node = getNode(key);
         String newPath = (this.fullPath.isEmpty()) ? key : this.fullPath + "." + key;
 
-        if (o instanceof SequenceNode sequenceNode) {
+        if (node instanceof SequenceNode sequenceNode) {
             return new ConfigurationSequenceStandalone(this, sequenceNode, newPath);
         }
 

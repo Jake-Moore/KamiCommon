@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 @Getter
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "ExtractMethodRecommender"})
 public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> {
     private boolean changed = false;
 
@@ -198,33 +198,34 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
     public static @Nullable Object getNodeValue(@Nullable Node node) {
         if (node == null) { return null; }
 
-        if (node instanceof ScalarNode) {
-            return ((ScalarNode) node).getValue();
-        }
         if (node instanceof MappingNode) {
             return node;
         }
-        if (node instanceof SequenceNode) {
-            return node;
+
+        if (node instanceof ScalarNode scalar) {
+            return scalar.getValue();
         }
 
-//        if (node instanceof SequenceNode sequenceNode) {
-//            List<Object> valuesList = new ArrayList<>();
-//            for (Node elementNode : sequenceNode.getValue()) {
-//                Object value = getNodeValue(elementNode); // Recursive call
-//                if (value != null) {
-//                    valuesList.add(value);
-//                }
-//            }
-//            return valuesList;
-//        }
+        if (node instanceof SequenceNode sequence) {
+            List<String> valuesList = new ArrayList<>();
+            for (Node child : sequence.getValue()) {
+                if (child == null) { continue; }
+                if (child instanceof ScalarNode scalar) {
+                    valuesList.add(scalar.getValue());
+                } else {
+                    throw new IllegalStateException(
+                        "Unknown child node type: " + child.getNodeId() + " (" + child.getClass().getSimpleName() + ")"
+                    );
+                }
+            }
+            return valuesList;
+        }
         throw new IllegalStateException(
-                "Unknown node type (2): " + node.getNodeId() + " (" + node.getClass().getSimpleName() + ")"
+                "Unknown node type: " + node.getNodeId() + " (" + node.getClass().getSimpleName() + ")"
         );
-//        return node;
     }
 
-    @Nullable Node getNode(String key) {
+    public @Nullable Node getNode(String key) {
         return getNodeInternal(node, key, "");
     }
 

@@ -2,16 +2,20 @@ testConfig:
   test: "Hello World!"
   people:
   - name: "Jake"
-    age: 23
+    age: 100
+    newKey: "305530ec-d9e6-4305-82d7-b98ede314211"
   - name: "Bob"
-    age: 25
+    age: 100
+    newKey: "8b6dbe74-da6b-47a8-9d9f-7c2af9146f43"
   - name: "Alice"
-    age: 22
+    age: 100
+    newKey: "b2c03c7a-4772-4345-8dfa-66f9810392ae"
   - name: "Charlie"
+    newKey: "1f008265-64bd-4774-a60c-34f567a8506e"
 my:
   super:
     nested:
-      key: "ffc9c623-8e3e-4187-b6bb-1c1c665de623"
+      key: "551cc8a1-5a4d-4eff-97f5-080ae6c64257"
 
 list:
 - "item1"
