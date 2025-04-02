@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.yaml.spigot;
 
-import org.yaml.snakeyaml.nodes.MappingNode;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlConfiguration;
+import org.yaml.snakeyaml.nodes.MappingNode;
 
 import java.io.File;
 
@@ -9,7 +9,7 @@ import java.io.File;
 public class YamlConfiguration extends MemorySection implements AbstractYamlConfiguration {
     private final File configFile;
     public YamlConfiguration(MappingNode node, File configFile) {
-        super(node, "");
+        super(node, "", null);
         this.configFile = configFile;
     }
 

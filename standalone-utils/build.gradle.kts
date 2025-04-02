@@ -1,5 +1,6 @@
 plugins {
     // Unique plugins for this module
+    kotlin("jvm")
 }
 
 var snakeYaml = "org.yaml:snakeyaml:2.3"
@@ -13,6 +14,7 @@ dependencies {
     // Testing Dependencies
     testImplementation(snakeYaml)
     testImplementation(json)
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks {
@@ -45,4 +47,10 @@ publishing {
             }
         }
     }
+}
+repositories {
+    mavenCentral()
+}
+kotlin {
+    jvmToolchain(17)
 }

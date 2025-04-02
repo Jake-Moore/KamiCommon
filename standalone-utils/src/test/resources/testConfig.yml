@@ -1,0 +1,19 @@
+testConfig:
+  test: "Hello World!"
+  people:
+  - name: "Jake"
+    age: 23
+  - name: "Bob"
+    age: 25
+  - name: "Alice"
+    age: 22
+  - name: "Charlie"
+my:
+  super:
+    nested:
+      key: "ffc9c623-8e3e-4187-b6bb-1c1c665de623"
+
+list:
+- "item1"
+- "item2"
+- "item3"

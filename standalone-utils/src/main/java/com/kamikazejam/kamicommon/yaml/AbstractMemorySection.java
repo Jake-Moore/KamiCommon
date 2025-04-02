@@ -1,32 +1,50 @@
 package com.kamikazejam.kamicommon.yaml;
 
 import com.kamikazejam.kamicommon.util.data.Pair;
+import com.kamikazejam.kamicommon.yaml.base.ConfigurationMethods;
 import lombok.Getter;
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.comments.CommentLine;
-import org.yaml.snakeyaml.nodes.*;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.SequenceNode;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @SuppressWarnings("unused")
 public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> {
-    @Setter private boolean changed = false;
+    private boolean changed = false;
 
     private final @NotNull MappingNode node;
-    public AbstractMemorySection(@Nullable MappingNode node) {
+    private final @Nullable ConfigurationMethods<?> parent;
+    public AbstractMemorySection(@Nullable MappingNode node, @Nullable ConfigurationMethods<?> parent) {
         if (node == null) { node = AbstractYamlHandler.createNewMappingNode(); }
         this.node = node;
+        this.parent = parent;
     }
 
     public void set(String key, Object value) { put(key, value); }
     public void put(String key, Object value) {
         if (value == null) { put(node, key, null); return; }
         put(node, key, value);
+    }
+
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+        if (parent != null && parent.isChanged() != changed) {
+            parent.setChanged(changed);
+        }
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -52,8 +70,7 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
             ScalarNode scalarKeyNode = null;
             for (NodeTuple t : node.getValue()) {
                 Node keyNode = t.getKeyNode();
-                if (keyNode instanceof ScalarNode) {
-                    ScalarNode scalarNode = (ScalarNode) keyNode;
+                if (keyNode instanceof ScalarNode scalarNode) {
                     if (scalarNode.getValue().equals(part)) {
                         tuple = t;
                         scalarKeyNode = scalarNode;
@@ -91,8 +108,7 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
         NodeTuple tuple = null;
         for (NodeTuple t : node.getValue()) {
             Node keyNode = t.getKeyNode();
-            if (keyNode instanceof ScalarNode) {
-                ScalarNode scalarNode = (ScalarNode) keyNode;
+            if (keyNode instanceof ScalarNode scalarNode) {
                 if (scalarNode.getValue().equals(part)) {
                     tuple = t;
                     break;
@@ -183,18 +199,27 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
         if (node instanceof ScalarNode) {
             return ((ScalarNode) node).getValue();
         }
-        if (node instanceof SequenceNode) {
-            SequenceNode s = (SequenceNode) node;
-            List<String> valuesList = new ArrayList<>();
-            for (Node n2 : s.getValue()) {
-                if (n2 instanceof ScalarNode) {
-                    ScalarNode scalar = (ScalarNode) n2;
-                    valuesList.add(scalar.getValue());
-                }else { System.out.print("Unknown node type (2): " + n2.getNodeId()); }
-            }
-            return valuesList;
+        if (node instanceof MappingNode) {
+            return node;
         }
-        return node;
+        if (node instanceof SequenceNode) {
+            return node;
+        }
+
+//        if (node instanceof SequenceNode sequenceNode) {
+//            List<Object> valuesList = new ArrayList<>();
+//            for (Node elementNode : sequenceNode.getValue()) {
+//                Object value = getNodeValue(elementNode); // Recursive call
+//                if (value != null) {
+//                    valuesList.add(value);
+//                }
+//            }
+//            return valuesList;
+//        }
+        throw new IllegalStateException(
+                "Unknown node type (2): " + node.getNodeId() + " (" + node.getClass().getSimpleName() + ")"
+        );
+//        return node;
     }
 
     @Nullable Node getNode(String key) {
@@ -212,8 +237,7 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
             String key2 = pair.getB();
 
             // If this is a mapping node, continue (it can't be a value)
-            if (valueNode instanceof MappingNode) {
-                MappingNode m = (MappingNode) valueNode;
+            if (valueNode instanceof MappingNode m) {
                 if (key2.equals(search)) { return m; } // If the key is the search, return the valueNode
 
                 Node n = getNodeInternal(m, search, key2);
@@ -221,11 +245,9 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
                 continue;
             }
 
-            if (valueNode instanceof ScalarNode) {
-                ScalarNode s = (ScalarNode) valueNode;
+            if (valueNode instanceof ScalarNode s) {
                 if (key2.equals(search)) { return s; }
-            }else if (valueNode instanceof SequenceNode) {
-                SequenceNode s = (SequenceNode) valueNode;
+            }else if (valueNode instanceof SequenceNode s) {
                 if (!key2.equals(search)) { continue; }
                 return s;
             } else {
@@ -333,8 +355,7 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
             String key2 = pair.getB();
 
             // If this is a mapping node, continue (it can't be a value)
-            if (valueNode instanceof MappingNode) {
-                MappingNode m = (MappingNode) valueNode;
+            if (valueNode instanceof MappingNode m) {
                 if (key2.equals(search)) { return tuple; } // If the key is the search, return the valueNode
 
                 NodeTuple o = getNodeTupleInternal(m, search, key2);
@@ -355,12 +376,11 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
     }
 
     private @Nullable Pair<Node, String> verifyNodeTuple(NodeTuple tuple, String search, String currentKey) {
-        if (!(tuple.getKeyNode() instanceof ScalarNode)) {
+        if (!(tuple.getKeyNode() instanceof ScalarNode scalarNode)) {
             throw new RuntimeException("getNodeInternal unknown node type: " + tuple.getKeyNode());
         }
         Node valueNode = tuple.getValueNode(); // Node that contains the next Node or the value object
 
-        ScalarNode scalarNode = (ScalarNode) tuple.getKeyNode();
         String key2 = concat(currentKey, scalarNode.getValue());
 
         // Optimize by pruning branches that don't match the search

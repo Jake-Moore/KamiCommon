@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.yaml;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -10,6 +11,9 @@ public interface AbstractYamlConfiguration {
     boolean save();
     boolean save(boolean force);
     boolean contains(String key);
+    boolean isChanged();
+    @Internal
+    void setChanged(boolean changed);
     Set<String> getKeys(boolean deep);
     NodeTuple getNodeTuple(String key);
     Node getKeyNode(String key);

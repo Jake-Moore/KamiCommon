@@ -4,6 +4,7 @@ import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfig;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSequenceSpigot;
 import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
 import com.kamikazejam.kamicommon.yaml.spigot.YamlConfiguration;
 import com.kamikazejam.kamicommon.yaml.spigot.YamlHandler;
@@ -170,6 +171,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     @Override public Object get(String key) { return getYamlConfiguration().get(key); }
     @Override public Object get(String key, Object def) { return getYamlConfiguration().get(key, def); }
     @Override public @NotNull MemorySection getConfigurationSection(String key) { return getYamlConfiguration().getConfigurationSection(key); }
+    @Override public @NotNull ConfigurationSequenceSpigot getConfigurationSequence(String key) { return getYamlConfiguration().getConfigurationSequence(key); }
 
     @Override public String getString(String key) { return getYamlConfiguration().getString(key); }
     @Override public String getString(String key, String def) { return getYamlConfiguration().getString(key, def); }

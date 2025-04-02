@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.yaml.base;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -33,8 +34,8 @@ public interface ConfigurationMethods<T extends ConfigurationMethods<?>> {
     void setDouble(String key, double value);
     void setFloat(String key, float value);
 
-
     @NotNull T getConfigurationSection(String key);
+    @NotNull ConfigurationSequence<T> getConfigurationSequence(String key);
     String getString(String key);
     String getString(String key, String def);
     boolean isString(String key);
@@ -80,4 +81,8 @@ public interface ConfigurationMethods<T extends ConfigurationMethods<?>> {
 
     boolean isEmpty();
     String getCurrentPath();
+
+    boolean isChanged();
+    @Internal
+    void setChanged(boolean changed);
 }

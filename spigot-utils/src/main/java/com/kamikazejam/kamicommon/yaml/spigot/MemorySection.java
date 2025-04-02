@@ -2,8 +2,8 @@ package com.kamikazejam.kamicommon.yaml.spigot;
 
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
-import org.yaml.snakeyaml.nodes.MappingNode;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
+import com.kamikazejam.kamicommon.yaml.base.ConfigurationMethods;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,14 +11,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.SequenceNode;
 
 @Getter
 @SuppressWarnings("unused")
 public class MemorySection extends MemorySectionMethods<MemorySection> implements ConfigurationSection {
     @Getter(AccessLevel.NONE)
     private final @NotNull String fullPath;
-    public MemorySection(@Nullable MappingNode node, @NotNull String fullPath) {
-        super(node);
+    public MemorySection(@Nullable MappingNode node, @NotNull String fullPath, @Nullable ConfigurationMethods<?> parent) {
+        super(node, parent);
         this.fullPath = fullPath;
     }
 
@@ -27,9 +29,22 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         Object o = get(key);
         String newPath = (this.fullPath.isEmpty()) ? key : this.fullPath + "." + key;
         if (o instanceof MappingNode m) {
-            return new MemorySection(m, newPath);
+            return new MemorySection(m, newPath, this);
         }
-        return new MemorySection(AbstractYamlHandler.createNewMappingNode(), newPath);
+        return new MemorySection(AbstractYamlHandler.createNewMappingNode(), newPath, this);
+    }
+
+    @Override
+    public @NotNull ConfigurationSequenceSpigot getConfigurationSequence(String key) {
+        Object o = get(key);
+        String newPath = (this.fullPath.isEmpty()) ? key : this.fullPath + "." + key;
+
+        if (o instanceof SequenceNode sequenceNode) {
+            return new ConfigurationSequenceSpigot(this, sequenceNode, newPath);
+        }
+
+        // Return empty sequence if not found or not a sequence
+        return new ConfigurationSequenceSpigot(this, null, newPath);
     }
 
     @Override
