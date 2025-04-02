@@ -55,7 +55,7 @@ public class PaginatedMenuOptions extends MenuOptions {
         this.layout = layout;
     }
 
-    public void setTitleFormat(@NotNull DefaultPaginatedMenuTitle titleFormat) {
+    public void setTitleFormat(@NotNull AbstractPaginatedMenuTitle titleFormat) {
         Preconditions.checkNotNull(titleFormat, "titleFormat cannot be null");
         this.titleFormat = titleFormat;
     }
