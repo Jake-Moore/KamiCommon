@@ -8,26 +8,27 @@ import org.bukkit.World;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class ModuleConfig extends KamiConfigExt {
     private final Module module;
 
     // Filename is in form: "moduleYmlPath + <module>.yml"
-    public ModuleConfig(Module module, String fileName) {
+    public ModuleConfig(Module module, Supplier<InputStream> defaultSupplier) {
         super(
                 // Plugin
                 module.getPlugin(),
                 // File on server filesystem
                 new File(module.getPlugin().getDataFolder() + File.separator + "modules" + File.separator + module.getName() + ".yml"),
-                // Supplier for config resource inputstream
-                () -> ModuleConfig.getIS(module, fileName)
+                // Supplier for config resource input stream
+                defaultSupplier
         );
         this.module = module;
         loadDefaultConfig();
     }
 
-    private static @Nonnull InputStream getIS(Module module, String fileName) {
+    public static @Nonnull InputStream getIS(Module module, String fileName) {
         InputStream moduleStream = module.getPlugin().getResource(fileName);
         assert moduleStream != null;
         return moduleStream;

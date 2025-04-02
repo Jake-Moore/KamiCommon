@@ -8,6 +8,7 @@ import com.kamikazejam.kamicommon.configuration.spigot.ConfigObserver;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import lombok.Getter;
 import org.bukkit.event.Listener;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -218,14 +220,21 @@ public abstract class Module implements CoreMethods, ConfigObserver {
     // Creates a ModuleConfig from the provided path
     @NotNull
     private ModuleConfig createConfig() {
-        final ModuleConfig moduleConfig;
+        // If the module yml path is null, fail
         @Nullable String moduleYmlPath = getPlugin().getModuleYmlPath();
-        if (moduleYmlPath == null) {
-            moduleConfig = new ModuleConfig(this, getConfigName());
-        }else {
-            if (!moduleYmlPath.endsWith("/")) { moduleYmlPath += "/"; }
-            moduleConfig = new ModuleConfig(this, moduleYmlPath + getConfigName());
-        }
+        Preconditions.checkNotNull(
+                moduleYmlPath,
+                "Module YML Path is null! This module config cannot be loaded without a path!"
+        );
+        // Load the config from the path
+        if (!moduleYmlPath.endsWith("/")) { moduleYmlPath += "/"; }
+        String fileName = moduleYmlPath + getConfigName();
+        InputStream inputStream = Preconditions.checkNotNull(
+                this.getPlugin().getResource(fileName),
+                "Module YML Path is invalid! ('" + fileName + "') This module config cannot be loaded!"
+        );
+
+        moduleConfig = new ModuleConfig(this, () -> inputStream);
         return Objects.requireNonNull(moduleConfig);
     }
 
