@@ -62,7 +62,14 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
     public void reopenMenu(@NotNull Player player) {
         // Sanity Checks
         if (!PlayerUtil.isFullyValidPlayer(player) || !player.getUniqueId().equals(this.player.getUniqueId())) { return; }
-        this.open();
+        this.open(false);
+    }
+
+    @Override
+    public void reopenMenu(@NotNull Player player, boolean resetTickCounter) {
+        // Sanity Checks
+        if (!PlayerUtil.isFullyValidPlayer(player) || !player.getUniqueId().equals(this.player.getUniqueId())) { return; }
+        this.open(resetTickCounter);
     }
 
     /**
@@ -71,14 +78,24 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
      */
     @Nullable
     public InventoryView open() {
-        return this.openInternal(false);
+        return this.open(options.isResetVisualsOnOpen());
     }
 
-    private InventoryView openInternal(boolean isResizeCall) {
+    /**
+     * Open the {@link Inventory} for the {@link Player} that this menu was created for.
+     * @param resetTickCounter If true, the tick counter will be reset to 0 when opening the menu.
+     * @return The {@link InventoryView} for the new menu, or null if the player was not online to open the menu for.
+     */
+    @Nullable
+    public InventoryView open(boolean resetTickCounter) {
+        return this.openInternal(resetTickCounter);
+    }
+
+    private InventoryView openInternal(boolean resetTickCounter) {
         if (!PlayerUtil.isFullyValidPlayer(player)) { return null; }
 
         // Reset the tick counter for icons that auto update if necessary
-        if (!isResizeCall && options.isResetVisualsOnOpen()) {
+        if (resetTickCounter) {
             tickCounter.set(0);
         }
 
@@ -128,7 +145,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
             // We need to prevent the close event from triggering its close callbacks
             this.events.getIgnoreNextInventoryCloseEvent().set(true);
             // This will trigger the previous Inventory to close, hence the need to ignore the events
-            openInternal(true);
+            openInternal(false);
         }
     }
 
