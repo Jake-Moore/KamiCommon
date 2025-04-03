@@ -27,8 +27,17 @@ public interface Menu {
     @Nullable MenuIcon getFillerIcon();
 
     /**
-     * Attempt to reopen the menu for the given player. Depending on the menu type, this may not be possible for all possible
+     * Attempt to reopen the menu for the given player. Depending on the menu type, this may not be possible for all possible<br>
+     * By default, this method will NOT reset the tick counter.<br>
+     * See {@link #reopenMenu(Player, boolean)} for reopening with reset.<br>
      * {@link Player} objects. For instance, the {@link SimpleMenu} requires that the same player from that menu be passed.
      */
     void reopenMenu(@NotNull Player player);
+
+    /**
+     * Attempt to reopen the menu for the given player. Depending on the menu type, this may not be possible for all possible<br>
+     * @param resetTickCounter If true, the tick counter will be reset to 0. This is useful for menus that are not paginated, and<br>
+     * {@link Player} objects. For instance, the {@link SimpleMenu} requires that the same player from that menu be passed.
+     */
+    void reopenMenu(@NotNull Player player, boolean resetTickCounter);
 }
