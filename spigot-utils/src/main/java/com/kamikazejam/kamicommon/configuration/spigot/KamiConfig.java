@@ -60,7 +60,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     private KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, @Nullable Supplier<InputStream> defaultSupplier) {
         this.plugin = plugin;
         this.file = file;
-        this.addDefaults = true;
+        this.addDefaults = addDefaults;
         this.defaultSupplier = defaultSupplier;
 
         ensureFile();
