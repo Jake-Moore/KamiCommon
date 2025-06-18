@@ -21,6 +21,8 @@ public class MessageParter {
         return messageParts;
     }
 
+    // Ensure that we never return the exact same parts list, as it will reference the same messageParts object
+    //  and cause the entire message to get cleared and set to an empty string
     private static List<MessagePart> injectAction(String original, List<MessagePart> parts, StandaloneAction action) {
         // Placeholder, which may be included fully inside of one part, or split between several parts
         String placeholder = StringUtil.t(action.getPlaceholder());
@@ -29,7 +31,7 @@ public class MessageParter {
         // Assume everything is translated, original and the placeholder/replacement are at this point
 
         // If placeholder is not in the original, then we don't need to do anything
-        if (!original.contains(placeholder)) { return parts; }
+        if (!original.contains(placeholder)) { return new ArrayList<>(parts); }
 
         // Case 1: If the placeholder is fully inside of one part, then handle that part
         return processFullPlaceholder(new ArrayList<>(parts), action, placeholder, replacement);
