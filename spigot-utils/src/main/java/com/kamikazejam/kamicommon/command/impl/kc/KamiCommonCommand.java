@@ -19,5 +19,6 @@ public class KamiCommonCommand extends KamiCommand {
         addChild(new CmdSaveItem());
         addChild(new CmdLoadItem());
         addChild(new CmdItemDump());
+        addChild(new CmdTestMsg());
     }
 }
