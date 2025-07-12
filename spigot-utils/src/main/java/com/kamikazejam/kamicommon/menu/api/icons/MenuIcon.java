@@ -4,13 +4,9 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
+import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
-import com.kamikazejam.kamicommon.menu.api.clicks.MenuClickEvent;
-import com.kamikazejam.kamicommon.menu.api.clicks.MenuClickPage;
-import com.kamikazejam.kamicommon.menu.api.clicks.transform.IClickTransform;
-import com.kamikazejam.kamicommon.menu.api.clicks.transform.paginated.PaginatedMenuClickPageTransform;
-import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.SimpleMenuClickEventTransform;
-import com.kamikazejam.kamicommon.menu.api.clicks.transform.simple.SimpleMenuClickTransform;
+import com.kamikazejam.kamicommon.menu.api.clicks.transform.MenuClickTransform;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.MenuIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StatefulIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StaticIconModifier;
@@ -24,21 +20,27 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Represents a menu icon that can contains the {@link ItemStack} data as {@link IBuilder}<br>
  * This class also holds the click data for the icon, and the auto updating logic for the icon
  */
-@Getter @Setter
+@Getter
+@Setter
 @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class MenuIcon {
+public class MenuIcon<M extends Menu<M>> {
     @Setter(AccessLevel.NONE)
     private @NotNull String id = UUID.randomUUID().toString(); // final because it's used in HashMaps
 
     private @Nullable ItemStack lastItem;
-    private @Nullable IClickTransform transform = null;
+    private @Nullable MenuClickTransform<M> transform = null;
     private @Nullable Integer updateInterval = null;
     private @Nullable MenuIconModifier modifier = null;
 
@@ -60,22 +62,25 @@ public class MenuIcon {
     public MenuIcon(@NotNull IBuilder builder) {
         this(true, builder);
     }
+
     public MenuIcon(boolean enabled, @NotNull IBuilder builder) {
         this.enabled = enabled;
         this.iBuilders.add(builder);
     }
+
     public MenuIcon(boolean enabled, @NotNull IBuilder... builders) {
         this.enabled = enabled;
         this.iBuilders.addAll(Arrays.asList(builders));
     }
+
     public MenuIcon(boolean enabled, @NotNull Collection<IBuilder> builders) {
         this.enabled = enabled;
         this.iBuilders.addAll(builders);
     }
 
     @NotNull
-    public MenuIcon copy() {
-        MenuIcon copy = new MenuIcon(this.enabled, this.iBuilders);
+    public MenuIcon<M> copy() {
+        MenuIcon<M> copy = new MenuIcon<>(this.enabled, this.iBuilders);
         copy.id = this.id;
         copy.lastItem = this.lastItem;
         copy.transform = this.transform;
@@ -89,47 +94,40 @@ public class MenuIcon {
     }
 
     // --------------------------------------------- //
-    //                 MenuIcon Methods              //
+    //                 MenuIcon<M> Methods              //
     // --------------------------------------------- //
     public void playClickSound(@NotNull Player player) {
         clickSound.play(player, clickVolume, clickPitch);
     }
-    public @NotNull MenuIcon setId(@NotNull String id) {
+
+    public @NotNull MenuIcon<M> setId(@NotNull String id) {
         this.id = id;
         return this;
     }
 
-    public @NotNull MenuIcon setAutoUpdate(@NotNull StaticIconModifier modifier, int tickInterval) {
-        this.updateInterval = tickInterval;
-        this.modifier = modifier;
-        return this;
-    }
-    public @NotNull MenuIcon setAutoUpdate(@NotNull StatefulIconModifier modifier, int tickInterval) {
+    public @NotNull MenuIcon<M> setAutoUpdate(@NotNull StaticIconModifier modifier, int tickInterval) {
         this.updateInterval = tickInterval;
         this.modifier = modifier;
         return this;
     }
 
-    public @NotNull MenuIcon setMenuClick(@NotNull MenuClick click) {
-        this.transform = new SimpleMenuClickTransform(click);
-        return this;
-    }
-
-    public @NotNull MenuIcon setMenuClick(@NotNull MenuClickPage click) {
-        this.transform = new PaginatedMenuClickPageTransform(click);
-        return this;
-    }
-
-    public @NotNull MenuIcon setMenuClick(@NotNull MenuClickEvent click) {
-        this.transform = new SimpleMenuClickEventTransform(click);
-        return this;
-    }
-
-    public @NotNull MenuIcon setModifier(@Nullable StaticIconModifier modifier) {
+    public @NotNull MenuIcon<M> setAutoUpdate(@NotNull StatefulIconModifier modifier, int tickInterval) {
+        this.updateInterval = tickInterval;
         this.modifier = modifier;
         return this;
     }
-    public @NotNull MenuIcon setModifier(@Nullable StatefulIconModifier modifier) {
+
+    public @NotNull MenuIcon<M> setMenuClick(@NotNull MenuClick<M> click) {
+        this.transform = new MenuClickTransform<>(click);
+        return this;
+    }
+
+    public @NotNull MenuIcon<M> setModifier(@Nullable StaticIconModifier modifier) {
+        this.modifier = modifier;
+        return this;
+    }
+
+    public @NotNull MenuIcon<M> setModifier(@Nullable StatefulIconModifier modifier) {
         this.modifier = modifier;
         return this;
     }
@@ -143,30 +141,33 @@ public class MenuIcon {
         boolean cycleToNextBuilder = tick > 0 && this.isCycleBuilderForTick(tick);
 
         @Nullable IBuilder next = cycleToNextBuilder ? getNextBuilder() : getCurrentBuilder();
-        if (next == null) { return null; }
+        if (next == null) {return null;}
 
         // Modify the builder
         if (modifier instanceof StaticIconModifier builderModifier) {
             builderModifier.modify(next);
-        }else if (modifier instanceof StatefulIconModifier updateModifier) {
+        } else if (modifier instanceof StatefulIconModifier updateModifier) {
             // Use the existing ItemStack (if available) so that stateful modifications can reference it
             //  while building the state of the new IBuilder (which is a copy of the initial configuration)
             updateModifier.modify(next, this.getLastItem(), player, tick);
         }
 
         ItemStack stack = next.build();
-        if (stack != null && stack.getAmount() > 64) { stack.setAmount(64); }
+        if (stack != null && stack.getAmount() > 64) {stack.setAmount(64);}
         return stack;
     }
+
     @ApiStatus.Internal
     public final boolean isCycleBuilderForTick(int tick) {
         // If we need to supply a new IBuilder from MenuIcon, then we should update
         return this.iBuilders.size() > 1 && this.getBuilderRotateTicks() > 0 && tick % this.getBuilderRotateTicks() == 0;
     }
+
     @ApiStatus.Internal
     public final boolean isAutoUpdateForTick(int tick) {
         return updateInterval != null && updateInterval > 0 && tick % updateInterval == 0;
     }
+
     @ApiStatus.Internal
     public final boolean needsModification(int tick) {
         return isCycleBuilderForTick(tick) || isAutoUpdateForTick(tick);
@@ -182,7 +183,7 @@ public class MenuIcon {
 
     @Nullable
     public IBuilder getNextBuilder() {
-        if (iBuilders.isEmpty()) { return null; }
+        if (iBuilders.isEmpty()) {return null;}
         this.builderIndex++;
         if (this.builderIndex >= iBuilders.size()) {
             this.builderIndex = 0;
@@ -192,7 +193,7 @@ public class MenuIcon {
 
     @Nullable
     public IBuilder getCurrentBuilder() {
-        if (iBuilders.isEmpty()) { return null; }
+        if (iBuilders.isEmpty()) {return null;}
         if (this.builderIndex >= iBuilders.size()) {
             this.builderIndex = 0;
         }
@@ -205,8 +206,8 @@ public class MenuIcon {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) { return true; }
-        if (!(obj instanceof MenuIcon menuIcon)) { return false; }
+        if (this == obj) {return true;}
+        if (!(obj instanceof MenuIcon<?> menuIcon)) {return false;}
         return enabled == menuIcon.enabled
                 && iBuilders.equals(menuIcon.iBuilders)
                 && Objects.equals(transform, menuIcon.transform)
@@ -219,9 +220,10 @@ public class MenuIcon {
         return Objects.hash(enabled, iBuilders, transform, updateInterval, modifier);
     }
 
-
-    public static MenuIcon getDefaultFillerIcon() {
-        return new MenuIcon(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" ")).setId("filler");
+    @NotNull
+    public static <M extends Menu<M>> MenuIcon<M> getDefaultFillerIcon(
+    ) {
+        return new MenuIcon<M>(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" ")).setId("filler");
     }
 }
 

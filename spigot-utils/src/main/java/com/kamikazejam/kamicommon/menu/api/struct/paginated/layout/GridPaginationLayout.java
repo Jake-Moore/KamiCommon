@@ -26,12 +26,14 @@ public class GridPaginationLayout implements PaginationLayout {
     private @NotNull IconSlot prevIconSlot;
     @Setter
     private @NotNull IconSlot nextIconSlot;
+
     public GridPaginationLayout(@NotNull PositionSlot a, @NotNull PositionSlot b, @NotNull IconSlot prevIconSlot, @NotNull IconSlot nextIconSlot) {
         this.min = new PositionSlot(Math.min(a.getRow(), b.getRow()), Math.min(a.getCol(), b.getCol()));
         this.max = new PositionSlot(Math.max(a.getRow(), b.getRow()), Math.max(a.getCol(), b.getCol()));
         this.prevIconSlot = prevIconSlot;
         this.nextIconSlot = nextIconSlot;
     }
+
     // Copy Constructor
     private GridPaginationLayout(@NotNull GridPaginationLayout other) {
         this.min = (PositionSlot) other.min.copy();
@@ -52,7 +54,7 @@ public class GridPaginationLayout implements PaginationLayout {
             for (int col = min.getCol(); col <= max.getCol(); col++) {
                 try {
                     slots.add(size.mapPositionToSlot(row, col));
-                }catch (Exception e) {
+                } catch (Exception e) {
                     SpigotUtilsSource.get().getColorLogger().warn("[GridPaginationLayout] Error while trying to map position (" + row + "," + col + ") to slot: " + e.getMessage());
                 }
             }

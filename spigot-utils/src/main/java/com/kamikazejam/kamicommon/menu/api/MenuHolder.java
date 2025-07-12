@@ -15,13 +15,19 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * InventoryHolder with constructor parameters for making an Inventory with either a row count or an InventoryType.<br>
  * Also contains a few utility methods for better utilization with the KamiCommon library.
  */
-@Getter @Setter
+@Getter
+@Setter
 @SuppressWarnings("unused")
 public class MenuHolder implements InventoryHolder {
 
@@ -75,13 +81,13 @@ public class MenuHolder implements InventoryHolder {
     }
 
 
-
     // --------------------------------------------------------------------- //
     //                       Inventory Access Methods                        //
     // --------------------------------------------------------------------- //
     public int getSize() {
         return this.getInventory().getSize();
     }
+
     @NotNull
     public MenuSize getMenuSize() {
         return this.size;
@@ -94,7 +100,7 @@ public class MenuHolder implements InventoryHolder {
 
     public void setItem(int slot, @Nullable ItemStack item) {
         // prevent inventory null pointers
-        if (slot < 0) { return; }
+        if (slot < 0) {return;}
 
         this.getInventory().setItem(slot, item);
     }
@@ -150,6 +156,7 @@ public class MenuHolder implements InventoryHolder {
         MenuHolder that = (MenuHolder) o;
         return Objects.equals(getInventory(), that.getInventory());
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(getInventory());

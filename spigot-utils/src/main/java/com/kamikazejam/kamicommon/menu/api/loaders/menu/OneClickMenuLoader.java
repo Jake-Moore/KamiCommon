@@ -43,7 +43,8 @@ public class OneClickMenuLoader {
         for (String key : icons.getKeys(false)) {
             builder.modifyIcons((access) -> {
                 ConfigurationSection iconSection = icons.getConfigurationSection(key);
-                MenuIcon icon = MenuIconLoader.load(iconSection).setId(key);
+                MenuIcon<OneClickMenu> icon = MenuIconLoader.load(iconSection);
+                icon.setId(key);
                 IconSlot slot = IconSlotLoader.load(iconSection);
                 access.setMenuIcon(icon, slot);
             });

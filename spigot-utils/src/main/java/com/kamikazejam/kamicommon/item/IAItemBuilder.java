@@ -17,19 +17,19 @@ public class IAItemBuilder extends IBuilder {
     public IAItemBuilder(@NotNull ConfigurationSection section) {
         super(section);
     }
-    public IAItemBuilder(@NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IAItemBuilder(@NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         super(section, offlinePlayer);
     }
     public IAItemBuilder(@NotNull XMaterial mat, @NotNull ConfigurationSection section) {
         super(mat, section);
     }
-    public IAItemBuilder(@NotNull XMaterial mat, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IAItemBuilder(@NotNull XMaterial mat, @NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         super(mat, section, offlinePlayer);
     }
     public IAItemBuilder(@NotNull ItemStack base, @NotNull ConfigurationSection section) {
         super(base, section);
     }
-    public IAItemBuilder(@NotNull ItemStack base, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IAItemBuilder(@NotNull ItemStack base, @NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         super(base, section, offlinePlayer);
     }
     public IAItemBuilder(@NotNull XMaterial m) {

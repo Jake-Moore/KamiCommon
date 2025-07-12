@@ -59,7 +59,7 @@ public abstract class IBuilder {
     public IBuilder(@NotNull ConfigurationSection section) {
         loadConfigItem(section, null, true);
     }
-    public IBuilder(@NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IBuilder(@NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         loadConfigItem(section, offlinePlayer, true);
     }
     public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section) {
@@ -67,7 +67,7 @@ public abstract class IBuilder {
         this.damage = material.getData();
         loadConfigItem(section, null, false);
     }
-    public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         this.material = material;
         this.damage = material.getData();
         loadConfigItem(section, offlinePlayer, false);

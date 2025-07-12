@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.menu.api.struct;
 
+import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.callbacks.MenuCloseCallback;
 import com.kamikazejam.kamicommon.menu.api.callbacks.MenuOpenCallback;
 import com.kamikazejam.kamicommon.menu.api.callbacks.MenuPostCloseCallback;
@@ -24,21 +25,22 @@ import java.util.function.Predicate;
  * The underlying {@link Map} can be accessed directly with getters for each callback type.<br>
  * Additional helper methods are provided to add callbacks.
  */
-@Getter @Setter
+@Getter
+@Setter
 @SuppressWarnings("unused")
-public class MenuEvents {
+public class MenuEvents<M extends Menu<M>> {
     public interface MenuEventsModification {
-        void modify(@NotNull MenuEvents events);
+        <T extends Menu<T>> void modify(@NotNull MenuEvents<T> events);
     }
 
     // All events are stored in a map of id->object, this is so that they can be inserted and removed by IDs
     private final @NotNull Map<String, Predicate<InventoryClickEvent>> clickPredicates;
     private final @NotNull Map<String, MenuCloseCallback> closeCallbacks;
-    private final @NotNull Map<String, MenuPostCloseCallback> postCloseCallbacks;
+    private final @NotNull Map<String, MenuPostCloseCallback<M>> postCloseCallbacks;
     private final @NotNull Map<String, MenuOpenCallback> openCallbacks;
     // Player Clicks
-    private final Map<String, PlayerSlotClick> playerInvClicks;                            // List<Click>              (processed before per-slot clicks)
-    private final Map<Integer, Map<String, PlayerSlotClick>> playerSlotClicks;             // Map<Slot, List<Click>>   (processed after global clicks)
+    private final Map<String, PlayerSlotClick<M>> playerInvClicks;                            // List<Click>              (processed before per-slot clicks)
+    private final Map<Integer, Map<String, PlayerSlotClick<M>>> playerSlotClicks;             // Map<Slot, List<Click>>   (processed after global clicks)
     private final Map<String, Predicate<InventoryClickEvent>> playerInvClickPredicates;
     // Ability to ignore upcoming events
     private final @NotNull AtomicBoolean ignoreNextInventoryCloseEvent;
@@ -53,8 +55,9 @@ public class MenuEvents {
         this.playerInvClickPredicates = new HashMap<>();
         this.ignoreNextInventoryCloseEvent = new AtomicBoolean(false);
     }
+
     // Copy Constructor
-    private MenuEvents(@NotNull MenuEvents copy) {
+    private MenuEvents(@NotNull MenuEvents<M> copy) {
         this.clickPredicates = new HashMap<>(copy.clickPredicates);
         this.closeCallbacks = new HashMap<>(copy.closeCallbacks);
         this.postCloseCallbacks = new HashMap<>(copy.postCloseCallbacks);
@@ -72,7 +75,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addClickPredicate(@NotNull Predicate<InventoryClickEvent> predicate) {
+    public MenuEvents<M> addClickPredicate(@NotNull Predicate<InventoryClickEvent> predicate) {
         this.clickPredicates.put(UUID.randomUUID().toString(), predicate);
         return this;
     }
@@ -85,7 +88,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addClickPredicate(@NotNull String id, @NotNull Predicate<InventoryClickEvent> predicate) {
+    public MenuEvents<M> addClickPredicate(@NotNull String id, @NotNull Predicate<InventoryClickEvent> predicate) {
         this.clickPredicates.put(id, predicate);
         return this;
     }
@@ -102,7 +105,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addCloseCallback(@NotNull MenuCloseCallback callback) {
+    public MenuEvents<M> addCloseCallback(@NotNull MenuCloseCallback callback) {
         this.closeCallbacks.put(UUID.randomUUID().toString(), callback);
         return this;
     }
@@ -113,7 +116,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addCloseCallback(@NotNull String id, @NotNull MenuCloseCallback callback) {
+    public MenuEvents<M> addCloseCallback(@NotNull String id, @NotNull MenuCloseCallback callback) {
         this.closeCallbacks.put(id, callback);
         return this;
     }
@@ -132,7 +135,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addPostCloseCallback(@NotNull MenuPostCloseCallback callback) {
+    public MenuEvents<M> addPostCloseCallback(@NotNull MenuPostCloseCallback<M> callback) {
         this.postCloseCallbacks.put(UUID.randomUUID().toString(), callback);
         return this;
     }
@@ -145,7 +148,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addPostCloseCallback(@NotNull String id, @NotNull MenuPostCloseCallback callback) {
+    public MenuEvents<M> addPostCloseCallback(@NotNull String id, @NotNull MenuPostCloseCallback<M> callback) {
         this.postCloseCallbacks.put(id, callback);
         return this;
     }
@@ -162,7 +165,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addOpenCallback(@Nullable MenuOpenCallback menuOpen) {
+    public MenuEvents<M> addOpenCallback(@Nullable MenuOpenCallback menuOpen) {
         this.openCallbacks.put(UUID.randomUUID().toString(), menuOpen);
         return this;
     }
@@ -173,7 +176,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addOpenCallback(@NotNull String id, @Nullable MenuOpenCallback menuOpen) {
+    public MenuEvents<M> addOpenCallback(@NotNull String id, @Nullable MenuOpenCallback menuOpen) {
         if (menuOpen != null) {
             this.openCallbacks.put(id, menuOpen);
         }
@@ -193,7 +196,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining.
      */
     @NotNull
-    public MenuEvents addPlayerSlotClick(int slot, @NotNull PlayerSlotClick click) {
+    public MenuEvents<M> addPlayerSlotClick(int slot, @NotNull PlayerSlotClick<M> click) {
         this.playerSlotClicks.computeIfAbsent(slot, k -> new HashMap<>()).put(UUID.randomUUID().toString(), click);
         return this;
     }
@@ -205,7 +208,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining.
      */
     @NotNull
-    public MenuEvents addPlayerSlotClick(int slot, @NotNull String id, @NotNull PlayerSlotClick click) {
+    public MenuEvents<M> addPlayerSlotClick(int slot, @NotNull String id, @NotNull PlayerSlotClick<M> click) {
         this.playerSlotClicks.computeIfAbsent(slot, k -> new HashMap<>()).put(id, click);
         return this;
     }
@@ -215,7 +218,7 @@ public class MenuEvents {
      */
     public boolean removePlayerSlotClick(@NotNull String id) {
         boolean removed = false;
-        for (Map<String, PlayerSlotClick> map : this.playerSlotClicks.values()) {
+        for (Map<String, PlayerSlotClick<M>> map : this.playerSlotClicks.values()) {
             if (map.remove(id) != null) {
                 removed = true;
             }
@@ -232,7 +235,7 @@ public class MenuEvents {
      */
     @NotNull
     @Deprecated
-    public MenuEvents addPlayerSlotClick(@NotNull PlayerSlotClick click) {
+    public MenuEvents<M> addPlayerSlotClick(@NotNull PlayerSlotClick<M> click) {
         this.playerInvClicks.put(UUID.randomUUID().toString(), click);
         return this;
     }
@@ -242,7 +245,7 @@ public class MenuEvents {
      * @param click The callback to run when a player clicks a slot in their inventory.
      * @return this {@link MenuEvents} object for chaining.
      */
-    public MenuEvents addPlayerInvClick(@NotNull PlayerSlotClick click) {
+    public MenuEvents<M> addPlayerInvClick(@NotNull PlayerSlotClick<M> click) {
         this.playerInvClicks.put(UUID.randomUUID().toString(), click);
         return this;
     }
@@ -253,7 +256,7 @@ public class MenuEvents {
      * @param click The callback to run when a player clicks a slot in their inventory.
      * @return this {@link MenuEvents} object for chaining.
      */
-    public MenuEvents addPlayerInvClick(@NotNull String id, @NotNull PlayerSlotClick click) {
+    public MenuEvents<M> addPlayerInvClick(@NotNull String id, @NotNull PlayerSlotClick<M> click) {
         this.playerInvClicks.put(id, click);
         return this;
     }
@@ -272,7 +275,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addPlayerClickPredicate(@NotNull Predicate<InventoryClickEvent> predicate) {
+    public MenuEvents<M> addPlayerClickPredicate(@NotNull Predicate<InventoryClickEvent> predicate) {
         this.playerInvClickPredicates.put(UUID.randomUUID().toString(), predicate);
         return this;
     }
@@ -285,7 +288,7 @@ public class MenuEvents {
      * @return this {@link MenuEvents} object for chaining
      */
     @NotNull
-    public MenuEvents addPlayerClickPredicate(@NotNull String id, @NotNull Predicate<InventoryClickEvent> predicate) {
+    public MenuEvents<M> addPlayerClickPredicate(@NotNull String id, @NotNull Predicate<InventoryClickEvent> predicate) {
         this.playerInvClickPredicates.put(id, predicate);
         return this;
     }
@@ -298,7 +301,7 @@ public class MenuEvents {
     }
 
     @NotNull
-    public MenuEvents copy() {
-        return new MenuEvents(this);
+    public MenuEvents<M> copy() {
+        return new MenuEvents<>(this);
     }
 }
