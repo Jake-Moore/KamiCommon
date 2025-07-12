@@ -2,7 +2,7 @@ name: Maven Deploy & Release
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
   build:
