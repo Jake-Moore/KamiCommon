@@ -1,21 +1,21 @@
-# 🌅 V4 Branch: Transitioning to Legacy 🌅
+# 🚀 V5 Branch: Active Development 🚧
 
 ---
 
-### ⚠️ **Important: Nearing End of Life (EOL)** ⚠️
+### **Status: Under Active Development** 🛠️
 
-This `release/v4` branch currently represents the **active maintenance line** for version 4.
+Welcome to the `release/v5` branch! This is where the **next major version** of the project is currently being built.
 
-**Development on the next major version (`v5`) has officially commenced!** 🚀
-
-Once the **first official release of `v5` is published**, this `release/v4` branch will transition to an **End of Life (EOL)** state. At that point, `v5` will become the *only actively supported version* of this project, and `v4` will primarily remain for historical reference. There is no ETA for the `v5` release.
-
-You are strongly encouraged to migrate to `v5` once it becomes available.
+**Please Note:**
+*   This branch is in an **active development phase**.
+*   It is **not stable**, may contain breaking changes, incomplete features, and bugs.
+*   It is **not recommended for production use** at this time.
 
 ---
 
-**For active `v5` development, please see the `release/v5` branch.**
-**For the latest stable release, refer to the `main` branch (currently pointing to `v4`).**
+**For the current stable and officially released version of the project, please refer to the `main` branch.**
+
+**For `v4` maintenance and bug fixes, please see the `release/v4` branch.**
 
 
 
