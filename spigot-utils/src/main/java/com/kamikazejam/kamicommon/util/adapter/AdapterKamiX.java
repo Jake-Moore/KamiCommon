@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.adapter;
 
 import com.google.gson.*;
-import com.google.gson.internal.$Gson$Types;
+import com.google.gson.internal.GsonTypes;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +89,7 @@ public abstract class AdapterKamiX<T> implements JsonDeserializer<T>, JsonSerial
 
 		Type[] typeArguments = Arrays.copyOfRange(args, 0, sArgs.length);
 
-		return $Gson$Types.newParameterizedTypeWithOwner(null, sClazz, typeArguments);
+		return GsonTypes.newParameterizedTypeWithOwner(null, sClazz, typeArguments);
 	}
 
 	public static @NotNull Object getNewArgumentInstance(@NotNull Type type, int index) {
