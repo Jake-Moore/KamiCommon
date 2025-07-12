@@ -7,6 +7,7 @@ import java.util.Set;
 
 public class LastRowIconSlot implements IconSlot {
     private final int slotInLastRow;
+
     public LastRowIconSlot(int slotInLastRow) {
         this.slotInLastRow = slotInLastRow;
     }

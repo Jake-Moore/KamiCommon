@@ -4,24 +4,32 @@ import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @SuppressWarnings("unused")
 public class StaticIconSlot implements IconSlot {
     private final @NotNull Set<Integer> slots;
+
     public StaticIconSlot(@NotNull Collection<Integer> slots) {
         this.slots = new HashSet<>(slots);
     }
+
     public StaticIconSlot(int slot) {
         this.slots = Set.of(slot);
     }
+
     public StaticIconSlot(int... slot) {
         this.slots = new HashSet<>();
         for (int i : slot) {
             this.slots.add(i);
         }
     }
+
     public StaticIconSlot(@NotNull Integer... slots) {
         this(Arrays.asList(slots));
     }

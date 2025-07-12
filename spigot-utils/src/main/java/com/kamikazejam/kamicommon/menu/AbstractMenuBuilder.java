@@ -17,27 +17,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public sealed abstract class AbstractMenuBuilder<M extends Menu, T extends AbstractMenuBuilder<M, T>> permits SimpleMenu.Builder, PaginatedMenu.Builder, OneClickMenu.Builder {
+public sealed abstract class AbstractMenuBuilder<M extends Menu<M>, T extends AbstractMenuBuilder<M, T>> permits SimpleMenu.Builder, PaginatedMenu.Builder, OneClickMenu.Builder {
     // Menu Details
     protected @NotNull MenuSize size;
     protected final @NotNull MenuTitleCalculator titleCalculator = new MenuTitleCalculator();
     // Menu Icons
-    protected final PrioritizedMenuIconMap menuIcons = new PrioritizedMenuIconMap();
+    protected final PrioritizedMenuIconMap<M> menuIcons = new PrioritizedMenuIconMap<>();
     // Additional Configuration
-    protected final MenuEvents events;
-    protected final MenuOptions options;
+    protected final MenuEvents<M> events;
+    protected final MenuOptions<M> options;
 
-    protected AbstractMenuBuilder(@NotNull MenuSize size, @NotNull MenuEvents events, @NotNull MenuOptions options) {
+    protected AbstractMenuBuilder(@NotNull MenuSize size, @NotNull MenuEvents<M> events, @NotNull MenuOptions<M> options) {
         this.size = size;
         // Add the default filler icon
-        this.menuIcons.add(MenuIcon.getDefaultFillerIcon().setId("filler"), null);
+        this.menuIcons.add(MenuIcon.getDefaultFillerIcon(), null);
         // Set the initial events and options
         this.events = events;
         this.options = options;
-    }
-
-    protected AbstractMenuBuilder(@NotNull MenuSize size) {
-        this(size, new MenuEvents(), new MenuOptions());
     }
 
     public final @NotNull MenuSize getSize() {
@@ -66,7 +62,7 @@ public sealed abstract class AbstractMenuBuilder<M extends Menu, T extends Abstr
 
     @SuppressWarnings("unchecked")
     public final @NotNull T titleReplacement(@NotNull CharSequence target,
-                                       @NotNull CharSequence replacement) {
+                                             @NotNull CharSequence replacement) {
         Preconditions.checkNotNull(target, "Target must not be null.");
         Preconditions.checkNotNull(replacement, "Replacement must not be null.");
         this.titleCalculator.getReplacements().add(new MenuTitleReplacement(target, replacement));
@@ -88,7 +84,7 @@ public sealed abstract class AbstractMenuBuilder<M extends Menu, T extends Abstr
     }
 
     @SuppressWarnings("unchecked")
-    public final @NotNull T fillerIcon(@Nullable MenuIcon fillerIcon) {
+    public final @NotNull T fillerIcon(@Nullable MenuIcon<M> fillerIcon) {
         if (fillerIcon == null) {
             this.menuIcons.remove("filler");
             return (T) this;
@@ -99,8 +95,8 @@ public sealed abstract class AbstractMenuBuilder<M extends Menu, T extends Abstr
     }
 
     @SuppressWarnings("unchecked")
-    public final @NotNull T modifyIcons(@NotNull Consumer<IMenuIconsAccess> consumer) {
-        consumer.accept(new MenuIconsAccess(this.size, this.menuIcons));
+    public final @NotNull T modifyIcons(@NotNull Consumer<IMenuIconsAccess<M>> consumer) {
+        consumer.accept(new MenuIconsAccess<>(this.size, this.menuIcons));
         return (T) this;
     }
 }

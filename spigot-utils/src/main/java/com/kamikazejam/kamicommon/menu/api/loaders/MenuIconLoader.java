@@ -1,39 +1,36 @@
 package com.kamikazejam.kamicommon.menu.api.loaders;
 
-import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.LastRowIconSlot;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.StaticIconSlot;
 import com.kamikazejam.kamicommon.item.IAItemBuilder;
 import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.menu.Menu;
+import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-// NOTE: This class does not set the MenuIcon ID to the section key, that is handled only if we're loading a MenuIcon for a specific Menu
+// NOTE: This class does not set the MenuIcon<M> ID to the section key, that is handled only if we're loading a MenuIcon<M> for a specific Menu
 // I.E. in the SimpleMenuLoader class, which will update the id when loading keys from the 'icons' section
 public class MenuIconLoader {
     @NotNull
-    public static MenuIcon load(@NotNull ConfigurationSection section) {
+    public static <M extends Menu<M>> MenuIcon<M> load(@NotNull ConfigurationSection section) {
         return load(section, null);
     }
 
     @NotNull
-    public static MenuIcon load(@NotNull ConfigurationSection section, @Nullable OfflinePlayer player) {
+    public static <M extends Menu<M>> MenuIcon<M> load(@NotNull ConfigurationSection section, @Nullable OfflinePlayer player) {
         boolean enabled = section.getBoolean("enabled", true);
 
         // Load the IBuilders
         Collection<IBuilder> iBuilders = loadIBuilders(section, player);
-        if (section.getBoolean("hideAttributes", true)) { iBuilders.forEach(IBuilder::hideAttributes); }
+        if (section.getBoolean("hideAttributes", true)) {iBuilders.forEach(IBuilder::hideAttributes);}
 
         // Create the MenuIcon
-        MenuIcon icon = new MenuIcon(enabled, iBuilders);
+        MenuIcon<M> icon = new MenuIcon<>(enabled, iBuilders);
 
         // Apply additional settings
         if (section.isSet("typeCycleTicks")) {

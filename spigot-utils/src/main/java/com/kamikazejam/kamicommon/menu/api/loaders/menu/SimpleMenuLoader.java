@@ -1,8 +1,8 @@
 package com.kamikazejam.kamicommon.menu.api.loaders.menu;
 
+import com.kamikazejam.kamicommon.menu.SimpleMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
-import com.kamikazejam.kamicommon.menu.SimpleMenu;
 import com.kamikazejam.kamicommon.menu.api.loaders.IconSlotLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuSizeLoader;
@@ -43,7 +43,8 @@ public class SimpleMenuLoader {
         for (String key : icons.getKeys(false)) {
             builder.modifyIcons((access) -> {
                 ConfigurationSection iconSection = icons.getConfigurationSection(key);
-                MenuIcon icon = MenuIconLoader.load(iconSection).setId(key);
+                MenuIcon<SimpleMenu> icon = MenuIconLoader.load(iconSection);
+                icon.setId(key);
                 IconSlot slot = IconSlotLoader.load(iconSection);
                 access.setMenuIcon(icon, slot);
             });

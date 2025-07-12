@@ -2,6 +2,8 @@ package com.kamikazejam.kamicommon.menu.api.struct.paginated;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
+import com.kamikazejam.kamicommon.menu.Menu;
+import com.kamikazejam.kamicommon.menu.PaginatedMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.layout.PaginationLayout;
@@ -21,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Accessors(chain = true)
 @SuppressWarnings("unused")
-public class PaginatedMenuOptions extends MenuOptions {
+public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
     // Both Fields are not final, since they can be extended and then set, so long as they are an instance of the correct class
     private @NotNull PaginationLayout layout;
     private @NotNull AbstractPaginatedMenuTitle titleFormat = new DefaultPaginatedMenuTitle();
@@ -33,14 +35,15 @@ public class PaginatedMenuOptions extends MenuOptions {
     private boolean fillerFillsEmptyPageIconSlots = true;
     // Icons
     @Setter
-    private @Nullable MenuIcon nextPageIcon = new MenuIcon(true, new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶"));
+    private @Nullable MenuIcon<PaginatedMenu> nextPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶"));
     @Setter
-    private @Nullable MenuIcon prevPageIcon = new MenuIcon(true, new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page"));
+    private @Nullable MenuIcon<PaginatedMenu> prevPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page"));
 
     public PaginatedMenuOptions(@NotNull PaginationLayout layout) {
         Preconditions.checkNotNull(layout, "layout cannot be null");
         this.layout = layout;
     }
+
     // Copy Constructor
     private PaginatedMenuOptions(@NotNull PaginatedMenuOptions copy) {
         this.layout = copy.layout.copy();
@@ -61,12 +64,14 @@ public class PaginatedMenuOptions extends MenuOptions {
     }
 
     public interface PaginatedMenuOptionsModification {
-        void modify(@NotNull PaginatedMenuOptions options);
+        <T extends Menu<T>> void modify(@NotNull PaginatedMenuOptions options);
     }
 
     @Override
     public @NotNull PaginatedMenuOptions copy() {
+        // Use copy constructor to copy paginated options
         PaginatedMenuOptions copy = new PaginatedMenuOptions(this);
+        // Copy base options from MenuOptions abstract class
         this.copyInto(copy);
         return copy;
     }
