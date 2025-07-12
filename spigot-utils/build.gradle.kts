@@ -7,7 +7,7 @@ dependencies {
     api("com.kamikazejam.kamicommon:spigot-nms:1.0.10")
     api(project(":standalone-utils")) // Also includes shared-utils
 
-    api("com.google.code.gson:gson:2.11.0")
+    api("com.google.code.gson:gson:2.13.1")
     api("org.apache.commons:commons-text:1.13.1") // primarily for LevenshteinDistance
 
     compileOnly(project.property("lowestSpigotDep") as String)
