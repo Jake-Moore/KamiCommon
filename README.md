@@ -1,20 +1,29 @@
+# 🕰️ V3 Branch: Historical Archive 🕰️
+
+---
+
+### 🚧 **Status: End of Life (EOL)** 🚧
+
+This `release/v3` branch serves purely as a **historical and archival snapshot** of the project's version 3 codebase.
+
+With the official release of `v4`, active development and maintenance for `v3` have ceased.
+
+**⚠️ Please be advised: No support, bug fixes, or new features will be provided for this branch.**
+
+For the most up-to-date and supported version, please refer to the `main` branch (which will always reflect the latest version).
+
+---
+
 &nbsp;
 > <a href="https://github.com/Jake-Moore/KamiCommon/releases/latest"> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/test.json" /></a>
 > 
 > The GitHub release may be different from the spigot release
-
-**SEE [STRUCTURE.md](./STRUCTURE.md) FOR GRADLE MODULE BREAKDOWN**
-
-## ⚠️ v4 Announcement ⚠️
-In the coming weeks/months I will be dedicating the majority of work for this project towards creating a v4 release.  
-V4 will be a complete rewrite of several sections of this project, and will make no attempt at backwards compatibility.  
-I will provide basic bug fix support for the v3 branch, but no new features will be added.  
-
-**ROADMAP**: https://github.com/users/Jake-Moore/projects/3
-- **TLDR**: v4 aims to rewrite GUIs, stick to semver practices, improve commands, improve usability of the `spigot-utils` module, add global configuration, and much more.
-
+> 
+**DEVELOPMENT ROADMAP**: https://github.com/users/Jake-Moore/projects/3
 
 # KamiCommon
+**SEE [STRUCTURE.md](./STRUCTURE.md) FOR GRADLE MODULE BREAKDOWN**
+
 - A common library originally intended for Spigot plugin development, expanded for standalone use too.
 - The spigot portions of this library aim to support all versions (since 1.8.x) via its sister project [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS)
   - View the NMS disclaimers here: [NMS Disclaimers](https://github.com/Jake-Moore/KamiCommonNMS?tab=readme-ov-file#disclaimers)
