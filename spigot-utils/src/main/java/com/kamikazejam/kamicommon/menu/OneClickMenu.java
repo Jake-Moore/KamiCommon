@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.menu;
 
+import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.MenuClickTransform;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
@@ -95,6 +96,12 @@ public final class OneClickMenu extends AbstractMenu<OneClickMenu> {
         public @NotNull OneClickMenu build(@NotNull Player player, @NotNull MenuClickTransform<OneClickMenu> transform) {
             Preconditions.checkNotNull(player, "Player must not be null.");
             return new OneClickMenu(this, player, transform);
+        }
+
+        @CheckReturnValue
+        public @NotNull OneClickMenu build(@NotNull Player player, @NotNull MenuClick<OneClickMenu> click) {
+            Preconditions.checkNotNull(player, "Player must not be null.");
+            return new OneClickMenu(this, player, new MenuClickTransform<>(click));
         }
 
         // Static factory methods
