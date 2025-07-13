@@ -13,7 +13,7 @@ public class MenuClickTransform<M extends Menu<M>> {
         this.click = click;
     }
 
-    public final void process(@NotNull MenuClickData<M> data) {
+    public void process(@NotNull MenuClickData<M> data) {
         // Play sound for click
         data.getIcon().playClickSound(data.getPlayer());
 
