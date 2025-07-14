@@ -3,7 +3,7 @@ plugins {
 }
 
 // Dependency Version Configuration
-val slf4jVersion = "2.0.16"
+val slf4jVersion = "2.0.17"
 val jacksonVersion = "2.18.2"
 dependencies {
     api(project(":shared-utils"))
