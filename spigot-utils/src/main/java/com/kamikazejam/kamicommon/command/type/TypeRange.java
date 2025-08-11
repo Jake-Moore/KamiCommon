@@ -1,13 +1,15 @@
 package com.kamikazejam.kamicommon.command.type;
 
+import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
-import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
+@SuppressWarnings("unused")
 public class TypeRange extends TypeInteger {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
@@ -43,11 +45,14 @@ public class TypeRange extends TypeInteger {
 	public Integer read(String arg, CommandSender sender) throws KamiCommonException {
 		Integer ret = super.read(arg, sender);
 
-		if (ret <= MIN_RANGE || ret > MAX_RANGE)
-			throw new KamiCommonException().addMsg(
-					StringUtil.t("&cInvalid range &d%d.&c Range must be between %d and %d."),
-					ret, MIN_RANGE, MAX_RANGE
-			);
+		if (ret <= MIN_RANGE || ret > MAX_RANGE) {
+            ChatColor error = KamiCommand.Lang.getErrorColor();
+            ChatColor param = KamiCommand.Lang.getErrorParamColor();
+            throw new KamiCommonException().addMsg(
+                    error + "Invalid range " + param + "%d." + error + " Range must be between %d and %d.",
+                    ret, MIN_RANGE, MAX_RANGE
+            );
+        }
 
 		return ret;
 	}

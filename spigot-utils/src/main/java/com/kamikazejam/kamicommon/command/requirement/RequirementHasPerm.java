@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.command.Lang;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
@@ -48,6 +47,6 @@ public class RequirementHasPerm extends RequirementAbstract {
 	}
 
 	public static String getPermissionDeniedMessage() {
-		return Lang.REQ_PERM_DENIED;
+		return KamiCommand.Lang.getRequirementPermissionDenied();
 	}
 }

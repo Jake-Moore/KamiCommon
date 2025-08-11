@@ -55,10 +55,11 @@ public class KamiCommandHelp extends KamiCommand {
 		// Create Lines
 		List<KMessageSingle> lines = new ArrayList<>();
 
-		// Add help lines (if specified), making sure to add the # prefix
-		List<KMessageSingle> helpLines = parent.getHelp();
-		for (KMessageSingle single : helpLines) {
-			lines.add(new KMessageSingle(StringUtil.t("&6# ") + single.getLine()));
+		// Add comments (if specified), using the comment format from the config
+		List<KMessageSingle> comments = parent.getHelpComments();
+		for (KMessageSingle single : comments) {
+            String text = String.format(KamiCommand.Lang.getHelpCommentFormat(), single.getLine());
+			lines.add(new KMessageSingle(StringUtil.t(text)));
 		}
 
 		CommandSender sender = context.getSender();
@@ -71,7 +72,7 @@ public class KamiCommandHelp extends KamiCommand {
 			lines.add(child.getTemplateClickSuggest(true, true, false, sender));
 		}
 
-		// Send Lines
+		// Add title line (becomes the first line)
 		List<KMessage> messages = Txt.getPage(lines, page, "Help for command \"" + parent.getAliases().getFirst() + "\"", this);
 		NmsAPI.getMessageManager().processAndSend(sender, messages);
 	}

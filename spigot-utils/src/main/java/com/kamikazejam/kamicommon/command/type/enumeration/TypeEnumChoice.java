@@ -1,8 +1,10 @@
 package com.kamikazejam.kamicommon.command.type.enumeration;
 
+import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -50,7 +52,9 @@ public abstract class TypeEnumChoice<T extends Enum<T>> extends TypeAbstract<T> 
 
             return t;
         }catch (IllegalArgumentException | NullPointerException e) {
-            throw new KamiCommonException().addMsg(StringUtil.t("&cNo %s matches \"&d%s&c\"."), enumName, arg);
+            ChatColor error = KamiCommand.Lang.getErrorColor();
+            ChatColor param = KamiCommand.Lang.getErrorParamColor();
+            throw new KamiCommonException().addMsg(StringUtil.t(error + "No %s matches \"" + param + "%s" + error + "\"."), enumName, arg);
         }
     }
 

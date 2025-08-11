@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.command.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,7 +27,7 @@ public class RequirementIsPlayer extends RequirementAbstract {
 
 	@Override
 	public String createErrorMessage(CommandSender sender, KamiCommand command) {
-		return Lang.COMMAND_SENDER_MUST_BE_PLAYER;
+		return KamiCommand.Lang.getSenderMustBePlayer();
 	}
 
 }

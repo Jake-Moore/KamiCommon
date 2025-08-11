@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.command.type;
 
+import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
-import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
@@ -12,15 +12,21 @@ import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Getter
-@SuppressWarnings({"unused", "UnstableApiUsage"})
+@SuppressWarnings({"unused"})
 public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements AllAble<T> {
 
     // -------------------------------------------- //
@@ -103,17 +109,6 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
     // OVERRIDE: TYPE
     // -------------------------------------------- //
 
-    protected static final String MESSAGE_MATCH_NOTHING = StringUtil.t("&cNo %s matches \"&d%s&c\".");
-    protected static final String MESSAGE_MATCH_AMBIGUOUS = StringUtil.t("&c%d %ss matches \"&d%s&c\".");
-    protected static final String MESSAGE_AVAILABLE_EMPTY = StringUtil.t("&eNote: There is no %s available.");
-
-    protected static final String MESSAGE_COLON_AMBIGUOUS = StringUtil.t("&bAmbiguous&7: ");
-    protected static final String MESSAGE_COLON_ALL = StringUtil.t("&bAll&7: ");
-    protected static final String MESSAGE_COLON_SIMILAR = StringUtil.t("&bSimilar&7: ");
-
-    protected static final String MESSAGE_SUGGESTIONS_EMPTY = StringUtil.t("&eNo suggestions found.");
-    protected static final String MESSAGE_SUGGESTIONS_MUCH = StringUtil.t("&eOver %d suggestions found (hiding output).");
-
     @Override
     public T read(String arg, CommandSender sender) throws KamiCommonException {
         // NPE Evade
@@ -147,12 +142,12 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
         // Nothing Found
         String message;
         if (matches.isEmpty()) {
-            message = String.format(MESSAGE_MATCH_NOTHING, this.getName(), arg);
+            message = String.format(Lang.getMessageMatchNothing(), this.getName(), arg);
             exception.addMsg(message);
         }
         // Ambiguous
         else {
-            message = String.format(MESSAGE_MATCH_AMBIGUOUS, matches.size(), this.getName(), arg);
+            message = String.format(Lang.getMessageMatchAmbiguous(), matches.size(), this.getName(), arg);
             exception.addMsg(message);
             suggestAmbiguous = true;
         }
@@ -163,26 +158,26 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
 
         if (this.canList(sender)) {
             if (suggestNone) {
-                message = String.format(MESSAGE_AVAILABLE_EMPTY, this.getName());
+                message = String.format(Lang.getMessageAvailableEmpty(), this.getName());
                 exception.addMsg(message);
             } else {
                 Collection<T> suggestions;
 
                 if (suggestAmbiguous) {
                     suggestions = matches;
-                    message = MESSAGE_COLON_AMBIGUOUS;
+                    message = Lang.getMessageColonAmbiguous();
                 } else if (suggestAll) {
                     suggestions = all;
-                    message = MESSAGE_COLON_ALL;
+                    message = Lang.getMessageColonAll();
                 } else {
                     suggestions = this.getMatches(options, arg, true);
-                    message = MESSAGE_COLON_SIMILAR;
+                    message = Lang.getMessageColonSimilar();
                 }
 
                 if (suggestions.isEmpty()) {
-                    exception.addMsg(MESSAGE_SUGGESTIONS_EMPTY);
+                    exception.addMsg(Lang.getMessageSuggestionsEmpty());
                 } else if (suggestions.size() > this.getListCountMax()) {
-                    message = String.format(MESSAGE_SUGGESTIONS_MUCH, this.getListCountMax());
+                    message = String.format(Lang.getMessageSuggestionsMuch(), this.getListCountMax());
                     exception.addMsg(message);
                 } else {
                     List<String> visuals = new KamiList<>();
@@ -191,7 +186,13 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
                         if (name == null) continue;
                         visuals.add(name);
                     }
-                    String explode = Txt.implodeCommaAndDot(visuals, "&d%s", " &7| ", " &7| ", "");
+                    String explode = Txt.implodeCommaAndDot(
+                            visuals,
+                            KamiCommand.Lang.getErrorParamColor() + "%s",
+                            " " + ChatColor.GRAY + "| ",
+                            " " + ChatColor.GRAY + "| ",
+                            ""
+                    );
                     exception.addMsg(message + explode);
                 }
             }
@@ -397,4 +398,32 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
         return string;
     }
 
+    /**
+     * Message and Color configuration for TypeAbstractChoice chat responses.
+     */
+    public static class Lang {
+        // Messages
+        @Setter private static @NotNull String messageMatchNothing =        KamiCommand.Lang.placeholderErrorColor + "No %s matches \"" + KamiCommand.Lang.placeholderErrorParamColor + "%s" + KamiCommand.Lang.placeholderErrorColor + "\".";
+        @Setter private static @NotNull String messageMatchAmbiguous =      KamiCommand.Lang.placeholderErrorColor + "%d %ss matches \"" + KamiCommand.Lang.placeholderErrorParamColor + "%s" + KamiCommand.Lang.placeholderErrorColor + "\".";
+        @Setter @Getter private static @NotNull String messageAvailableEmpty =      ChatColor.YELLOW + "Note: There is no %s available.";
+
+        @Setter @Getter private static @NotNull String messageColonAmbiguous =      ChatColor.AQUA + "Ambiguous" + ChatColor.GRAY + ": ";
+        @Setter @Getter private static @NotNull String messageColonAll =            ChatColor.AQUA + "All" + ChatColor.GRAY + ": ";
+        @Setter @Getter private static @NotNull String messageColonSimilar =        ChatColor.AQUA + "Similar" + ChatColor.GRAY + ": ";
+
+        @Setter @Getter private static @NotNull String messageSuggestionsEmpty =    ChatColor.YELLOW + "No suggestions found.";
+        @Setter @Getter private static @NotNull String messageSuggestionsMuch =     ChatColor.YELLOW + "Over %d suggestions found (hiding output).";
+
+        // Derived Getters
+        public static @NotNull String getMessageMatchNothing() {
+            return messageMatchNothing
+                    .replace(KamiCommand.Lang.placeholderErrorColor, KamiCommand.Lang.getErrorColor().toString())
+                    .replace(KamiCommand.Lang.placeholderErrorParamColor, KamiCommand.Lang.getErrorParamColor().toString());
+        }
+        public static @NotNull String getMessageMatchAmbiguous() {
+            return messageMatchAmbiguous
+                    .replace(KamiCommand.Lang.placeholderErrorColor, KamiCommand.Lang.getErrorColor().toString())
+                    .replace(KamiCommand.Lang.placeholderErrorParamColor, KamiCommand.Lang.getErrorParamColor().toString());
+        }
+    }
 }
