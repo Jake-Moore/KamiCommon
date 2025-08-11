@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "UnusedReturnValue"})
+@SuppressWarnings({"BooleanMethodIsAlwaysInverted", "UnusedReturnValue", "unused"})
 public class KamiCommand implements Active, PluginIdentifiableCommand {
     private static final Set<KamiCommand> allInstances = new KamiSet<>();
 
@@ -273,8 +273,10 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         return ret;
     }
 
-    // The parents are like a stack trace.
-    // We start with ourselves. The root is at the end.
+    /**
+     * Returns all parents of this command, like a stack trace.<br>
+     * The first element will be this command. The root command is last in the list.
+     */
     public List<KamiCommand> getParents(boolean includeSelf) {
         // Create
         List<KamiCommand> ret = new KamiList<>();
@@ -291,8 +293,12 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         return ret;
     }
 
-    // The chain is the parents in reversed order.
+    /**
+     * Returns the chain of commands leading to this command, like a stack trace.<br>
+     * The first element will be the root command. This command is last in the list.
+     */
     public List<KamiCommand> getChain(boolean includeSelf) {
+        // return parents in reverse order.
         List<KamiCommand> ret = this.getParents(includeSelf);
         Collections.reverse(ret);
         return ret;
@@ -641,15 +647,6 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     }
 
     // -------------------------------------------- //
-    // PUZZLER > APPLY
-    // -------------------------------------------- //
-
-    public List<String> applyPuzzler(List<String> args, CommandSender sender) {
-        args = this.applyConcatenating(args);
-        return new ArrayList<>(args);
-    }
-
-    // -------------------------------------------- //
     // REQUIREMENTS
     // -------------------------------------------- //
 
@@ -713,13 +710,19 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     // EXECUTOR
     // -------------------------------------------- //
 
-    public void execute(@NotNull CommandSender sender, @NotNull List<String> args) {
+    // Internal command execution logic, called from the bukkit command executor.
+    // For implementing your own command logic, override the perform() method. (see below)
+
+    /**
+     * @param label The specific label (or 'alias') used for this KamiCommand.
+     */
+    public final void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull List<String> args) {
         try {
-            // Apply Puzzler
-            args = this.applyPuzzler(args, sender);
+            // Apply Concatenation Rules (merges arg strings together if applicable)
+            args = new ArrayList<>(this.applyConcatenating(args));
 
             // Initialize Execution State (run context)
-            this.context = new CommandContext(args, sender);
+            this.context = new CommandContext(sender, label, args);
 
             // Requirements
             if (!this.isRequirementsMet(sender, true)) return;
@@ -729,49 +732,60 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
                 // Get matches
                 String token = args.getFirst();
 
+                // Fetch direct matches (not using levenshtein) only allowing lowercase startsWith matches.
+                // i.e. if you run "/command t", any subcommand starting with "t" will match.
                 Set<KamiCommand> matches = this.getChildren(token, false, null, true);
 
                 // Score!
                 if (matches.size() == 1) {
                     KamiCommand child = matches.iterator().next();
-                    args.removeFirst();
-                    child.execute(sender, args);
+                    List<String> childArgs = new ArrayList<>(args);
+                    childArgs.removeFirst();
+                    // Invoke child command with the token (label) used, and the remaining args.
+                    child.execute(sender, token, childArgs);
                 }
                 // Crap!
                 else {
-                    String base;
+                    String errorContent;
                     Collection<KamiCommand> suggestions;
 
                     if (matches.isEmpty()) {
-                        base = Lang.getCommandChildNone();
+                        // Use levenshtein distance to find the closest subcommand match.
+                        errorContent = Lang.getCommandChildNone();
                         suggestions = this.getChildren(token, true, sender, false);
                         onUnmatchedArg(context);
                     } else {
-                        base = Lang.getCommandChildAmbiguous();
+                        // Had multiple possible matches, inform the user
+                        errorContent = Lang.getCommandChildAmbiguous();
                         suggestions = this.getChildren(token, false, sender, false);
                     }
 
                     // Message: "The sub command X couldn't be found."
                     // OR
                     // Message: "The sub command X is ambiguous."
-                    base = base.replace(Lang.placeholderReplacement, Lang.commandColor + token);
+                    errorContent = errorContent.replace(Lang.placeholderReplacement, Lang.commandColor + token);
 
-                    // Create the KMessage which will include a click event for this command.
-                    KMessage message = KMessageSingle.ofClickRunCommand(base, this.getCommandLine());
-                    NmsAPI.getMessageManager().processAndSend(sender, message);
+                    // Create the KMessage informing the user about the matching error.
+                    // This is kind of like the title line, with additional possible commands listed after it.
+                    NmsAPI.getMessageManager().processAndSend(sender, new KMessageSingle(errorContent));
 
-                    // Message: "/f access ..."
-                    // Message: "/f ally ..."
+                    // Send all possible subcommand matches as suggestions. I.E.:
+                    //   "/command test ..."
+                    //   "/command temp ..."
                     for (KamiCommand suggestion : suggestions) {
-                        KMessage template = suggestion.getTemplateClickSuggest(false, false, false, sender);
+                        KMessage template = this.getSuggestionClickable(
+                                suggestion,
+                                token, // token that triggered this suggestion
+                                sender
+                        );
                         NmsAPI.getMessageManager().processAndSend(sender, template);
                     }
 
-                    // Message: "Use /Y to see all commands."
+                    // Message: "Use /<command> to see all commands."
                     KMessage help = new KMessageSingle(Lang.getCommandChildHelp()).addClickSuggestCommand(
                             Lang.placeholderReplacement,
-                            this.getTemplate(false, false, false, sender),
-                            this.getCommandLine()
+                            this.getCurrentTemplateChain(),
+                            this.getCurrentCommandLine()
                     );
                     NmsAPI.getMessageManager().processAndSend(sender, help);
                 }
@@ -781,7 +795,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             }
 
             // Self Execution > Arguments Valid
-            if (!this.isArgsValid(context.getArgs(), context.getSender())) return;
+            if (!this.isArgsValid(context)) return;
 
             // Self Execution > Perform
             this.perform(context);
@@ -804,44 +818,48 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     }
 
     // This is where the command action is performed.
+    // By default, it will execute the help command unless overridden to do something else.
     public void perform(@NotNull CommandContext context) throws KamiCommonException {
         // Per default, we just run the help command!
         Preconditions.checkNotNull(context, "context cannot be null");
-        this.getHelpCommand().execute(context.getSender(), context.getArgs());
+        this.getHelpCommand().execute(context.getSender(), context.getLabel(), context.getArgs());
     }
 
     // -------------------------------------------- //
     // CALL VALIDATION
     // -------------------------------------------- //
 
-    public boolean isArgsValid(@NotNull List<String> args, CommandSender sender) {
+    /**
+     * Called on a SubCommand to check if the provided arguments are valid for the command to execute.<br>
+     */
+    private boolean isArgsValid(@NotNull CommandContext context) {
+        @NotNull CommandSender sender = context.getSender();
+        @NotNull List<String> args = context.getArgs();
+
+        // Check if there are too few arguments.
         if (args.size() < this.getParameterCountRequired(sender)) {
-            if (sender != null) {
-                sender.sendMessage(StringUtil.t(Lang.getCommandTooFewArguments()));
-                sender.sendMessage(StringUtil.t(this.getTemplate(false, false, false, sender)));
-            }
+            sender.sendMessage(StringUtil.t(Lang.getCommandTooFewArguments()));
+            sender.sendMessage(StringUtil.t(this.getCurrentTemplateUsage(sender, false)));
             return false;
         }
 
         // We don't need to take argConcatFrom into account. Because at this point the args
         // are already concatenated and thus cannot be too many.
         if (args.size() > this.getParameterCount(sender) && this.isOverflowSensitive()) {
-            if (sender != null) {
-                // Get the extra args that were the 'too many'
-                List<String> extraArgs = args.subList(this.getParameterCount(sender), args.size());
-                String extraArgsImploded = Txt.implodeCommaAndDot(
-                        extraArgs,
-                        Lang.commandColor + "%s",
-                        Lang.errorColor + ", ",
-                        Lang.errorColor + " and ",
-                        ""
-                );
+            // Get the extra args that were the 'too many'
+            List<String> extraArgs = args.subList(this.getParameterCount(sender), args.size());
+            String extraArgsImploded = Txt.implodeCommaAndDot(
+                    extraArgs,
+                    Lang.commandColor + "%s",
+                    Lang.errorColor + ", ",
+                    Lang.errorColor + " and ",
+                    ""
+            );
 
-                String message = String.format(Lang.getCommandTooManyArguments(), extraArgsImploded);
-                sender.sendMessage(StringUtil.t(message));
-                sender.sendMessage(StringUtil.t(Lang.getCommandUseLike()));
-                sender.sendMessage(StringUtil.t(this.getTemplate(false, false, false, sender)));
-            }
+            String message = String.format(Lang.getCommandTooManyArguments(), extraArgsImploded);
+            sender.sendMessage(StringUtil.t(message));
+            sender.sendMessage(StringUtil.t(Lang.getCommandUseLike()));
+            sender.sendMessage(StringUtil.t(this.getCurrentTemplateUsage(sender, false)));
             return false;
         }
         return true;
@@ -851,20 +869,196 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     // TEMPLATE
     // -------------------------------------------- //
 
+    /**
+     * @param suggested The command that should be suggested to the user. (subcommand of this command)
+     * @param token The token used that triggered this possible suggestion. (likely a partial alias)
+     */
     @NotNull
-    public KMessageSingle getTemplateClickSuggest(boolean addDesc, boolean onlyFirstAlias, boolean onlyOneSubAlias, CommandSender sender) {
-        String ret = getTemplate(addDesc, onlyFirstAlias, onlyOneSubAlias, sender);
-        return KMessageSingle.ofClickSuggestCommand(ret, this.getCommandLine());
+    public KMessageSingle getSuggestionClickable(
+            @NotNull KamiCommand suggested,
+            @NotNull String token,
+            @NotNull CommandSender sender
+    ) {
+        // The current chain of args leading to the suggestion (does NOT include the suggestion itself).
+        StringBuilder templateBuilder = new StringBuilder(this.getCurrentTemplateChain());
+
+        // Find the aliases of suggested that match the token. (using startsWith Predicate)
+        Predicate<String> predicate = PredicateStartsWithIgnoreCase.get(token);
+        List<String> matchingAliases = new KamiList<>();
+        for (String alias : suggested.getAliases()) {
+            // If the alias matches the token, add it to the list.
+            if (predicate.apply(alias)) {
+                matchingAliases.add(alias);
+            }
+        }
+
+        // Compose the subCommand aliases concatenated with commas.
+        //   fall back to the first alias if no matches were found.
+        String subCommandAliases = matchingAliases.isEmpty() ? suggested.getAliases().getFirst() : Txt.implode(matchingAliases, ",");
+        templateBuilder.append(" ").append(Lang.commandColor).append(subCommandAliases.trim());
+
+        // Add 'suggested' parameters to the template string
+        for (String parameter : suggested.getTemplateParameters(sender)) {
+            templateBuilder.append(" ").append(Lang.parameterColor).append(parameter);
+        }
+
+        // Content of the KMessageSingle
+        String messageContent = templateBuilder.toString().trim(); // remove trailing spaces
+
+        return KMessageSingle.ofClickSuggestCommand(messageContent, getSuggestionCommandLine(suggested, token));
+    }
+
+    /**
+     * Given a suggested subcommand (a child of this command), returns a fully qualified command line
+     * that includes the current command chain and the suggested subcommand alias.<br>
+     * The subcommand alias is chosen based on the provided token, which is expected to be a prefix of the alias.
+     */
+    @NotNull
+    public String getSuggestionCommandLine(@NotNull KamiCommand suggested, @NotNull String token) {
+        // A valid command string comprised of every KamiCommand up until this point.
+        StringBuilder commandBuilder = new StringBuilder(this.getCurrentCommandLine());
+
+        // Find the aliases of suggested that match the token. (using startsWith Predicate)
+        Predicate<String> predicate = PredicateStartsWithIgnoreCase.get(token);
+        List<String> matchingAliases = new KamiList<>();
+        for (String alias : suggested.getAliases()) {
+            // If the alias matches the token, add it to the list.
+            if (predicate.apply(alias)) {
+                matchingAliases.add(alias);
+            }
+        }
+
+        // Pick one alias to use as the suggested subcommand.
+        //   fall back to the first alias if no matches were found.
+        String subCommandAlias = matchingAliases.isEmpty() ? suggested.getAliases().getFirst() : matchingAliases.getFirst();
+        commandBuilder.append(" ").append(subCommandAlias.trim());
+
+        // If the suggestion has more subcommands or parameters, append a space for tab completions to begin.
+        if (!suggested.getParameters().isEmpty() || suggested.hasChildren()) {
+            return commandBuilder.toString().trim() + " "; // add trailing space for tab completion
+        } else {
+            return commandBuilder.toString().trim(); // no trailing space, this looks like the end of the command.
+        }
+    }
+
+    /**
+     * @param child The command that should be suggested to the user. (subcommand of this command)
+     */
+    @NotNull
+    public KMessageSingle getHelpClickable(
+            @NotNull KamiCommand child,
+            @NotNull CommandSender sender
+    ) {
+        // The current chain of args leading to the suggestion (does NOT include the suggestion itself).
+        StringBuilder templateBuilder = new StringBuilder(this.getCurrentTemplateChain());
+
+        // Compose the subCommand aliases concatenated with commas.
+        String subCommandAliases = Txt.implode(child.getAliases(), ",");
+        templateBuilder.append(" ").append(Lang.commandColor).append(subCommandAliases.trim());
+
+        // Add parameters to the template string
+        for (String parameter : child.getTemplateParameters(sender)) {
+            templateBuilder.append(" ").append(Lang.parameterColor).append(parameter);
+        }
+
+        // Content of the KMessageSingle
+        String messageContent = templateBuilder.toString().trim(); // remove trailing spaces
+
+        return KMessageSingle.ofClickSuggestCommand(messageContent, getHelpCommandLine(child));
+    }
+
+    /**
+     * Given a subcommand (a child of this command), returns a fully qualified command line
+     * that includes the current command chain and the suggested subcommand alias.
+     */
+    @NotNull
+    public String getHelpCommandLine(@NotNull KamiCommand child) {
+        // A valid command string comprised of every KamiCommand up until this point.
+        StringBuilder commandBuilder = new StringBuilder(this.getCurrentCommandLine());
+
+        // Pick one alias to use as the suggested subcommand.
+        //   fall back to the first alias if no matches were found.
+        String subCommandAlias = child.getAliases().getFirst();
+        commandBuilder.append(" ").append(subCommandAlias.trim());
+
+        // If the suggestion has more subcommands or parameters, append a space for tab completions to begin.
+        if (!child.getParameters().isEmpty() || child.hasChildren()) {
+            return commandBuilder.toString().trim() + " "; // add trailing space for tab completion
+        } else {
+            return commandBuilder.toString().trim(); // no trailing space, this looks like the end of the command.
+        }
+    }
+
+    /**
+     * Returns the current template chain for this command. Requires an active command instance with non-null context.<br>
+     * The chain is the color coded concatenation of all command labels thus far (no parameters or descriptions).
+     */
+    @NotNull
+    public String getCurrentTemplateChain() {
+        StringBuilder ret = new StringBuilder(Lang.commandColor + "/");
+        List<KamiCommand> commands = this.getChain(true);
+
+        boolean first = true;
+        for (KamiCommand command : commands) {
+            @NotNull CommandContext context = Preconditions.checkNotNull(command.context);
+            String base = Lang.commandColor + context.getLabel();
+
+            if (!first) {
+                ret.append(" ");
+            }
+            ret.append(base);
+            first = false;
+        }
+
+        return ret.toString().trim(); // remove trailing space
+    }
+
+    /**
+     * Returns the current template usage for this command. Requires an active command instance with non-null context.<br>
+     * The usage is the color coded concatenation of all command labels thus far, followed by parameters and description.
+     */
+    @NotNull
+    public String getCurrentTemplateUsage(@NotNull CommandSender sender, boolean addDesc) {
+        StringBuilder ret = new StringBuilder(this.getCurrentTemplateChain());
+
+        // Add args
+        for (String parameter : this.getTemplateParameters(sender)) {
+            ret.append(" ").append(Lang.parameterColor).append(parameter);
+        }
+
+        // Add desc
+        if (addDesc) {
+            ret.append(" ").append(Lang.descriptionColor).append(this.getDesc());
+        }
+
+        return ret.toString().trim(); // remove trailing space
+    }
+
+    /**
+     * Returns the current command ran by the player. Requires an active command instance with non-null context.<br>
+     * Includes a leading slash.
+     */
+    @NotNull
+    public String getCurrentCommandLine() {
+        StringBuilder ret = new StringBuilder("/");
+        List<KamiCommand> commands = this.getChain(true);
+
+        boolean first = true;
+        for (KamiCommand command : commands) {
+            @NotNull CommandContext context = Preconditions.checkNotNull(command.context);
+
+            if (!first) {
+                ret.append(" ");
+            }
+            ret.append(context.getLabel());
+            first = false;
+        }
+
+        return ret.toString().trim(); // remove trailing space
     }
 
     @NotNull
-    public KMessageSingle getTemplateClickRun(boolean addDesc, boolean onlyFirstAlias, boolean onlyOneSubAlias, CommandSender sender) {
-        String ret = getTemplate(addDesc, onlyFirstAlias, onlyOneSubAlias, sender);
-        return KMessageSingle.ofClickRunCommand(ret, this.getCommandLine());
-    }
-
-    @NotNull
-    public String getTemplate(boolean addDesc, boolean onlyFirstAlias, boolean onlyOneSubAlias, @Nullable CommandSender sender) {
+    public String getFullTemplate(boolean addDesc, boolean onlyFirstAlias, boolean onlyOneSubAlias, @Nullable CommandSender sender) {
         // Get base
         StringBuilder ret = new StringBuilder(this.getTemplateChain(onlyFirstAlias, onlyOneSubAlias, sender));
 
@@ -883,12 +1077,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     }
 
     @NotNull
-    public String getTemplateChain(boolean onlyFirstAlias, @Nullable CommandSender sender) {
-        return getTemplateChain(onlyFirstAlias, false, sender);
-    }
-
-    @NotNull
-    public String getTemplateChain(boolean onlyFirstAlias, boolean onlyOneSubAlias, @Nullable CommandSender sender) {
+    private  String getTemplateChain(boolean onlyFirstAlias, boolean onlyOneSubAlias, @Nullable CommandSender sender) {
         StringBuilder ret = new StringBuilder(Lang.commandColor + "/");
 
         // Get commands
@@ -931,7 +1120,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         return true;
     }
 
-    // Intended to be overriden
+    // Intended to be overridden
     public void onUnmatchedArg(@NotNull CommandContext context) {}
 
     @NotNull
@@ -947,10 +1136,6 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     // -------------------------------------------- //
     // GET COMMAND LINE
     // -------------------------------------------- //
-
-    public String getCommandLine(String @NotNull ... args) {
-        return getCommandLine(Arrays.asList(args));
-    }
 
     public String getCommandLine(Iterable<String> args) {
         // Initiate ret
@@ -1113,7 +1298,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         // OLD: Throw error if there was no arg, or default value in the parameter.
         // OLD: if ( ! this.argIsSet(idx)) throw new IllegalArgumentException("Trying to access arg: " + idx + " but that is not set.");
         // NOTE: This security actually blocks some functionality. Certain AR handle null argument values and specify their own default from within.
-        // NOTE: An example is the MassiveQuest ARMNode which defaults to the used node of the player but must error when the player has no used node: "You must use a quest to skip the optional argument.".
+        // NOTE: An example is the MassiveQuest ARMNode which defaults to the used node of the player but must error when the player has no used node: "You must use a quest to skip the optional argument".
 
         // Get the arg.
         String arg = null;

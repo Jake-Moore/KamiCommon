@@ -1,32 +1,28 @@
 package com.kamikazejam.kamicommon.util;
 
-import com.kamikazejam.kamicommon.command.CommandContext;
-import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.command.KamiCommandHelp;
-import com.kamikazejam.kamicommon.command.Parameter;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
-import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import com.kamikazejam.kamicommon.util.predicate.PredicateStartsWithIgnoreCase;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
+
+import static com.kamikazejam.kamicommon.util.Txt.Config.TITLE_LINE_LENGTH;
 
 @SuppressWarnings({"UnnecessaryUnicodeEscape", "unused"})
 public class Txt {
-
-    public static final int PAGEHEIGHT_PLAYER = 9;
-    public static final int PAGEHEIGHT_CONSOLE = 50;
 
     public static final Pattern PATTERN_WHITESPACE = Pattern.compile("\\s+");
     public static final Pattern PATTERN_NEWLINE = Pattern.compile("\\r?\\n");
@@ -42,10 +38,7 @@ public class Txt {
             "a", "e", "i", "o", "u", "å", "ä", "ö", "æ", "ø"
     );
     private static final Pattern PATTERN_UPPERCASE_ZEROWIDTH = Pattern.compile("(?=[A-Z])"); // NOTE: Use camelsplit instead for Java 6/7 compatibility.
-    private final static String titleizeLine = "_".repeat(52);
-    private final static int titleizeBalance = -1;
     protected static Pattern PATTERN_ENUM_SPLIT = Pattern.compile("[\\s_]+");
-    private static KamiCommandHelp kamiCommandHelp = null;
 
     @Contract("null -> null; !null -> !null")
     public static String upperCaseFirst(String string) {
@@ -165,187 +158,9 @@ public class Txt {
         return getStartsWithIgnoreCase(Arrays.asList(elements), prefix);
     }
 
-    public static @NotNull String titleize(@NotNull String title) {
-        // Apply color to title if there is none
-        title = ChatColor.DARK_GREEN + title;
-
-        String center = ChatColor.GOLD + ".[ " + title + ChatColor.GOLD + " ].";
-
-        int centerLen = ChatColor.stripColor(StringUtil.t(center)).length();
-        int pivot = titleizeLine.length() / 2;
-        int eatLeft = (centerLen / 2) - titleizeBalance;
-        int eatRight = (centerLen - eatLeft) + titleizeBalance;
-
-        if (eatLeft < pivot) {
-            return ChatColor.GOLD + titleizeLine.substring(0, pivot - eatLeft)
-                    + center
-                    + ChatColor.GOLD + titleizeLine.substring(pivot + eatRight);
-        } else {
-            return center;
-        }
-    }
-
-    @Contract(" -> new")
-    public static @NotNull KMessageSingle getMessageEmpty() {
-        return new KMessageSingle(ChatColor.YELLOW + "Sorry, no pages available.");
-    }
-
-    public static @NotNull KMessageSingle getMessageInvalid(int size) {
-        if (size == 0) {
-            return getMessageEmpty();
-        } else if (size == 1) {
-            return new KMessageSingle(ChatColor.RED + "Invalid, there is only one page.");
-        } else {
-            return new KMessageSingle(ChatColor.RED + "Invalid, page must be between 1 and " + size + ".");
-        }
-    }
-
-    public static @NotNull KMessageSingle titleizedPageTitle(@NotNull String title, int pageCount, int pageHumanBased, @Nullable KamiCommand command, @NotNull List<String> args) {
-        if (command == null) {
-            // Can't add next or back pages without a command -> just add the page numbers
-            //  and skip the prev/next arrows and skip the click events
-            String pageTitle = title + " " + ChatColor.GOLD + pageHumanBased + "/" + pageCount;
-            return new KMessageSingle(titleize(pageTitle));
-        }
-
-        // Create the title string, using placeholders for the prev/next arrows
-        String pageTitle = ChatColor.GOLD + ".[ "
-                + ChatColor.DARK_GREEN + title
-                + " {prevPage} "
-                + ChatColor.GOLD + pageHumanBased + "/" + pageCount
-                + " {nextPage}"
-                + ChatColor.GOLD + " ].";
-
-        // Calculate the length of what will be visible (Strip colors & replace variables)
-        int centerLen = ChatColor.stripColor(StringUtil.t(
-                pageTitle.replace("{prevPage}", "[<]").replace("{nextPage}", "[>]")
-        )).length();
-        int pivot = titleizeLine.length() / 2;
-        int eatLeft = (centerLen / 2) - titleizeBalance;
-        int eatRight = (centerLen - eatLeft) + titleizeBalance;
-
-        KMessageSingle center = new KMessageSingle(pageTitle);
-        Txt.applyPageActions(center, pageCount, pageHumanBased, args, command);
-
-        if (eatLeft < pivot) {
-            String pre = ChatColor.GOLD + titleizeLine.substring(0, pivot - eatLeft);
-            String post = ChatColor.GOLD + titleizeLine.substring(pivot + eatRight);
-            return center.setLine(pre + center.getLine() + post);
-        } else {
-            return center;
-        }
-    }
-
-    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, @NotNull KamiCommand command) {
-        CommandContext context = command.getContext();
-        Preconditions.checkNotNull(context, "Txt.getPage must be called synchronously to a command's perform execution, where CommandContext is available");
-        return getPage(lines, pageHumanBased, title, (context.getSender() instanceof Player) ? Txt.PAGEHEIGHT_PLAYER : Txt.PAGEHEIGHT_CONSOLE, command, context.getArgs());
-    }
-
-    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, @Nullable CommandSender sender, @Nullable KamiCommand command, @NotNull List<String> args) {
-        return getPage(lines, pageHumanBased, title, (sender == null || sender instanceof Player) ? Txt.PAGEHEIGHT_PLAYER : Txt.PAGEHEIGHT_CONSOLE, command, args);
-    }
-
-    public static @NotNull List<KMessage> getPage(@NotNull List<KMessageSingle> lines, int pageHumanBased, @NotNull String title, int pageheight, @Nullable KamiCommand command, @NotNull List<String> args) {
-        // Create Ret
-        List<KMessage> ret = new KamiList<>();
-        int pageZeroBased = pageHumanBased - 1;
-        int pageCount = (int) Math.ceil(((double) lines.size()) / pageheight);
-
-        // Add Title
-        KMessageSingle kTitle = Txt.titleizedPageTitle(title, pageCount, pageHumanBased, command, args);
-        ret.add(kTitle);
-
-        // Check empty and invalid
-        if (pageCount == 0) {
-            ret.add(getMessageEmpty());
-            return ret;
-        } else if (pageZeroBased < 0 || pageHumanBased > pageCount) {
-            ret.add(getMessageInvalid(pageCount));
-            return ret;
-        }
-
-        // Get Lines
-        int from = pageZeroBased * pageheight;
-        int to = from + pageheight;
-        if (to > lines.size()) {
-            to = lines.size();
-        }
-
-        // Add page lines
-        ret.addAll(lines.subList(from, to));
-
-        // Return Ret
-        return ret;
-    }
-
-    private static void applyPageActions(@NotNull KMessageSingle title, int pageCount, int pageHumanBased, @NotNull List<String> args, @NotNull KamiCommand command) {
-        // Construct Mson
-        String backward = "[<]";
-        String forward = "[>]";
-
-        // Add flip backwards command
-        @Nullable String forwardCmd = getFlipPageCommand(pageHumanBased, pageHumanBased - 1, args, command);
-        if (pageHumanBased > 1 && forwardCmd != null) {
-            String replacement = ChatColor.AQUA + backward;
-            title.addClickRunCommand("{prevPage}", replacement, forwardCmd);
-        } else {
-            title.setLine(title.getLine().replace("{prevPage}", ChatColor.GRAY + backward));
-        }
-
-        // Add flip forwards command
-        @Nullable String backCmd = getFlipPageCommand(pageHumanBased, pageHumanBased + 1, args, command);
-        if (pageCount > pageHumanBased && backCmd != null) {
-            String replacement = ChatColor.AQUA + forward;
-            title.addClickRunCommand("{nextPage}", replacement, backCmd);
-        } else {
-            title.setLine(title.getLine().replace("{nextPage}", ChatColor.GRAY + forward));
-        }
-    }
-
-    public static @NotNull KamiCommandHelp getKamiCommandHelp() {
-        if (kamiCommandHelp == null) kamiCommandHelp = new KamiCommandHelp();
-        return kamiCommandHelp;
-    }
-
     // -------------------------------------------- //
     // Material name tools
     // -------------------------------------------- //
-
-    @Nullable
-    private static String getFlipPageCommand(int pageHumanBased, int destinationPage, @NotNull List<String> args, @NotNull KamiCommand command) {
-        // Create the command line
-        String number = String.valueOf(destinationPage);
-
-        int pageParamIndex = command.getPageParameterIndex();
-        if (pageParamIndex == -1) { return null; } // Couldn't find which arg is the page
-
-        List<String> arguments = new ArrayList<>(args);
-
-        // If our page index is farther out than the args we've supplied so far,
-        //  try supplementing with the defaults
-        if (arguments.size() <= pageParamIndex) {
-            // Add defaults for previous arguments
-            for (int i = arguments.size(); i < pageParamIndex; i++) {
-                try {
-                    // Ensure we fetch a valid param, which has its default value set
-                    Parameter<?> param = command.getParameter(i);
-                    if (param == null || !param.isDefaultValueSet()) { return null; }
-                    // Add the default value (which we know was set)
-                    arguments.add(String.valueOf(command.getParameter(i).getDefaultValue()));
-                }catch (IndexOutOfBoundsException ignored) {
-                    return null;
-                }
-            }
-            // Add this page number as the next argument
-            arguments.add(number);
-        }else {
-            // The page is in the current arguments, just update it
-            arguments.set(pageParamIndex, number);
-        }
-
-        return command.getCommandLine(arguments);
-    }
 
     public static @NotNull String getNicedEnumString(@NotNull String str, String glue) {
         List<String> parts = new ArrayList<>();
@@ -372,8 +187,18 @@ public class Txt {
         return getNicedEnum(material, " ");
     }
 
+    /**
+     * @return The name of the item, or a default name ({@link #getItemName(ItemStack, String)}) if the item is null or empty.
+     */
     public static @NotNull String getItemName(@Nullable ItemStack itemStack) {
-        if (KUtil.isNothing(itemStack)) return StringUtil.t("&7&oNothing");
+        return getItemName(itemStack, StringUtil.t("&7&oNothing"));
+    }
+
+    /**
+     * @return The name of the item, or the supplied default name if the item is null or empty.
+     */
+    public static @NotNull String getItemName(@Nullable ItemStack itemStack, @NotNull String defaultName) {
+        if (KUtil.isNothing(itemStack)) return defaultName;
 
         ChatColor color = (!itemStack.getEnchantments().isEmpty()) ? ChatColor.AQUA : ChatColor.WHITE;
 
@@ -466,5 +291,88 @@ public class Txt {
         string = string.replace("\u2026", "...");
 
         return string;
+    }
+
+    // -------------------------------------------- //
+    // Title-ing Utils
+    // -------------------------------------------- //
+
+    /**
+     * Formats a given title to be centered in a titleized line.<br><br>
+     * Titleized lines can be configured in {@link Txt.Config}<br><br>
+     * They feature the {@param title} centered in additional 'titleized' line characters.<br>
+     *
+     * @param title The unformatted title, which will be titleized.
+     *
+     * @return The titleized page title String.
+     */
+    @NotNull
+    public static String titleize(@NotNull String title) {
+        // Create the title string
+        String pageTitle = Config.getTitleFormat().replace(Config.getPlaceholderTitle(), title);
+
+        // Calculate the length of what will be visible (Strip colors)
+        int pageTitleLength = ChatColor.stripColor(StringUtil.t(pageTitle)).length();
+
+        // Calculate how many characters we need to add on either side
+        int leftPaddingSize = Math.max(0, (int) Math.ceil((TITLE_LINE_LENGTH - pageTitleLength) / 2.0));
+        int rightPaddingSize = Math.max(0, TITLE_LINE_LENGTH - pageTitleLength - leftPaddingSize);
+
+        // Create the title line with padding
+        String leftPadding = Txt.Config.getTitlePaddingColor() + Txt.Config.getTitlePaddingChar().toString().repeat(leftPaddingSize);
+        String rightPadding = Txt.Config.getTitlePaddingColor() + Txt.Config.getTitlePaddingChar().toString().repeat(rightPaddingSize);
+
+        // Construct the final title line (adds padding to both sides)
+        return leftPadding + pageTitle + rightPadding;
+    }
+
+    /**
+     * Forms a page title using {@param title}, {@param pageNum} and {@param pageCount}, and then passes
+     * it to {@link Txt#titleize(String)}.<br><br>
+     *
+     * Default format is configured in {@link Config#getPageTitleFormat()} and looks like:<br>
+     *
+     * @param title The unformatted title, which will be titleized.
+     * @param pageNum The current page number, 1-based (e.g. 1 for the first page).
+     * @param pageCount The total number of pages.
+     *
+     * @return The titleized page title String.
+     */
+    @NotNull
+    public static String titleizedPageTitle(
+            @NotNull String title,
+            int pageNum,
+            int pageCount,
+            @NotNull List<String> args
+    ) {
+        String pageTitle = String.format(Config.getPageTitleFormat(), title, pageNum, pageCount);
+        return Txt.titleize(pageTitle);
+    }
+
+    public static class Config {
+        /**
+         * Length of a full titleized title (default: 52 characters)
+         */
+        public static int TITLE_LINE_LENGTH = 52;
+        @Getter @Setter
+        private static @NotNull Character titlePaddingChar = '_';
+        @Getter @Setter
+        private static @NotNull ChatColor titlePaddingColor = ChatColor.GOLD;
+
+        // Placeholders
+        @Getter private static final @NotNull String placeholderTitle = "{title}";
+
+        // Configurable values
+        @Getter @Setter
+        private static @NotNull String titleFormat =
+                ChatColor.GOLD + ".[ "
+                + ChatColor.DARK_GREEN + placeholderTitle
+                + ChatColor.GOLD + " ].";
+
+        /**
+         * See {@link Txt#titleizedPageTitle(String, int, int, List)} for information.
+         */
+        @Getter @Setter
+        private static @NotNull String pageTitleFormat = "%s " + ChatColor.GOLD + "%d/%d";
     }
 }

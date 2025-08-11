@@ -1,11 +1,12 @@
 package com.kamikazejam.kamicommon.command;
 
 import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
+import com.kamikazejam.kamicommon.command.util.CommandPaging;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;
-import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -69,11 +70,12 @@ public class KamiCommandHelp extends KamiCommand {
 			// Add another visibility check for if they don't have the perms for it
 			if (!child.isFullChainMet(sender)) continue;
 
-			lines.add(child.getTemplateClickSuggest(true, true, false, sender));
+			lines.add(parent.getHelpClickable(child, sender));
 		}
 
 		// Add title line (becomes the first line)
-		List<KMessage> messages = Txt.getPage(lines, page, "Help for command \"" + parent.getAliases().getFirst() + "\"", this);
+        @NotNull CommandContext parentContext = Preconditions.checkNotNull(parent.getContext(), "Parent command context cannot be null");
+		List<KMessage> messages = CommandPaging.getPage(this, lines, page, "Help for command \"" + parentContext.getLabel() + "\"");
 		NmsAPI.getMessageManager().processAndSend(sender, messages);
 	}
 
@@ -88,7 +90,7 @@ public class KamiCommandHelp extends KamiCommand {
 			if (sibling.isVisibleTo(sender)) visibleSiblingCount++;
 		}
 
-		int pageHeight = (sender instanceof Player) ? Txt.PAGEHEIGHT_PLAYER : Txt.PAGEHEIGHT_CONSOLE;
+		int pageHeight = (sender instanceof Player) ? CommandPaging.PAGEHEIGHT_PLAYER : CommandPaging.PAGEHEIGHT_CONSOLE;
 		return visibleSiblingCount > pageHeight;
 	}
 
