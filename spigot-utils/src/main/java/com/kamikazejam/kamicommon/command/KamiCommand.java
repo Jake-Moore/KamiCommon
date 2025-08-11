@@ -961,6 +961,9 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             templateBuilder.append(" ").append(Lang.parameterColor).append(parameter);
         }
 
+        // Add desc (always want to show the description in help display)
+        templateBuilder.append(" ").append(Lang.descriptionColor).append(child.getDesc());
+
         // Content of the KMessageSingle
         String messageContent = templateBuilder.toString().trim(); // remove trailing spaces
 
