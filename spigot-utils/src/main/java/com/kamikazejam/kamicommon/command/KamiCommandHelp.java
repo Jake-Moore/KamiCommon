@@ -8,6 +8,8 @@ import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +77,8 @@ public class KamiCommandHelp extends KamiCommand {
 
 		// Add title line (becomes the first line)
         @NotNull CommandContext parentContext = Preconditions.checkNotNull(parent.getContext(), "Parent command context cannot be null");
-		List<KMessage> messages = CommandPaging.getPage(this, lines, page, "Help for command \"" + parentContext.getLabel() + "\"");
+		String title = Config.getHelpTitleFormat().replace(Config.getPlaceholderTitle(), parentContext.getLabel());
+        List<KMessage> messages = CommandPaging.getPage(this, lines, page, title);
 		NmsAPI.getMessageManager().processAndSend(sender, messages);
 	}
 
@@ -94,4 +97,11 @@ public class KamiCommandHelp extends KamiCommand {
 		return visibleSiblingCount > pageHeight;
 	}
 
+    public static class Config {
+        @Getter
+        private static final @NotNull String placeholderTitle = "{TITLE}";
+
+        @Getter @Setter
+        private static @NotNull String helpTitleFormat = "Help for command \"" + placeholderTitle + "\"";
+    }
 }
