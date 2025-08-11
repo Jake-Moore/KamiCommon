@@ -32,7 +32,7 @@ public class KamiCommonBukkitCommand extends Command implements PluginIdentifiab
 		super(
 				name,
 				kamiCommand.getDesc(),
-				kamiCommand.getTemplate(false, false, false, null),
+				kamiCommand.getFullTemplate(false, false, false, null),
 				Collections.emptyList() // We don't use aliases
 		);
 		this.kamiCommand = kamiCommand;
@@ -55,7 +55,7 @@ public class KamiCommonBukkitCommand extends Command implements PluginIdentifiab
 	@Override
 	public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
 		List<String> argList = this.createArgList(args);
-		this.getKamiCommand().execute(sender, argList);
+		this.getKamiCommand().execute(sender, commandLabel, argList);
 		return true;
 	}
 
