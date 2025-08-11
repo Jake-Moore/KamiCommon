@@ -138,7 +138,7 @@ public class KamiCommonBukkitCommand extends Command implements PluginIdentifiab
 		int retSize = ret.size();
 		int maxSize = 100; // The limit for tab completions in the vanilla client is 100.
 		if (retSize > maxSize) {
-			sender.sendMessage(StringUtil.t(String.format(Lang.COMMAND_TOO_MANY_TAB_SUGGESTIONS, retSize)));
+			sender.sendMessage(StringUtil.t(String.format(KamiCommand.Lang.getCommandTooManyTabSuggestions(), retSize)));
 			return Collections.emptyList();
 		}
 

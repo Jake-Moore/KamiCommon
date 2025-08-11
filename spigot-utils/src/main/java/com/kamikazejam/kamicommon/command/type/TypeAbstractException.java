@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.command.type;
 
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 
@@ -37,7 +37,7 @@ public abstract class TypeAbstractException<T> extends TypeAbstract<T> {
     // -------------------------------------------- //
 
     public String extractErrorMessage(String arg, CommandSender sender, Exception ex) {
-        return StringUtil.t("&c" + ex.getMessage());
+        return KamiCommand.Lang.getErrorColor() + ex.getMessage();
     }
 
 }
