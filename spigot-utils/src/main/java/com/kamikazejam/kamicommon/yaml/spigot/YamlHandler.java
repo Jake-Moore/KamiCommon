@@ -4,22 +4,22 @@ import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.nodes.MappingNode;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
 
 @SuppressWarnings("unused")
 public class YamlHandler extends AbstractYamlHandler<YamlConfiguration> {
-    @Nonnull private final JavaPlugin plugin;
+    @NotNull private final JavaPlugin plugin;
 
-    public YamlHandler(AbstractConfig<?> abstractConfig, @Nonnull JavaPlugin plugin, File configFile) {
+    public YamlHandler(AbstractConfig<?> abstractConfig, @NotNull JavaPlugin plugin, File configFile) {
         super(abstractConfig, configFile);
         this.plugin = plugin;
     }
 
-    public YamlHandler(AbstractConfig<?> abstractConfig, @Nonnull JavaPlugin plugin, File configFile, String fileName) {
+    public YamlHandler(AbstractConfig<?> abstractConfig, @NotNull JavaPlugin plugin, File configFile, String fileName) {
         super(abstractConfig, configFile, fileName);
         this.plugin = plugin;
     }

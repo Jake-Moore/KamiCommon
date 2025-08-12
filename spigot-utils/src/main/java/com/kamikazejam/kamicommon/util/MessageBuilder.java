@@ -12,7 +12,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -188,7 +187,7 @@ public class MessageBuilder {
      * @param sender The CommandSender to send the message to
      * @return The MessageBuilder instance (for chaining)
      */
-    public MessageBuilder send(@Nonnull CommandSender sender) {
+    public MessageBuilder send(@NotNull CommandSender sender) {
         if (sender instanceof Player) { send((Player) sender); return this; }
 
         for (String s : lines) {
@@ -204,7 +203,7 @@ public class MessageBuilder {
      * @param senders The CommandSender to send the message to
      * @return The MessageBuilder instance (for chaining)
      */
-    public MessageBuilder send(@Nonnull CommandSender... senders) {
+    public MessageBuilder send(@NotNull CommandSender... senders) {
         for (CommandSender s : senders) { send(s); }
         return this;
     }
@@ -214,7 +213,7 @@ public class MessageBuilder {
      * @param senders The CommandSender to send the message to
      * @return The MessageBuilder instance (for chaining)
      */
-    public MessageBuilder send(@Nonnull List<CommandSender> senders) {
+    public MessageBuilder send(@NotNull List<CommandSender> senders) {
         for (CommandSender s : senders) { send(s); }
         return this;
     }
@@ -224,7 +223,7 @@ public class MessageBuilder {
      * @param player The Player to send the message to
      * @return The MessageBuilder instance (for chaining)
      */
-    public MessageBuilder send(@Nonnull Player player) {
+    public MessageBuilder send(@NotNull Player player) {
         for (String s : lines) {
             s = (translatePAPI) ? StringUtilP.justP(player, s) : s;
             s = (translateColor) ? StringUtil.t(s) : s;
@@ -238,7 +237,7 @@ public class MessageBuilder {
      * @param players The Player(s) to send the message to
      * @return The MessageBuilder instance (for chaining)
      */
-    public MessageBuilder send(@Nonnull Player... players) {
+    public MessageBuilder send(@NotNull Player... players) {
         for (Player p : players) { send(p); }
         return this;
     }

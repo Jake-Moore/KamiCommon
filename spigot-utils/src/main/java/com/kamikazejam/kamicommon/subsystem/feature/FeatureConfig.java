@@ -1,0 +1,36 @@
+package com.kamikazejam.kamicommon.subsystem.feature;
+
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
+import com.kamikazejam.kamicommon.util.Preconditions;
+import org.jetbrains.annotations.NotNull;
+
+@SuppressWarnings("unused")
+public class FeatureConfig extends SubsystemConfig<Feature> {
+
+    // Filename is in form: "featureYmlPath + <feature>.yml"
+    public FeatureConfig(@NotNull Feature feature, @NotNull String fileName) {
+        super(
+                Preconditions.checkNotNull(feature, "Feature cannot be null"),
+                "features",
+                Preconditions.checkNotNull(fileName, "File name cannot be null")
+        );
+    }
+
+    @NotNull
+    public Feature getFeature() {
+        return this.getSubsystem();
+    }
+
+    @Override
+    public final void addConfigDefaults() {
+        Feature feature = this.getFeature();
+        KamiConfigExt c = feature.getPlugin().getFeaturesConfig();
+        String name = feature.getName().replace(" ", "_");
+        c.addDefault("features." + name + ".featurePrefix", feature.defaultPrefix());
+        c.save();
+
+        this.save();
+        this.reload();
+    }
+}

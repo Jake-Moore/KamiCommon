@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -41,23 +40,23 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     private final @Nullable Supplier<InputStream> defaultSupplier;
     private final @NotNull Set<ConfigObserver> observers = new HashSet<>();
 
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file) {
+    public KamiConfig(@NotNull JavaPlugin plugin, File file) {
         this(plugin, file, true);
     }
 
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults) {
+    public KamiConfig(@NotNull JavaPlugin plugin, File file, boolean addDefaults) {
         this(plugin, file, addDefaults, null);
     }
 
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, boolean strictKeys) {
+    public KamiConfig(@NotNull JavaPlugin plugin, File file, boolean addDefaults, boolean strictKeys) {
         this(plugin, file, addDefaults, null);
     }
 
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file, Supplier<InputStream> defaultSupplier) {
+    public KamiConfig(@NotNull JavaPlugin plugin, File file, Supplier<InputStream> defaultSupplier) {
         this(plugin, file, true, defaultSupplier);
     }
 
-    private KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, @Nullable Supplier<InputStream> defaultSupplier) {
+    private KamiConfig(@NotNull JavaPlugin plugin, File file, boolean addDefaults, @Nullable Supplier<InputStream> defaultSupplier) {
         this.plugin = plugin;
         this.file = file;
         this.addDefaults = addDefaults;
