@@ -42,9 +42,14 @@ public class FeatureManager {
 
     @Internal
     public void unregister() {
-        for (Feature feature : featureList) {
+        // Disable will remove the feature from the list and map
+        // Iterate over a copy to avoid ConcurrentModificationException
+        for (Feature feature : new ArrayList<>(featureList)) {
             disable(feature);
         }
+        // Ensure the feature structures are cleared
+        featureList.clear();
+        featureMap.clear();
     }
 
     // Private disable access. Once a Feature is enabled, it should not be disabled until the plugin is shut down.
