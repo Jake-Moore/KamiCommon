@@ -23,6 +23,7 @@ import com.kamikazejam.kamicommon.util.predicate.PredicateStartsWithIgnoreCase;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.plugin.Plugin;
@@ -218,6 +219,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     // === EXECUTION ===
     @Getter
     private @Nullable CommandContext context = null;
+
+    private @Nullable String bukkitCommandPermission = null;
 
     // -------------------------------------------- //
     // HIERARCHY
@@ -1337,6 +1340,66 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         for (String line : block.getLines()) {
             this.helpComments.add(new KMessageSingle(line));
         }
+    }
+
+    /**
+     * NOTICE: This Method is only relevant if this command is used as a ROOT COMMAND.<br><br>
+     *
+     * Override the default command permission parsing.<br>
+     * (The permission sent to {@link Command#setPermission(String)}<br><br>
+     *
+     * By default, the permission is derived from any {@link RequirementHasPerm} requirements set on the command.<br>
+     * You can optionally set a custom permission to use instead of the derived one.<br><br>
+     * Note:<br>
+     * - Setting this to null will cause the derived permission to be used again<br>
+     * - The only way to get a 'permission-less' command is to ensure there are no {@link RequirementHasPerm} requirements.
+     */
+    public void setBukkitCommandPermission(@Nullable String permission) {
+        this.bukkitCommandPermission = permission;
+    }
+
+    /**
+     * NOTICE: This Method is only relevant if this command is used as a ROOT COMMAND.<br><br>
+     *
+     * Get the permission that should be used for this command in Bukkit.<br>
+     * (This is the permission sent to {@link Command#setPermission(String)} when the command is registered)<br><br>
+     *
+     * Set a custom permission using {@link #setBukkitCommandPermission(String)}.<br>
+     * If no custom permission is set, then the permission is derived from the {@link RequirementHasPerm} requirements set on the command.<br>
+     * (If no {@link RequirementHasPerm} requirements are found, this command will not require any permission to execute)
+     */
+    @Nullable
+    public String getBukkitCommandPermission() {
+        // If a custom permission is set, return that.
+        if (this.bukkitCommandPermission != null) {
+            return this.bukkitCommandPermission;
+        }
+
+        // Otherwise, derive the permission from the requirements.
+        List<String> permissions = new ArrayList<>();
+        for (Requirement requirement : this.getRequirements()) {
+            if (!(requirement instanceof RequirementHasPerm)) {
+                continue;
+            }
+            permissions.add(((RequirementHasPerm) requirement).getPermissionId());
+        }
+        if (permissions.isEmpty()) {
+            return null; // No permission set, command does not require any permission.
+        }
+        String permission = permissions.getFirst(); // Use the first permission as the derived one.
+        // Notify about the permission collision if applicable, recommending authors to set a dedicated permission.
+        if (permissions.size() > 1) {
+            String message1 = String.format(
+                    "[KamiCommand] Command '%s' has multiple permission requirements set (%d). Using only the first one: %s.",
+                    this.getClass().getSimpleName(),
+                    permissions.size(),
+                    permission
+            );
+            String message2 = "[KamiCommand] Consider setting a dedicated permission for this command using setBukkitCommandPermission(String).";
+            this.getActivePlugin().getColorLogger().warn(message1);
+            this.getActivePlugin().getColorLogger().warn(message2);
+        }
+        return permission; // Return the derived permission.
     }
 
     /**
