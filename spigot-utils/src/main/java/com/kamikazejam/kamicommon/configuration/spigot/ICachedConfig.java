@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.configuration.spigot;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.modules.ModuleConfig;
+import com.kamikazejam.kamicommon.subsystem.modules.ModuleConfig;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;

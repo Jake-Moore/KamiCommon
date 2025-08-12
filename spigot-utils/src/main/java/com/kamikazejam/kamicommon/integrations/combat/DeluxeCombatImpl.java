@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class DeluxeCombatImpl implements CombatIntegration {
@@ -25,7 +24,7 @@ public class DeluxeCombatImpl implements CombatIntegration {
     }
 
     @Override
-    public void tag(@NotNull Player victim, @Nonnull Player attacker) {
+    public void tag(@NotNull Player victim, @NotNull Player attacker) {
         PVPPlayer pvpPlayer = DeluxeCombat.getInstance().getSettings().getPlayer(victim);
         pvpPlayer.getTagger().activate(attacker);
     }

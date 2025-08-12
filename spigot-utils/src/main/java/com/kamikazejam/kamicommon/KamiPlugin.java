@@ -6,11 +6,13 @@ import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.configuration.spigot.ConfigObserver;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
-import com.kamikazejam.kamicommon.modules.Module;
-import com.kamikazejam.kamicommon.modules.ModuleManager;
-import com.kamikazejam.kamicommon.modules.integration.CitizensIntegration;
-import com.kamikazejam.kamicommon.modules.integration.ItemsAdderIntegration;
-import com.kamikazejam.kamicommon.modules.integration.MythicMobsIntegration;
+import com.kamikazejam.kamicommon.subsystem.feature.Feature;
+import com.kamikazejam.kamicommon.subsystem.feature.FeatureManager;
+import com.kamikazejam.kamicommon.subsystem.modules.Module;
+import com.kamikazejam.kamicommon.subsystem.modules.ModuleManager;
+import com.kamikazejam.kamicommon.subsystem.integration.CitizensIntegration;
+import com.kamikazejam.kamicommon.subsystem.integration.ItemsAdderIntegration;
+import com.kamikazejam.kamicommon.subsystem.integration.MythicMobsIntegration;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
@@ -41,7 +43,9 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     private long enableTime;
     private String logPrefixColored = null;
     @Getter ModuleManager moduleManager;
+    @Getter FeatureManager featureManager;
     private KamiConfigExt modulesConfig = null;
+    private KamiConfigExt featuresConfig = null;
     private @Nullable KamiConfigExt config = null;
     @Getter
     private LoggerService colorLogger;
@@ -82,8 +86,9 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         this.colorLogger = new PluginLogger(this);
         this.colorLogger.logToConsole(this.logPrefixColored + "=== ENABLE START ===", Level.INFO);
 
-        // Create the Module Manager
+        // Create the Subsystem Managers
         this.moduleManager = new ModuleManager(this);
+        this.featureManager = new FeatureManager(this);
 
         // Load the Config
         if (isAutoLoadKamiConfig()) {
@@ -106,7 +111,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     }
 
     public void onEnablePost() {
-        // Register module integrations
+        // Register subsystem integrations
         if (hasItemsAdder()) {
             new ItemsAdderIntegration(this);
         }
@@ -159,6 +164,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         if (moduleManager != null) {
             moduleManager.unregister();
         }
+        // Cleanup Features
+        if (featureManager != null) {
+            featureManager.unregister();
+        }
 
         onDisablePost();
 
@@ -179,18 +188,24 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     /**
      * Called after both onDisableInner and listeners, tasks, and disableables are unregistered<br>
-     * Also called after modules and commands are unregistered<br>
-     * You can use this method to cleanup databases or anything else that should come after module shutdowns
+     * Also called after modules, features, and commands are unregistered<br>
+     * You can use this method to cleanup databases or anything else that should come after module/features shutdowns
      */
     public void onDisablePost() {}
 
     /**
-     * Can override if configs are stored in a subpackage of the jar
+     * Can override if module configs are stored in a subpackage of the jar
      */
     public String getModuleYmlPath() {
         return null;
     }
 
+    /**
+     * Can override if feature configs are stored in a subpackage of the jar
+     */
+    public String getFeatureYmlPath() {
+        return null;
+    }
 
     // -------------------------------------------- //
     // LISTENER REGISTRATION
@@ -402,12 +417,12 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     // -------------------------------------------- //
     // MODULE MANAGEMENT
     // -------------------------------------------- //
-    public <T extends Module> void registerModule(Class<T> clazz) {
-        Constructor<T> s;
+    public <M extends Module> void registerModule(Class<M> clazz) {
+        Constructor<M> s;
         try {
             s = clazz.getDeclaredConstructor();
             s.setAccessible(true);
-            T instance = s.newInstance();
+            M instance = s.newInstance();
             registerModule(instance);
         } catch (Throwable t) {
             Bukkit.getLogger().severe("Failed to initialize the module: " + clazz.getName());
@@ -423,8 +438,36 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
      * @deprecated Use singleton pattern on your modules instead of this!!
      */
     @Deprecated
-    public <T extends Module> T getModule(Class<T> clazz) {
+    public <M extends Module> M getModule(Class<M> clazz) {
         return moduleManager.get(clazz);
+    }
+
+    // -------------------------------------------- //
+    // FEATURE MANAGEMENT
+    // -------------------------------------------- //
+    public <F extends Feature> void registerFeature(Class<F> clazz) {
+        Constructor<F> s;
+        try {
+            s = clazz.getDeclaredConstructor();
+            s.setAccessible(true);
+            F instance = s.newInstance();
+            registerFeature(instance);
+        } catch (Throwable t) {
+            Bukkit.getLogger().severe("Failed to initialize the feature: " + clazz.getName());
+            t.printStackTrace();
+        }
+    }
+    public void registerFeature(Feature... features) {
+        for (Feature feature : features) {
+            getFeatureManager().registerFeature(feature);
+        }
+    }
+    /**
+     * @deprecated Use singleton pattern on your features instead of this!!
+     */
+    @Deprecated
+    public <F extends Feature> F getFeature(Class<F> clazz) {
+        return featureManager.get(clazz);
     }
 
 
@@ -525,6 +568,14 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         return modulesConfig;
     }
 
+    public @NotNull KamiConfigExt getFeaturesConfig() {
+        // Create on-demand, since creating the KamiConfig will create the file too
+        if (featuresConfig == null) {
+            // Create the Modules Config
+            this.featuresConfig = new KamiConfigExt(this, new File(getDataFolder(), "features.yml"), false);
+        }
+        return featuresConfig;
+    }
 
     // -------------------------------------------- //
     // MISCELLANEOUS
