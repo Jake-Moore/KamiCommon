@@ -39,9 +39,14 @@ public class ModuleManager {
     }
 
     public void unregister() {
-        for (Module module : moduleList) {
+        // Disable will remove the feature from the list and map
+        // Iterate over a copy to avoid ConcurrentModificationException
+        for (Module module : new ArrayList<>(moduleList)) {
             disable(module);
         }
+        // Ensure the module structures are cleared
+        moduleList.clear();
+        moduleMap.clear();
     }
 
     public boolean disable(Module module) {
