@@ -9,12 +9,15 @@ import com.kamikazejam.kamicommon.util.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+
 /**
  * This class represents a single feature registered under your {@link KamiPlugin} plugin.<br>
  * A feature is a subsystem that acts like its own plugin, providing its own functionality and configuration.<br>
  * Features cannot be disabled or toggled, they are always enabled.<br>
  * For a subsystem that can be toggled or disabled, see {@link Module}.<br>
  */
+@SuppressWarnings("unused")
 public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> {
 
     /**
@@ -60,5 +63,18 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
         c.setString("features." + getName() + ".featurePrefix", def);
         c.save();
         return def;
+    }
+
+    @NotNull
+    public File getFeatureDataFolder() {
+        File dataFolder = getPlugin().getDataFolder();
+        File featureFolder = new File(dataFolder + File.separator + FeatureConfig.FEATURES_FOLDER + File.separator + getName());
+        if (!featureFolder.exists()) {
+            boolean created = featureFolder.mkdirs();
+            if (!created) {
+                throw new IllegalStateException("Failed to create feature data folder: " + featureFolder.getAbsolutePath());
+            }
+        }
+        return featureFolder;
     }
 }

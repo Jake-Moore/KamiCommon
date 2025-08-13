@@ -7,12 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class FeatureConfig extends SubsystemConfig<Feature> {
+    public static final @NotNull String FEATURES_FOLDER = "features";
 
     // Filename is in form: "featureYmlPath + <feature>.yml"
     public FeatureConfig(@NotNull Feature feature, @NotNull String fileName) {
         super(
                 Preconditions.checkNotNull(feature, "Feature cannot be null"),
-                "features",
+                FEATURES_FOLDER,
                 Preconditions.checkNotNull(fileName, "File name cannot be null")
         );
     }
