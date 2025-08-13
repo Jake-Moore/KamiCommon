@@ -70,16 +70,16 @@ public sealed abstract class AbstractMenuBuilder<M extends Menu<M>, T extends Ab
     }
 
     @SuppressWarnings("unchecked")
-    public final @NotNull T options(@NotNull MenuOptions.MenuOptionsModification modification) {
-        Preconditions.checkNotNull(modification, "Modification must not be null.");
-        modification.modify(this.options);
+    public final @NotNull T options(@NotNull Consumer<MenuOptions<M>> consumer) {
+        Preconditions.checkNotNull(consumer, "consumer must not be null.");
+        consumer.accept(this.options);
         return (T) this;
     }
 
     @SuppressWarnings("unchecked")
-    public final @NotNull T events(@NotNull MenuEvents.MenuEventsModification modification) {
-        Preconditions.checkNotNull(modification, "Modification must not be null.");
-        modification.modify(this.events);
+    public final @NotNull T events(@NotNull Consumer<MenuEvents<M>> consumer) {
+        Preconditions.checkNotNull(consumer, "consumer must not be null.");
+        consumer.accept(this.events);
         return (T) this;
     }
 

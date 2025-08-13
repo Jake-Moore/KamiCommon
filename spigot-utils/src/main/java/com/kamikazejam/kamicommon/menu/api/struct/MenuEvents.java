@@ -29,9 +29,6 @@ import java.util.function.Predicate;
 @Setter
 @SuppressWarnings("unused")
 public class MenuEvents<M extends Menu<M>> {
-    public interface MenuEventsModification {
-        <T extends Menu<T>> void modify(@NotNull MenuEvents<T> events);
-    }
 
     // All events are stored in a map of id->object, this is so that they can be inserted and removed by IDs
     private final @NotNull Map<String, Predicate<InventoryClickEvent>> clickPredicates;
