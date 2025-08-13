@@ -18,9 +18,6 @@ import java.util.Set;
 @Accessors(chain = true)
 @SuppressWarnings("unused")
 public abstract class MenuOptions<M extends Menu<M>> {
-    public interface MenuOptionsModification {
-        <T extends Menu<T>> void modify(@NotNull MenuOptions<T> options);
-    }
 
     /**
      * If we should allow the player to pick up items while the menu is open.
