@@ -61,6 +61,20 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
     @Setter
     private @Nullable MenuIcon<PaginatedMenu> prevPageInactiveIcon;
 
+    /**
+     * The message to send the player when they click the {@link #nextPageInactiveIcon} icon.<br>
+     * If null, no message will be sent.
+     */
+    @Setter
+    private @Nullable String noNextPageIconMessage;
+
+    /**
+     * The message to send the player when they click the {@link #prevPageInactiveIcon} icon.<br>
+     * If null, no message will be sent.
+     */
+    @Setter
+    private @Nullable String noPrevPageIconMessage;
+
     public PaginatedMenuOptions(@NotNull PaginationLayout layout) {
         Preconditions.checkNotNull(layout, "layout cannot be null");
         this.layout = layout;
@@ -70,6 +84,8 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         this.prevPageIcon = Defaults.getPrevPageIcon();
         this.nextPageInactiveIcon = Defaults.getNextPageInactiveIcon();
         this.prevPageInactiveIcon = Defaults.getPrevPageInactiveIcon();
+        this.noNextPageIconMessage = Defaults.getNoNextPageIconMessage();
+        this.noPrevPageIconMessage = Defaults.getNoPrevPageIconMessage();
     }
 
     // Copy Constructor
@@ -81,6 +97,8 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         this.prevPageIcon = copy.prevPageIcon == null ? null : copy.prevPageIcon.copy();
         this.nextPageInactiveIcon = copy.nextPageInactiveIcon == null ? null : copy.nextPageInactiveIcon.copy();
         this.prevPageInactiveIcon = copy.prevPageInactiveIcon == null ? null : copy.prevPageInactiveIcon.copy();
+        this.noNextPageIconMessage = copy.noNextPageIconMessage;
+        this.noPrevPageIconMessage = copy.noPrevPageIconMessage;
     }
 
     public void setLayout(@NotNull PaginationLayout layout) {
@@ -119,5 +137,15 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         private static @Nullable MenuIcon<PaginatedMenu> nextPageInactiveIcon = null;
         @Getter @Setter
         private static @Nullable MenuIcon<PaginatedMenu> prevPageInactiveIcon = null;
+        /**
+         * Only applies to the {@link #getNextPageInactiveIcon()} click (if enabled).
+         */
+        @Getter @Setter
+        private static @Nullable String noNextPageIconMessage = "&cNo next page available";
+        /**
+         * Only applies to the {@link #getPrevPageInactiveIcon()} click (if enabled).
+         */
+        @Getter @Setter
+        private static @Nullable String noPrevPageIconMessage = "&cNo previous page available";
     }
 }
