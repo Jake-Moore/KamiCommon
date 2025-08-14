@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class KamiCommandHelp extends KamiCommand {
@@ -66,7 +67,7 @@ public class KamiCommandHelp extends KamiCommand {
 		}
 
 		CommandSender sender = context.getSender();
-		for (KamiCommand child : parent.getChildren()) {
+		for (KamiCommand child : this.getSortedChildren(parent)) {
 			if (!child.isVisibleTo(sender)) continue;
 
 			// Add another visibility check for if they don't have the perms for it
@@ -97,11 +98,36 @@ public class KamiCommandHelp extends KamiCommand {
 		return visibleSiblingCount > pageHeight;
 	}
 
+    @NotNull
+    private List<KamiCommand> getSortedChildren(@NotNull KamiCommand parent) {
+        // if not using sorted help commands, return default children list
+        if (!Config.isSortHelpCommands()) {
+            return parent.getChildren();
+        }
+
+        // if using sorted help commands, return sorted list
+        List<KamiCommand> children = new ArrayList<>(parent.getChildren());
+        children.sort(
+                Comparator.comparing(
+                        // Extract the primary alias (or null if no aliases)
+                        (KamiCommand c) -> c.getAliases().isEmpty() ? null : c.getAliases().getFirst(),
+                        // This comparator handles the actual comparison:
+                        // 1. nullsLast ensures null primary aliases are sorted after non-null ones.
+                        // 2. String.CASE_INSENSITIVE_ORDER compares strings ignoring case.
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+                )
+        );
+        return children;
+    }
+
     public static class Config {
         @Getter
         private static final @NotNull String placeholderTitle = "{TITLE}";
 
         @Getter @Setter
         private static @NotNull String helpTitleFormat = "Help for command \"" + placeholderTitle + "\"";
+
+        @Getter @Setter
+        private static boolean sortHelpCommands = false;
     }
 }
