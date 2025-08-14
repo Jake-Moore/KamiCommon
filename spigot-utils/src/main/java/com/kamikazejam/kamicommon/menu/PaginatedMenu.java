@@ -14,6 +14,7 @@ import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeRows;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeType;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -126,6 +127,12 @@ public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
                 @Nullable MenuIcon<PaginatedMenu> nextInactiveIcon = this.getOptions().getNextPageInactiveIcon();
                 if (nextInactiveIcon != null && nextInactiveIcon.isEnabled()) {
                     access.setMenuIcon(nextInactiveIcon.setId(nextInactiveIconId), layout.getNextIconSlot(size));
+                    access.setMenuClick(nextInactiveIconId, (data) -> {
+                        @Nullable String message = this.getOptions().getNoNextPageIconMessage();
+                        if (message != null && !message.isEmpty()) {
+                            this.getPlayer().sendMessage(StringUtil.t(message));
+                        }
+                    });
                 }
             }
 
@@ -148,6 +155,12 @@ public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
                 @Nullable MenuIcon<PaginatedMenu> prevInactiveIcon = this.getOptions().getPrevPageInactiveIcon();
                 if (prevInactiveIcon != null && prevInactiveIcon.isEnabled()) {
                     access.setMenuIcon(prevInactiveIcon.setId(prevInactiveIconId), layout.getPrevIconSlot(size));
+                    access.setMenuClick(prevInactiveIconId, (data) -> {
+                        @Nullable String message = this.getOptions().getNoPrevPageIconMessage();
+                        if (message != null && !message.isEmpty()) {
+                            this.getPlayer().sendMessage(StringUtil.t(message));
+                        }
+                    });
                 }
             }
         });
