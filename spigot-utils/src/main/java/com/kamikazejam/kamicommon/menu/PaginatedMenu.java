@@ -42,8 +42,10 @@ import java.util.function.Consumer;
 @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
-    private static final String nextIconId = "paginated_menu_next";
-    private static final String prevIconId = "paginated_menu_prev";
+    private static final @NotNull String nextIconId = "paginated_menu_next";
+    private static final @NotNull String prevIconId = "paginated_menu_prev";
+    private static final @NotNull String nextInactiveIconId = "paginated_menu_next_inactive";
+    private static final @NotNull String prevInactiveIconId = "paginated_menu_prev_inactive";
 
     // Fields
     //  Uses priorities for ordering (higher = earlier)
@@ -104,29 +106,49 @@ public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
         modifyIcons((access) -> {
             access.removeMenuIcon(nextIconId);
             access.removeMenuIcon(prevIconId);
+
             // Add the Next Icon
-            @Nullable MenuIcon<PaginatedMenu> nextIcon = this.getOptions().getNextPageIcon();
-            if ((this.pageIndex + 1 < totalPages) && nextIcon != null && nextIcon.isEnabled()) {
-                access.setMenuIcon(nextIcon.setId(nextIconId), layout.getNextIconSlot(size));
-                access.setMenuClick(nextIconId, (data) -> {
-                    if (this.pageIndex + 1 < totalPages) {
-                        this.pageIndex++;
-                    }
-                    this.getEvents().getIgnoreNextInventoryCloseEvent().set(true);
-                    this.open(this.pageIndex);
-                });
+            if ((this.pageIndex + 1 < totalPages)) {
+                // There is a next page, place the next icon if enabled
+                @Nullable MenuIcon<PaginatedMenu> nextIcon = this.getOptions().getNextPageIcon();
+                if (nextIcon != null && nextIcon.isEnabled()) {
+                    access.setMenuIcon(nextIcon.setId(nextIconId), layout.getNextIconSlot(size));
+                    access.setMenuClick(nextIconId, (data) -> {
+                        if (this.pageIndex + 1 < totalPages) {
+                            this.pageIndex++;
+                        }
+                        this.getEvents().getIgnoreNextInventoryCloseEvent().set(true);
+                        this.open(this.pageIndex);
+                    });
+                }
+            } else {
+                // There is no next page, place the inactive icon if enabled
+                @Nullable MenuIcon<PaginatedMenu> nextInactiveIcon = this.getOptions().getNextPageInactiveIcon();
+                if (nextInactiveIcon != null && nextInactiveIcon.isEnabled()) {
+                    access.setMenuIcon(nextInactiveIcon.setId(nextInactiveIconId), layout.getNextIconSlot(size));
+                }
             }
+
             // Add the Prev Icon
-            @Nullable MenuIcon<PaginatedMenu> prevIcon = this.getOptions().getPrevPageIcon();
-            if (this.pageIndex > 0 && prevIcon != null && prevIcon.isEnabled()) {
-                access.setMenuIcon(prevIcon.setId(prevIconId), layout.getPrevIconSlot(size));
-                access.setMenuClick(prevIconId, (data) -> {
-                    if (this.pageIndex > 0) {
-                        this.pageIndex--;
-                    }
-                    this.getEvents().getIgnoreNextInventoryCloseEvent().set(true);
-                    this.open(this.pageIndex);
-                });
+            if (this.pageIndex > 0) {
+                // There is a previous page, place the prev icon if enabled
+                @Nullable MenuIcon<PaginatedMenu> prevIcon = this.getOptions().getPrevPageIcon();
+                if (prevIcon != null && prevIcon.isEnabled()) {
+                    access.setMenuIcon(prevIcon.setId(prevIconId), layout.getPrevIconSlot(size));
+                    access.setMenuClick(prevIconId, (data) -> {
+                        if (this.pageIndex > 0) {
+                            this.pageIndex--;
+                        }
+                        this.getEvents().getIgnoreNextInventoryCloseEvent().set(true);
+                        this.open(this.pageIndex);
+                    });
+                }
+            } else {
+                // There is no previous page, place the inactive icon if enabled
+                @Nullable MenuIcon<PaginatedMenu> prevInactiveIcon = this.getOptions().getPrevPageInactiveIcon();
+                if (prevInactiveIcon != null && prevInactiveIcon.isEnabled()) {
+                    access.setMenuIcon(prevInactiveIcon.setId(prevInactiveIconId), layout.getPrevIconSlot(size));
+                }
             }
         });
 
