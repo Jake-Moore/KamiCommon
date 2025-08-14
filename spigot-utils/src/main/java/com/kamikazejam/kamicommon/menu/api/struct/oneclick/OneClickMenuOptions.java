@@ -17,9 +17,11 @@ import org.jetbrains.annotations.NotNull;
 @Accessors(chain = true)
 @SuppressWarnings("unused")
 public class OneClickMenuOptions extends MenuOptions<OneClickMenu> {
-    private boolean excludeFillerClickFromOneClick = true;
+    private boolean excludeFillerClickFromOneClick;
 
-    public OneClickMenuOptions() {}
+    public OneClickMenuOptions() {
+        this.excludeFillerClickFromOneClick = Defaults.isExcludeFillerClickFromOneClick();
+    }
 
     // Copy Constructor
     public OneClickMenuOptions(@NotNull OneClickMenuOptions copy) {
@@ -37,5 +39,10 @@ public class OneClickMenuOptions extends MenuOptions<OneClickMenu> {
         // Copy base options from MenuOptions abstract class
         this.copyInto(copy);
         return copy;
+    }
+
+    public static class Defaults {
+        @Getter @Setter
+        private static boolean excludeFillerClickFromOneClick = true;
     }
 }

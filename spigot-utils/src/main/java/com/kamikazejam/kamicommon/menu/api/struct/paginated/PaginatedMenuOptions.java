@@ -26,22 +26,50 @@ import org.jetbrains.annotations.Nullable;
 public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
     // Both Fields are not final, since they can be extended and then set, so long as they are an instance of the correct class
     private @NotNull PaginationLayout layout;
-    private @NotNull AbstractPaginatedMenuTitle titleFormat = new DefaultPaginatedMenuTitle();
+    private @NotNull AbstractPaginatedMenuTitle titleFormat;
     /**
      * Should the filler fill any empty page icon slots? For instance on the last page if we don't have enough icons to fill the page,
      * should we fill the last slots with filler (true) or leave them empty (false)?
      */
     @Setter
-    private boolean fillerFillsEmptyPageIconSlots = true;
+    private boolean fillerFillsEmptyPageIconSlots;
     // Icons
+    /**
+     * The icon that will be used to navigate to the next page.<br>
+     * If null, no icon will be shown. (manual navigation required).
+     */
     @Setter
-    private @Nullable MenuIcon<PaginatedMenu> nextPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶"));
+    private @Nullable MenuIcon<PaginatedMenu> nextPageIcon;
+    /**
+     * The icon that will be used to navigate to the previous page.<br>
+     * If null, no icon will be shown. (manual navigation required).
+     */
     @Setter
-    private @Nullable MenuIcon<PaginatedMenu> prevPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page"));
+    private @Nullable MenuIcon<PaginatedMenu> prevPageIcon;
+
+    /**
+     * The icon that will be used in place of {@link #nextPageIcon} when the next page is not available.<br>
+     * If null, no icon will be shown. (default behavior).
+     */
+    @Setter
+    private @Nullable MenuIcon<PaginatedMenu> nextPageInactiveIcon;
+
+    /**
+     * The icon that will be used in place of {@link #prevPageIcon} when the previous page is not available.<br>
+     * If null, no icon will be shown. (default behavior).
+     */
+    @Setter
+    private @Nullable MenuIcon<PaginatedMenu> prevPageInactiveIcon;
 
     public PaginatedMenuOptions(@NotNull PaginationLayout layout) {
         Preconditions.checkNotNull(layout, "layout cannot be null");
         this.layout = layout;
+        this.titleFormat = Defaults.getTitleFormat();
+        this.fillerFillsEmptyPageIconSlots = Defaults.isFillerFillsEmptyPageIconSlots();
+        this.nextPageIcon = Defaults.getNextPageIcon();
+        this.prevPageIcon = Defaults.getPrevPageIcon();
+        this.nextPageInactiveIcon = Defaults.getNextPageInactiveIcon();
+        this.prevPageInactiveIcon = Defaults.getPrevPageInactiveIcon();
     }
 
     // Copy Constructor
@@ -51,6 +79,8 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         this.fillerFillsEmptyPageIconSlots = copy.fillerFillsEmptyPageIconSlots;
         this.nextPageIcon = copy.nextPageIcon == null ? null : copy.nextPageIcon.copy();
         this.prevPageIcon = copy.prevPageIcon == null ? null : copy.prevPageIcon.copy();
+        this.nextPageInactiveIcon = copy.nextPageInactiveIcon == null ? null : copy.nextPageInactiveIcon.copy();
+        this.prevPageInactiveIcon = copy.prevPageInactiveIcon == null ? null : copy.prevPageInactiveIcon.copy();
     }
 
     public void setLayout(@NotNull PaginationLayout layout) {
@@ -74,5 +104,20 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         // Copy base options from MenuOptions abstract class
         this.copyInto(copy);
         return copy;
+    }
+
+    public static class Defaults {
+        @Getter @Setter
+        private static @NotNull AbstractPaginatedMenuTitle titleFormat = new DefaultPaginatedMenuTitle();
+        @Getter @Setter
+        private static boolean fillerFillsEmptyPageIconSlots = true;
+        @Getter @Setter
+        private static @Nullable MenuIcon<PaginatedMenu> nextPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶"));
+        @Getter @Setter
+        private static @Nullable MenuIcon<PaginatedMenu> prevPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page"));
+        @Getter @Setter
+        private static @Nullable MenuIcon<PaginatedMenu> nextPageInactiveIcon = null;
+        @Getter @Setter
+        private static @Nullable MenuIcon<PaginatedMenu> prevPageInactiveIcon = null;
     }
 }
