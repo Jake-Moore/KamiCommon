@@ -5,7 +5,6 @@ import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
-import com.kamikazejam.kamicommon.util.Preconditions;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,18 +50,17 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
     public @NotNull String getConfigResourcePath() {
         @NotNull String ymlPath = this.getPlugin().getModuleYmlPath();
         if (ymlPath.endsWith("/")) {
-            ymlPath = ymlPath.substring(0, ymlPath.length() - 1);
+            return ymlPath + this.getName() + "Module.yml";
+        } else {
+            return ymlPath + "/" + this.getName() + "Module.yml";
         }
-        return ymlPath + File.separator + this.getName() + "Module.yml";
     }
 
     @Override
     protected @NotNull ModuleConfig createConfig() {
         @NotNull String configResourcePath = this.getConfigResourcePath();
-        Preconditions.checkNotNull(
-                SubsystemConfig.getIS(this, configResourcePath),
-                "Module YML resource is invalid! ('" + configResourcePath + "') This module config cannot be loaded!"
-        );
+        // Double check we can obtain the resource stream (may throw)
+        SubsystemConfig.getIS(this, configResourcePath);
 
         return new ModuleConfig(this, configResourcePath);
     }
