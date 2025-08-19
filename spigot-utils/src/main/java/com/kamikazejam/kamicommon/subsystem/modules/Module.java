@@ -8,7 +8,6 @@ import com.kamikazejam.kamicommon.subsystem.feature.Feature;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -19,6 +18,7 @@ import java.io.File;
  */
 @SuppressWarnings("unused")
 public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
+    public static final @NotNull String MODULES_FOLDER = "modules";
 
     /**
      * @return Whether this module is enabled by default (generally always true, except in specific situations) <br>
@@ -36,27 +36,35 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
     // MODULE CONFIG
     // -------------------------------------------- //
     @Override
-    public @NotNull String getConfigName() {
-        return getName() + "Module.yml";
+    public @NotNull File getConfigFileDestination() {
+        // Default: /home/container/plugins/<plugin>/modules/<module>.yml
+        return new File(this.getPlugin().getDataFolder() + File.separator + MODULES_FOLDER + File.separator + this.getName() + ".yml");
+    }
+
+    /**
+     * The name of the config file (IN SOURCE CODE) for this Module.<br>
+     * <br>
+     * By default, it is fetched as {@link KamiPlugin#getModuleYmlPath()}/[name]Module.yml<br>
+     * <br>
+     * You can override this method, or edit {@link KamiPlugin#getModuleYmlPath()} to change the path resolution.
+     */
+    public @NotNull String getConfigResourcePath() {
+        @NotNull String ymlPath = this.getPlugin().getModuleYmlPath();
+        if (ymlPath.endsWith("/")) {
+            ymlPath = ymlPath.substring(0, ymlPath.length() - 1);
+        }
+        return ymlPath + File.separator + this.getName() + "Module.yml";
     }
 
     @Override
     protected @NotNull ModuleConfig createConfig() {
-        // If the module yml path is null, fail
-        @Nullable String moduleYmlPath = getPlugin().getModuleYmlPath();
+        @NotNull String configResourcePath = this.getConfigResourcePath();
         Preconditions.checkNotNull(
-                moduleYmlPath,
-                "Module YML Path is null! This module config cannot be loaded without a path!"
-        );
-        // Load the config from the path
-        if (!moduleYmlPath.endsWith("/")) { moduleYmlPath += "/"; }
-        String fileName = moduleYmlPath + getConfigName();
-        Preconditions.checkNotNull(
-                SubsystemConfig.getIS(this, fileName),
-                "Module YML resource is invalid! ('" + fileName + "') This module config cannot be loaded!"
+                SubsystemConfig.getIS(this, configResourcePath),
+                "Module YML resource is invalid! ('" + configResourcePath + "') This module config cannot be loaded!"
         );
 
-        return new ModuleConfig(this, fileName);
+        return new ModuleConfig(this, configResourcePath);
     }
 
     @Internal
@@ -87,7 +95,7 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
     @NotNull
     public File getModuleDataFolder() {
         File dataFolder = getPlugin().getDataFolder();
-        File moduleFolder = new File(dataFolder + File.separator + ModuleConfig.MODULES_FOLDER + File.separator + getName());
+        File moduleFolder = new File(dataFolder + File.separator + MODULES_FOLDER + File.separator + getName());
         if (!moduleFolder.exists()) {
             boolean created = moduleFolder.mkdirs();
             if (!created) {

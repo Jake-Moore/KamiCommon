@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.InputStream;
 
 @SuppressWarnings("unused")
@@ -16,16 +15,15 @@ public abstract class SubsystemConfig<S extends AbstractSubsystem<?, S>> extends
 
     public SubsystemConfig(
             @NotNull S subsystem,
-            @NotNull String folderName,
-            @NotNull String fileName
+            @NotNull String resourcePath
     ) {
         super(
                 // Plugin
                 subsystem.getPlugin(),
                 // File on server filesystem
-                new File(subsystem.getPlugin().getDataFolder() + File.separator + folderName + File.separator + subsystem.getName() + ".yml"),
+                subsystem.getConfigFileDestination(),
                 // Supplier for config resource input stream
-                () -> SubsystemConfig.getIS(subsystem, fileName)
+                () -> SubsystemConfig.getIS(subsystem, resourcePath)
         );
         this.subsystem = subsystem;
 
@@ -33,8 +31,8 @@ public abstract class SubsystemConfig<S extends AbstractSubsystem<?, S>> extends
         addConfigDefaults();
     }
 
-    public static @NotNull InputStream getIS(@NotNull AbstractSubsystem<?,?> subsystem, @NotNull String fileName) {
-        return Preconditions.checkNotNull(subsystem.getPlugin().getResource(fileName), "Subsystem resource stream is null");
+    public static @NotNull InputStream getIS(@NotNull AbstractSubsystem<?,?> subsystem, @NotNull String resourcePath) {
+        return Preconditions.checkNotNull(subsystem.getPlugin().getResource(resourcePath), "Subsystem resource stream is null");
     }
 
     public abstract void addConfigDefaults();

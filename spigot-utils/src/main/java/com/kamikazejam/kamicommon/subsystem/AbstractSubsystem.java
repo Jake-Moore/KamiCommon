@@ -18,6 +18,7 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -177,6 +178,9 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     // -------------------------------------------- //
     // SUBSYSTEM CONFIG
     // -------------------------------------------- //
+    @NotNull
+    public abstract File getConfigFileDestination();
+
     private @Nullable C subsystemConfig = null;
     @Override
     public final void reloadConfig() {
@@ -190,11 +194,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
         config.save();
     }
 
-    /**
-     * Get the name of the config file for this subsystem.<br>
-     * Something like "[name]Module.yml" or "[name]Feature.yml"
-     */
-    public abstract @NotNull String getConfigName();
+    public abstract @NotNull String getConfigResourcePath();
 
     @NotNull
     public C getConfig() {
