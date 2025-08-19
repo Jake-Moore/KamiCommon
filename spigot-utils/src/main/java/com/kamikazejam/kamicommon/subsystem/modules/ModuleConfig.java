@@ -7,14 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class ModuleConfig extends SubsystemConfig<Module> {
-    public static final @NotNull String MODULES_FOLDER = "modules";
 
-    // Filename is in form: "moduleYmlPath + <module>.yml"
-    public ModuleConfig(@NotNull Module module, @NotNull String fileName) {
+    // resourcePath is in form: "moduleYmlPath + <module>.yml"
+    public ModuleConfig(@NotNull Module module, @NotNull String resourcePath) {
         super(
                 Preconditions.checkNotNull(module, "Module cannot be null"),
-                MODULES_FOLDER,
-                Preconditions.checkNotNull(fileName, "File name cannot be null")
+                Preconditions.checkNotNull(resourcePath, "File name cannot be null")
         );
     }
 

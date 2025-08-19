@@ -7,7 +7,6 @@ import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.modules.Module;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -19,6 +18,7 @@ import java.io.File;
  */
 @SuppressWarnings("unused")
 public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> {
+    public static final @NotNull String FEATURES_FOLDER = "features";
 
     /**
      * @return The default logging prefix for this subsystem (saved under the KamiPlugin featuresConfig featurePrefix)
@@ -30,27 +30,35 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
     // FEATURE CONFIG
     // -------------------------------------------- //
     @Override
-    public @NotNull String getConfigName() {
-        return getName() + "Feature.yml";
+    public @NotNull File getConfigFileDestination() {
+        // Default: /home/container/plugins/<plugin>/features/<feature>.yml
+        return new File(this.getPlugin().getDataFolder() + File.separator + FEATURES_FOLDER + File.separator + this.getName() + ".yml");
+    }
+
+    /**
+     * The name of the config file (IN SOURCE CODE) for this Feature.<br>
+     * <br>
+     * By default, it is fetched as {@link KamiPlugin#getFeatureYmlPath()}/[name]Feature.yml<br>
+     * <br>
+     * You can override this method, or edit {@link KamiPlugin#getFeatureYmlPath()} to change the path resolution.
+     */
+    public @NotNull String getConfigResourcePath() {
+        @NotNull String ymlPath = this.getPlugin().getFeatureYmlPath();
+        if (ymlPath.endsWith("/")) {
+            ymlPath = ymlPath.substring(0, ymlPath.length() - 1);
+        }
+        return ymlPath + File.separator + this.getName() + "Feature.yml";
     }
 
     @Override
     protected @NotNull FeatureConfig createConfig() {
-        // If the feature yml path is null, fail
-        @Nullable String featureYmlPath = getPlugin().getFeatureYmlPath();
+        @NotNull String configResourcePath = this.getConfigResourcePath();
         Preconditions.checkNotNull(
-                featureYmlPath,
-                "Feature YML Path is null! This feature config cannot be loaded without a path!"
-        );
-        // Load the config from the path
-        if (!featureYmlPath.endsWith("/")) { featureYmlPath += "/"; }
-        String fileName = featureYmlPath + getConfigName();
-        Preconditions.checkNotNull(
-                SubsystemConfig.getIS(this, fileName),
-                "Feature YML resource is invalid! ('" + fileName + "') This feature config cannot be loaded!"
+                SubsystemConfig.getIS(this, configResourcePath),
+                "Feature YML resource is invalid! ('" + configResourcePath + "') This feature config cannot be loaded!"
         );
 
-        return new FeatureConfig(this, fileName);
+        return new FeatureConfig(this, configResourcePath);
     }
 
     @Override
@@ -68,7 +76,7 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
     @NotNull
     public File getFeatureDataFolder() {
         File dataFolder = getPlugin().getDataFolder();
-        File featureFolder = new File(dataFolder + File.separator + FeatureConfig.FEATURES_FOLDER + File.separator + getName());
+        File featureFolder = new File(dataFolder + File.separator + FEATURES_FOLDER + File.separator + getName());
         if (!featureFolder.exists()) {
             boolean created = featureFolder.mkdirs();
             if (!created) {
