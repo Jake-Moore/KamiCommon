@@ -5,7 +5,6 @@ import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.modules.Module;
-import com.kamikazejam.kamicommon.util.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -45,18 +44,17 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
     public @NotNull String getConfigResourcePath() {
         @NotNull String ymlPath = this.getPlugin().getFeatureYmlPath();
         if (ymlPath.endsWith("/")) {
-            ymlPath = ymlPath.substring(0, ymlPath.length() - 1);
+            return ymlPath + this.getName() + "Feature.yml";
+        } else {
+            return ymlPath + "/" + this.getName() + "Feature.yml";
         }
-        return ymlPath + File.separator + this.getName() + "Feature.yml";
     }
 
     @Override
     protected @NotNull FeatureConfig createConfig() {
         @NotNull String configResourcePath = this.getConfigResourcePath();
-        Preconditions.checkNotNull(
-                SubsystemConfig.getIS(this, configResourcePath),
-                "Feature YML resource is invalid! ('" + configResourcePath + "') This feature config cannot be loaded!"
-        );
+        // Double check we can obtain the resource stream (may throw)
+        SubsystemConfig.getIS(this, configResourcePath);
 
         return new FeatureConfig(this, configResourcePath);
     }

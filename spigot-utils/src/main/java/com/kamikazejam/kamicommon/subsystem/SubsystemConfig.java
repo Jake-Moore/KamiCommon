@@ -32,7 +32,10 @@ public abstract class SubsystemConfig<S extends AbstractSubsystem<?, S>> extends
     }
 
     public static @NotNull InputStream getIS(@NotNull AbstractSubsystem<?,?> subsystem, @NotNull String resourcePath) {
-        return Preconditions.checkNotNull(subsystem.getPlugin().getResource(resourcePath), "Subsystem resource stream is null");
+        return Preconditions.checkNotNull(
+                subsystem.getPlugin().getResource(resourcePath),
+                "Subsystem ('" + subsystem.getName() + "') resource stream is null: '" + resourcePath + "'"
+        );
     }
 
     public abstract void addConfigDefaults();
