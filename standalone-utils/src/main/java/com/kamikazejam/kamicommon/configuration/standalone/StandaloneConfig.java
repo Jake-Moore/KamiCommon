@@ -1,5 +1,7 @@
 package com.kamikazejam.kamicommon.configuration.standalone;
 
+import com.kamikazejam.kamicommon.util.Preconditions;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSectionStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSequenceStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.MemorySectionStandalone;
@@ -7,6 +9,7 @@ import com.kamikazejam.kamicommon.yaml.standalone.YamlConfigurationStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlHandlerStandalone;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.io.File;
 import java.io.InputStream;
@@ -25,40 +28,42 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings("unused")
 public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone> implements ConfigurationSectionStandalone {
-    private final File file;
+    private final @NotNull File file;
     private final YamlHandlerStandalone yamlHandler;
     private YamlConfigurationStandalone config;
-    private final boolean addDefaults;
-    private final @Nullable Supplier<InputStream> defaultSupplier;
 
-    public StandaloneConfig(File file) {
-        this(file, true);
+    /**
+     * Creates a new config instance with the given logger and destination file.<br><br>
+     * This constructor enables defaults using the following resource file method:<br>
+     * - Assumes a resource file with the same name as the provided file, exists in the current jar.<br>
+     * - See {@link StandaloneConfig#getDefaultIS(LoggerService, File)}
+     */
+    public StandaloneConfig(@NotNull LoggerService logger, @NotNull File file) {
+        this(logger, file, () -> getDefaultIS(logger, file));
     }
 
-    public StandaloneConfig(File file, boolean addDefaults) {
-        this(file, addDefaults, null);
-    }
-
-    public StandaloneConfig(File file, Supplier<InputStream> defaultStream) {
-        this(file, true, defaultStream);
-    }
-
-    public StandaloneConfig(File file, boolean addDefaults, @Nullable Supplier<InputStream> defaultStream) {
+    /**
+     * Creates a new config instance with the given logger and destination file.<br><br>
+     * This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+     * - Providing a non-null supplier will enable defaults using the provided InputStream
+     * - Providing a null supplier will disable defaults
+     *
+     * @param defaultsStream The optional supplier to load defaults from.
+     */
+    public StandaloneConfig(@NotNull LoggerService logger, @NotNull File file, @Nullable Supplier<InputStream> defaultsStream) {
         this.file = file;
-        this.addDefaults = addDefaults;
-        this.defaultSupplier = defaultStream;
 
         ensureFile();
 
-        this.yamlHandler = new YamlHandlerStandalone(this, file);
-        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
+        this.yamlHandler = new YamlHandlerStandalone(this, logger, file, defaultsStream);
+        this.config = yamlHandler.loadConfig();
         save();
     }
 
     @Override
     public void reload() {
         try {
-            config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
+            config = yamlHandler.loadConfig();
             save();
         }catch (Exception e) {
             e.printStackTrace();
@@ -69,13 +74,8 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
     protected YamlConfigurationStandalone getYamlConfiguration() { return config; }
 
     @Override
-    protected File getFile() {
+    protected @NotNull File getFile() {
         return file;
-    }
-
-    @Override
-    protected boolean isAddDefaults() {
-        return addDefaults;
     }
 
     private void ensureFile() {
@@ -212,5 +212,20 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
     public String getCurrentPath() {
         // No current path, this is root config
         return "";
+    }
+
+
+
+    @UnknownNullability
+    public static InputStream getDefaultIS(@NotNull LoggerService logger, File configFile) {
+        Preconditions.checkNotNull(logger, "LoggerService cannot be null");
+
+        InputStream i1 = logger.getClass().getResourceAsStream("/" + configFile.getName());
+        if (i1 != null) { return i1; }
+
+        InputStream i2 = logger.getClass().getClassLoader().getResourceAsStream("/" + configFile.getName());
+        if (i2 != null) { return i2; }
+
+        return YamlHandlerStandalone.class.getClassLoader().getResourceAsStream(File.separator + configFile.getName());
     }
 }

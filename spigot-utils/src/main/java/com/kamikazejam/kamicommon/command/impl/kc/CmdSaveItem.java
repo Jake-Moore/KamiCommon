@@ -44,7 +44,7 @@ public class CmdSaveItem extends KamiCommand {
         String fileName = readArg();
         File file = new File(SpigotUtilsSource.get().getDataFolder(), fileName);
 
-        KamiConfig config = new KamiConfigExt(SpigotUtilsSource.get(), file, false);
+        KamiConfig config = new KamiConfigExt(SpigotUtilsSource.get(), file, null);
         config.setItemStack(configKey, NmsAPI.getItemInMainHand(player));
         config.save();
 
