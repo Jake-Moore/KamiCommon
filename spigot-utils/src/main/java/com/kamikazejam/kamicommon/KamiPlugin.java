@@ -128,7 +128,8 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     public @NotNull KamiConfigExt getKamiConfig() {
         if (config == null) {
-            this.config = new KamiConfigExt(this, new File(getDataFolder(), "config.yml"), true);
+            // Using the Ext config with defaults enabled. It looks for a 'config.yml' resource file.
+            this.config = new KamiConfigExt(this, new File(getDataFolder(), "config.yml"));
             this.config.registerObserver(this);
         }
         return config;
@@ -562,8 +563,8 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     public @NotNull KamiConfigExt getModulesConfig() {
         // Create on-demand, since creating the KamiConfig will create the file too
         if (modulesConfig == null) {
-            // Create the Modules Config
-            this.modulesConfig = new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"), false);
+            // Create the Modules Config (no defaults loading)
+            this.modulesConfig = new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"), null);
         }
         return modulesConfig;
     }
@@ -571,8 +572,8 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     public @NotNull KamiConfigExt getFeaturesConfig() {
         // Create on-demand, since creating the KamiConfig will create the file too
         if (featuresConfig == null) {
-            // Create the Modules Config
-            this.featuresConfig = new KamiConfigExt(this, new File(getDataFolder(), "features.yml"), false);
+            // Create the Modules Config (no defaults loading)
+            this.featuresConfig = new KamiConfigExt(this, new File(getDataFolder(), "features.yml"), null);
         }
         return featuresConfig;
     }

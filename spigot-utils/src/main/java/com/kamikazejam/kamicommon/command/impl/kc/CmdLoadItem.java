@@ -39,7 +39,7 @@ public class CmdLoadItem extends KamiCommand {
         String fileName = readArg();
         File file = new File(SpigotUtilsSource.get().getDataFolder(), fileName);
 
-        KamiConfig config = new KamiConfigExt(SpigotUtilsSource.get(), file, false);
+        KamiConfig config = new KamiConfigExt(SpigotUtilsSource.get(), file, null);
         ItemStack stack = config.getItemStack(configKey);
         if (stack == null) {
             player.sendMessage(StringUtil.t("&cNo item found in &f" + file.getAbsolutePath() + "&c: &f" + configKey));

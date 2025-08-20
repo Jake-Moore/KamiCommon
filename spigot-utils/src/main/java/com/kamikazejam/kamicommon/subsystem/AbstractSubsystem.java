@@ -10,6 +10,7 @@ import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import lombok.Getter;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
@@ -17,14 +18,17 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 
 @SuppressWarnings("unused")
-public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> implements CoreMethods, ConfigObserver {
+public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> extends LoggerService implements CoreMethods, ConfigObserver {
     @Getter private boolean successfullyEnabled = false;
     @Getter private boolean enabled = false;
 
@@ -424,40 +428,19 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     }
 
     // -------------------------------------------- //
-    // LOGGING
+    // LoggerService
     // -------------------------------------------- //
-    public void info(String msg) { log(msg); }
-    public void log(String msg) {
-        getPlugin().getLogger().info("[" + getName() + "] " + msg);
+    public String getLoggerName() {
+        return this.getName();
     }
-
-    public void warning(String msg) { warn(msg); }
-    public void warn(String msg) {
-        getPlugin().getLogger().warning("[" + getName() + "] " + msg);
+    public boolean isDebug() {
+        // Inherit from KamiPlugin
+        return this.getPlugin().getColorLogger().isDebug();
     }
-
-    public void warnWithTrace(String msg) {
-        msg = "[" + getName() + "] " + msg;
-        getPlugin().getLogger().warning(msg);
-        try {
-            throw new Exception(msg);
-        }catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    public void severe(String msg) { error(msg); }
-    public void error(String msg) {
-        getPlugin().getLogger().severe("[" + getName() + "] " + msg);
-    }
-    public void errorWithTrace(String msg) {
-        msg = "[" + getName() + "] " + msg;
-        getPlugin().getLogger().severe(msg);
-        try {
-            throw new Exception(msg);
-        }catch (Throwable t) {
-            t.printStackTrace();
-        }
+    public void logToConsole(String message, Level level) {
+        // Use the plugin's logger, appending this logger name to the start of the message
+        String subsystemPrefix = "[" + this.getName() + "] ";
+        getPlugin().getColorLogger().logToConsole(subsystemPrefix + message, level);
     }
 
     /**
@@ -503,5 +486,21 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
      */
     public final void registerConfigObserver(@NotNull ConfigObserver observer) {
         this.configObservers.add(observer);
+    }
+
+    // -------------------------------------------- //
+    // SUPPLEMENTAL CONFIG
+    // -------------------------------------------- //
+
+    /**
+     * Placeholder for your own implementation in order to support supplemental configuration files.<br>
+     * This method should return an InputStream to the supplemental config resource.<br><br>
+     * By default, this method throws an {@link UnsupportedOperationException}.
+     * @param fileName The YAML file name of the resource to load. Includes ONLY the name, not the path.
+     * @throws UnsupportedOperationException Always, unless overridden with new behavior
+     */
+    @UnknownNullability
+    public InputStream getSupplementalConfigResource(@NotNull String fileName) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
     }
 }
