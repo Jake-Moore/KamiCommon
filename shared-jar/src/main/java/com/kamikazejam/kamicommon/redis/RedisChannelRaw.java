@@ -17,7 +17,7 @@ public class RedisChannelRaw {
      * Add a callback for this channel (for listening to messages)
      * @return true if the callback was successfully added
      */
-    public boolean subscribe(@NotNull RedisChannelCallback<String> callback) {
+    public boolean subscribe(@NotNull RedisChannelCallback callback) {
         return manager.subscribeRaw(callback, channel);
     }
 
