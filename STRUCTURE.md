@@ -128,8 +128,6 @@ It also adds the following dependencies:
 - `org.slf4j:slf4j-api`
 - `org.slf4j:slf4j-simple`
 - `io.lettuce:lettuce-core`
-- `com.fasterxml.jackson.core:jackson-databind`
-- `com.fasterxml.jackson.core:jackson-annotations`
 
 (⭐) **SHOULD** be shaded ✅
 

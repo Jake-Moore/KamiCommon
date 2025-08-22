@@ -1,14 +1,12 @@
 package com.kamikazejam.kamicommon.redis;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.kamikazejam.kamicommon.redis.callback.RedisChannelCallback;
 import com.kamikazejam.kamicommon.redis.logger.DefaultRedisLogger;
 import com.kamikazejam.kamicommon.redis.util.RedisConf;
 import com.kamikazejam.kamicommon.redis.util.RedisMonitor;
 import com.kamikazejam.kamicommon.redis.util.RedisState;
-import com.kamikazejam.kamicommon.util.JacksonUtil;
-import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.util.interfaces.Service;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
@@ -156,7 +154,7 @@ class RedisManager implements Service {
     //               RedisManager Methods                //
     // ------------------------------------------------- //
     private RedisPubSubReactiveCommands<String, String> reactive = null;
-    <T> boolean subscribe(@NotNull RedisChannelCallback<T> callback, @NotNull Class<T> clazz, @NotNull String... channels) {
+    boolean subscribe(@NotNull RedisChannelCallback callback, @NotNull String... channels) {
         try {
             logger.info("Subscribing to channels: " + String.join(", ", channels));
 
@@ -175,13 +173,7 @@ class RedisManager implements Service {
                     // Deserialize the message and call the callback
                     .doOnNext(pm -> {
                         try {
-                            T message = JacksonUtil.deserialize(clazz, pm.getMessage());
-                            callback.onMessage(pm.getChannel(), message);
-                        } catch (JsonParseException e) {
-                            logger.error("DeserializationError (" + clazz.getSimpleName() + ") - channel: " + pm.getChannel() + " message: " + pm.getMessage());
-                            if (logger.isDebug()) {
-                                e.printStackTrace();
-                            }
+                            callback.onMessage(pm.getChannel(), pm.getMessage());
                         } catch (Throwable t) {
                             logger.error(t, "DeserializationError - channel: " + pm.getChannel() + " message: " + pm.getMessage());
                         }
@@ -195,7 +187,7 @@ class RedisManager implements Service {
         }
     }
 
-    <T> boolean subscribeRaw(@NotNull RedisChannelCallback<String> callback, @NotNull String... channels) {
+    boolean subscribeRaw(@NotNull RedisChannelCallback callback, @NotNull String... channels) {
         try {
             logger.info("Subscribing to channels: " + String.join(", ", channels));
 
@@ -223,12 +215,12 @@ class RedisManager implements Service {
         }
     }
 
-    <T> void publish(@NotNull String channel, T message, boolean sync) {
+    void publish(@NotNull String channel, String message, boolean sync) {
         // Publish a message to the channel
         if (sync) {
-            redis.sync().publish(channel, JacksonUtil.serialize(message));
+            redis.sync().publish(channel, message);
         }else {
-            redis.async().publish(channel, JacksonUtil.serialize(message));
+            redis.async().publish(channel, message);
         }
     }
 
