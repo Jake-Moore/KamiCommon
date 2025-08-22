@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Interface for classes that accept {@link ConfigObserver} registrations.<br>
  * <br>
- * See {@link #registerObserver(ConfigObserver)}.
+ * See {@link #registerConfigObserver(ConfigObserver)}.
  */
 public interface ObservableConfig {
     /**
@@ -13,10 +13,10 @@ public interface ObservableConfig {
      * Refer to the {@link ConfigObserver} docs for information on its lifecycle.
      * @return If the observer was successfully registered from this call (false if already registered)
      */
-    boolean registerObserver(@NotNull ConfigObserver observer);
+    boolean registerConfigObserver(@NotNull ConfigObserver observer);
 
     /**
      * Unregisters an observer from this config
      */
-    void unregisterObserver(@NotNull ConfigObserver observer);
+    void unregisterConfigObserver(@NotNull ConfigObserver observer);
 }

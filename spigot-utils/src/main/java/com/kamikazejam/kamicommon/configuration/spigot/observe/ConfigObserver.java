@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * If this observer is registered after the initial load, it will be called immediately to receive those values.<br>
  * <br>
- * See {@link KamiConfig#registerObserver(ConfigObserver)} for more information.
+ * See {@link KamiConfig#registerConfigObserver(ConfigObserver)} for more information.
  */
 public interface ConfigObserver {
     /**

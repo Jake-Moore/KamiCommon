@@ -450,13 +450,13 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     // ObservableConfig
     // -------------------------------------------- //
     @Override
-    public boolean registerObserver(@NotNull ConfigObserver observer) {
-        return getConfig().registerObserver(observer);
+    public boolean registerConfigObserver(@NotNull ConfigObserver observer) {
+        return getConfig().registerConfigObserver(observer);
     }
 
     @Override
-    public void unregisterObserver(@NotNull ConfigObserver observer) {
-        getConfig().unregisterObserver(observer);
+    public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
+        getConfig().unregisterConfigObserver(observer);
     }
 
     // -------------------------------------------- //
