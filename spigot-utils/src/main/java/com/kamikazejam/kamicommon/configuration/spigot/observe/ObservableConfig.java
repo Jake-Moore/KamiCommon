@@ -19,4 +19,10 @@ public interface ObservableConfig {
      * Unregisters an observer from this config
      */
     void unregisterConfigObserver(@NotNull ConfigObserver observer);
+
+    /**
+     * Unregisters ALL observers from this config.<br>
+     * Intended for shutdown logic, but can be used at any time.
+     */
+    void unregisterConfigObservers();
 }

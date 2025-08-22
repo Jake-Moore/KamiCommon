@@ -159,6 +159,11 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         observers.remove(observer);
     }
 
+    @Override
+    public void unregisterConfigObservers() {
+        observers.clear();
+    }
+
 
 
 

@@ -173,6 +173,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
         // Delete Config
         if (config != null) {
+            config.unregisterConfigObservers();
             config = null;
         }
 
@@ -595,5 +596,14 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     @Override
     public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
         this.getKamiConfig().unregisterConfigObserver(observer);
+    }
+
+    /**
+     * Unregisters ALL observers from this plugin's default KamiConfig.<br>
+     * Intended for shutdown logic, but can be used at any time.
+     */
+    @Override
+    public void unregisterConfigObservers() {
+        this.getKamiConfig().unregisterConfigObservers();
     }
 }

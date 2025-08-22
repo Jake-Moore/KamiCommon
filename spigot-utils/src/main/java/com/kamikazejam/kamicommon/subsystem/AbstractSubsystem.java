@@ -215,7 +215,9 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
         onDisableLater();
         info("Successfully disabled!");
         enabled = false;
+        // Clear config
         if (subsystemConfig != null) {
+            subsystemConfig.unregisterConfigObservers();
             subsystemConfig = null;
         }
     }
@@ -457,6 +459,11 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     @Override
     public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
         getConfig().unregisterConfigObserver(observer);
+    }
+
+    @Override
+    public void unregisterConfigObservers() {
+        getConfig().unregisterConfigObservers();
     }
 
     // -------------------------------------------- //
