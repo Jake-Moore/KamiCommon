@@ -1,6 +1,8 @@
 package com.kamikazejam.kamicommon.configuration.spigot;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
+import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfig;
 import com.kamikazejam.kamicommon.item.IBuilder;
@@ -35,7 +37,7 @@ import java.util.function.Supplier;
  * Then you can use this object just like a YamlConfiguration, it has all the same methods plus a few others like {@link KamiConfig#reload()} <br>
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class KamiConfig extends AbstractConfig<YamlConfiguration> implements ConfigurationSection {
+public class KamiConfig extends AbstractConfig<YamlConfiguration> implements ConfigurationSection, ObservableConfig {
     private final @NotNull LoggerService logger;
     private final File file;
     private final YamlHandler yamlHandler;
@@ -142,26 +144,19 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         }
     }
 
-    /**
-     * Registers an observer to this config (if not already registered) <br>
-     * The observer's {@link ConfigObserver#onConfigLoaded} method will be called immediately, AND every time the config is reloaded
-     * @return If the observer was successfully registered from this call (false if already registered)
-     */
+    @Override
     public boolean registerObserver(@NotNull ConfigObserver observer) {
         if (observers.add(observer)) {
+            // Call the observer immediately, since the config has already been loaded
             observer.onConfigLoaded(this);
             return true;
         }
         return false;
     }
 
-    /**
-     * Unregisters an observer from this config
-     * @param observer The observer to unregister
-     * @return True if the observer was successfully unregistered
-     */
-    public boolean unregisterObserver(@NotNull ConfigObserver observer) {
-        return observers.remove(observer);
+    @Override
+    public void unregisterObserver(@NotNull ConfigObserver observer) {
+        observers.remove(observer);
     }
 
 

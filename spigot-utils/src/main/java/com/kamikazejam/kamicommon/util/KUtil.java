@@ -7,7 +7,12 @@ import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
 import com.kamikazejam.kamicommon.util.comparator.ComparatorCaseInsensitive;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -19,9 +24,19 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
@@ -172,8 +187,7 @@ public class KUtil {
         // Now return the playersObject.
         if (playersObject instanceof Collection<?>) {
             return (Collection<Player>) playersObject;
-        } else if (playersObject instanceof Player[]) {
-            Player[] playersArray = (Player[]) playersObject;
+        } else if (playersObject instanceof Player[] playersArray) {
             return Arrays.asList(playersArray);
         } else {
             throw new RuntimeException("Failed retrieving online players.");
@@ -206,16 +220,14 @@ public class KUtil {
         }
 
         // UUID
-        if (senderObject instanceof UUID) {
-            UUID uuid = (UUID) senderObject;
+        if (senderObject instanceof UUID uuid) {
             // Attempt finding player
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) return player;
         }
 
         // String
-        if (senderObject instanceof String) {
-            String string = (String) senderObject;
+        if (senderObject instanceof String string) {
             // Recurse as UUID
             UUID uuid = KUtil.asUuid(string);
             if (uuid != null) return getSender(uuid);
@@ -307,8 +319,7 @@ public class KUtil {
 
     @Contract("null -> false")
     public static boolean isNpc(Object object) {
-        if (!(object instanceof Metadatable)) return false;
-        Metadatable metadatable = (Metadatable) object;
+        if (!(object instanceof Metadatable metadatable)) return false;
         try {
             return metadatable.hasMetadata("NPC");
         } catch (UnsupportedOperationException e) {
