@@ -1,15 +1,14 @@
 package com.kamikazejam.kamicommon.item;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class ItemBuilder extends IBuilder {

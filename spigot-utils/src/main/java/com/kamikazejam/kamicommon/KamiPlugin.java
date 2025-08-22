@@ -3,16 +3,16 @@ package com.kamikazejam.kamicommon;
 import com.google.gson.JsonObject;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
-import com.kamikazejam.kamicommon.configuration.spigot.ConfigObserver;
-import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
 import com.kamikazejam.kamicommon.subsystem.feature.FeatureManager;
-import com.kamikazejam.kamicommon.subsystem.modules.Module;
-import com.kamikazejam.kamicommon.subsystem.modules.ModuleManager;
 import com.kamikazejam.kamicommon.subsystem.integration.CitizensIntegration;
 import com.kamikazejam.kamicommon.subsystem.integration.ItemsAdderIntegration;
 import com.kamikazejam.kamicommon.subsystem.integration.MythicMobsIntegration;
+import com.kamikazejam.kamicommon.subsystem.modules.Module;
+import com.kamikazejam.kamicommon.subsystem.modules.ModuleManager;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "DuplicatedCode"})
-public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, CoreMethods, ConfigObserver {
+public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, CoreMethods, ObservableConfig {
     // -------------------------------------------- //
     // FIELDS
     // -------------------------------------------- //
@@ -130,7 +130,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         if (config == null) {
             // Using the Ext config with defaults enabled. It looks for a 'config.yml' resource file.
             this.config = new KamiConfigExt(this, new File(getDataFolder(), "config.yml"));
-            this.config.registerObserver(this);
         }
         return config;
     }
@@ -174,7 +173,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
         // Delete Config
         if (config != null) {
-            config.unregisterObserver(this);
             config = null;
         }
 
@@ -579,19 +577,23 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     }
 
     // -------------------------------------------- //
-    // MISCELLANEOUS
+    // ObservableConfig
     // -------------------------------------------- //
     /**
-     * Registers a {@link ConfigObserver} to a {@link KamiConfig} instance.
-     * @return true IFF the observer was registered as a result of this call, false if the observer was already registered to the config.
+     * Registers an observer with the default KamiPlugin config (if not already registered)<br>
+     * Refer to the {@link ConfigObserver} docs for information on its lifecycle events.
+     * @return If the observer was successfully registered from this call (false if already registered)
      */
-    public final boolean registerConfigObserver(@NotNull ConfigObserver observer, @NotNull KamiConfig config) {
-        return config.registerObserver(observer);
+    @Override
+    public boolean registerObserver(@NotNull ConfigObserver observer) {
+        return this.getKamiConfig().registerObserver(observer);
     }
 
     /**
-     * Optional Override (with listening behavior)
+     * Unregisters an observer from this plugin's default KamiConfig
      */
     @Override
-    public void onConfigLoaded(@NotNull KamiConfig config) { }
+    public void unregisterObserver(@NotNull ConfigObserver observer) {
+        this.getKamiConfig().unregisterObserver(observer);
+    }
 }

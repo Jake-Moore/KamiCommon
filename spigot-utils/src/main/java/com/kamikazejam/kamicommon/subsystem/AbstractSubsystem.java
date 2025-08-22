@@ -4,9 +4,9 @@ import com.kamikazejam.kamicommon.CoreMethods;
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
-import com.kamikazejam.kamicommon.configuration.spigot.ConfigObserver;
-import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
@@ -14,7 +14,6 @@ import com.kamikazejam.kamicommon.util.log.LoggerService;
 import lombok.Getter;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +27,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 @SuppressWarnings("unused")
-public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> extends LoggerService implements CoreMethods, ConfigObserver {
+public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> extends LoggerService implements CoreMethods, ObservableConfig {
     @Getter private boolean successfullyEnabled = false;
     @Getter private boolean enabled = false;
 
@@ -37,7 +36,6 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     private final List<BukkitTask> taskList = new ArrayList<>();
     private final List<KamiCommand> commandList = new ArrayList<>();
     private final List<Disableable> disableableList = new ArrayList<>();
-    private final List<ConfigObserver> configObservers = new ArrayList<>();
 
     /**
      * @return The KamiPlugin that this subsystem is registered to
@@ -45,28 +43,8 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     public abstract KamiPlugin getPlugin();
 
     /**
-     * This method is called every time the subsystem is loaded. <br>
-     * This is called before both {@link #onEnable()}. <br>
-     * It is also called on {@link S#reloadConfig()} (when the subsystem is reloaded). <br>
-     * It is NOT called for {@link C#reload()} (when the backing config is reloaded). <br>
-     * You should put logic here that depends on values in the config. For easy reloading.
-     */
-    public abstract void onConfigLoaded(@NotNull C config);
-
-    @Override
-    @ApiStatus.Internal
-    @SuppressWarnings("unchecked")
-    public final void onConfigLoaded(@NotNull KamiConfig config) {
-        // Call the subsystem's onConfigLoaded method, since our config should always be a SubsystemConfig
-        onConfigLoaded((C) config);
-        // Call all observers of this config
-        configObservers.forEach(observer -> observer.onConfigLoaded(config));
-    }
-
-    /**
      * This method is called at {@link AbstractSubsystem} initialization. <br>
-     * This is called after {@link #onConfigLoaded(C)}. <br>
-     * You should handle your enable logic here, including registering commands/listeners/tasks/disableables. <br>
+     * You should handle your enable logic here, including: configs/commands/listeners/tasks/disableables. <br>
      * <br>
      * Registration Methods: {@link #registerCommands}, {@link #registerListeners}, {@link #registerTasks}, {@link #registerDisableables}
      */
@@ -212,7 +190,6 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     @Internal
     public void initializeConfig(@NotNull C config) {
         this.subsystemConfig = config;
-        this.subsystemConfig.registerObserver(this);
     }
 
     @NotNull
@@ -239,7 +216,6 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
         info("Successfully disabled!");
         enabled = false;
         if (subsystemConfig != null) {
-            subsystemConfig.unregisterObserver(this);
             subsystemConfig = null;
         }
     }
@@ -471,27 +447,21 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     }
 
     // -------------------------------------------- //
-    // MISCELLANEOUS
+    // ObservableConfig
     // -------------------------------------------- //
-    /**
-     * Registers a {@link ConfigObserver} to a {@link KamiConfig} instance.
-     * @return true IFF the observer was registered as a result of this call, false if the observer was already registered to the config.
-     */
-    public final boolean registerConfigObserver(@NotNull ConfigObserver observer, @NotNull KamiConfig config) {
-        return config.registerObserver(observer);
+    @Override
+    public boolean registerObserver(@NotNull ConfigObserver observer) {
+        return getConfig().registerObserver(observer);
     }
 
-    /**
-     * Registers a {@link ConfigObserver} to this {@link S} instance to receive reloads automatically from {@link #onConfigLoaded(C)}
-     */
-    public final void registerConfigObserver(@NotNull ConfigObserver observer) {
-        this.configObservers.add(observer);
+    @Override
+    public void unregisterObserver(@NotNull ConfigObserver observer) {
+        getConfig().unregisterObserver(observer);
     }
 
     // -------------------------------------------- //
     // SUPPLEMENTAL CONFIG
     // -------------------------------------------- //
-
     /**
      * Placeholder for your own implementation in order to support supplemental configuration files.<br>
      * This method should return an InputStream to the supplemental config resource.<br><br>

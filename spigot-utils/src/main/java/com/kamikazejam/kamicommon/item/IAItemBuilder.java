@@ -1,14 +1,12 @@
 package com.kamikazejam.kamicommon.item;
 
+import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
-
-import dev.lone.itemsadder.api.CustomStack;
 
 @SuppressWarnings({"unused", "UnreachableCode"})
 public class IAItemBuilder extends IBuilder {
