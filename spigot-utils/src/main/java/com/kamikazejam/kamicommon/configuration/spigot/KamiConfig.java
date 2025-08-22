@@ -145,7 +145,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     }
 
     @Override
-    public boolean registerObserver(@NotNull ConfigObserver observer) {
+    public boolean registerConfigObserver(@NotNull ConfigObserver observer) {
         if (observers.add(observer)) {
             // Call the observer immediately, since the config has already been loaded
             observer.onConfigLoaded(this);
@@ -155,7 +155,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     }
 
     @Override
-    public void unregisterObserver(@NotNull ConfigObserver observer) {
+    public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
         observers.remove(observer);
     }
 

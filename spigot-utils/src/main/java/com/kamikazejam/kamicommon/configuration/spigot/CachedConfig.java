@@ -51,13 +51,13 @@ public abstract class CachedConfig<T extends KamiConfig> implements ConfigObserv
 
     /**
      * Registers this cached config as an observer of its backing config.<br>
-     * Shortcut for calling {@link KamiConfig#registerObserver(ConfigObserver)} on the backing config.<br>
-     * i.e. {@code this.config.registerObserver(this); }
+     * Shortcut for calling {@link KamiConfig#registerConfigObserver(ConfigObserver)} on the backing config.<br>
+     * i.e. {@code this.config.registerConfigObserver(this); }
      */
     public void register() {
         // Register this class as an observer of the config
         //  so the onConfigLoaded method is called automatically
-        config.registerObserver(this);
+        config.registerConfigObserver(this);
     }
 
     /**

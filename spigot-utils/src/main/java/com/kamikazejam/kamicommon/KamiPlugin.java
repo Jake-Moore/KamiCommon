@@ -585,15 +585,15 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
      * @return If the observer was successfully registered from this call (false if already registered)
      */
     @Override
-    public boolean registerObserver(@NotNull ConfigObserver observer) {
-        return this.getKamiConfig().registerObserver(observer);
+    public boolean registerConfigObserver(@NotNull ConfigObserver observer) {
+        return this.getKamiConfig().registerConfigObserver(observer);
     }
 
     /**
      * Unregisters an observer from this plugin's default KamiConfig
      */
     @Override
-    public void unregisterObserver(@NotNull ConfigObserver observer) {
-        this.getKamiConfig().unregisterObserver(observer);
+    public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
+        this.getKamiConfig().unregisterConfigObserver(observer);
     }
 }
