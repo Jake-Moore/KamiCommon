@@ -83,6 +83,8 @@ jobs:
     #--------------------------------------------------------------------------------------------
 
     - name: Define Download URLs
+      # Run only for valid non-snapshot versions
+      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
       id: generate_url
       run: |
         VERSION="${{ needs.build-core.outputs.core_version }}"
