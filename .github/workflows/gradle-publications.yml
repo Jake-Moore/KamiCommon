@@ -1,4 +1,4 @@
-name: Maven Deploy & Release
+name: Gradle Publish & Release
 
 on:
   push:
