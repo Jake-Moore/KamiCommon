@@ -6,8 +6,8 @@ repositories {
     mavenCentral()
 }
 
-var snakeYaml = "org.yaml:snakeyaml:2.3"
-var json = "org.json:json:20250107"
+var snakeYaml = "org.yaml:snakeyaml:2.4"
+var json = "org.json:json:20250517"
 dependencies {
     api(project(":shared-utils"))
     // Unique dependencies for this module
