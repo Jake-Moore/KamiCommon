@@ -241,6 +241,8 @@ jobs:
           omitDraftDuringUpdate: true
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
+          # Mark as a prerelease
+          prerelease: true
           body: |
             ## KamiCommon Pre-Release ${{ needs.build-core.outputs.core_version }}
             
