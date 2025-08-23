@@ -54,9 +54,9 @@ public class RequirementHasItemInHand extends RequirementAbstract {
 		}
 		ItemStack inHand = NmsAPI.getItemInMainHand(player);
 		if (inHand == null) {
-			return KamiCommand.Lang.getErrorColor() + "You must be holding an item in your hand.";
+			return KamiCommand.Config.getErrorColor() + "You must be holding an item in your hand.";
 		}
-		return KamiCommand.Lang.getErrorColor() + "Invalid Item: " + Txt.getNicedEnum(inHand.getType());
+		return KamiCommand.Config.getErrorColor() + "Invalid Item: " + Txt.getNicedEnum(inHand.getType());
 	}
 
 }

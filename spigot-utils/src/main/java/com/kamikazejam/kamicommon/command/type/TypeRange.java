@@ -46,8 +46,8 @@ public class TypeRange extends TypeInteger {
 		Integer ret = super.read(arg, sender);
 
 		if (ret <= MIN_RANGE || ret > MAX_RANGE) {
-            ChatColor error = KamiCommand.Lang.getErrorColor();
-            ChatColor param = KamiCommand.Lang.getErrorParamColor();
+            ChatColor error = KamiCommand.Config.getErrorColor();
+            ChatColor param = KamiCommand.Config.getErrorParamColor();
             throw new KamiCommonException().addMsg(
                     error + "Invalid range " + param + "%d." + error + " Range must be between %d and %d.",
                     ret, MIN_RANGE, MAX_RANGE

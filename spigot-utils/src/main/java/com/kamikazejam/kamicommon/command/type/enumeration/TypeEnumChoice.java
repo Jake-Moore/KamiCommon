@@ -52,8 +52,8 @@ public abstract class TypeEnumChoice<T extends Enum<T>> extends TypeAbstract<T> 
 
             return t;
         }catch (IllegalArgumentException | NullPointerException e) {
-            ChatColor error = KamiCommand.Lang.getErrorColor();
-            ChatColor param = KamiCommand.Lang.getErrorParamColor();
+            ChatColor error = KamiCommand.Config.getErrorColor();
+            ChatColor param = KamiCommand.Config.getErrorParamColor();
             throw new KamiCommonException().addMsg(StringUtil.t(error + "No %s matches \"" + param + "%s" + error + "\"."), enumName, arg);
         }
     }

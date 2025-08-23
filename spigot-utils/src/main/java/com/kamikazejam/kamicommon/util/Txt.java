@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.util;
 
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import com.kamikazejam.kamicommon.util.predicate.PredicateStartsWithIgnoreCase;
 import lombok.Getter;
@@ -349,6 +350,7 @@ public class Txt {
         return Txt.titleize(pageTitle);
     }
 
+    @Configurable
     public static class Config {
         /**
          * Length of a full titleized title (default: 52 characters)

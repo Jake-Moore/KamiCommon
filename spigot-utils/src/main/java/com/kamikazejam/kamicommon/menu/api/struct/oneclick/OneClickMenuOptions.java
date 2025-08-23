@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.menu.api.struct.oneclick;
 
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.OneClickMenu;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
@@ -20,7 +21,7 @@ public class OneClickMenuOptions extends MenuOptions<OneClickMenu> {
     private boolean excludeFillerClickFromOneClick;
 
     public OneClickMenuOptions() {
-        this.excludeFillerClickFromOneClick = Defaults.isExcludeFillerClickFromOneClick();
+        this.excludeFillerClickFromOneClick = Config.isExcludeFillerClickFromOneClick();
     }
 
     // Copy Constructor
@@ -41,7 +42,8 @@ public class OneClickMenuOptions extends MenuOptions<OneClickMenu> {
         return copy;
     }
 
-    public static class Defaults {
+    @Configurable
+    public static class Config {
         @Getter @Setter
         private static boolean excludeFillerClickFromOneClick = true;
     }

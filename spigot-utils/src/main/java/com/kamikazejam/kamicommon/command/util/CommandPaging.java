@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.command.util;
 import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.Parameter;
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.Preconditions;
@@ -247,6 +248,7 @@ public class CommandPaging {
         return command.getCommandLine(arguments);
     }
 
+    @Configurable
     public static class Config {
         // Placeholders
         @Getter private static final @NotNull String placeholderTitle = "{title}";

@@ -47,6 +47,6 @@ public class RequirementHasPerm extends RequirementAbstract {
 	}
 
 	public static String getPermissionDeniedMessage() {
-		return KamiCommand.Lang.getRequirementPermissionDenied();
+		return KamiCommand.Config.getRequirementPermissionDenied();
 	}
 }
