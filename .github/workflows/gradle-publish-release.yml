@@ -12,9 +12,9 @@ jobs:
       contents: write # Access to Publish a Release
       packages: write # Access to Publish a Package
 
-    #--------------------------------------------------------------------------------------------
-    #           Build the Artifact and Publish to Luxious Repository
-    #--------------------------------------------------------------------------------------------
+    #--------------------------------------------------------------------------#
+    #           Build the Artifact and Publish to Luxious Repository           #
+    #--------------------------------------------------------------------------#
     steps:
     - uses: actions/checkout@v3
     
@@ -26,12 +26,11 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    # Configure Gradle for optimal use in GiHub Actions, including caching of downloaded dependencies.
-    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+    # Configure: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
       with:
-        gradle-version: '8.7'
+        gradle-version: '9.0.0'
 
     - name: Extract Version from Gradle
       id: extract_version
@@ -45,17 +44,35 @@ jobs:
     - name: Validate Version
       id: validate_version
       run: |
-        echo "Version: ${{ steps.extract_version.outputs.version }}"
-        if [[ "${{ steps.extract_version.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "is_release=true" >> $GITHUB_OUTPUT
-          echo "Version is a release"
+        VERSION="${{ steps.extract_version.outputs.version }}"
+        echo "Version: $VERSION"
+
+        # Regex patterns
+        SEMVER_RELEASE='^[0-9]+\.[0-9]+\.[0-9]+$'
+        SEMVER_PRERELEASE='^[0-9]+\.[0-9]+\.[0-9]+-(alpha|beta|rc)\.[0-9]+$'
+        SEMVER_SNAPSHOT='^.+-SNAPSHOT$'
+
+        if [[ "$VERSION" =~ $SEMVER_RELEASE ]]; then
+          echo "is_valid=true" >> $GITHUB_OUTPUT
+          echo "is_snapshot=false" >> $GITHUB_OUTPUT
+          echo "Version is a RELEASE"
+        elif [[ "$VERSION" =~ $SEMVER_PRERELEASE ]]; then
+          echo "is_valid=true" >> $GITHUB_OUTPUT
+          echo "is_snapshot=false" >> $GITHUB_OUTPUT
+          echo "Version is a PRE-RELEASE"
+        elif [[ "$VERSION" =~ $SEMVER_SNAPSHOT ]]; then
+          echo "is_valid=true" >> $GITHUB_OUTPUT
+          echo "is_snapshot=true" >> $GITHUB_OUTPUT
+          echo "Version is a SNAPSHOT"
         else
-          echo "is_release=false" >> $GITHUB_OUTPUT
-          echo "Version is not a release (skipping deployment)"
+          echo "is_valid=false" >> $GITHUB_OUTPUT
+          echo "is_snapshot=false" >> $GITHUB_OUTPUT
+          echo "❌ Invalid version format, skipping deployment"
         fi
 
-    - name: Build with Gradle 8.7
-      if: steps.validate_version.outputs.is_release == 'true'
+    - name: Publish with Gradle
+      # Run only for valid non-snapshot versions
+      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
       run: gradle publish
       env:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
@@ -66,7 +83,8 @@ jobs:
     #--------------------------------------------------------------------------------------------
 
     - name: Create Release (Spigot Jar + Module Jars)
-      if: steps.validate_version.outputs.is_release == 'true'
+      # Run only for valid non-snapshot versions
+      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
       uses: ncipollo/release-action@v1
       with:
         # We only want to add the spigot-jar file, since that is the only fully-shaded and runnable jar
@@ -84,7 +102,8 @@ jobs:
 
     # Update the README.md Badge with the new version
     - name: Create Version Badge
-      if: steps.validate_version.outputs.is_release == 'true'
+      # Run only for valid non-snapshot versions
+      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
@@ -95,7 +114,8 @@ jobs:
         color: blue
 
     - name: Update Download Link Gist
-      if: steps.validate_version.outputs.is_release == 'true'
+      # Run only for valid non-snapshot versions
+      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
       env:
         GIST_ID: 5dfd7c9bb8b81ae5867c81e9a77ee821
         AUTH_KEY: ${{ secrets.GIST_SECRET }}

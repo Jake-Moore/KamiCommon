@@ -1,5 +1,15 @@
+// Allowed Version Formats:
+//   1. A simple SemVer release version: X.Y.Z (e.g. 1.0.0, 2.1.3, 10.20.30)
+//   2. A pre-release version: X.Y.Z-TYPE.NUMBER (e.g. 1.0.0-alpha.1, 1.0.0-beta.2, 1.0.0-rc.3)
+//      'TYPE' can be 'alpha', 'beta', or 'rc'
+//   3. A snapshot version: Any version suffixed with -SNAPSHOT (e.g. 1.0.0-SNAPSHOT, 1.0.0-alpha.1-SNAPSHOT)
+// Publication Locations by Version Format:
+//   - maven-releases: Formats 1 and 2 (releases and pre-releases)
+//   - maven-snapshots: Format 3 (snapshots)
+// Invalid Versions:
+//   - Any version not matching one of the above formats will not be published. Publication will be skipped.
 @Suppress("PropertyName")
-var VERSION = "5.0.0-alpha.9"
+var VERSION = "5.0.0-alpha.10-SNAPSHOT" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
 
 plugins { // needed for the allprojects section to work
     id("java")
@@ -68,21 +78,36 @@ allprojects {
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
     }
+
+    // Disable tests, KamiCommon does not use a testing framework yet.
+    tasks.named<Test>("test") {
+        enabled = false
+    }
 }
 
 // Disable root project build
 tasks.jar.get().enabled = false
 
-// ---------------- Define Helper Methods ---------------- //
+// -------------------------------------------------- //
+//          Version Management for Publishing         //
+// -------------------------------------------------- //
+// Regex patterns for allowed formats
+val semverRelease = Regex("""^\d+\.\d+\.\d+$""")
+val semverPreRelease = Regex("""^\d+\.\d+\.\d+-(alpha|beta|rc)\.\d+$""")
+val semverSnapshot = Regex("""^.+-SNAPSHOT$""")
 
-// This method adapts the version string to send the artifact to the snapshots repository if it does not
-//  comply with the SemVer release versioning scheme.
-extra["getPublishingVersion"] = {
-    val version = rootProject.version.toString()
-    if (!version.matches(Regex("^\\d+\\.\\d+\\.\\d+$"))) {
-        // Only apply -SNAPSHOT if necessary
-        if (!version.endsWith("-SNAPSHOT")) "$version-SNAPSHOT" else version
-    } else {
-        version
+// Function to resolve publishing version (nullable)
+/**
+ * @returns Pair<VersionString or null, isSnapshot:Boolean>
+ */
+val getPublishingVersion: () -> Pair<String, Boolean>? = {
+    when {
+        semverRelease.matches(VERSION) -> VERSION to false
+        semverPreRelease.matches(VERSION) -> VERSION to false
+        semverSnapshot.matches(VERSION) -> VERSION to true
+        else -> null
     }
 }
+
+// Expose it to subprojects
+rootProject.extra["getPublishingVersion"] = getPublishingVersion
