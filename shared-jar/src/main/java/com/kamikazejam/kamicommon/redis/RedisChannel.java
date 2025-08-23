@@ -30,14 +30,4 @@ public class RedisChannel {
     public void publish(@NotNull String message, boolean sync) {
         manager.publish(channel, message, sync);
     }
-
-    public void publishRawSync(@NotNull String message) {
-        manager.publishRaw(channel, message, true);
-    }
-    public void publishRawAsync(@NotNull String message) {
-        manager.publishRaw(channel, message, false);
-    }
-    public void publishRaw(@NotNull String message, boolean sync) {
-        manager.publishRaw(channel, message, sync);
-    }
 }
