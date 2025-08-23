@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.menu.api.icons;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.Menu;
@@ -221,9 +222,17 @@ public class MenuIcon<M extends Menu<M>> {
     }
 
     @NotNull
-    public static <M extends Menu<M>> MenuIcon<M> getDefaultFillerIcon(
-    ) {
-        return new MenuIcon<M>(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" ")).setId("filler");
+    public static <M extends Menu<M>> MenuIcon<M> getDefaultFillerIcon() {
+        return new MenuIcon<M>(Config.getDefaultFillerIconBuilder()).setId("filler");
+    }
+
+    /**
+     * Basic configuration for MenuIcon defaults.
+     */
+    @Configurable
+    public static class Config {
+        @Getter @Setter
+        private static @NotNull IBuilder defaultFillerIconBuilder = new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" ");
     }
 }
 
