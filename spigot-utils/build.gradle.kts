@@ -8,7 +8,7 @@ dependencies {
     api(project(":standalone-utils")) // Also includes shared-utils
 
     api("com.google.code.gson:gson:2.13.1")
-    api("org.apache.commons:commons-text:1.13.1") // primarily for LevenshteinDistance
+    api("org.apache.commons:commons-text:1.14.0") // primarily for LevenshteinDistance
 
     compileOnly(project.property("lowestSpigotDep") as String)
 
@@ -18,7 +18,7 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.39-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
-    compileOnly("io.lumine:Mythic-Dist:5.7.2")
+    compileOnly("io.lumine:Mythic-Dist:5.9.5")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.19")
     // Combat Integrations
     compileOnly("net.minelink:CombatTagPlus:1.3.1")
