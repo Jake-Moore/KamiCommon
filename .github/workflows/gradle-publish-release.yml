@@ -87,7 +87,7 @@ jobs:
       if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
       id: generate_url
       run: |
-        VERSION="${{ needs.build-core.outputs.core_version }}"
+        VERSION="${{ steps.extract_version.outputs.version }}"
         REPO_URL="https://repo.luxiouslabs.net/repository/maven-releases/com/kamikazejam/kamicommon/"
   
         STANDALONE_UTILS_URL="$REPO_URL/standalone-utils/$VERSION/standalone-utils-$VERSION.jar"
