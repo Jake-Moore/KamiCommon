@@ -82,6 +82,30 @@ jobs:
     #           Create a Github Release
     #--------------------------------------------------------------------------------------------
 
+    - name: Define Download URLs
+      id: generate_url
+      run: |
+        VERSION="${{ needs.build-core.outputs.core_version }}"
+        REPO_URL="https://repo.luxiouslabs.net/repository/maven-releases/com/kamikazejam/kamicommon/"
+  
+        STANDALONE_UTILS_URL="$REPO_URL/standalone-utils/$VERSION/standalone-utils-$VERSION.jar"
+        echo "standalone_utils_url=$STANDALONE_UTILS_URL" >> $GITHUB_OUTPUT
+        
+        STANDALONE_JAR_URL="$REPO_URL/standalone-jar/$VERSION/standalone-jar-$VERSION.jar"
+        echo "standalone_jar_url=$STANDALONE_JAR_URL" >> $GITHUB_OUTPUT
+        
+        SHARED_UTILS_URL="$REPO_URL/shared-utils/$VERSION/shared-utils-$VERSION.jar"
+        echo "shared_utils_url=$SHARED_UTILS_URL" >> $GITHUB_OUTPUT
+        
+        SHARED_JAR_URL="$REPO_URL/shared-jar/$VERSION/shared-jar-$VERSION.jar"
+        echo "shared_jar_url=$SHARED_JAR_URL" >> $GITHUB_OUTPUT
+        
+        SPIGOT_UTILS_URL="$REPO_URL/spigot-utils/$VERSION/spigot-utils-$VERSION.jar"
+        echo "spigot_utils_url=$SPIGOT_UTILS_URL" >> $GITHUB_OUTPUT
+        
+        SPIGOT_JAR_URL="$REPO_URL/spigot-jar/$VERSION/spigot-jar-$VERSION.jar"
+        echo "spigot_jar_url=$SPIGOT_JAR_URL" >> $GITHUB_OUTPUT
+
     - name: Create Release (Spigot Jar + Module Jars)
       # Run only for valid non-snapshot versions
       if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
@@ -98,7 +122,21 @@ jobs:
         omitDraftDuringUpdate: true
         omitNameDuringUpdate: true
         omitPrereleaseDuringUpdate: true
+        body: |
+          ## KamiCommon Release ${{ needs.build-core.outputs.core_version }}
+          
+          ### Plugin Download
+          - [KamiCommon Plugin](${{ steps.generate_url.outputs.spigot_jar_url }})
+          
+          ### Published Artifacts
+          - [standalone-utils](${{ steps.generate_url.outputs.standalone_utils_url }})
+          - [standalone-jar](${{ steps.generate_url.outputs.standalone_jar_url }})
+          - [shared-utils](${{ steps.generate_url.outputs.shared_utils_url }})
+          - [shared-jar](${{ steps.generate_url.outputs.shared_jar_url }})
+          - [spigot-utils](${{ steps.generate_url.outputs.spigot_utils_url }})
+          ```
         tag: "${{ steps.extract_version.outputs.version }}"
+        name: "KamiCommon ${{ steps.extract_version.outputs.version }}"
 
     # Update the README.md Badge with the new version
     - name: Create Version Badge
