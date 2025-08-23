@@ -9,7 +9,7 @@
 // Invalid Versions:
 //   - Any version not matching one of the above formats will not be published. Publication will be skipped.
 @Suppress("PropertyName")
-var VERSION = "5.0.0-alpha.13" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
+var VERSION = "5.0.0-alpha.14-SNAPSHOT" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
 
 plugins { // needed for the allprojects section to work
     id("java")

@@ -3,7 +3,7 @@ package com.kamikazejam.kamicommon.menu.api.icons.access;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.PositionSlot;
+import com.kamikazejam.kamicommon.menu.api.icons.slots.PositionIconSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.icons.PrioritizedMenuIconMap;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import org.jetbrains.annotations.NotNull;
@@ -82,12 +82,12 @@ public class MenuIconsAccess<M extends Menu<M>> implements IMenuIconsAccess<M> {
     //                  Icon Management (by position)               //
     // ------------------------------------------------------------ //
     @Override
-    public @NotNull Optional<MenuIcon<M>> getMenuIcon(@NotNull PositionSlot slot) {
+    public @NotNull Optional<MenuIcon<M>> getMenuIcon(@NotNull PositionIconSlot slot) {
         return this.getMenuIcon(this.menuSize.mapPositionToSlot(slot.getRow(), slot.getCol()));
     }
 
     @Override
-    public boolean hasMenuIcon(@NotNull PositionSlot slot) {
+    public boolean hasMenuIcon(@NotNull PositionIconSlot slot) {
         return this.hasMenuIcon(this.menuSize.mapPositionToSlot(slot.getRow(), slot.getCol()));
     }
 }
