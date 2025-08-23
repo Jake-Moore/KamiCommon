@@ -37,7 +37,7 @@ public abstract class TypeAbstractException<T> extends TypeAbstract<T> {
     // -------------------------------------------- //
 
     public String extractErrorMessage(String arg, CommandSender sender, Exception ex) {
-        return KamiCommand.Lang.getErrorColor() + ex.getMessage();
+        return KamiCommand.Config.getErrorColor() + ex.getMessage();
     }
 
 }

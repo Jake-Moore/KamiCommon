@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.menu.api.struct.paginated;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.PaginatedMenu;
@@ -78,14 +79,14 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
     public PaginatedMenuOptions(@NotNull PaginationLayout layout) {
         Preconditions.checkNotNull(layout, "layout cannot be null");
         this.layout = layout;
-        this.titleFormat = Defaults.getTitleFormat();
-        this.fillerFillsEmptyPageIconSlots = Defaults.isFillerFillsEmptyPageIconSlots();
-        this.nextPageIcon = Defaults.getNextPageIcon();
-        this.prevPageIcon = Defaults.getPrevPageIcon();
-        this.nextPageInactiveIcon = Defaults.getNextPageInactiveIcon();
-        this.prevPageInactiveIcon = Defaults.getPrevPageInactiveIcon();
-        this.noNextPageIconMessage = Defaults.getNoNextPageIconMessage();
-        this.noPrevPageIconMessage = Defaults.getNoPrevPageIconMessage();
+        this.titleFormat = Config.getTitleFormat();
+        this.fillerFillsEmptyPageIconSlots = Config.isFillerFillsEmptyPageIconSlots();
+        this.nextPageIcon = Config.getNextPageIcon();
+        this.prevPageIcon = Config.getPrevPageIcon();
+        this.nextPageInactiveIcon = Config.getNextPageInactiveIcon();
+        this.prevPageInactiveIcon = Config.getPrevPageInactiveIcon();
+        this.noNextPageIconMessage = Config.getNoNextPageIconMessage();
+        this.noPrevPageIconMessage = Config.getNoPrevPageIconMessage();
     }
 
     // Copy Constructor
@@ -124,7 +125,8 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         return copy;
     }
 
-    public static class Defaults {
+    @Configurable
+    public static class Config {
         @Getter @Setter
         private static @NotNull AbstractPaginatedMenuTitle titleFormat = new DefaultPaginatedMenuTitle();
         @Getter @Setter

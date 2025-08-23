@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.menu.api.loaders.menu;
 
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.menu.PaginatedMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
@@ -23,7 +24,7 @@ public class PaginatedMenuLoader {
     /**
      * Loads a {@link PaginatedMenu.Builder} from a {@link ConfigurationSection} with the given key.<br>
      * Identical to calling {@link #loadMenu(ConfigurationSection)} with {@link ConfigurationSection#getConfigurationSection(String key)}<br>
-     * Uses the Default pagination layout in {@link Defaults#getLayout()}.
+     * Uses the Default pagination layout in {@link Config#getLayout()}.
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
     public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section, @NotNull String key) {
@@ -32,7 +33,7 @@ public class PaginatedMenuLoader {
 
     /**
      * Loads a {@link PaginatedMenu.Builder} from a {@link ConfigurationSection}.<br>
-     * Uses the Default pagination layout in {@link Defaults#getLayout()}.
+     * Uses the Default pagination layout in {@link Config#getLayout()}.
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
     public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section) {
@@ -42,7 +43,7 @@ public class PaginatedMenuLoader {
     /**
      * Loads a {@link PaginatedMenu.Builder} from a {@link ConfigurationSection} with the given key.<br>
      * Identical to calling {@link #loadMenu(ConfigurationSection)} with {@link ConfigurationSection#getConfigurationSection(String key)}<br>
-     * Uses the provided {@link PaginationLayout} if not null, otherwise uses the Default pagination layout in {@link Defaults#getLayout()}.
+     * Uses the provided {@link PaginationLayout} if not null, otherwise uses the Default pagination layout in {@link Config#getLayout()}.
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
     public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section, @NotNull String key, @Nullable PaginationLayout layout) {
@@ -51,11 +52,11 @@ public class PaginatedMenuLoader {
 
     /**
      * Loads a {@link PaginatedMenu.Builder} from a {@link ConfigurationSection}.<br>
-     * Uses the provided {@link PaginationLayout} if not null, otherwise uses the Default pagination layout in {@link Defaults#getLayout()}.
+     * Uses the provided {@link PaginationLayout} if not null, otherwise uses the Default pagination layout in {@link Config#getLayout()}.
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
     public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section, @Nullable PaginationLayout layout) {
-        @NotNull PaginationLayout paginationLayout = layout != null ? layout : Defaults.getLayout();
+        @NotNull PaginationLayout paginationLayout = layout != null ? layout : Config.getLayout();
 
         // Load title from 'title' or 'name', defaulting to " "
         String title = section.getString("title", section.getString("name", " "));
@@ -81,7 +82,8 @@ public class PaginatedMenuLoader {
         return builder;
     }
 
-    public static class Defaults {
+    @Configurable
+    public static class Config {
         @Getter @Setter
         private static @NotNull PaginationLayout layout = new SimplePaginationLayout();
     }

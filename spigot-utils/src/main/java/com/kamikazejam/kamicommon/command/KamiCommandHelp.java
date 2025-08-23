@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.command;
 
 import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
 import com.kamikazejam.kamicommon.command.util.CommandPaging;
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
@@ -62,7 +63,7 @@ public class KamiCommandHelp extends KamiCommand {
 		// Add comments (if specified), using the comment format from the config
 		List<KMessageSingle> comments = parent.getHelpComments();
 		for (KMessageSingle single : comments) {
-            String text = String.format(KamiCommand.Lang.getHelpCommentFormat(), single.getLine());
+            String text = String.format(KamiCommand.Config.getHelpCommentFormat(), single.getLine());
 			lines.add(new KMessageSingle(StringUtil.t(text)));
 		}
 
@@ -78,7 +79,7 @@ public class KamiCommandHelp extends KamiCommand {
 
 		// Add title line (becomes the first line)
         @NotNull CommandContext parentContext = Preconditions.checkNotNull(parent.getContext(), "Parent command context cannot be null");
-		String title = Config.getHelpTitleFormat().replace(Config.getPlaceholderTitle(), parentContext.getLabel());
+		String title = KamiCommandHelp.Config.getHelpTitleFormat().replace(KamiCommandHelp.Config.getPlaceholderTitle(), parentContext.getLabel());
         List<KMessage> messages = CommandPaging.getPage(this, lines, page, title);
 		NmsAPI.getMessageManager().processAndSend(sender, messages);
 	}
@@ -101,7 +102,7 @@ public class KamiCommandHelp extends KamiCommand {
     @NotNull
     private List<KamiCommand> getSortedChildren(@NotNull KamiCommand parent) {
         // if not using sorted help commands, return default children list
-        if (!Config.isSortHelpCommands()) {
+        if (!KamiCommandHelp.Config.isSortHelpCommands()) {
             return parent.getChildren();
         }
 
@@ -120,6 +121,10 @@ public class KamiCommandHelp extends KamiCommand {
         return children;
     }
 
+    /**
+     * Basic configuration for the help command.
+     */
+    @Configurable
     public static class Config {
         @Getter
         private static final @NotNull String placeholderTitle = "{TITLE}";

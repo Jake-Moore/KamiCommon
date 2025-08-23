@@ -20,8 +20,8 @@ public abstract class TypeAbstractSimple<T> extends TypeAbstractException<T> {
 
     @Override
     public String extractErrorMessage(String arg, CommandSender sender, Exception ex) {
-        ChatColor error = KamiCommand.Lang.getErrorColor();
-        ChatColor param = KamiCommand.Lang.getErrorParamColor();
+        ChatColor error = KamiCommand.Config.getErrorColor();
+        ChatColor param = KamiCommand.Config.getErrorParamColor();
         return StringUtil.t(String.format(error + "\"" + param + "%s" + error + "\" is not a %s.", arg, this.getName()));
     }
 

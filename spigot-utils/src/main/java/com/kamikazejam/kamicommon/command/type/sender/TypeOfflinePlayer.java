@@ -31,8 +31,8 @@ public class TypeOfflinePlayer extends TypeAbstract<OfflinePlayer> {
 	public OfflinePlayer read(String str, CommandSender sender) throws KamiCommonException {
 		OfflinePlayer offlinePlayer = IdUtilLocal.getOfflinePlayer(str);
 		if (offlinePlayer == null) {
-            ChatColor error = KamiCommand.Lang.getErrorColor();
-            ChatColor param = KamiCommand.Lang.getErrorParamColor();
+            ChatColor error = KamiCommand.Config.getErrorColor();
+            ChatColor param = KamiCommand.Config.getErrorParamColor();
             throw new KamiCommonException().addMsg(StringUtil.t(error + "No player with the name \"" + param + "%s" + error + "\" has been seen before on this server."), str);
 		}
 		return offlinePlayer;

@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command.type;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
@@ -142,12 +143,12 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
         // Nothing Found
         String message;
         if (matches.isEmpty()) {
-            message = String.format(Lang.getMessageMatchNothing(), this.getName(), arg);
+            message = String.format(Config.getMessageMatchNothing(), this.getName(), arg);
             exception.addMsg(message);
         }
         // Ambiguous
         else {
-            message = String.format(Lang.getMessageMatchAmbiguous(), matches.size(), this.getName(), arg);
+            message = String.format(Config.getMessageMatchAmbiguous(), matches.size(), this.getName(), arg);
             exception.addMsg(message);
             suggestAmbiguous = true;
         }
@@ -158,26 +159,26 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
 
         if (this.canList(sender)) {
             if (suggestNone) {
-                message = String.format(Lang.getMessageAvailableEmpty(), this.getName());
+                message = String.format(Config.getMessageAvailableEmpty(), this.getName());
                 exception.addMsg(message);
             } else {
                 Collection<T> suggestions;
 
                 if (suggestAmbiguous) {
                     suggestions = matches;
-                    message = Lang.getMessageColonAmbiguous();
+                    message = Config.getMessageColonAmbiguous();
                 } else if (suggestAll) {
                     suggestions = all;
-                    message = Lang.getMessageColonAll();
+                    message = Config.getMessageColonAll();
                 } else {
                     suggestions = this.getMatches(options, arg, true);
-                    message = Lang.getMessageColonSimilar();
+                    message = Config.getMessageColonSimilar();
                 }
 
                 if (suggestions.isEmpty()) {
-                    exception.addMsg(Lang.getMessageSuggestionsEmpty());
+                    exception.addMsg(Config.getMessageSuggestionsEmpty());
                 } else if (suggestions.size() > this.getListCountMax()) {
-                    message = String.format(Lang.getMessageSuggestionsMuch(), this.getListCountMax());
+                    message = String.format(Config.getMessageSuggestionsMuch(), this.getListCountMax());
                     exception.addMsg(message);
                 } else {
                     List<String> visuals = new KamiList<>();
@@ -188,7 +189,7 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
                     }
                     String explode = Txt.implodeCommaAndDot(
                             visuals,
-                            KamiCommand.Lang.getErrorParamColor() + "%s",
+                            KamiCommand.Config.getErrorParamColor() + "%s",
                             " " + ChatColor.GRAY + "| ",
                             " " + ChatColor.GRAY + "| ",
                             ""
@@ -401,10 +402,11 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
     /**
      * Message and Color configuration for TypeAbstractChoice chat responses.
      */
-    public static class Lang {
+    @Configurable
+    public static class Config {
         // Messages
-        @Setter private static @NotNull String messageMatchNothing =        KamiCommand.Lang.placeholderErrorColor + "No %s matches \"" + KamiCommand.Lang.placeholderErrorParamColor + "%s" + KamiCommand.Lang.placeholderErrorColor + "\".";
-        @Setter private static @NotNull String messageMatchAmbiguous =      KamiCommand.Lang.placeholderErrorColor + "%d %ss matches \"" + KamiCommand.Lang.placeholderErrorParamColor + "%s" + KamiCommand.Lang.placeholderErrorColor + "\".";
+        @Setter private static @NotNull String messageMatchNothing =        KamiCommand.Config.placeholderErrorColor + "No %s matches \"" + KamiCommand.Config.placeholderErrorParamColor + "%s" + KamiCommand.Config.placeholderErrorColor + "\".";
+        @Setter private static @NotNull String messageMatchAmbiguous =      KamiCommand.Config.placeholderErrorColor + "%d %ss matches \"" + KamiCommand.Config.placeholderErrorParamColor + "%s" + KamiCommand.Config.placeholderErrorColor + "\".";
         @Setter @Getter private static @NotNull String messageAvailableEmpty =      ChatColor.YELLOW + "Note: There is no %s available.";
 
         @Setter @Getter private static @NotNull String messageColonAmbiguous =      ChatColor.AQUA + "Ambiguous" + ChatColor.GRAY + ": ";
@@ -417,13 +419,13 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
         // Derived Getters
         public static @NotNull String getMessageMatchNothing() {
             return messageMatchNothing
-                    .replace(KamiCommand.Lang.placeholderErrorColor, KamiCommand.Lang.getErrorColor().toString())
-                    .replace(KamiCommand.Lang.placeholderErrorParamColor, KamiCommand.Lang.getErrorParamColor().toString());
+                    .replace(KamiCommand.Config.placeholderErrorColor, KamiCommand.Config.getErrorColor().toString())
+                    .replace(KamiCommand.Config.placeholderErrorParamColor, KamiCommand.Config.getErrorParamColor().toString());
         }
         public static @NotNull String getMessageMatchAmbiguous() {
             return messageMatchAmbiguous
-                    .replace(KamiCommand.Lang.placeholderErrorColor, KamiCommand.Lang.getErrorColor().toString())
-                    .replace(KamiCommand.Lang.placeholderErrorParamColor, KamiCommand.Lang.getErrorParamColor().toString());
+                    .replace(KamiCommand.Config.placeholderErrorColor, KamiCommand.Config.getErrorColor().toString())
+                    .replace(KamiCommand.Config.placeholderErrorParamColor, KamiCommand.Config.getErrorParamColor().toString());
         }
     }
 }

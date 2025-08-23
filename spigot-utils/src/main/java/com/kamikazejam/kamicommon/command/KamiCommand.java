@@ -5,6 +5,7 @@ import com.kamikazejam.kamicommon.command.requirement.Requirement;
 import com.kamikazejam.kamicommon.command.requirement.RequirementAbstract;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.type.Type;
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageBlock;
@@ -754,19 +755,19 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
                     if (matches.isEmpty()) {
                         // Use levenshtein distance to find the closest subcommand match.
-                        errorContent = Lang.getCommandChildNone();
+                        errorContent = Config.getCommandChildNone();
                         suggestions = this.getChildren(token, true, sender, false);
                         onUnmatchedArg(context);
                     } else {
                         // Had multiple possible matches, inform the user
-                        errorContent = Lang.getCommandChildAmbiguous();
+                        errorContent = Config.getCommandChildAmbiguous();
                         suggestions = this.getChildren(token, false, sender, false);
                     }
 
                     // Message: "The sub command X couldn't be found."
                     // OR
                     // Message: "The sub command X is ambiguous."
-                    errorContent = errorContent.replace(Lang.placeholderReplacement, Lang.commandColor + token);
+                    errorContent = errorContent.replace(Config.placeholderReplacement, Config.commandColor + token);
 
                     // Create the KMessage informing the user about the matching error.
                     // This is kind of like the title line, with additional possible commands listed after it.
@@ -785,8 +786,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
                     }
 
                     // Message: "Use /<command> to see all commands."
-                    KMessage help = new KMessageSingle(Lang.getCommandChildHelp()).addClickSuggestCommand(
-                            Lang.placeholderReplacement,
+                    KMessage help = new KMessageSingle(Config.getCommandChildHelp()).addClickSuggestCommand(
+                            Config.placeholderReplacement,
                             this.getCurrentTemplateChain(),
                             this.getCurrentCommandLine()
                     );
@@ -841,7 +842,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
         // Check if there are too few arguments.
         if (args.size() < this.getParameterCountRequired(sender)) {
-            sender.sendMessage(StringUtil.t(Lang.getCommandTooFewArguments()));
+            sender.sendMessage(StringUtil.t(Config.getCommandTooFewArguments()));
             sender.sendMessage(StringUtil.t(this.getCurrentTemplateUsage(sender, false)));
             return false;
         }
@@ -853,15 +854,15 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             List<String> extraArgs = args.subList(this.getParameterCount(sender), args.size());
             String extraArgsImploded = Txt.implodeCommaAndDot(
                     extraArgs,
-                    Lang.commandColor + "%s",
-                    Lang.errorColor + ", ",
-                    Lang.errorColor + " and ",
+                    Config.commandColor + "%s",
+                    Config.errorColor + ", ",
+                    Config.errorColor + " and ",
                     ""
             );
 
-            String message = String.format(Lang.getCommandTooManyArguments(), extraArgsImploded);
+            String message = String.format(Config.getCommandTooManyArguments(), extraArgsImploded);
             sender.sendMessage(StringUtil.t(message));
-            sender.sendMessage(StringUtil.t(Lang.getCommandUseLike()));
+            sender.sendMessage(StringUtil.t(Config.getCommandUseLike()));
             sender.sendMessage(StringUtil.t(this.getCurrentTemplateUsage(sender, false)));
             return false;
         }
@@ -898,11 +899,11 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         // Compose the subCommand aliases concatenated with commas.
         //   fall back to the first alias if no matches were found.
         String subCommandAliases = matchingAliases.isEmpty() ? suggested.getAliases().getFirst() : Txt.implode(matchingAliases, ",");
-        templateBuilder.append(" ").append(Lang.commandColor).append(subCommandAliases.trim());
+        templateBuilder.append(" ").append(Config.commandColor).append(subCommandAliases.trim());
 
         // Add 'suggested' parameters to the template string
         for (String parameter : suggested.getTemplateParameters(sender)) {
-            templateBuilder.append(" ").append(Lang.parameterColor).append(parameter);
+            templateBuilder.append(" ").append(Config.parameterColor).append(parameter);
         }
 
         // Content of the KMessageSingle
@@ -957,15 +958,15 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
         // Compose the subCommand aliases concatenated with commas.
         String subCommandAliases = Txt.implode(child.getAliases(), ",");
-        templateBuilder.append(" ").append(Lang.commandColor).append(subCommandAliases.trim());
+        templateBuilder.append(" ").append(Config.commandColor).append(subCommandAliases.trim());
 
         // Add parameters to the template string
         for (String parameter : child.getTemplateParameters(sender)) {
-            templateBuilder.append(" ").append(Lang.parameterColor).append(parameter);
+            templateBuilder.append(" ").append(Config.parameterColor).append(parameter);
         }
 
         // Add desc (always want to show the description in help display)
-        templateBuilder.append(" ").append(Lang.descriptionColor).append(child.getDesc());
+        templateBuilder.append(" ").append(Config.descriptionColor).append(child.getDesc());
 
         // Content of the KMessageSingle
         String messageContent = templateBuilder.toString().trim(); // remove trailing spaces
@@ -1001,13 +1002,13 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
      */
     @NotNull
     public String getCurrentTemplateChain() {
-        StringBuilder ret = new StringBuilder(Lang.commandColor + "/");
+        StringBuilder ret = new StringBuilder(Config.commandColor + "/");
         List<KamiCommand> commands = this.getChain(true);
 
         boolean first = true;
         for (KamiCommand command : commands) {
             @NotNull CommandContext context = Preconditions.checkNotNull(command.context);
-            String base = Lang.commandColor + context.getLabel();
+            String base = Config.commandColor + context.getLabel();
 
             if (!first) {
                 ret.append(" ");
@@ -1029,12 +1030,12 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
         // Add args
         for (String parameter : this.getTemplateParameters(sender)) {
-            ret.append(" ").append(Lang.parameterColor).append(parameter);
+            ret.append(" ").append(Config.parameterColor).append(parameter);
         }
 
         // Add desc
         if (addDesc) {
-            ret.append(" ").append(Lang.descriptionColor).append(this.getDesc());
+            ret.append(" ").append(Config.descriptionColor).append(this.getDesc());
         }
 
         return ret.toString().trim(); // remove trailing space
@@ -1070,12 +1071,12 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
         // Add args
         for (String parameter : this.getTemplateParameters(sender)) {
-            ret.append(" ").append(Lang.parameterColor).append(parameter);
+            ret.append(" ").append(Config.parameterColor).append(parameter);
         }
 
         // Add desc
         if (addDesc) {
-            ret.append(" ").append(Lang.descriptionColor).append(this.getDesc());
+            ret.append(" ").append(Config.descriptionColor).append(this.getDesc());
         }
 
         // Return Ret
@@ -1084,7 +1085,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
     @NotNull
     private  String getTemplateChain(boolean onlyFirstAlias, boolean onlyOneSubAlias, @Nullable CommandSender sender) {
-        StringBuilder ret = new StringBuilder(Lang.commandColor + "/");
+        StringBuilder ret = new StringBuilder(Config.commandColor + "/");
 
         // Get commands
         List<KamiCommand> commands = this.getChain(true);
@@ -1101,9 +1102,9 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             }
 
             if (sender != null && !command.isRequirementsMet(sender, false)) {
-                base = Lang.inaccessibleCommandColor + base;
+                base = Config.inaccessibleCommandColor + base;
             } else {
-                base = Lang.commandColor + base;
+                base = Config.commandColor + base;
             }
 
             if (!first) {
@@ -1405,7 +1406,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     /**
      * Message and Color configuration for KamiCommand messages.
      */
-    public static class Lang {
+    @Configurable
+    public static class Config {
         // Command Colors and Formats
         @Getter @Setter
         private static @NotNull String helpCommentFormat = ChatColor.GOLD + "# %s";

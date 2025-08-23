@@ -28,7 +28,7 @@ public class RequirementIsntPlayer extends RequirementAbstract {
 
 	@Override
 	public String createErrorMessage(CommandSender sender, KamiCommand command) {
-		return KamiCommand.Lang.getSenderMustNotBePlayer();
+		return KamiCommand.Config.getSenderMustNotBePlayer();
 	}
 
 }

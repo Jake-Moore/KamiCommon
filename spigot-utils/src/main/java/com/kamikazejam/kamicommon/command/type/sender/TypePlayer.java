@@ -31,16 +31,16 @@ public class TypePlayer extends TypeAbstract<Player> {
 	public Player read(String str, CommandSender sender) throws KamiCommonException {
 		Player target = sender.getServer().getPlayer(str);
 		if (target == null) {
-            ChatColor error = KamiCommand.Lang.getErrorColor();
-            ChatColor param = KamiCommand.Lang.getErrorParamColor();
+            ChatColor error = KamiCommand.Config.getErrorColor();
+            ChatColor param = KamiCommand.Config.getErrorParamColor();
 			throw new KamiCommonException().addMsg(StringUtil.t(error + "No player matching \"" + param + "%s" + error + "\"."), str);
 		}
 
 		@Nullable PremiumVanishIntegration integration = SpigotUtilsSource.getVanishIntegration();
 		if (integration != null && sender instanceof Player viewer) {
             if (!integration.canSee(viewer, target)) {
-                ChatColor error = KamiCommand.Lang.getErrorColor();
-                ChatColor param = KamiCommand.Lang.getErrorParamColor();
+                ChatColor error = KamiCommand.Config.getErrorColor();
+                ChatColor param = KamiCommand.Config.getErrorParamColor();
                 throw new KamiCommonException().addMsg(StringUtil.t(error + "No player matching \"" + param + "%s" + error + "\"."), str);
 			}
 		}
