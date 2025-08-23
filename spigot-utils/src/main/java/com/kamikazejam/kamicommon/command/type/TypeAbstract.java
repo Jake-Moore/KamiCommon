@@ -1,34 +1,25 @@
 package com.kamikazejam.kamicommon.command.type;
 
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
-import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.interfaces.Identified;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
 import lombok.Getter;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings({"unused"})
 public abstract class TypeAbstract<T> implements Type<T> {
-	// -------------------------------------------- //
-	// CONSTANTS
-	// -------------------------------------------- //
-
-	public static final String NULL = StringUtil.t("&7&oNONE");
-	public static final String EMPTY = StringUtil.t("&7&oEMPTY");
-	public static final String UNKNOWN = StringUtil.t("&c???");
-
-	public static final ChatColor COLOR_DEFAULT = ChatColor.YELLOW;
-
-	public static final int TAB_LIST_UUID_THRESHOLD = 5;
 
 	// -------------------------------------------- //
 	// META

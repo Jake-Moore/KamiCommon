@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Getter @Setter
+@Getter
+@Setter
 public class MenuTitleCalculator {
     private @Nullable MenuTitleProvider provider;
     private final @NotNull List<MenuTitleReplacement> replacements = new ArrayList<>();
@@ -21,7 +22,7 @@ public class MenuTitleCalculator {
 
     @NotNull
     public String buildTitle(@NotNull Player player) {
-        if (provider == null) { return " "; }
+        if (provider == null) {return " ";}
         String title = Objects.requireNonNull(provider.getTitle(player));
         for (MenuTitleReplacement replacement : replacements) {
             title = title.replace(replacement.getTarget(), replacement.getReplacement());

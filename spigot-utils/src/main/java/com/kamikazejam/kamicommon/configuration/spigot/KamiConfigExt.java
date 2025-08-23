@@ -1,8 +1,10 @@
 package com.kamikazejam.kamicommon.configuration.spigot;
 
+import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.InputStream;
@@ -14,17 +16,53 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings("unused")
 public class KamiConfigExt extends KamiConfig {
+
+    // -------------------------------------------------- //
+    //               JavaPlugin Constructors              //
+    // -------------------------------------------------- //
+
+    /**
+     * Creates a new config instance with the given plugin and destination file.<br><br>
+     * This constructor enables defaults using the following resource file method:<br>
+     * - Assumes a resource file with the same name as the provided file, exists in the current jar.
+     */
     public KamiConfigExt(@NotNull JavaPlugin plugin, File file) {
         super(plugin, file);
     }
-    public KamiConfigExt(@NotNull JavaPlugin plugin, File file, boolean addDefaults) {
-        super(plugin, file, addDefaults);
+
+    /**
+     * Creates a new config instance with the given plugin and destination file.<br><br>
+     * This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+     * - Providing a non-null supplier will enable defaults using the provided InputStream
+     * - Providing a null supplier will disable defaults
+     *
+     * @param defaultsStream The optional supplier to load defaults from.
+     */
+    public KamiConfigExt(@NotNull JavaPlugin plugin, File file, @Nullable Supplier<InputStream> defaultsStream) {
+        super(plugin, file, defaultsStream);
     }
-    public KamiConfigExt(@NotNull JavaPlugin plugin, File file, boolean addDefaults, boolean strictKeys) {
-        super(plugin, file, addDefaults);
+
+    // -------------------------------------------------- //
+    //                Subsystem Constructors              //
+    // -------------------------------------------------- //
+
+    /**
+     * Creates a new config instance with the given subsystem and destination file.<br><br>
+     * This constructor enables defaults using the following resource file method:<br>
+     * - Fetches the resource file using the provided file name, from {@link AbstractSubsystem#getSupplementalConfigResource(String)}
+     */
+    public KamiConfigExt(@NotNull AbstractSubsystem<?, ?> subsystem, File file) {
+        super(subsystem, file);
     }
-    public KamiConfigExt(@NotNull JavaPlugin plugin, File file, Supplier<InputStream> defaultSupplier) {
-        super(plugin, file, defaultSupplier);
+
+    /**
+     * Creates a new config instance with the given subsystem and destination file.<br><br>
+     * This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+     * - Providing a non-null supplier will enable defaults using the provided InputStream
+     * - Providing a null supplier will disable defaults
+     */
+    public KamiConfigExt(@NotNull AbstractSubsystem<?, ?> subsystem, File file, @Nullable Supplier<InputStream> defaultsStream) {
+        super(subsystem, file, defaultsStream);
     }
 
     @Override

@@ -84,7 +84,7 @@ public final class MenuSizeType implements MenuSize {
                 }
                 // Otherwise we use the normal 9-slot rows, but where the first one is 9 in bukkit math
                 yield row * 9 + col + 9;
-            // Our 3x3 menus
+                // Our 3x3 menus
             case "DISPENSER", "DROPPER", "CRAFTER":
                 if (row < 0 || row >= 3 || col < 0 || col >= 3) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in a 3x3 menu.");
@@ -128,7 +128,7 @@ public final class MenuSizeType implements MenuSize {
                 }
                 yield col;
 
-            // Nonsensical Types we can't decide how to support
+                // Nonsensical Types we can't decide how to support
             case "FURNACE", "BLAST_FURNACE", "CRAFTING", "BREWING", "LECTERN", "SMOKER", "LOOM",
                  "STONECUTTER", "CARTOGRAPHY", "GRINDSTONE", "COMPOSTER", "CHISELED_BOOKSHELF", "JUKEBOX", "DECORATED_POT":
                 throw new IllegalStateException("Cannot map position to slot for InventoryType " + type.name() + ". (not supported)");

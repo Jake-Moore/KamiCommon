@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.menu.api.struct;
 
+import com.kamikazejam.kamicommon.menu.Menu;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -12,13 +13,11 @@ import java.util.Set;
  * A container for all the options that every {@link com.kamikazejam.kamicommon.menu.Menu} must allow to be configured.<br>
  * Use Getters and Setters to access and modify these options.
  */
-@Getter @Setter
+@Getter
+@Setter
 @Accessors(chain = true)
 @SuppressWarnings("unused")
-public class MenuOptions {
-    public interface MenuOptionsModification {
-        void modify(@NotNull MenuOptions options);
-    }
+public abstract class MenuOptions<M extends Menu<M>> {
 
     /**
      * If we should allow the player to pick up items while the menu is open.
@@ -45,7 +44,7 @@ public class MenuOptions {
     /**
      * Configure slots that won't be filled by the filler icon, even if they are empty.
      */
-    private final @NotNull Set<Integer> excludedFillSlots;
+    private final @NotNull Set<Integer> excludedFillSlots = new HashSet<>();
 
     /**
      * Should each call to open() from the same {@link com.kamikazejam.kamicommon.menu.Menu} reset the visuals of the menu?<br>
@@ -54,18 +53,10 @@ public class MenuOptions {
      */
     private boolean resetVisualsOnOpen = true;
 
-    public MenuOptions() {
-        this.excludedFillSlots = new HashSet<>();
-    }
-
     @NotNull
-    public MenuOptions copy() {
-        MenuOptions copy = new MenuOptions();
-        copyInto(copy);
-        return copy;
-    }
+    public abstract MenuOptions<M> copy();
 
-    protected void copyInto(@NotNull MenuOptions options) {
+    protected final void copyInto(@NotNull MenuOptions<M> options) {
         options.allowItemDrop = this.allowItemDrop;
         options.allowItemPickup = this.allowItemPickup;
         options.cancelClickEvent = this.cancelClickEvent;

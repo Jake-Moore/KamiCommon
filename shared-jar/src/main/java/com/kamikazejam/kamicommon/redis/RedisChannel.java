@@ -5,31 +5,29 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter @SuppressWarnings({"UnusedReturnValue", "unused"})
-public class RedisChannel<T> {
+public class RedisChannel {
     private final @NotNull RedisManager manager;
     private final @NotNull String channel;
-    private final @NotNull Class<T> clazz;
-    RedisChannel(@NotNull RedisManager manager, @NotNull String channel, @NotNull Class<T> clazz) {
+    RedisChannel(@NotNull RedisManager manager, @NotNull String channel) {
         this.manager = manager;
         this.channel = channel;
-        this.clazz = clazz;
     }
 
     /**
      * Add a callback for this channel (for listening to messages)
      * @return true if the callback was successfully added
      */
-    public boolean subscribe(@NotNull RedisChannelCallback<T> callback) {
-        return manager.subscribe(callback, clazz, channel);
+    public boolean subscribe(@NotNull RedisChannelCallback callback) {
+        return manager.subscribe(callback, channel);
     }
 
-    public void publishSync(@NotNull T message) {
+    public void publishSync(@NotNull String message) {
         manager.publish(channel, message, true);
     }
-    public void publishAsync(@NotNull T message) {
+    public void publishAsync(@NotNull String message) {
         manager.publish(channel, message, false);
     }
-    public void publish(@NotNull T message, boolean sync) {
+    public void publish(@NotNull String message, boolean sync) {
         manager.publish(channel, message, sync);
     }
 

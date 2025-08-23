@@ -31,19 +31,19 @@ public class IconSlotLoader {
             if (s >= 0) {
                 slots.add(s);
             }
-        }else if (section.isList("slot")) {
+        } else if (section.isList("slot")) {
             List<Integer> s = section.getIntegerList("slot");
             s.forEach(slot -> {
-                if (slot < 0) { return; }
+                if (slot < 0) {return;}
                 slots.add(slot);
             });
-        }else if (section.isList("slots")) {
+        } else if (section.isList("slots")) {
             List<Integer> s = section.getIntegerList("slots");
             s.forEach(slot -> {
-                if (slot < 0) { return; }
+                if (slot < 0) {return;}
                 slots.add(slot);
             });
-        }else if (section.isInt("slots")) {
+        } else if (section.isInt("slots")) {
             int s = section.getInt("slots");
             if (s >= 0) {
                 slots.add(s);

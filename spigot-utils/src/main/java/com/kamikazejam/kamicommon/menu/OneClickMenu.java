@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.menu;
 
-import com.kamikazejam.kamicommon.menu.api.clicks.OneClickMenuTransform;
+import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
+import com.kamikazejam.kamicommon.menu.api.clicks.transform.MenuClickTransform;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
@@ -15,22 +16,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * This Menu class focuses on providing a simple single-frame menu. This is the most versatile menu type
- * because you define everything in the menu, and can create your own custom logic.
+ * This Menu class focuses on providing a simple menu that allows for only one single click per opening.
+ * Subsequent clicks will not trigger click callbacks on icons, unless the menu is reopened.
  */
 @Getter
 @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public final class OneClickMenu extends AbstractMenu<OneClickMenu> {
     boolean clicked = false;
-    private final @NotNull OneClickMenuTransform transform;
+    private final @NotNull MenuClickTransform<OneClickMenu> transform;
 
     // Constructor (Deep Copying from Builder)
-    OneClickMenu(@NotNull Builder builder, @NotNull Player player, @NotNull OneClickMenuTransform transform) {
+    OneClickMenu(@NotNull Builder builder, @NotNull Player player, @NotNull MenuClickTransform<OneClickMenu> transform) {
         super(builder, player);
         this.transform = transform;
     }
@@ -42,14 +44,19 @@ public final class OneClickMenu extends AbstractMenu<OneClickMenu> {
         return super.open();
     }
 
+    @Contract("null, _ -> false")
     @SuppressWarnings("RedundantIfStatement")
-    public boolean countsForClick(@NotNull MenuIcon icon, int slot) {
+    public boolean countsForClick(@Nullable MenuIcon<?> icon, int slot) {
+        if (icon == null) {
+            // If the icon is null, we cannot count it for a click
+            return false;
+        }
         Preconditions.checkNotNull(icon, "Icon must not be null.");
-        if (!(options instanceof OneClickMenuOptions menuOptions)) { return true; }
+        if (!(options instanceof OneClickMenuOptions menuOptions)) {return true;}
 
         // 1. Check if filler icon counts
         if (menuOptions.isExcludeFillerClickFromOneClick()) {
-            @Nullable MenuIcon filler = this.getFillerIcon();
+            @Nullable MenuIcon<?> filler = this.getFillerIcon();
             if (filler != null && filler.equals(icon)) {
                 return false;
             }
@@ -63,16 +70,18 @@ public final class OneClickMenu extends AbstractMenu<OneClickMenu> {
     //                        Builder Pattern                       //
     // ------------------------------------------------------------ //
     public static final class Builder extends AbstractMenuBuilder<OneClickMenu, Builder> {
-        public Builder(@NotNull MenuSize size, @NotNull MenuEvents events, @NotNull MenuOptions options) {
+        public Builder(@NotNull MenuSize size, @NotNull MenuEvents<OneClickMenu> events, @NotNull MenuOptions<OneClickMenu> options) {
             super(size, events, options);
         }
 
         public Builder(@NotNull MenuSize size) {
-            this(size, new MenuEvents(), new OneClickMenuOptions());
+            this(size, new MenuEvents<>(), new OneClickMenuOptions());
         }
+
         public Builder(int rows) {
             this(new MenuSizeRows(rows));
         }
+
         public Builder(@NotNull InventoryType type) {
             this(new MenuSizeType(type));
         }
@@ -84,9 +93,15 @@ public final class OneClickMenu extends AbstractMenu<OneClickMenu> {
         }
 
         @CheckReturnValue
-        public @NotNull OneClickMenu build(@NotNull Player player, @NotNull OneClickMenuTransform transform) {
+        public @NotNull OneClickMenu build(@NotNull Player player, @NotNull MenuClickTransform<OneClickMenu> transform) {
             Preconditions.checkNotNull(player, "Player must not be null.");
             return new OneClickMenu(this, player, transform);
+        }
+
+        @CheckReturnValue
+        public @NotNull OneClickMenu build(@NotNull Player player, @NotNull MenuClick<OneClickMenu> click) {
+            Preconditions.checkNotNull(player, "Player must not be null.");
+            return new OneClickMenu(this, player, new MenuClickTransform<>(click));
         }
 
         // Static factory methods

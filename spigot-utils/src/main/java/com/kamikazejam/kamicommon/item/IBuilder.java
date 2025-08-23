@@ -1,12 +1,16 @@
 package com.kamikazejam.kamicommon.item;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.util.StringUtilP;
+import com.kamikazejam.kamicommon.util.data.Pair;
+import com.kamikazejam.kamicommon.util.data.TriState;
+import com.kamikazejam.kamicommon.util.nms.MaterialFlatteningUtil;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import de.tr7zw.changeme.nbtapi.NBT;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -18,18 +22,12 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.cryptomorin.xseries.XEnchantment;
-import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.util.StringUtilP;
-import com.kamikazejam.kamicommon.util.data.Pair;
-import com.kamikazejam.kamicommon.util.data.TriState;
-import com.kamikazejam.kamicommon.util.nms.MaterialFlatteningUtil;
-import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
-
-import de.tr7zw.changeme.nbtapi.NBT;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Getter
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -59,7 +57,7 @@ public abstract class IBuilder {
     public IBuilder(@NotNull ConfigurationSection section) {
         loadConfigItem(section, null, true);
     }
-    public IBuilder(@NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IBuilder(@NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         loadConfigItem(section, offlinePlayer, true);
     }
     public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section) {
@@ -67,7 +65,7 @@ public abstract class IBuilder {
         this.damage = material.getData();
         loadConfigItem(section, null, false);
     }
-    public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         this.material = material;
         this.damage = material.getData();
         loadConfigItem(section, offlinePlayer, false);

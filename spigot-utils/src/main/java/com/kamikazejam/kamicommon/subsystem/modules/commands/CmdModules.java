@@ -1,10 +1,10 @@
-package com.kamikazejam.kamicommon.modules.commands;
+package com.kamikazejam.kamicommon.subsystem.modules.commands;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
-import com.kamikazejam.kamicommon.modules.Module;
+import com.kamikazejam.kamicommon.subsystem.modules.Module;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
@@ -13,6 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * KamiCommand implementation that lists all modules in the provided {@link KamiPlugin} (see constructor).<br>
+ * Construct an instance of this class and register it under your own {@link KamiCommand} class.
+ */
 @SuppressWarnings("unused")
 public class CmdModules extends KamiCommand {
     private final KamiPlugin plugin;

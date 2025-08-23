@@ -32,11 +32,6 @@ public abstract class AbstractConfig<T extends AbstractYamlConfiguration> {
     protected abstract T getYamlConfiguration();
 
     /**
-     * @return If the config should add defaults
-     */
-    protected abstract boolean isAddDefaults();
-
-    /**
      * Reloads the config from the file
      */
     public abstract void reload();

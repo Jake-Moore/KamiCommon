@@ -7,31 +7,29 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 @Getter @SuppressWarnings({"UnusedReturnValue", "unused"})
-public class RedisMultiChannel<T> {
+public class RedisMultiChannel {
     private final @NotNull RedisManager manager;
     private final @NotNull List<String> channels;
-    private final @NotNull Class<T> clazz;
-    RedisMultiChannel(@NotNull RedisManager manager, @NotNull Class<T> clazz, @NotNull String... channels) {
+    RedisMultiChannel(@NotNull RedisManager manager, @NotNull String... channels) {
         this.manager = manager;
         this.channels = List.of(channels);
-        this.clazz = clazz;
     }
 
     /**
      * Add a callback for this channel (for listening to messages)
      * @return true if the callback was successfully added
      */
-    public boolean subscribe(@NotNull RedisChannelCallback<T> callback) {
-        return manager.subscribe(callback, clazz, channels.toArray(new String[0]));
+    public boolean subscribe(@NotNull RedisChannelCallback callback) {
+        return manager.subscribe(callback, channels.toArray(new String[0]));
     }
 
-    public void publishSync(@NotNull String channel, @NotNull T message) {
+    public void publishSync(@NotNull String channel, @NotNull String message) {
         this.publish(channel, message, true);
     }
-    public void publishAsync(@NotNull String channel, @NotNull T message) {
+    public void publishAsync(@NotNull String channel, @NotNull String message) {
         this.publish(channel, message, false);
     }
-    public void publish(@NotNull String channel, @NotNull T message, boolean sync) {
+    public void publish(@NotNull String channel, @NotNull String message, boolean sync) {
         if (!channels.contains(channel)) {
             throw new IllegalArgumentException("Channel " + channel + " is not part of this RedisMultiChannel");
         }

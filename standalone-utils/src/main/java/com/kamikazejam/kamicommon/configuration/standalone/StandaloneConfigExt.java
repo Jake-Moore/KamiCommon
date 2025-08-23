@@ -1,6 +1,8 @@
 package com.kamikazejam.kamicommon.configuration.standalone;
 
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.yaml.standalone.MemorySectionStandalone;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -15,17 +17,26 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 public class StandaloneConfigExt extends StandaloneConfig {
 
-    public StandaloneConfigExt(File file) {
-        super(file);
+    /**
+     * Creates a new config instance with the given logger and destination file.<br><br>
+     * This constructor enables defaults using the following resource file method:<br>
+     * - Assumes a resource file with the same name as the provided file, exists in the current jar.<br>
+     * - See {@link StandaloneConfig#getDefaultIS(LoggerService, File)}
+     */
+    public StandaloneConfigExt(@NotNull LoggerService logger, @NotNull File file) {
+        super(logger, file);
     }
-    public StandaloneConfigExt(File file, boolean addDefaults) {
-        super(file, addDefaults);
-    }
-    public StandaloneConfigExt(File file, Supplier<InputStream> defaultStream) {
-        super(file, defaultStream);
-    }
-    public StandaloneConfigExt(File file, boolean addDefaults, @Nullable Supplier<InputStream> defaultStream) {
-        super(file, addDefaults, defaultStream);
+
+    /**
+     * Creates a new config instance with the given logger and destination file.<br><br>
+     * This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+     * - Providing a non-null supplier will enable defaults using the provided InputStream
+     * - Providing a null supplier will disable defaults
+     *
+     * @param defaultsStream The optional supplier to load defaults from.
+     */
+    public StandaloneConfigExt(@NotNull LoggerService logger, @NotNull File file, @Nullable Supplier<InputStream> defaultsStream) {
+        super(logger, file, defaultsStream);
     }
 
     @Override

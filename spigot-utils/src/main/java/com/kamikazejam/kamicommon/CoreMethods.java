@@ -1,8 +1,6 @@
 package com.kamikazejam.kamicommon;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.configuration.spigot.ConfigObserver;
-import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import org.bukkit.event.Listener;
@@ -40,6 +38,4 @@ public interface CoreMethods {
     int unregisterDisableables(Disableable... disableables);
     int unregisterDisableables();
 
-    // Misc Methods
-    boolean registerConfigObserver(@NotNull ConfigObserver observer, @NotNull KamiConfig config);
 }

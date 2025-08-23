@@ -29,19 +29,19 @@ public class PluginLogger extends LoggerService {
     }
 
     @Override
-    public final void logToConsole(String msg, Level level) {
+    public final void logToConsole(String message, Level level) {
         // Add the plugin name to the VERY start, so it matches existing logging format
         String plPrefix = "[" + getPlugin().getName() + "] ";
 
         if (level == Level.FINE) {
-            Bukkit.getConsoleSender().sendMessage(StringUtil.t("&7[DEBUG] " + plPrefix + msg));
+            Bukkit.getConsoleSender().sendMessage(StringUtil.t("&7[DEBUG] " + plPrefix + message));
         } else if (level == Level.INFO) {
             // No need to colorize INFO messages or include the prefix
-            Bukkit.getConsoleSender().sendMessage(StringUtil.t(plPrefix + msg));
+            Bukkit.getConsoleSender().sendMessage(StringUtil.t(plPrefix + message));
         } else if (level == Level.WARNING) {
-            Bukkit.getConsoleSender().sendMessage(StringUtil.t("&e[WARNING] " + plPrefix + msg));
+            Bukkit.getConsoleSender().sendMessage(StringUtil.t("&e[WARNING] " + plPrefix + message));
         } else if (level == Level.SEVERE) {
-            Bukkit.getConsoleSender().sendMessage(StringUtil.t("&c[SEVERE] " + plPrefix + msg));
+            Bukkit.getConsoleSender().sendMessage(StringUtil.t("&c[SEVERE] " + plPrefix + message));
         }
     }
 }

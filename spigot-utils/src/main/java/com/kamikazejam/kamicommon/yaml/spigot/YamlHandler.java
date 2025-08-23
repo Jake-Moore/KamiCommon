@@ -1,37 +1,45 @@
 package com.kamikazejam.kamicommon.yaml.spigot;
 
 import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.MappingNode;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class YamlHandler extends AbstractYamlHandler<YamlConfiguration> {
-    @Nonnull private final JavaPlugin plugin;
+    @NotNull private final LoggerService logger;
 
-    public YamlHandler(AbstractConfig<?> abstractConfig, @Nonnull JavaPlugin plugin, File configFile) {
-        super(abstractConfig, configFile);
-        this.plugin = plugin;
-    }
-
-    public YamlHandler(AbstractConfig<?> abstractConfig, @Nonnull JavaPlugin plugin, File configFile, String fileName) {
-        super(abstractConfig, configFile, fileName);
-        this.plugin = plugin;
-    }
-
-    @Override
-    public InputStream getIS() {
-        return plugin.getResource(configFile.getName());
+    /**
+     * @param abstractConfig The parent config instance who holds this handler.
+     * @param logger The logger service for warnings and errors.
+     * @param configFile The file to read/write the configuration to/from.
+     * @param defaultsStream An optional stream (of a YAML config) to read default values from, can be null.
+     */
+    public YamlHandler(
+            @NotNull AbstractConfig<?> abstractConfig,
+            @NotNull LoggerService logger,
+            @NotNull File configFile,
+            @Nullable Supplier<InputStream> defaultsStream
+    ) {
+        super(abstractConfig, configFile, defaultsStream);
+        this.logger = logger;
     }
 
     @Override
     public void error(String s) {
-        plugin.getLogger().severe(s);
+        logger.severe(s);
+    }
+
+    @Override
+    public void warn(String s) {
+        logger.warn(s);
     }
 
     @Override

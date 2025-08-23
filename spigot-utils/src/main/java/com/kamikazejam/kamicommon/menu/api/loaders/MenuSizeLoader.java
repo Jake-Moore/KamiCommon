@@ -13,6 +13,7 @@ public class MenuSizeLoader {
     public static MenuSize load(@NotNull ConfigurationSection section, @NotNull String key) {
         return load(section.getConfigurationSection(key));
     }
+
     @NotNull
     public static MenuSize load(@NotNull ConfigurationSection section) {
         // Load Type with higher priority (if successful -> return)
@@ -21,7 +22,7 @@ public class MenuSizeLoader {
             try {
                 InventoryType type = InventoryType.valueOf(s);
                 return new MenuSizeType(type);
-            }catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 // ignore error, in case there is a valid row count to use instead
             }
         }
