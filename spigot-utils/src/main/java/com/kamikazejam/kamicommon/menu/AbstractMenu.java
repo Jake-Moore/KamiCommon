@@ -59,14 +59,14 @@ public sealed abstract class AbstractMenu<M extends AbstractMenu<M>> extends Men
     }
 
     @Override
-    public void reopenMenu(@NotNull Player player) {
+    public void reopenMenu() {
         // Sanity Checks
         if (!PlayerUtil.isFullyValidPlayer(player) || !player.getUniqueId().equals(this.player.getUniqueId())) {return;}
         this.open(false);
     }
 
     @Override
-    public void reopenMenu(@NotNull Player player, boolean resetTickCounter) {
+    public void reopenMenu(boolean resetTickCounter) {
         // Sanity Checks
         if (!PlayerUtil.isFullyValidPlayer(player) || !player.getUniqueId().equals(this.player.getUniqueId())) {return;}
         this.open(resetTickCounter);
