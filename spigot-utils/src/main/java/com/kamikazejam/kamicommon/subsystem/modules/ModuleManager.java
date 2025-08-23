@@ -1,7 +1,8 @@
-package com.kamikazejam.kamicommon.modules;
+package com.kamikazejam.kamicommon.subsystem.modules;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,9 +39,14 @@ public class ModuleManager {
     }
 
     public void unregister() {
-        for (Module module : moduleList) {
+        // Disable will remove the feature from the list and map
+        // Iterate over a copy to avoid ConcurrentModificationException
+        for (Module module : new ArrayList<>(moduleList)) {
             disable(module);
         }
+        // Ensure the module structures are cleared
+        moduleList.clear();
+        moduleMap.clear();
     }
 
     public boolean disable(Module module) {
@@ -49,6 +55,8 @@ public class ModuleManager {
 
         try {
             module.handleDisable();
+            moduleMap.remove(module.getClass());
+            moduleList.remove(module);
             return true;
         } catch (Throwable e) {
             plugin.getLogger().warning("Can not disable the module: " + module.getName());
@@ -93,6 +101,7 @@ public class ModuleManager {
         return null;
     }
 
+    @Nullable
     public Module getModuleByName(String name) {
         for (Module module : moduleList) {
             if (module.getName().equalsIgnoreCase(name)) {

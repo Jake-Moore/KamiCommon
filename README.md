@@ -1,22 +1,23 @@
-# 🕰️ V4 Branch: Historical Archive 🕰️
+# 🚀 V5 Branch: Active Development 🚧
 
 ---
 
-### 🚧 **Status: End of Life (EOL)** 🚧
+### **Status: Under Active Development** 🛠️
 
-This `release/v4` branch now serves purely as a **historical and archival snapshot** of the project's version 4 codebase.
+Welcome to the `release/v5` branch! This is where the **next major version** of the project is currently being built.
 
-With the official release of the first `v5` alpha, **active development and maintenance for `v4` have ceased**.  
-All new development efforts are focused on `v5`.
-
-**⚠️ Please be advised: No support, bug fixes, or new features will be provided for this branch.**
-
-For the most up-to-date and supported version, please refer to the `main` branch (which now reflects `v5`).
+**Please Note:**
+*   This branch is in an **active development phase**.
+*   It is **not stable**, may contain breaking changes, incomplete features, and bugs.
+*   It is **not recommended for production use** at this time.
 
 ---
 
-**For active `v5` development, please see the `release/v5` branch.**  
-**For the latest published release (including prereleases), see the [Releases page](https://github.com/Jake-Moore/KamiCommon/releases).**
+**For the current stable and officially released version of the project, please refer to the `main` branch.**
+
+**For `v4` maintenance and bug fixes, please see the `release/v4` branch.**
+
+
 
 &nbsp;
 > <a href="https://github.com/Jake-Moore/KamiCommon/releases/latest"> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/test.json" /></a>

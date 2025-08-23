@@ -1,11 +1,13 @@
 package com.kamikazejam.kamicommon.command.type.sender;
 
+import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.id.SenderPresence;
 import com.kamikazejam.kamicommon.util.id.SenderType;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Represents a OfflinePlayer seen before by this server, accessible through the Bukkit API via UUID.
  */
+@SuppressWarnings("unused")
 public class TypeOfflinePlayer extends TypeAbstract<OfflinePlayer> {
 
 	private static final TypeOfflinePlayer i = new TypeOfflinePlayer();
@@ -28,7 +31,9 @@ public class TypeOfflinePlayer extends TypeAbstract<OfflinePlayer> {
 	public OfflinePlayer read(String str, CommandSender sender) throws KamiCommonException {
 		OfflinePlayer offlinePlayer = IdUtilLocal.getOfflinePlayer(str);
 		if (offlinePlayer == null) {
-			throw new KamiCommonException().addMsg(StringUtil.t("&cNo player with the name '&f" + str + "&c' has been seen before on this server."));
+            ChatColor error = KamiCommand.Config.getErrorColor();
+            ChatColor param = KamiCommand.Config.getErrorParamColor();
+            throw new KamiCommonException().addMsg(StringUtil.t(error + "No player with the name \"" + param + "%s" + error + "\" has been seen before on this server."), str);
 		}
 		return offlinePlayer;
 	}

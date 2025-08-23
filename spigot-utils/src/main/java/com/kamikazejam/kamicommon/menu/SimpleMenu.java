@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.menu;
 
 import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
+import com.kamikazejam.kamicommon.menu.api.struct.simple.SimpleMenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeRows;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeType;
@@ -31,16 +32,18 @@ public final class SimpleMenu extends AbstractMenu<SimpleMenu> {
     //                        Builder Pattern                       //
     // ------------------------------------------------------------ //
     public static final class Builder extends AbstractMenuBuilder<SimpleMenu, Builder> {
-        public Builder(@NotNull MenuSize size, @NotNull MenuEvents events, @NotNull MenuOptions options) {
+        public Builder(@NotNull MenuSize size, @NotNull MenuEvents<SimpleMenu> events, @NotNull MenuOptions<SimpleMenu> options) {
             super(size, events, options);
         }
 
         public Builder(@NotNull MenuSize size) {
-            this(size, new MenuEvents(), new MenuOptions());
+            this(size, new MenuEvents<>(), new SimpleMenuOptions());
         }
+
         public Builder(int rows) {
             this(new MenuSizeRows(rows));
         }
+
         public Builder(@NotNull InventoryType type) {
             this(new MenuSizeType(type));
         }

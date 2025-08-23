@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class PvpManagerImpl implements CombatIntegration {
@@ -23,7 +22,7 @@ public class PvpManagerImpl implements CombatIntegration {
     }
 
     @Override
-    public void tag(@NotNull Player victim, @Nonnull Player attacker) {
+    public void tag(@NotNull Player victim, @NotNull Player attacker) {
         PvPlayer attackerP = PvPManager.getInstance().getPlayerHandler().get(attacker);
         PvPManager.getInstance().getPlayerHandler().get(victim).setTagged(true, attackerP);
     }

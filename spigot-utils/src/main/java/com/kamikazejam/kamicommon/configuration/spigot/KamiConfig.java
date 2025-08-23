@@ -1,8 +1,14 @@
 package com.kamikazejam.kamicommon.configuration.spigot;
 
+import com.kamikazejam.kamicommon.KamiPlugin;
+import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfig;
 import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
+import com.kamikazejam.kamicommon.util.log.JavaPluginLogger;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSequenceSpigot;
 import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
@@ -13,7 +19,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -32,48 +37,84 @@ import java.util.function.Supplier;
  * Then you can use this object just like a YamlConfiguration, it has all the same methods plus a few others like {@link KamiConfig#reload()} <br>
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class KamiConfig extends AbstractConfig<YamlConfiguration> implements ConfigurationSection {
-    private final JavaPlugin plugin;
+public class KamiConfig extends AbstractConfig<YamlConfiguration> implements ConfigurationSection, ObservableConfig {
+    private final @NotNull LoggerService logger;
     private final File file;
     private final YamlHandler yamlHandler;
     private YamlConfiguration config;
-    private final boolean addDefaults;
-    private final @Nullable Supplier<InputStream> defaultSupplier;
     private final @NotNull Set<ConfigObserver> observers = new HashSet<>();
 
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file) {
-        this(plugin, file, true);
+    // -------------------------------------------------- //
+    //               JavaPlugin Constructors              //
+    // -------------------------------------------------- //
+
+    /**
+     * Creates a new config instance with the given plugin and destination file.<br><br>
+     * This constructor enables defaults using the following resource file method:<br>
+     * - Assumes a resource file with the same name as the provided file, exists in the current jar.
+     */
+    public KamiConfig(@NotNull JavaPlugin plugin, File file) {
+        this(plugin, file, () -> plugin.getResource(file.getName()));
     }
 
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults) {
-        this(plugin, file, addDefaults, null);
+    /**
+     * Creates a new config instance with the given plugin and destination file.<br><br>
+     * This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+     * - Providing a non-null supplier will enable defaults using the provided InputStream
+     * - Providing a null supplier will disable defaults
+     *
+     * @param defaultsStream The optional supplier to load defaults from.
+     */
+    public KamiConfig(@NotNull JavaPlugin plugin, File file, @Nullable Supplier<InputStream> defaultsStream) {
+        this(parseLogger(plugin), file, defaultsStream);
     }
 
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, boolean strictKeys) {
-        this(plugin, file, addDefaults, null);
+    // -------------------------------------------------- //
+    //                Subsystem Constructors              //
+    // -------------------------------------------------- //
+
+    /**
+     * Creates a new config instance with the given subsystem and destination file.<br><br>
+     * This constructor enables defaults using the following resource file method:<br>
+     * - Fetches the resource file using the provided file name, from {@link AbstractSubsystem#getSupplementalConfigResource(String)}
+     */
+    public KamiConfig(@NotNull AbstractSubsystem<?, ?> subsystem, File file) {
+        this(subsystem, file, () -> subsystem.getSupplementalConfigResource(file.getName()));
     }
 
-    public KamiConfig(@Nonnull JavaPlugin plugin, File file, Supplier<InputStream> defaultSupplier) {
-        this(plugin, file, true, defaultSupplier);
+    /**
+     * Creates a new config instance with the given subsystem and destination file.<br><br>
+     * This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+     * - Providing a non-null supplier will enable defaults using the provided InputStream
+     * - Providing a null supplier will disable defaults
+     */
+    public KamiConfig(@NotNull AbstractSubsystem<?, ?> subsystem, File file, @Nullable Supplier<InputStream> defaultsStream) {
+        this((LoggerService) subsystem, file, defaultsStream);
     }
 
-    private KamiConfig(@Nonnull JavaPlugin plugin, File file, boolean addDefaults, @Nullable Supplier<InputStream> defaultSupplier) {
-        this.plugin = plugin;
+    // -------------------------------------------------- //
+    //                 Internal Constructors              //
+    // -------------------------------------------------- //
+
+    /**
+     * @param file The target file on the destination filesystem to save and load config data from.
+     * @param defaultsStream The optional supplier to load defaults from.
+     */
+    private KamiConfig(@NotNull LoggerService logger, @NotNull File file, @Nullable Supplier<InputStream> defaultsStream) {
+        this.logger = logger;
         this.file = file;
-        this.addDefaults = addDefaults;
-        this.defaultSupplier = defaultSupplier;
 
         ensureFile();
 
-        this.yamlHandler = new YamlHandler(this, plugin, file);
-        this.config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
+        this.yamlHandler = new YamlHandler(this, logger, file, defaultsStream);
+        this.config = yamlHandler.loadConfig();
         save(true); // Force save since there won't be any changes from load, but we want to write any new comments to file
     }
 
     @Override
     public void reload() {
         try {
-            config = yamlHandler.loadConfig(addDefaults, defaultSupplier);
+            config = yamlHandler.loadConfig();
             save();
             observers.forEach(observer -> observer.onConfigLoaded(this));
         }catch (Exception e) {
@@ -91,11 +132,6 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         return config;
     }
 
-    @Override
-    protected boolean isAddDefaults() {
-        return addDefaults;
-    }
-
     private void ensureFile() {
         // Ensure the file exists
         try {
@@ -104,30 +140,28 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
             }
         }catch (Exception e) {
             e.printStackTrace();
-            plugin.getLogger().severe("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
+            logger.severe("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
         }
     }
 
-    /**
-     * Registers an observer to this config (if not already registered) <br>
-     * The observer's {@link ConfigObserver#onConfigLoaded} method will be called immediately, AND every time the config is reloaded
-     * @return If the observer was successfully registered from this call (false if already registered)
-     */
-    public boolean registerObserver(@NotNull ConfigObserver observer) {
+    @Override
+    public boolean registerConfigObserver(@NotNull ConfigObserver observer) {
         if (observers.add(observer)) {
+            // Call the observer immediately, since the config has already been loaded
             observer.onConfigLoaded(this);
             return true;
         }
         return false;
     }
 
-    /**
-     * Unregisters an observer from this config
-     * @param observer The observer to unregister
-     * @return True if the observer was successfully unregistered
-     */
-    public boolean unregisterObserver(@NotNull ConfigObserver observer) {
-        return observers.remove(observer);
+    @Override
+    public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void unregisterConfigObservers() {
+        observers.clear();
     }
 
 
@@ -251,5 +285,14 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     public String getCurrentPath() {
         // No path, this is the root config
         return "";
+    }
+
+    @NotNull
+    private static LoggerService parseLogger(@NotNull JavaPlugin plugin) {
+        if (plugin instanceof KamiPlugin kp) {
+            return kp.getColorLogger();
+        } else {
+            return new JavaPluginLogger(plugin);
+        }
     }
 }

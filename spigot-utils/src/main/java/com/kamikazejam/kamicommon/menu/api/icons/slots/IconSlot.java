@@ -7,5 +7,6 @@ import java.util.Set;
 
 public interface IconSlot {
     Set<Integer> get(@NotNull MenuSize size);
+
     @NotNull IconSlot copy();
 }

@@ -1,5 +1,6 @@
 import com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfig;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSectionStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSequenceStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.MemorySectionStandalone;
@@ -15,7 +16,7 @@ import java.util.UUID;
 public class TestConfig {
     public static void main(String[] args) {
         File file = new File("C:\\Users\\Jake\\Desktop\\Spigot Plugins\\KamiCommon\\standalone-utils\\src\\test\\resources\\testConfig.yml");
-        StandaloneConfig config = new StandaloneConfig(file, false);
+        StandaloneConfig config = new StandaloneConfig(new TestConfigLogger(), file, null);
 
         // Example usage of the config object
         System.out.println("Test 1...");
@@ -112,5 +113,18 @@ public class TestConfig {
         Preconditions.checkArgument(test5SectionChanged, "Section Changed");
         Preconditions.checkArgument(test5ConfigChanged, "Config Changed");
         config.save();
+    }
+
+    private static class TestConfigLogger extends LoggerService {
+
+        @Override
+        public String getLoggerName() {
+            return "TestConfigLogger";
+        }
+
+        @Override
+        public boolean isDebug() {
+            return true;
+        }
     }
 }

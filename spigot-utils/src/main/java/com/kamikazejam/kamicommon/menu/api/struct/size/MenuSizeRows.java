@@ -23,7 +23,7 @@ public final class MenuSizeRows implements MenuSize {
     @Override
     public int getSlotInLastRow(int index) {
         // Require the index to be between 0 and 8, otherwise return -1 so the icon doesn't get placed.
-        if (index < 0 || index > 8) { return -1; }
+        if (index < 0 || index > 8) {return -1;}
         return (rows * 9) - (9 - index);
     }
 

@@ -4,7 +4,7 @@ import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Set;
 
 @Getter
 @SuppressWarnings("unused")

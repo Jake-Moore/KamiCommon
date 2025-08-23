@@ -4,12 +4,21 @@ import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.comments.CommentLine;
-import org.yaml.snakeyaml.nodes.*;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.Tag;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
@@ -21,29 +30,30 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
+    protected final AbstractConfig<?> abstractConfig;
     protected final File configFile;
     protected final String fileName;
+    protected final @Nullable Supplier<InputStream> defaultsStream;
     protected T config;
-    protected final AbstractConfig<?> abstractConfig;
 
-    public AbstractYamlHandler(AbstractConfig<?> abstractConfig, File configFile) {
+    /**
+     * @param abstractConfig The parent config instance who holds this handler.
+     * @param configFile The file to read/write the configuration to/from.
+     * @param defaultsStream An optional stream (of a YAML config) to read default values from, can be null.
+     */
+    public AbstractYamlHandler(AbstractConfig<?> abstractConfig, File configFile, @Nullable Supplier<InputStream> defaultsStream) {
         this.abstractConfig = abstractConfig;
         this.configFile = configFile;
         this.fileName = configFile.getName();
-        this.config = null;
-    }
-
-    public AbstractYamlHandler(AbstractConfig<?> abstractConfig, File configFile, String fileName) {
-        this.abstractConfig = abstractConfig;
-        this.configFile = configFile;
-        this.fileName = fileName;
+        this.defaultsStream = defaultsStream;
         this.config = null;
     }
 
     public abstract T newConfig(MappingNode node, File configFile);
     public abstract MemorySectionMethods<?> newMemorySection(MappingNode node);
 
-    public T loadConfig(boolean addDefaults, @Nullable Supplier<InputStream> stream) {
+    @NotNull
+    public T loadConfig() {
         try {
             if (!configFile.exists()) {
                 if (!configFile.getParentFile().exists()) {
@@ -60,8 +70,8 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
             Reader reader = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8);
             config = newConfig((MappingNode) (YamlUtil.getYaml()).compose(reader), configFile);
 
-            if (addDefaults) {
-                config = addDefaults(stream);
+            if (defaultsStream != null) {
+                config = addDefaults(defaultsStream);
             }
 
             config.save();
@@ -87,9 +97,9 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
     }
 
     private static final DecimalFormat DF_THOUSANDS = new DecimalFormat("#,###");
-    private T addDefaults(@Nullable Supplier<InputStream> defStreamSupplier) {
+    private T addDefaults(@NotNull Supplier<InputStream> defaultsStream) {
         // Use passed arg unless it's null, then grab the IS from the plugin
-        InputStream defConfigStream = getIS(defStreamSupplier);
+        InputStream defConfigStream = defaultsStream.get();
 
         // Error if we still don't have a default config stream
         if (defConfigStream == null) {
@@ -110,7 +120,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
         // Perhaps we can analyze which part of the below logic is slow, and optimize that part
         //  maybe with a file contents comparison before writing the file (if file writing is slow)
 
-        Pair<List<String>, List<NodePair>> pair2 = YAMLParser.parseOrderedKeys(getIS(defStreamSupplier));
+        Pair<List<String>, List<NodePair>> pair2 = YAMLParser.parseOrderedKeys(defaultsStream.get());
         List<String> defaultKeys = pair2.getA();
         List<NodePair> defaultKeyNodes = pair2.getB();
 
@@ -146,13 +156,9 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
         return newConfig;
     }
 
-    private InputStream getIS(@Nullable Supplier<InputStream> defStreamSupplier) {
-        return (defStreamSupplier == null) ? getIS() : defStreamSupplier.get();
-    }
-
-    public abstract InputStream getIS();
-
     public abstract void error(String s);
+
+    public abstract void warn(String s);
 
     private boolean isInteger(String s) {
         try { Integer.parseInt(s); return true;

@@ -33,7 +33,7 @@ public class CmdOpenMenu extends KamiCommand {
         SimpleMenu.Builder builder = SimpleMenuLoader.loadMenu(SpigotUtilsSource.getKamiConfig(), menuKey);
         builder.modifyIcons((access) -> {
             for (String id : access.getMenuIconIDs()) {
-                access.setMenuClick(id, (p, c) -> p.sendMessage(StringUtil.t("&7Menu Item Click (&f" + c.name() + "&7) on &f" + id)));
+                access.setMenuClick(id, (data) -> data.getPlayer().sendMessage(StringUtil.t("&7Menu Item Click (&f" + data.getClickType().name() + "&7) on &f" + id)));
             }
         });
 

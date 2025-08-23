@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,10 +33,20 @@ public class KamiCommonBukkitCommand extends Command implements PluginIdentifiab
 		super(
 				name,
 				kamiCommand.getDesc(),
-				kamiCommand.getTemplate(false, false, false, null),
+				kamiCommand.getFullTemplate(false, false, false, null),
 				Collections.emptyList() // We don't use aliases
 		);
 		this.kamiCommand = kamiCommand;
+
+        // Set the command's permission so that root-level tab completion and execution is restricted by the command's permission.
+        // - Tab completion (after `/`) will only show if sender has the permission.
+        // - Execution will only succeed if the sender has the permission.
+        //
+        // This is derived from the current permission requirements of the command.
+        @Nullable String permission = this.kamiCommand.getBukkitCommandPermission();
+        if (permission != null && !permission.isEmpty()) {
+            this.setPermission(permission);
+        }
 	}
 
 	// -------------------------------------------- //
@@ -55,7 +66,7 @@ public class KamiCommonBukkitCommand extends Command implements PluginIdentifiab
 	@Override
 	public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
 		List<String> argList = this.createArgList(args);
-		this.getKamiCommand().execute(sender, argList);
+		this.getKamiCommand().execute(sender, commandLabel, argList);
 		return true;
 	}
 
@@ -138,7 +149,7 @@ public class KamiCommonBukkitCommand extends Command implements PluginIdentifiab
 		int retSize = ret.size();
 		int maxSize = 100; // The limit for tab completions in the vanilla client is 100.
 		if (retSize > maxSize) {
-			sender.sendMessage(StringUtil.t(String.format(Lang.COMMAND_TOO_MANY_TAB_SUGGESTIONS, retSize)));
+			sender.sendMessage(StringUtil.t(String.format(KamiCommand.Config.getCommandTooManyTabSuggestions(), retSize)));
 			return Collections.emptyList();
 		}
 

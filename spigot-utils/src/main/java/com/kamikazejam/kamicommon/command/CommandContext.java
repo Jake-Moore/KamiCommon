@@ -12,6 +12,7 @@ import java.util.List;
 @Getter @Setter
 public class CommandContext {
     // The raw string arguments passed upon execution. An empty list if there are none.
+    private final @NotNull String label; // The current command's 'label' i.e. the alias used to invoke it.
     private final @NotNull List<String> args;
     private final @NotNull CommandSender sender;
     private final @Nullable Player me;
@@ -20,7 +21,8 @@ public class CommandContext {
     // The index of the next arg to read.
     private int nextArg = 0;
 
-    public CommandContext(@NotNull List<String> args, @NotNull CommandSender sender) {
+    public CommandContext(@NotNull CommandSender sender, @NotNull String label, @NotNull List<String> args) {
+        this.label = label;
         this.args = args;
         this.sender = sender;
         if (sender instanceof Player p) {

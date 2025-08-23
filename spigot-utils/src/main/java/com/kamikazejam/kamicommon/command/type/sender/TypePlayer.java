@@ -1,10 +1,12 @@
 package com.kamikazejam.kamicommon.command.type.sender;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
+import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Represents a Player currently logged into this server, accessible through the Bukkit API.
  */
+@SuppressWarnings("unused")
 public class TypePlayer extends TypeAbstract<Player> {
 
 	private static final TypePlayer i = new TypePlayer();
@@ -28,13 +31,17 @@ public class TypePlayer extends TypeAbstract<Player> {
 	public Player read(String str, CommandSender sender) throws KamiCommonException {
 		Player target = sender.getServer().getPlayer(str);
 		if (target == null) {
-			throw new KamiCommonException().addMsg(StringUtil.t("&cNo player matching \"&3%s&c\"."), str);
+            ChatColor error = KamiCommand.Config.getErrorColor();
+            ChatColor param = KamiCommand.Config.getErrorParamColor();
+			throw new KamiCommonException().addMsg(StringUtil.t(error + "No player matching \"" + param + "%s" + error + "\"."), str);
 		}
 
 		@Nullable PremiumVanishIntegration integration = SpigotUtilsSource.getVanishIntegration();
 		if (integration != null && sender instanceof Player viewer) {
             if (!integration.canSee(viewer, target)) {
-				throw new KamiCommonException().addMsg(StringUtil.t("&cNo player matching \"&3%s&c\"."), str);
+                ChatColor error = KamiCommand.Config.getErrorColor();
+                ChatColor param = KamiCommand.Config.getErrorParamColor();
+                throw new KamiCommonException().addMsg(StringUtil.t(error + "No player matching \"" + param + "%s" + error + "\"."), str);
 			}
 		}
 		return target;

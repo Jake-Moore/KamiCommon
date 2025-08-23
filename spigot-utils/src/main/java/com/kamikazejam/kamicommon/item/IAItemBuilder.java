@@ -1,14 +1,12 @@
 package com.kamikazejam.kamicommon.item;
 
+import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
-
-import dev.lone.itemsadder.api.CustomStack;
 
 @SuppressWarnings({"unused", "UnreachableCode"})
 public class IAItemBuilder extends IBuilder {
@@ -17,19 +15,19 @@ public class IAItemBuilder extends IBuilder {
     public IAItemBuilder(@NotNull ConfigurationSection section) {
         super(section);
     }
-    public IAItemBuilder(@NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IAItemBuilder(@NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         super(section, offlinePlayer);
     }
     public IAItemBuilder(@NotNull XMaterial mat, @NotNull ConfigurationSection section) {
         super(mat, section);
     }
-    public IAItemBuilder(@NotNull XMaterial mat, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IAItemBuilder(@NotNull XMaterial mat, @NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         super(mat, section, offlinePlayer);
     }
     public IAItemBuilder(@NotNull ItemStack base, @NotNull ConfigurationSection section) {
         super(base, section);
     }
-    public IAItemBuilder(@NotNull ItemStack base, @NotNull ConfigurationSection section, @NotNull OfflinePlayer offlinePlayer) {
+    public IAItemBuilder(@NotNull ItemStack base, @NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
         super(base, section, offlinePlayer);
     }
     public IAItemBuilder(@NotNull XMaterial m) {

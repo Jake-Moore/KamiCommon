@@ -7,5 +7,6 @@ import org.jetbrains.annotations.NotNull;
 public interface UpdatingMenu {
     @ApiStatus.Internal
     void updateOneTick();
+
     @NotNull Inventory getInventory();
 }

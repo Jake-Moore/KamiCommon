@@ -36,21 +36,21 @@ import java.util.function.Predicate;
 @Getter
 @Accessors(chain = true)
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends MenuHolder implements Menu, UpdatingMenu permits SimpleMenu, PaginatedMenu, OneClickMenu {
+public sealed abstract class AbstractMenu<M extends AbstractMenu<M>> extends MenuHolder implements Menu<M>, UpdatingMenu permits SimpleMenu, PaginatedMenu, OneClickMenu {
     protected final Player player;
     // priority icon is used to keep track of the order icons were registered, which is necessary when resizing
-    // The data type PriorityMenuIcon also keeps track of the slot data
-    protected final PrioritizedMenuIconMap menuIcons;
+    // The data type PriorityMenuIcon<M> also keeps track of the slot data
+    protected final @NotNull PrioritizedMenuIconMap<M> menuIcons;
     // Configuration
-    protected final MenuEvents events;
-    protected final MenuOptions options;
+    protected final MenuEvents<M> events;
+    protected final MenuOptions<M> options;
 
     // Internal Data
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     private final AtomicInteger tickCounter = new AtomicInteger(0);
 
     // Constructor (Deep Copying from Builder)
-    protected AbstractMenu(@NotNull AbstractMenuBuilder<?,?> builder, @NotNull Player player) {
+    protected AbstractMenu(@NotNull AbstractMenuBuilder<M, ?> builder, @NotNull Player player) {
         super(builder.size.copy(), builder.titleCalculator.buildTitle(player));
         this.player = player;
         this.menuIcons = builder.menuIcons.copy();
@@ -61,14 +61,14 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
     @Override
     public void reopenMenu(@NotNull Player player) {
         // Sanity Checks
-        if (!PlayerUtil.isFullyValidPlayer(player) || !player.getUniqueId().equals(this.player.getUniqueId())) { return; }
+        if (!PlayerUtil.isFullyValidPlayer(player) || !player.getUniqueId().equals(this.player.getUniqueId())) {return;}
         this.open(false);
     }
 
     @Override
     public void reopenMenu(@NotNull Player player, boolean resetTickCounter) {
         // Sanity Checks
-        if (!PlayerUtil.isFullyValidPlayer(player) || !player.getUniqueId().equals(this.player.getUniqueId())) { return; }
+        if (!PlayerUtil.isFullyValidPlayer(player) || !player.getUniqueId().equals(this.player.getUniqueId())) {return;}
         this.open(resetTickCounter);
     }
 
@@ -92,7 +92,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
     }
 
     private InventoryView openInternal(boolean resetTickCounter) {
-        if (!PlayerUtil.isFullyValidPlayer(player)) { return null; }
+        if (!PlayerUtil.isFullyValidPlayer(player)) {return null;}
 
         // Reset the tick counter for icons that auto update if necessary
         if (resetTickCounter) {
@@ -118,7 +118,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
      * @return If the inventory was successfully closed. False if the player is no longer valid (not online).
      */
     public boolean close() {
-        if (!PlayerUtil.isFullyValidPlayer(player)) { return false; }
+        if (!PlayerUtil.isFullyValidPlayer(player)) {return false;}
 
         player.closeInventory();
         return true;
@@ -130,7 +130,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
     }
 
     public void resizeMenu(@NotNull MenuSize size) {
-        // Because PrioritizedMenuIcon keeps the IconSlot, and the PrioritizedMenuIconMap uses the MenuSize
+        // Because PrioritizedMenuIcon<M> keeps the IconSlot, and the PrioritizedMenuIconMap uses the MenuSize
         // every time it needs to derive the slot for a MenuIcon, all we need to do is update the MenuSize (& update MenuHolder)
         // The next time icons are placed, it will automatically re-calculate the slots for each icon
         // and then the priorities (which are based on the order of registration) will be used
@@ -154,23 +154,23 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
     // ------------------------------------------------------------ //
 
     @SuppressWarnings("unchecked")
-    public @NotNull T modifyIcons(@NotNull Consumer<IMenuIconsAccess> consumer) {
+    public @NotNull M modifyIcons(@NotNull Consumer<IMenuIconsAccess<M>> consumer) {
         consumer.accept(this.getMenuIconsAccess());
-        return (T) this;
+        return (M) this;
     }
 
     @Override
-    public @NotNull Map<String, MenuIcon> getMenuIcons() {
+    public @NotNull Map<String, MenuIcon<M>> getMenuIcons() {
         return menuIcons.getMenuIcons();
     }
 
     @Override
-    public @NotNull IMenuIconsAccess getMenuIconsAccess() {
-        return new MenuIconsAccess(this.getMenuSize(), this.menuIcons);
+    public @NotNull IMenuIconsAccess<M> getMenuIconsAccess() {
+        return new MenuIconsAccess<>(this.getMenuSize(), this.menuIcons);
     }
 
     @Override
-    public @Nullable MenuIcon getFillerIcon() {
+    public @Nullable MenuIcon<M> getFillerIcon() {
         return this.menuIcons.get("filler").orElse(null);
     }
 
@@ -191,7 +191,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
      * If the predicate is null, it will always update all icons.
      * @param needsUpdate An optional predicate to filter which icons need new builders.
      */
-    public void placeIcons(@Nullable Predicate<MenuIcon> needsUpdate) {
+    public void placeIcons(@Nullable Predicate<MenuIcon<M>> needsUpdate) {
         int tick = this.tickCounter.get();
 
         // Keep track of the current state of the menu (as a map of each slot to an ItemStack)
@@ -206,7 +206,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
         Set<Integer> forFillerSlots = new HashSet<>();
         for (int i = 0; i < this.getSize(); i++) {
             // If forHere is not null, then it is guaranteed to be enabled
-            @Nullable MenuIcon forHere = this.menuIcons.getActiveIconForSlot(size, i);
+            @Nullable MenuIcon<M> forHere = this.menuIcons.getActiveIconForSlot(size, i);
             @Nullable ItemStack lastItem = (forHere == null) ? null : forHere.getLastItem();
 
             // 1. If there is no icon for this slot, we need to fill it with the filler icon
@@ -250,7 +250,7 @@ public sealed abstract class AbstractMenu<T extends AbstractMenu<T>> extends Men
         slots.removeAll(this.options.getExcludedFillSlots());
 
         // Skip fill if the filler icon is disabled or not found
-        @Nullable MenuIcon icon = this.menuIcons.getOrDefault("filler", null);
+        @Nullable MenuIcon<?> icon = this.menuIcons.getOrDefault("filler", null);
         if (icon == null || !icon.isEnabled()) {
             return;
         }

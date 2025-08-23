@@ -2,7 +2,6 @@ package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -55,9 +54,9 @@ public class RequirementHasItemInHand extends RequirementAbstract {
 		}
 		ItemStack inHand = NmsAPI.getItemInMainHand(player);
 		if (inHand == null) {
-			return StringUtil.t("&cYou must be holding an item in your hand.");
+			return KamiCommand.Config.getErrorColor() + "You must be holding an item in your hand.";
 		}
-		return StringUtil.t("&cInvalid Item: " + Txt.getNicedEnum(inHand.getType()));
+		return KamiCommand.Config.getErrorColor() + "Invalid Item: " + Txt.getNicedEnum(inHand.getType());
 	}
 
 }
