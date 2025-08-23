@@ -2,29 +2,32 @@ name: Maven Deploy & Release
 
 on:
   push:
-    branches: [ "main" ]
+    # Run on 'main' (for releases) and on 'release/v5' (for pre-releases)
+    branches: [ "main", "release/v5" ]
 
 jobs:
-  build:
-
+  # -------------------------------------------------- #
+  #                  Shared Setup Job                  #
+  # -------------------------------------------------- #
+  setup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # Access to Publish a Release
-      packages: write # Access to Publish a Package
+    outputs:
+      version: ${{ steps.extract_version.outputs.version }}
+      is_valid: ${{ steps.validate_version.outputs.is_valid }}
+      is_release: ${{ steps.validate_version.outputs.is_release }}
+      is_prerelease: ${{ steps.validate_version.outputs.is_prerelease }}
+      is_snapshot: ${{ steps.validate_version.outputs.is_snapshot }}
 
-    #--------------------------------------------------------------------------#
-    #           Build the Artifact and Publish to Luxious Repository           #
-    #--------------------------------------------------------------------------#
     steps:
     - uses: actions/checkout@v5
-    
+
     - name: Set up JDK 21
       uses: actions/setup-java@v5
       with:
         java-version: '21'
         distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+        server-id: github
+        settings-path: ${{ github.workspace }}
 
     # Configure: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
     - name: Setup Gradle
@@ -52,39 +55,63 @@ jobs:
         SEMVER_PRERELEASE='^[0-9]+\.[0-9]+\.[0-9]+-(alpha|beta|rc)\.[0-9]+$'
         SEMVER_SNAPSHOT='^.+-SNAPSHOT$'
 
+        # Default values
+        echo "is_valid=false" >> $GITHUB_OUTPUT
+        echo "is_release=false" >> $GITHUB_OUTPUT
+        echo "is_prerelease=false" >> $GITHUB_OUTPUT
+        echo "is_snapshot=false" >> $GITHUB_OUTPUT
+
         if [[ "$VERSION" =~ $SEMVER_RELEASE ]]; then
           echo "is_valid=true" >> $GITHUB_OUTPUT
-          echo "is_snapshot=false" >> $GITHUB_OUTPUT
+          echo "is_release=true" >> $GITHUB_OUTPUT
           echo "Version is a RELEASE"
         elif [[ "$VERSION" =~ $SEMVER_PRERELEASE ]]; then
           echo "is_valid=true" >> $GITHUB_OUTPUT
-          echo "is_snapshot=false" >> $GITHUB_OUTPUT
+          echo "is_prerelease=true" >> $GITHUB_OUTPUT
           echo "Version is a PRE-RELEASE"
         elif [[ "$VERSION" =~ $SEMVER_SNAPSHOT ]]; then
           echo "is_valid=true" >> $GITHUB_OUTPUT
           echo "is_snapshot=true" >> $GITHUB_OUTPUT
           echo "Version is a SNAPSHOT"
         else
-          echo "is_valid=false" >> $GITHUB_OUTPUT
-          echo "is_snapshot=false" >> $GITHUB_OUTPUT
           echo "❌ Invalid version format, skipping deployment"
         fi
 
-    - name: Publish with Gradle
-      # Run only for valid non-snapshot versions
-      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
+  #--------------------------------------------------------------------------#
+  #                          Release Job (main branch)                       #
+  #--------------------------------------------------------------------------#
+  release:
+    needs: setup
+    # Run only for commits into main, with valid versions that match the release pattern
+    if: github.ref == 'refs/heads/main' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Access to Publish a Release
+      packages: write # Access to Publish a Package
+
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v5
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        server-id: github
+        settings-path: ${{ github.workspace }}
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4.4.2
+      with:
+        gradle-version: '9.0.0'
+
+    - name: Publish Release with Gradle
       run: gradle publish
       env:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
 
-    #--------------------------------------------------------------------------------------------
-    #           Create a Github Release
-    #--------------------------------------------------------------------------------------------
-
-    - name: Define Download URLs
-      # Run only for valid non-snapshot versions
-      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
+    - name: Define Release Download URLs
       id: generate_url
       run: |
         VERSION="${{ steps.extract_version.outputs.version }}"
@@ -111,9 +138,7 @@ jobs:
         PLUGIN_JAR_URL="https://github.com/Jake-Moore/KamiCommon/releases/download/$VERSION/KamiCommon-$VERSION.jar"
         echo "plugin_jar_url=$PLUGIN_JAR_URL" >> $GITHUB_OUTPUT
 
-    - name: Create Release (Spigot Jar + Module Jars)
-      # Run only for valid non-snapshot versions
-      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
+    - name: Create GitHub Release for release
       uses: ncipollo/release-action@v1
       with:
         # We only want to add the spigot-jar file, since that is the only fully-shaded and runnable jar
@@ -146,20 +171,16 @@ jobs:
 
     # Update the README.md Badge with the new version
     - name: Create Version Badge
-      # Run only for valid non-snapshot versions
-      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
-        filename: test.json # Use test.svg if you want to use the SVG mode.
+        filename: kc-release-latest.json
         label: Latest Release
         message: "${{ steps.extract_version.outputs.version }}"
         color: blue
 
     - name: Update Download Link Gist
-      # Run only for valid non-snapshot versions
-      if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot == 'false'
       env:
         GIST_ID: 5dfd7c9bb8b81ae5867c81e9a77ee821
         AUTH_KEY: ${{ secrets.GIST_SECRET }}
@@ -171,3 +192,81 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/gists/$GIST_ID \
           -d "{\"files\": {\"kamicommon.txt\": {\"content\": \"$CONTENT\"}}}"
+
+  #--------------------------------------------------------------------------#
+  #                      Pre-release Job (release/v5 branch)                #
+  #--------------------------------------------------------------------------#
+  prerelease:
+    needs: setup
+    # Run only for commits into dev branch, with valid versions that match the prerelease pattern
+    if: github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_prerelease == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Access to Publish a Release
+      packages: write # Access to Publish a Package
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github
+          settings-path: ${{ github.workspace }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4.4.2
+        with:
+          gradle-version: '9.0.0'
+
+      - name: Publish Pre-release with Gradle
+        run: gradle publish
+        env:
+          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
+          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
+
+      - name: Create GitHub Release for pre-release
+        uses: ncipollo/release-action@v1
+        with:
+          # We only want to add the spigot-jar file, since that is the only fully-shaded and runnable jar
+          # All other modules publish api dependencies via their publication, and are meaningless on their own
+          # Those jars should be pulled with a build system, from the luxiouslabs maven repository, such that
+          #  all their dependencies can be fetched as well.
+          artifacts: "spigot-jar/build/libs/*.jar"
+          allowUpdates: true
+          removeArtifacts: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          body: |
+            ## KamiCommon Pre-Release ${{ needs.build-core.outputs.core_version }}
+            
+            ### Plugin Download
+            - [KamiCommon Plugin](${{ steps.generate_url.outputs.plugin_jar_url }})
+            
+            ### Published Artifacts
+            - [standalone-utils](${{ steps.generate_url.outputs.standalone_utils_url }})
+            - [standalone-jar](${{ steps.generate_url.outputs.standalone_jar_url }})
+            - [shared-utils](${{ steps.generate_url.outputs.shared_utils_url }})
+            - [shared-jar](${{ steps.generate_url.outputs.shared_jar_url }})
+            - [spigot-utils](${{ steps.generate_url.outputs.spigot_utils_url }})
+            - [spigot-jar](${{ steps.generate_url.outputs.spigot_jar_url }})
+            ```
+          tag: "${{ steps.extract_version.outputs.version }}"
+          name: "KamiCommon PRERELEASE ${{ steps.extract_version.outputs.version }}"
+
+      # Update the README.md Badge with the new version
+      - name: Create Version Badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
+          filename: kc-prerelease-latest.json
+          label: Latest Pre-Release
+          message: "${{ steps.extract_version.outputs.version }}"
+          color: blue
+
+      # We skip updating the download link, the download link only updates for stable releases
