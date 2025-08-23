@@ -247,7 +247,9 @@ jobs:
             ## KamiCommon Pre-Release ${{ needs.build-core.outputs.core_version }}
             
             ⚠️ **This is a pre-release version for testing purposes.**
-            ```
+            
+            Maven Artifacts are available via the [LuxiousLabs Maven Repository](https://repo.luxiouslabs.net/).
+            - Pre-Releases are published in the `maven-releases` repository.
           tag: "pre-v${{ needs.setup.outputs.version }}"
           name: "KamiCommon ${{ needs.setup.outputs.version }} (Pre-Release)"
 
@@ -260,6 +262,6 @@ jobs:
           filename: kc-prerelease-latest.json
           label: Latest Pre-Release
           message: "${{ needs.setup.outputs.version }}"
-          color: blue
+          color: orange
 
       # We skip updating the download link, the download link only updates for stable releases
