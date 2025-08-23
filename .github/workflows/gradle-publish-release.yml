@@ -107,6 +107,9 @@ jobs:
         
         SPIGOT_JAR_URL="$REPO_URL/spigot-jar/$VERSION/spigot-jar-$VERSION.jar"
         echo "spigot_jar_url=$SPIGOT_JAR_URL" >> $GITHUB_OUTPUT
+        
+        PLUGIN_JAR_URL="https://github.com/Jake-Moore/KamiCommon/releases/download/$VERSION/KamiCommon-$VERSION.jar"
+        echo "plugin_jar_url=$PLUGIN_JAR_URL" >> $GITHUB_OUTPUT
 
     - name: Create Release (Spigot Jar + Module Jars)
       # Run only for valid non-snapshot versions
@@ -128,7 +131,7 @@ jobs:
           ## KamiCommon Release ${{ needs.build-core.outputs.core_version }}
           
           ### Plugin Download
-          - [KamiCommon Plugin](${{ steps.generate_url.outputs.spigot_jar_url }})
+          - [KamiCommon Plugin](${{ steps.generate_url.outputs.plugin_jar_url }})
           
           ### Published Artifacts
           - [standalone-utils](${{ steps.generate_url.outputs.standalone_utils_url }})
@@ -136,6 +139,7 @@ jobs:
           - [shared-utils](${{ steps.generate_url.outputs.shared_utils_url }})
           - [shared-jar](${{ steps.generate_url.outputs.shared_jar_url }})
           - [spigot-utils](${{ steps.generate_url.outputs.spigot_utils_url }})
+          - [spigot-jar](${{ steps.generate_url.outputs.spigot_jar_url }})
           ```
         tag: "${{ steps.extract_version.outputs.version }}"
         name: "KamiCommon ${{ steps.extract_version.outputs.version }}"
