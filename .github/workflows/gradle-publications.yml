@@ -114,7 +114,7 @@ jobs:
     - name: Define Release Download URLs
       id: generate_url
       run: |
-        VERSION="${{ steps.extract_version.outputs.version }}"
+        VERSION="${{ needs.setup.outputs.version }}"
         REPO_URL="https://repo.luxiouslabs.net/repository/maven-releases/com/kamikazejam/kamicommon/"
   
         STANDALONE_UTILS_URL="$REPO_URL/standalone-utils/$VERSION/standalone-utils-$VERSION.jar"
@@ -138,7 +138,7 @@ jobs:
         PLUGIN_JAR_URL="https://github.com/Jake-Moore/KamiCommon/releases/download/$VERSION/KamiCommon-$VERSION.jar"
         echo "plugin_jar_url=$PLUGIN_JAR_URL" >> $GITHUB_OUTPUT
 
-    - name: Create GitHub Release for release
+    - name: Create GitHub Release
       uses: ncipollo/release-action@v1
       with:
         # We only want to add the spigot-jar file, since that is the only fully-shaded and runnable jar
@@ -166,8 +166,8 @@ jobs:
           - [spigot-utils](${{ steps.generate_url.outputs.spigot_utils_url }})
           - [spigot-jar](${{ steps.generate_url.outputs.spigot_jar_url }})
           ```
-        tag: "${{ steps.extract_version.outputs.version }}"
-        name: "KamiCommon ${{ steps.extract_version.outputs.version }}"
+        tag: "${{ needs.setup.outputs.version }}"
+        name: "KamiCommon ${{ needs.setup.outputs.version }}"
 
     # Update the README.md Badge with the new version
     - name: Create Version Badge
@@ -177,14 +177,14 @@ jobs:
         gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
         filename: kc-release-latest.json
         label: Latest Release
-        message: "${{ steps.extract_version.outputs.version }}"
+        message: "${{ needs.setup.outputs.version }}"
         color: blue
 
     - name: Update Download Link Gist
       env:
         GIST_ID: 5dfd7c9bb8b81ae5867c81e9a77ee821
         AUTH_KEY: ${{ secrets.GIST_SECRET }}
-        VERSION: ${{ steps.extract_version.outputs.version }}
+        VERSION: ${{ needs.setup.outputs.version }}
       run: |
         CONTENT="https://github.com/Jake-Moore/KamiCommon/releases/download/$VERSION/kamicommon-$VERSION.jar"
         curl -X PATCH \
@@ -221,13 +221,13 @@ jobs:
         with:
           gradle-version: '9.0.0'
 
-      - name: Publish Pre-release with Gradle
+      - name: Publish Pre-Release with Gradle
         run: gradle publish
         env:
           LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
           LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
 
-      - name: Create GitHub Release for pre-release
+      - name: Create GitHub Pre-Release
         uses: ncipollo/release-action@v1
         with:
           # We only want to add the spigot-jar file, since that is the only fully-shaded and runnable jar
@@ -246,19 +246,10 @@ jobs:
           body: |
             ## KamiCommon Pre-Release ${{ needs.build-core.outputs.core_version }}
             
-            ### Plugin Download
-            - [KamiCommon Plugin](${{ steps.generate_url.outputs.plugin_jar_url }})
-            
-            ### Published Artifacts
-            - [standalone-utils](${{ steps.generate_url.outputs.standalone_utils_url }})
-            - [standalone-jar](${{ steps.generate_url.outputs.standalone_jar_url }})
-            - [shared-utils](${{ steps.generate_url.outputs.shared_utils_url }})
-            - [shared-jar](${{ steps.generate_url.outputs.shared_jar_url }})
-            - [spigot-utils](${{ steps.generate_url.outputs.spigot_utils_url }})
-            - [spigot-jar](${{ steps.generate_url.outputs.spigot_jar_url }})
+            ⚠️ **This is a pre-release version for testing purposes.**
             ```
-          tag: "${{ steps.extract_version.outputs.version }}"
-          name: "KamiCommon PRERELEASE ${{ steps.extract_version.outputs.version }}"
+          tag: "pre-v${{ needs.setup.outputs.version }}"
+          name: "KamiCommon ${{ needs.setup.outputs.version }} (Pre-Release)"
 
       # Update the README.md Badge with the new version
       - name: Create Version Badge
@@ -268,7 +259,7 @@ jobs:
           gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
           filename: kc-prerelease-latest.json
           label: Latest Pre-Release
-          message: "${{ steps.extract_version.outputs.version }}"
+          message: "${{ needs.setup.outputs.version }}"
           color: blue
 
       # We skip updating the download link, the download link only updates for stable releases
