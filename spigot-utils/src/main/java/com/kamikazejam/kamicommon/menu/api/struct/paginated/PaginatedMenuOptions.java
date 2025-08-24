@@ -3,7 +3,6 @@ package com.kamikazejam.kamicommon.menu.api.struct.paginated;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
-import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.PaginatedMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
@@ -113,7 +112,7 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
     }
 
     public interface PaginatedMenuOptionsModification {
-        <T extends Menu<T>> void modify(@NotNull PaginatedMenuOptions options);
+        void modify(@NotNull PaginatedMenuOptions options);
     }
 
     @Override
