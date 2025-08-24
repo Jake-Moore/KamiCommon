@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 /**
  * This Menu class focuses on providing a simple menu that allows for only one single click per opening.
  * Subsequent clicks will not trigger click callbacks on icons, unless the menu is reopened.
@@ -86,9 +88,9 @@ public final class OneClickMenu extends AbstractMenu<OneClickMenu> {
             this(new MenuSizeType(type));
         }
 
-        public @NotNull Builder oneClickOptions(OneClickMenuOptions.@NotNull OneClickMenuOptionsModification modification) {
-            Preconditions.checkNotNull(modification, "Modification must not be null.");
-            modification.modify((OneClickMenuOptions) this.options);
+        public @NotNull Builder oneClickOptions(@NotNull Consumer<OneClickMenuOptions> consumer) {
+            Preconditions.checkNotNull(consumer, "consumer must not be null.");
+            consumer.accept((OneClickMenuOptions) this.options);
             return this;
         }
 
