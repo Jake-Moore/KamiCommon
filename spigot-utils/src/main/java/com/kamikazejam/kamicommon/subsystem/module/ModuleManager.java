@@ -5,13 +5,10 @@ import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class ModuleManager {
-    private final Map<Class<? extends Module>, Module> moduleMap = new HashMap<>();
     @Getter private final List<Module> moduleList = new ArrayList<>();
 
     private final KamiPlugin plugin;
@@ -24,7 +21,6 @@ public class ModuleManager {
             if (!moduleList.contains(module)) {
                 moduleList.add(module);
             }
-            moduleMap.put(module.getClass(), module);
 
             // The call to isEnabledInConfig will handle config state appropriately
             if (module.isEnabledInConfig()) {
@@ -46,7 +42,6 @@ public class ModuleManager {
         }
         // Ensure the module structures are cleared
         moduleList.clear();
-        moduleMap.clear();
     }
 
     public boolean disable(Module module) {
@@ -55,7 +50,6 @@ public class ModuleManager {
 
         try {
             module.handleDisable();
-            moduleMap.remove(module.getClass());
             moduleList.remove(module);
             return true;
         } catch (Throwable e) {
@@ -77,28 +71,6 @@ public class ModuleManager {
             e.printStackTrace();
         }
         return false;
-    }
-
-    /**
-     * Get the origin module class by the class name.
-     *
-     * @param clazz Module class
-     * @param <T>   Module
-     * @return Origin module class, if not exist null.
-     */
-    public <T extends Module> T get(Class<T> clazz) {
-        Module module = moduleMap.get(clazz);
-        if (module == null) {
-            for (Module modules : moduleList) {
-                if (clazz.isInstance(modules)) {
-                    return clazz.cast(modules);
-                }
-            }
-        }
-        if (clazz.isInstance(module)) {
-            return clazz.cast(module);
-        }
-        return null;
     }
 
     @Nullable
