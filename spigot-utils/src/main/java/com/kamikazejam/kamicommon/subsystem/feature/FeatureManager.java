@@ -6,13 +6,10 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class FeatureManager {
-    private final Map<Class<? extends Feature>, Feature> featureMap = new HashMap<>();
     @Getter private final List<Feature> featureList = new ArrayList<>();
 
     private final KamiPlugin plugin;
@@ -25,7 +22,6 @@ public class FeatureManager {
             if (!featureList.contains(feature)) {
                 featureList.add(feature);
             }
-            featureMap.put(feature.getClass(), feature);
 
             // Initialize the Config
             FeatureConfig config = feature.createConfig();
@@ -49,7 +45,6 @@ public class FeatureManager {
         }
         // Ensure the feature structures are cleared
         featureList.clear();
-        featureMap.clear();
     }
 
     // Private disable access. Once a Feature is enabled, it should not be disabled until the plugin is shut down.
@@ -59,7 +54,6 @@ public class FeatureManager {
 
         try {
             feature.handleDisable();
-            featureMap.remove(feature.getClass());
             featureList.remove(feature);
             return true;
         } catch (Throwable e) {
@@ -81,28 +75,6 @@ public class FeatureManager {
             e.printStackTrace();
         }
         return false;
-    }
-
-    /**
-     * Get the origin feature class by the class name.
-     *
-     * @param clazz Feature class
-     * @param <T>   Feature
-     * @return Origin feature class, if not exist null.
-     */
-    public <T extends Feature> T get(Class<T> clazz) {
-        Feature feature = featureMap.get(clazz);
-        if (feature == null) {
-            for (Feature features : featureList) {
-                if (clazz.isInstance(features)) {
-                    return clazz.cast(features);
-                }
-            }
-        }
-        if (clazz.isInstance(feature)) {
-            return clazz.cast(feature);
-        }
-        return null;
     }
 
     @Nullable

@@ -434,13 +434,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
             getModuleManager().registerModule(module);
         }
     }
-    /**
-     * @deprecated Use singleton pattern on your modules instead of this!!
-     */
-    @Deprecated
-    public <M extends Module> M getModule(Class<M> clazz) {
-        return moduleManager.get(clazz);
-    }
 
     // -------------------------------------------- //
     // FEATURE MANAGEMENT
@@ -461,13 +454,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         for (Feature feature : features) {
             getFeatureManager().registerFeature(feature);
         }
-    }
-    /**
-     * @deprecated Use singleton pattern on your features instead of this!!
-     */
-    @Deprecated
-    public <F extends Feature> F getFeature(Class<F> clazz) {
-        return featureManager.get(clazz);
     }
 
 
