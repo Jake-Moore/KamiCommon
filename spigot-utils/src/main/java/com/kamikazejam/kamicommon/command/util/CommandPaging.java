@@ -72,7 +72,7 @@ public class CommandPaging {
         String finalTitle = leftPadding + pageTitle + rightPadding;
 
         // Create the
-        return applyPageActions(command, new KMessageSingle(finalTitle), pageCount, pageNum);
+        return applyPageActions(command, new KMessageSingle(finalTitle), pageNum, pageCount);
     }
 
     /**
@@ -163,8 +163,8 @@ public class CommandPaging {
     private static KMessageSingle applyPageActions(
             @NotNull KamiCommand command,
             @NotNull KMessageSingle title,
-            int pageCount,
-            int pageNum
+            int pageNum,
+            int pageCount
     ) {
         // Validate KamiCommand context
         CommandContext context = Preconditions.checkNotNull(
