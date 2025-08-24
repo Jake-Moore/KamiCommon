@@ -111,10 +111,6 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         this.titleFormat = titleFormat;
     }
 
-    public interface PaginatedMenuOptionsModification {
-        void modify(@NotNull PaginatedMenuOptions options);
-    }
-
     @Override
     public @NotNull PaginatedMenuOptions copy() {
         // Use copy constructor to copy paginated options
