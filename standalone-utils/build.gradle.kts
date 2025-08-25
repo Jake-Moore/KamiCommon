@@ -23,6 +23,12 @@ tasks {
     publish.get().dependsOn(build.get())
 }
 
+// Java version MUST stay at 17 to support KamiCommonNMS which uses standalone-utils in certain J17 modules
+//   It cannot get promoted higher than 17 unless that module is also promoted.
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
 @Suppress("UNCHECKED_CAST")
 val getPublishingVersion = rootProject.extra["getPublishingVersion"] as () -> Pair<String, Boolean>?
 
