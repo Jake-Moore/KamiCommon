@@ -83,10 +83,50 @@ allprojects {
     tasks.named<Test>("test") {
         enabled = false
     }
+
+    // Configure basic UTF-8 for all Javadoc tasks
+    tasks.withType<Javadoc> {
+        (options as StandardJavadocDocletOptions).apply {
+            encoding = "UTF-8"
+            charSet = "UTF-8"
+        }
+    }
 }
 
 // Disable root project build
 tasks.jar.get().enabled = false
+
+// Register a root task called aggregateJavadoc that runs all subproject's "aggregateJavadoc" tasks
+tasks.register("aggregateJavadoc") {
+    description = "Aggregates Javadoc from all subprojects"
+    group = "documentation"
+
+    dependsOn(subprojects.map { it.tasks.named("aggregateJavadoc") })
+    // require the `build/docs/aggregateJavadoc` folder exist for all subprojects
+    doLast {
+        subprojects.forEach {
+            val javadocDir = it.layout.buildDirectory.dir("docs/aggregateJavadoc").get().asFile
+            if (!javadocDir.exists()) {
+                throw GradleException(
+                    "Javadoc directory for project ${it.name} does not exist: $javadocDir. " +
+                            "Did you run the 'aggregateJavadoc' task in that subproject?"
+                )
+            }
+        }
+    }
+}
+tasks.register("aggregateJavadocJar") {
+    description = "Aggregates Javadoc from all subprojects"
+    group = "documentation"
+
+    dependsOn(subprojects.map { it.tasks.named("aggregateJavadocJar") })
+}
+tasks.register("aggregateSourcesJar") {
+    description = "Aggregates Javadoc from all subprojects"
+    group = "documentation"
+
+    dependsOn(subprojects.map { it.tasks.named("aggregateSourcesJar") })
+}
 
 // -------------------------------------------------- //
 //          Version Management for Publishing         //

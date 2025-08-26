@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * This class exists as a bootloader for the {@link KamiCommon} plugin & APIs.<br>
+ * This class exists as a bootloader for the {@link KamiCommon} plugin and APIs.<br>
  * As of v4 of the KamiCommon library, most of the APIs were moved to the spigot-utils module, and this class
  * has less responsibility, mainly to initialize the {@link SpigotUtilsSource} from spigot-utils.
  */

@@ -1,10 +1,11 @@
 plugins {
+    id("javadoc-publish-convention")
     // Unique plugins for this module
 }
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api("com.kamikazejam.kamicommon:spigot-nms:1.0.10")
+    api("com.kamikazejam.kamicommon:spigot-nms:1.1.2")
     api(project(":standalone-utils")) // Also includes shared-utils
 
     api("com.google.code.gson:gson:2.13.1")
@@ -26,46 +27,17 @@ dependencies {
     compileOnly("nl.marido.deluxecombat:DeluxeCombat:1.40.5")
 }
 
-tasks {
-    publish.get().dependsOn(build.get())
-}
-
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
-@Suppress("UNCHECKED_CAST")
-val getPublishingVersion = rootProject.extra["getPublishingVersion"] as () -> Pair<String, Boolean>?
-
-publishing {
-    val versionData = getPublishingVersion() ?: run {
-        logger.warn("⚠️ Skipping publication: VERSION '${rootProject.version}' is not valid.")
-        return@publishing
-    }
-    val resolvedVersion = versionData.first
-    val isSnapshot = versionData.second
-
-    publications {
-        create<MavenPublication>("shadow") {
-            groupId = rootProject.group.toString()
-            artifactId = project.name
-            version = resolvedVersion
-            from(components["java"])
-        }
-    }
-
-    repositories {
-        maven {
-            credentials {
-                username = System.getenv("LUXIOUS_NEXUS_USER")
-                password = System.getenv("LUXIOUS_NEXUS_PASS")
-            }
-            // getPublishingVersion will append "-SNAPSHOT" if the version is not a SemVer release version
-            url = if (!isSnapshot) {
-                uri("https://repo.luxiouslabs.net/repository/maven-releases/")
-            } else {
-                uri("https://repo.luxiouslabs.net/repository/maven-snapshots/")
-            }
-        }
-    }
+// Configure javadoc-publish-convention
+configure<Javadoc_publish_convention_gradle.JavadocPublishExtension> {
+    // spigot-utils includes shared-utils AND standalone-utils
+    exportedProjects = listOf(
+        ":spigot-utils",
+        ":standalone-utils",
+        ":shared-utils",
+    )
+    moduleName = "spigot-utils"
 }

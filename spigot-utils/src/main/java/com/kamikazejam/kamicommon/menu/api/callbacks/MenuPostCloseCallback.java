@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 public interface MenuPostCloseCallback<M extends Menu<M>> {
     /**
      * Called after the menu is closed. With the ability to safely re-open the menu if needed.<br>
-     * See {@link Menu#reopenMenu)} for reopening the menu for the player.
+     * See {@link Menu#reopenMenu()} )} for reopening the menu for the player.
      * @param player The player who closed the menu.
      * @param menu The menu that was closed
      */

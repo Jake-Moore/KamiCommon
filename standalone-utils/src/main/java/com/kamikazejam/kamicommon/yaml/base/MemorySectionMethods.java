@@ -4,9 +4,6 @@ import com.kamikazejam.kamicommon.yaml.AbstractMemorySection;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.SequenceNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -482,7 +479,7 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     /**
      * Saves the config to the file
      * @param force If the config should be saved even if no changes were made
-     * @return true IFF the config was saved successfully (can be skipped if the config is not changed & force is false)
+     * @return true IFF the config was saved successfully (can be skipped if the config is not changed and force is false)
      */
     public boolean save(File f, boolean force) {
         if (!force && !isChanged()) { return false; }

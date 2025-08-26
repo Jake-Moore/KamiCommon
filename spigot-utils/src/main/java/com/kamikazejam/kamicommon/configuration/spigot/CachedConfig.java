@@ -61,7 +61,7 @@ public abstract class CachedConfig<T extends KamiConfig> implements ConfigObserv
     }
 
     /**
-     * Manual reload method. Call this to have {@link #onConfigLoaded(KamiConfig)} called again & your cache reloaded.<br>
+     * Manual reload method. Call this to have {@link #onConfigLoaded(KamiConfig)} called again and your cache reloaded.<br>
      * This method DOES NOT reload the underlying config, it simply calls {@link #onConfigLoaded(KamiConfig)}, triggering your caching logic.
      * <p>
      * This {@link CachedConfig} class as a member of {@link ConfigObserver} is automatically registered to receive all config reloads.<br>

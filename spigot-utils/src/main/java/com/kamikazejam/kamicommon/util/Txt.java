@@ -331,7 +331,7 @@ public class Txt {
      * Forms a page title using {@param title}, {@param pageNum} and {@param pageCount}, and then passes
      * it to {@link Txt#titleize(String)}.<br><br>
      *
-     * Default format is configured in {@link Config#getPageTitleFormat()} and looks like:<br>
+     * Default format is configured in {@link Config#pageTitleFormat} and looks like:<br>
      *
      * @param title The unformatted title, which will be titleized.
      * @param pageNum The current page number, 1-based (e.g. 1 for the first page).
