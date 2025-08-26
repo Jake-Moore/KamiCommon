@@ -492,7 +492,7 @@ jobs:
             sed "s|{{PAGE_TITLE}}|KamiCommon NMS API - ${MODULE}|g" ../template.html | \
             sed "s|{{PAGE_HEADING}}|🚀 ${MODULE} Documentation|g" | \
             sed "s|{{PAGE_DESCRIPTION}}|Documentation for the ${MODULE} module. Choose a version below to browse the API documentation.|g" | \
-            sed "s|{{GITHUB_PATH}}|/Jake-Moore/KamiCommonNMS|g" > temp_index.html
+            sed "s|{{GITHUB_PATH}}|/Jake-Moore/KamiCommon|g" > temp_index.html
 
             # Replace the dynamic content placeholder
             awk '
@@ -527,24 +527,9 @@ jobs:
           cat > dynamic_content.html << 'EOF'
           <h2>📦 Available Modules</h2>
           <div class="modules-grid">
-              <a href="standalone-utils/" class="module-card">
-                  <h3>🔧 standalone-utils</h3>
-                  <p>Utility classes for standalone applications</p>
-              </a>
-          
-              <a href="standalone-jar/" class="module-card">
-                  <h3>📦 standalone-jar</h3>
-                  <p>Packaged JAR for standalone applications</p>
-              </a>
-          
-              <a href="shared-utils/" class="module-card">
-                  <h3>🤝 shared-utils</h3>
-                  <p>Shared utility classes across platforms</p>
-              </a>
-          
-              <a href="shared-jar/" class="module-card">
-                  <h3>📚 shared-jar</h3>
-                  <p>Shared JAR components</p>
+              <a href="spigot-jar/" class="module-card">
+                  <h3>🎮 spigot-jar</h3>
+                  <p>Spigot plugin JAR components</p>
               </a>
           
               <a href="spigot-utils/" class="module-card">
@@ -552,9 +537,24 @@ jobs:
                   <p>Spigot-specific utility classes</p>
               </a>
           
-              <a href="spigot-jar/" class="module-card">
-                  <h3>🎮 spigot-jar</h3>
-                  <p>Spigot plugin JAR components</p>
+              <a href="standalone-jar/" class="module-card">
+                  <h3>📦 standalone-jar</h3>
+                  <p>Packaged JAR for standalone applications</p>
+              </a>
+          
+              <a href="standalone-utils/" class="module-card">
+                  <h3>🔧 standalone-utils</h3>
+                  <p>Utility classes for standalone applications</p>
+              </a>
+          
+              <a href="shared-jar/" class="module-card">
+                  <h3>📚 shared-jar</h3>
+                  <p>Shared JAR components</p>
+              </a>
+          
+              <a href="shared-utils/" class="module-card">
+                  <h3>🤝 shared-utils</h3>
+                  <p>Shared utility classes across platforms</p>
               </a>
           </div>
           
@@ -601,7 +601,7 @@ jobs:
           sed "s|{{PAGE_TITLE}}|KamiCommon NMS API Documentation|g" template.html | \
           sed "s|{{PAGE_HEADING}}|🚀 KamiCommon NMS API Documentation|g" | \
           sed "s|{{PAGE_DESCRIPTION}}|Welcome to the KamiCommon NMS API documentation. Select a module below to browse the API documentation.|g" | \
-          sed "s|{{GITHUB_PATH}}|/Jake-Moore/KamiCommonNMS|g" > temp_index.html
+          sed "s|{{GITHUB_PATH}}|/Jake-Moore/KamiCommon|g" > temp_index.html
           
           # Replace the dynamic content placeholder
           awk '
