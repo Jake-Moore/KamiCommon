@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Data class to hold information about a click event occurring inside a {@link Player}'s {@link Inventory}.
- * This is a click that occurs while the given {@link #getMenu()} is open for the player.
+ * This is a click that occurs while the given {@link #menu} is open for the player.
  */
 @Getter
 public class PlayerClickData<M extends Menu<M>> {

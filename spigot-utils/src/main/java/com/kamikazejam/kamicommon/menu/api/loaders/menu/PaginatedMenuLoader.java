@@ -24,7 +24,7 @@ public class PaginatedMenuLoader {
     /**
      * Loads a {@link PaginatedMenu.Builder} from a {@link ConfigurationSection} with the given key.<br>
      * Identical to calling {@link #loadMenu(ConfigurationSection)} with {@link ConfigurationSection#getConfigurationSection(String key)}<br>
-     * Uses the Default pagination layout in {@link Config#getLayout()}.
+     * Uses the Default pagination layout in {@link Config#layout}.
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
     public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section, @NotNull String key) {
@@ -33,7 +33,7 @@ public class PaginatedMenuLoader {
 
     /**
      * Loads a {@link PaginatedMenu.Builder} from a {@link ConfigurationSection}.<br>
-     * Uses the Default pagination layout in {@link Config#getLayout()}.
+     * Uses the Default pagination layout in {@link Config#layout}.
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
     public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section) {
@@ -43,7 +43,7 @@ public class PaginatedMenuLoader {
     /**
      * Loads a {@link PaginatedMenu.Builder} from a {@link ConfigurationSection} with the given key.<br>
      * Identical to calling {@link #loadMenu(ConfigurationSection)} with {@link ConfigurationSection#getConfigurationSection(String key)}<br>
-     * Uses the provided {@link PaginationLayout} if not null, otherwise uses the Default pagination layout in {@link Config#getLayout()}.
+     * Uses the provided {@link PaginationLayout} if not null, otherwise uses the Default pagination layout in {@link Config#layout}.
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
     public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section, @NotNull String key, @Nullable PaginationLayout layout) {
@@ -52,7 +52,7 @@ public class PaginatedMenuLoader {
 
     /**
      * Loads a {@link PaginatedMenu.Builder} from a {@link ConfigurationSection}.<br>
-     * Uses the provided {@link PaginationLayout} if not null, otherwise uses the Default pagination layout in {@link Config#getLayout()}.
+     * Uses the provided {@link PaginationLayout} if not null, otherwise uses the Default pagination layout in {@link Config#layout}.
      * @return A new {@link PaginatedMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
     public static @NotNull PaginatedMenu.Builder loadMenu(@NotNull ConfigurationSection section, @Nullable PaginationLayout layout) {
