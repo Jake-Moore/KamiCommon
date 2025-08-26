@@ -394,7 +394,7 @@ jobs:
               echo "  Wrote empty versions.json for $MODULE"
               popd >/dev/null
               continue
-            end
+            fi
 
             # Write versions.json
             {
