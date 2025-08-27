@@ -37,6 +37,9 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     private final List<KamiCommand> commandList = new ArrayList<>();
     private final List<Disableable> disableableList = new ArrayList<>();
 
+    // Hooks
+    private final List<ObservableConfig> configHooks = new ArrayList<>();
+
     /**
      * @return The KamiPlugin that this subsystem is registered to
      */
@@ -164,10 +167,21 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     public abstract File getConfigFileDestination();
 
     private @Nullable C subsystemConfig = null;
+
+    /**
+     * Reload the subsystem config from its yaml file on disk.<br>
+     *
+     * Will also call any {@link ObservableConfig} hooks registered via {@link #registerReloadHook(ObservableConfig)}
+     */
     @Override
     public final void reloadConfig() {
+        // Reload Primary Config
         C config = Preconditions.checkNotNull(subsystemConfig, "SubsystemConfig is null! Cannot reload config!");
         config.reload(); // Automatically saves
+        // Call hook reloads
+        for (ObservableConfig hook : configHooks) {
+            hook.reloadObservableConfig();
+        }
     }
 
     @Override
@@ -198,6 +212,17 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     @Override
     public @NotNull KamiConfigExt getKamiConfig() {
         return getConfig();
+    }
+
+    /**
+     * Adds a hook to call this observable's {@link #reloadObservableConfig()} method whenever this subsystem's config is reloaded.<br>
+     * <br>
+     * This means that when this subsystem gets reloaded, this config will also be reloaded.
+     */
+    public final void registerReloadHook(@NotNull ObservableConfig config) {
+        Preconditions.checkNotNull(config, "Cannot register a null config hook!");
+        // caller's responsibility to not register the same hook multiple times
+        configHooks.add(config);
     }
 
     // -------------------------------------------- //
@@ -464,6 +489,16 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     @Override
     public void unregisterConfigObservers() {
         getConfig().unregisterConfigObservers();
+    }
+
+    /**
+     * Reloads the backing config for this observable, notifying all registered observers of the change.<br>
+     * <br>
+     * Equivalent to calling {@link #reloadConfig()} on this subsystem.<br>
+     */
+    @Override
+    public void reloadObservableConfig() {
+        reloadConfig();
     }
 
     // -------------------------------------------- //

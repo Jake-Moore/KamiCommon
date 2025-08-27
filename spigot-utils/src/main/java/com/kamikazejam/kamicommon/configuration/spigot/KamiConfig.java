@@ -164,10 +164,15 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         observers.clear();
     }
 
-
-
-
-
+    /**
+     * Reload the backing config for this observable, notifying all registered observers of the change.<br>
+     * <br>
+     * Equivalent to calling {@link #reload()}
+     */
+    @Override
+    public void reloadObservableConfig() {
+        reload();
+    }
 
     // Below this point are overrides for the ConfigurationSection abstract class
     // This allows this class to be used as a swap in replacement for a YamlConfiguration (same methods)

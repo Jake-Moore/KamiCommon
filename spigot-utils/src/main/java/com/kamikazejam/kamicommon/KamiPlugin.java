@@ -592,4 +592,14 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     public void unregisterConfigObservers() {
         this.getKamiConfig().unregisterConfigObservers();
     }
+
+    /**
+     * Reload the default KamiConfig for this plugin, notifying all registered observers of the change.<br>
+     * <br>
+     * Equivalent to {@link #reloadKamiConfig()}
+     */
+    @Override
+    public void reloadObservableConfig() {
+        this.reloadKamiConfig();
+    }
 }
