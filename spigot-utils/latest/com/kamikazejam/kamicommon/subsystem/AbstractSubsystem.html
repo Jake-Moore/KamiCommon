@@ -247,15 +247,33 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <div class="block">Registers one or more listeners for this subsystem.<br>
  The listeners will be automatically unregistered when the subsystem is disabled.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerTasks(org.bukkit.scheduler.BukkitTask...)" class="member-name-link">registerTasks</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/scheduler/BukkitTask.html" title="class or interface in org.bukkit.scheduler" class="external-link">BukkitTask</a>...&nbsp;tasks)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)" class="member-name-link">registerReloadHook</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a>&nbsp;config)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Adds a hook to call this observable's <a href="#reloadObservableConfig()"><code>reloadObservableConfig()</code></a> method whenever this subsystem's config is reloaded.<br>
+ <br>
+ This means that when this subsystem gets reloaded, this config will also be reloaded.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerTasks(org.bukkit.scheduler.BukkitTask...)" class="member-name-link">registerTasks</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/scheduler/BukkitTask.html" title="class or interface in org.bukkit.scheduler" class="external-link">BukkitTask</a>...&nbsp;tasks)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers one or more tasks for this subsystem.<br>
  The tasks will be automatically cancelled when the subsystem is disabled.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadConfig()" class="member-name-link">reloadConfig</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadConfig()" class="member-name-link">reloadConfig</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Reload the subsystem config from its yaml file on disk.<br>
+
+ Will also call any <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe"><code>ObservableConfig</code></a> hooks registered via <a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)"><code>registerReloadHook(ObservableConfig)</code></a></div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadObservableConfig()" class="member-name-link">reloadObservableConfig</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Reloads the backing config for this observable, notifying all registered observers of the change.<br>
+ <br>
+ Equivalent to calling <a href="#reloadConfig()"><code>reloadConfig()</code></a> on this subsystem.<br></div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#saveConfig()" class="member-name-link">saveConfig</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -477,6 +495,9 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <section class="detail" id="reloadConfig()">
 <h3>reloadConfig</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadConfig</span>()</div>
+<div class="block">Reload the subsystem config from its yaml file on disk.<br>
+
+ Will also call any <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe"><code>ObservableConfig</code></a> hooks registered via <a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)"><code>registerReloadHook(ObservableConfig)</code></a></div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../CoreMethods.html#reloadConfig()">reloadConfig</a></code>&nbsp;in interface&nbsp;<code><a href="../CoreMethods.html" title="interface in com.kamikazejam.kamicommon">CoreMethods</a></code></dd>
@@ -531,6 +552,16 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <dt>Specified by:</dt>
 <dd><code><a href="../CoreMethods.html#getKamiConfig()">getKamiConfig</a></code>&nbsp;in interface&nbsp;<code><a href="../CoreMethods.html" title="interface in com.kamikazejam.kamicommon">CoreMethods</a></code></dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)">
+<h3>registerReloadHook</h3>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">registerReloadHook</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a>&nbsp;config)</span></div>
+<div class="block">Adds a hook to call this observable's <a href="#reloadObservableConfig()"><code>reloadObservableConfig()</code></a> method whenever this subsystem's config is reloaded.<br>
+ <br>
+ This means that when this subsystem gets reloaded, this config will also be reloaded.</div>
 </section>
 </li>
 <li>
@@ -795,6 +826,19 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../configuration/spigot/observe/ObservableConfig.html#unregisterConfigObservers()">unregisterConfigObservers</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="reloadObservableConfig()">
+<h3>reloadObservableConfig</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadObservableConfig</span>()</div>
+<div class="block">Reloads the backing config for this observable, notifying all registered observers of the change.<br>
+ <br>
+ Equivalent to calling <a href="#reloadConfig()"><code>reloadConfig()</code></a> on this subsystem.<br></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="../configuration/spigot/observe/ObservableConfig.html#reloadObservableConfig()">reloadObservableConfig</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a></code></dd>
 </dl>
 </section>
 </li>
