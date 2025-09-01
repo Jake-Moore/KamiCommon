@@ -79,6 +79,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><a href="../package-summary.html">com.kamikazejam.kamicommon</a></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><a href="patch/package-summary.html">com.kamikazejam.kamicommon.item.patch</a></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </div>
 </li>
@@ -89,12 +91,22 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="IAItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">IAItemBuilder</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="IBuilder.html" title="class in com.kamikazejam.kamicommon.item">IBuilder</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;T extends <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;T&gt;&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">&nbsp;</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">A builder class for wrapping <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>ItemStack</code></a>s and applying patches to them.<br>
+ Patches modify the base metadata and nbt of the item via easier to use methods exposed by this class.<br>
+ <br>
+ <strong>NOTE:</strong> Using third party plugins like ItemsAdder which provide custom items IS SUPPORTED!<br>
+ Just adjust your workflow to parse the <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>ItemStack</code></a> from their API, and then use that object as the prototype for this wrapper:</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ItemBuilderLoader.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilderLoader</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Loader to assist in automatically extracting <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item"><code>ItemBuilder</code></a>s from configuration sections.<br>
+ <br>
+ Supports the <a href="../configuration/spigot/KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot"><code>KamiConfig</code></a> system, requiring a <a href="../yaml/spigot/ConfigurationSection.html" title="interface in com.kamikazejam.kamicommon.yaml.spigot"><code>ConfigurationSection</code></a> object to load from.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab3"><a href="NbtType.html" title="enum class in com.kamikazejam.kamicommon.item">NbtType</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab3">&nbsp;</div>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="NbtType.ConfRead.html" title="interface in com.kamikazejam.kamicommon.item">NbtType.ConfRead</a></div>

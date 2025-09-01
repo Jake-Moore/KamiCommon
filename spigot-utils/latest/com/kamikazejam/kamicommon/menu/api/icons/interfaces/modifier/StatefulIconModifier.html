@@ -93,8 +93,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">StatefulIconModifier</span><span class="extends-implements">
 extends <a href="MenuIconModifier.html" title="interface in com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier">MenuIconModifier</a></span></div>
-<div class="block">A stateful modifier for an icon's <a href="../../../../../item/IBuilder.html" title="class in com.kamikazejam.kamicommon.item"><code>IBuilder</code></a> it wants to place in a menu.<br>
- The <a href="#modify(com.kamikazejam.kamicommon.item.IBuilder,org.bukkit.inventory.ItemStack,org.bukkit.entity.Player,int)"><code>modify(com.kamikazejam.kamicommon.item.IBuilder, org.bukkit.inventory.ItemStack, org.bukkit.entity.Player, int)</code></a> method also provides the existing item in the menu (if it exists) and the <a href="https://jd.papermc.io/paper/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> viewing the menu.</div>
+<div class="block">A stateful modifier for an icon's <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item"><code>ItemBuilder</code></a> it wants to place in a menu.<br>
+ The <a href="#modify(com.kamikazejam.kamicommon.item.ItemBuilder,org.bukkit.inventory.ItemStack,org.bukkit.entity.Player,int)"><code>modify(com.kamikazejam.kamicommon.item.ItemBuilder, org.bukkit.inventory.ItemStack, org.bukkit.entity.Player, int)</code></a> method also provides the existing item in the menu (if it exists) and the <a href="https://jd.papermc.io/paper/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> viewing the menu.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -109,8 +109,8 @@ extends <a href="MenuIconModifier.html" title="interface in com.kamikazejam.kami
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#modify(com.kamikazejam.kamicommon.item.IBuilder,org.bukkit.inventory.ItemStack,org.bukkit.entity.Player,int)" class="member-name-link">modify</a><wbr>(@NotNull <a href="../../../../../item/IBuilder.html" title="class in com.kamikazejam.kamicommon.item">IBuilder</a>&nbsp;initialBuilder,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#modify(com.kamikazejam.kamicommon.item.ItemBuilder,org.bukkit.inventory.ItemStack,org.bukkit.entity.Player,int)" class="member-name-link">modify</a><wbr>(@NotNull <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&nbsp;initialBuilder,
  @Nullable <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;currentItem,
  @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player,
  int&nbsp;tickCounter)</code></div>
@@ -133,10 +133,11 @@ extends <a href="MenuIconModifier.html" title="interface in com.kamikazejam.kami
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="modify(com.kamikazejam.kamicommon.item.IBuilder,org.bukkit.inventory.ItemStack,org.bukkit.entity.Player,int)">
+<section class="detail" id="modify(com.kamikazejam.kamicommon.item.ItemBuilder,org.bukkit.inventory.ItemStack,org.bukkit.entity.Player,int)">
 <h3>modify</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">modify</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="../../../../../item/IBuilder.html" title="class in com.kamikazejam.kamicommon.item">IBuilder</a>&nbsp;initialBuilder,
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="return-type">@NotNull <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">modify</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&nbsp;initialBuilder,
  @Nullable
  @Nullable <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;currentItem,
  @NotNull
@@ -150,6 +151,8 @@ extends <a href="MenuIconModifier.html" title="interface in com.kamikazejam.kami
 <dd><code>currentItem</code> - is the current item in the menu, if it exists. (null if the icon has not been placed yet)</dd>
 <dd><code>player</code> - is the player who is viewing the menu.</dd>
 <dd><code>tickCounter</code> - is the number of ticks since the menu was opened.</dd>
+<dt>Returns:</dt>
+<dd>The modified builder (can be the same instance modified in place).</dd>
 </dl>
 </section>
 </li>

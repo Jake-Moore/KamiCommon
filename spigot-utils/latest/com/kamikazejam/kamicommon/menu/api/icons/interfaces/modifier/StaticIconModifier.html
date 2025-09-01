@@ -93,7 +93,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">StaticIconModifier</span><span class="extends-implements">
 extends <a href="MenuIconModifier.html" title="interface in com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier">MenuIconModifier</a></span></div>
-<div class="block">A static modifier for an icon's <a href="../../../../../item/IBuilder.html" title="class in com.kamikazejam.kamicommon.item"><code>IBuilder</code></a> it wants to place in a menu.</div>
+<div class="block">A static modifier for an icon's <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item"><code>ItemBuilder</code></a> it wants to place in a menu.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -108,8 +108,8 @@ extends <a href="MenuIconModifier.html" title="interface in com.kamikazejam.kami
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#modify(com.kamikazejam.kamicommon.item.IBuilder)" class="member-name-link">modify</a><wbr>(@NotNull <a href="../../../../../item/IBuilder.html" title="class in com.kamikazejam.kamicommon.item">IBuilder</a>&nbsp;builder)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#modify(com.kamikazejam.kamicommon.item.ItemBuilder)" class="member-name-link">modify</a><wbr>(@NotNull <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&nbsp;builder)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">A simple modify method to edit the state of the builder.<br>
  There is no return value because the builder is modified in place.</div>
@@ -129,12 +129,19 @@ extends <a href="MenuIconModifier.html" title="interface in com.kamikazejam.kami
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="modify(com.kamikazejam.kamicommon.item.IBuilder)">
+<section class="detail" id="modify(com.kamikazejam.kamicommon.item.ItemBuilder)">
 <h3>modify</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">modify</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="../../../../../item/IBuilder.html" title="class in com.kamikazejam.kamicommon.item">IBuilder</a>&nbsp;builder)</span></div>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="return-type">@NotNull <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">modify</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../../../../../item/ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&nbsp;builder)</span></div>
 <div class="block">A simple modify method to edit the state of the builder.<br>
  There is no return value because the builder is modified in place.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>builder</code> - The builder to modify.</dd>
+<dt>Returns:</dt>
+<dd>The modified builder (can be the same instance modified in place).</dd>
+</dl>
 </section>
 </li>
 </ul>
