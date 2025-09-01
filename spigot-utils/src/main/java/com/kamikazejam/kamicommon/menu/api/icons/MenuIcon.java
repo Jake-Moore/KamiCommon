@@ -141,15 +141,15 @@ public class MenuIcon<M extends Menu<M>> {
         boolean cycleToNextBuilder = tick > 0 && this.isCycleBuilderForTick(tick);
 
         @Nullable ItemBuilder next = cycleToNextBuilder ? getNextBuilder() : getCurrentBuilder();
-        if (next == null) {return null;}
+        if (next == null) { return null; }
 
         // Modify the builder
         if (modifier instanceof StaticIconModifier builderModifier) {
-            builderModifier.modify(next);
+            next = builderModifier.modify(next);
         } else if (modifier instanceof StatefulIconModifier updateModifier) {
             // Use the existing ItemStack (if available) so that stateful modifications can reference it
             //  while building the state of the new ItemBuilder (which is a copy of the initial configuration)
-            updateModifier.modify(next, this.getLastItem(), player, tick);
+            next = updateModifier.modify(next, this.getLastItem(), player, tick);
         }
 
         ItemStack stack = next.build();
