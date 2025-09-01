@@ -82,25 +82,4 @@ public class ModuleManager {
         }
         return null;
     }
-
-    public final void onItemsAdderLoaded() {
-        for (Module module : moduleList) {
-            if (!module.isEnabled()) { continue; }
-            module.onItemsAdderLoaded();
-        }
-    }
-
-    public final void onMythicMobsLoaded() {
-        for (Module module : moduleList) {
-            if (!module.isEnabled()) { continue; }
-            module.onMythicMobsLoaded();
-        }
-    }
-
-    public final void onCitizensLoaded() {
-        for (Module module : moduleList) {
-            if (!module.isEnabled()) { continue; }
-            module.onCitizensLoaded();
-        }
-    }
 }

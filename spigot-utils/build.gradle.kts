@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api("com.kamikazejam.kamicommon:spigot-nms:1.1.2")
+    api("com.kamikazejam.kamicommon:spigot-nms:1.1.5")
     api(project(":standalone-utils")) // Also includes shared-utils
 
     api("com.google.code.gson:gson:2.13.1")
@@ -15,11 +15,6 @@ dependencies {
 
     // Spigot Libs (soft-depend)
     compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.39-SNAPSHOT") {
-        exclude(group = "*", module = "*")
-    }
-    compileOnly("io.lumine:Mythic-Dist:5.9.5")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.19")
     // Combat Integrations
     compileOnly("net.minelink:CombatTagPlus:1.3.1")

@@ -121,33 +121,6 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     }
 
     // -------------------------------------------- //
-    // INTEGRATIONS
-    // -------------------------------------------- //
-    /**
-     * This method is called when/if ItemsAdder loads/reloads. <br>
-     * It is always called after {@link #onEnable()} <br>
-     * <br>
-     * This may be called several times (if ItemsAdder is reloaded)
-     */
-    public void onItemsAdderLoaded() {}
-
-    /**
-     * This method is called when/if MythicMobs loads/reloads. <br>
-     * It is always called after {@link #onEnable()} <br>
-     * <br>
-     * This may be called several times (if MythicMobs is reloaded)
-     */
-    public void onMythicMobsLoaded() {}
-
-    /**
-     * This method is called when/if Citizens loads/reloads. <br>
-     * It is always called after {@link #onEnable()} <br>
-     * <br>
-     * This may be called several times (if Citizens is reloaded)
-     */
-    public void onCitizensLoaded() {}
-
-    // -------------------------------------------- //
     // GENERAL METHODS
     // -------------------------------------------- //
     /**

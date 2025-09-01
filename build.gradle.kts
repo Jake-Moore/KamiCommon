@@ -9,7 +9,7 @@
 // Invalid Versions:
 //   - Any version not matching one of the above formats will not be published. Publication will be skipped.
 @Suppress("PropertyName")
-var VERSION = "5.0.0-alpha.16" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
+var VERSION = "5.0.0-alpha.17-SNAPSHOT" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
 
 plugins { // needed for the allprojects section to work
     id("java")
@@ -48,7 +48,6 @@ allprojects {
         maven("https://repo.luxiouslabs.net/repository/maven-public/")
         // Spigot Plugin Repos
         maven("https://repo.codemc.org/repository/maven-public/")
-        maven("https://maven.citizensnpcs.co/repo")
         maven("https://mvn.lumine.io/repository/maven-public/") {
             content {
                 includeGroup("io.lumine")

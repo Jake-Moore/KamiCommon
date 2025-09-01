@@ -1,13 +1,13 @@
 package com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier;
 
-import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.item.ItemBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A stateful modifier for an icon's {@link IBuilder} it wants to place in a menu.<br>
+ * A stateful modifier for an icon's {@link ItemBuilder} it wants to place in a menu.<br>
  * The {@link #modify} method also provides the existing item in the menu (if it exists) and the {@link Player} viewing the menu.
  */
 public non-sealed interface StatefulIconModifier extends MenuIconModifier {
@@ -19,5 +19,5 @@ public non-sealed interface StatefulIconModifier extends MenuIconModifier {
      * @param player is the player who is viewing the menu.
      * @param tickCounter is the number of ticks since the menu was opened.
      */
-    void modify(@NotNull IBuilder initialBuilder, @Nullable ItemStack currentItem, @NotNull Player player, int tickCounter);
+    void modify(@NotNull ItemBuilder initialBuilder, @Nullable ItemStack currentItem, @NotNull Player player, int tickCounter);
 }
