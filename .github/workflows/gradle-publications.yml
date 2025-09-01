@@ -271,8 +271,8 @@ jobs:
   #--------------------------------------------------------------------------#
   docs:
     needs: setup
-    # Run only for commits with valid versions that match the release OR prerelease pattern
-    if: needs.setup.outputs.is_valid == 'true' && (needs.setup.outputs.is_prerelease == 'true' || needs.setup.outputs.is_release == 'true')
+    # Run only for commits with valid versions that match the release OR prerelease pattern on their respective branches
+    if: needs.setup.outputs.is_valid == 'true' && ((github.ref == 'refs/heads/main' && needs.setup.outputs.is_release == 'true') || (github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_prerelease == 'true'))
 
     runs-on: ubuntu-latest
     permissions:
