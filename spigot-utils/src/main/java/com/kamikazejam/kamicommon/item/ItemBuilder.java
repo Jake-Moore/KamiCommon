@@ -792,4 +792,34 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         Preconditions.checkNotNull(section, "ConfigurationSection cannot be null");
         return ItemBuilderLoader.load(section);
     }
+
+    /**
+     * Load an {@link ItemBuilder} from a prototype {@link ItemStack} and a configuration section which defines additional patches to apply to the item.<br>
+     * <br>
+     * The section can define the amount, name, lore, and many additional attributes of the item. (Everything except the material type)
+     * @param material The material to use for the prototype. Used as the base for the ItemBuilder.
+     * @param section The configuration section to load additional patches from.
+     */
+    public static @NotNull ItemBuilder load(@NotNull XMaterial material, @NotNull ConfigurationSection section) {
+        Preconditions.checkNotNull(material, "XMaterial cannot be null");
+        Preconditions.checkNotNull(section, "ConfigurationSection cannot be null");
+        ItemStack prototype = Preconditions.checkNotNull(
+                Preconditions.checkNotNull(material, "XMaterial cannot be null").parseItem(),
+                "XMaterial " + material.name() + " could not be parsed to a valid ItemStack!"
+        );
+        return ItemBuilderLoader.loadPatches(prototype, section);
+    }
+
+    /**
+     * Load an {@link ItemBuilder} from a prototype {@link ItemStack} and a configuration section which defines additional patches to apply to the item.<br>
+     * <br>
+     * The section can define the amount, name, lore, and many additional attributes of the item. (Everything except the material type)
+     * @param prototype The prototype item stack to base the ItemBuilder on, this defines the material type and any existing item meta.
+     * @param section The configuration section to load additional patches from.
+     */
+    public static @NotNull ItemBuilder load(@NotNull ItemStack prototype, @NotNull ConfigurationSection section) {
+        Preconditions.checkNotNull(prototype, "ItemStack cannot be null");
+        Preconditions.checkNotNull(section, "ConfigurationSection cannot be null");
+        return ItemBuilderLoader.loadPatches(prototype, section);
+    }
 }
