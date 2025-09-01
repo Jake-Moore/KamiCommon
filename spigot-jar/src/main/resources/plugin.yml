@@ -4,9 +4,6 @@ main: com.kamikazejam.kamicommon.KamiCommon
 authors: [ KamikazeJAM ]
 softdepend:
   - PlaceholderAPI
-  - ItemsAdder
-  - MythicMobs
-  - Citizens
   - SuperVanish
   - PremiumVanish
   - WorldEdit

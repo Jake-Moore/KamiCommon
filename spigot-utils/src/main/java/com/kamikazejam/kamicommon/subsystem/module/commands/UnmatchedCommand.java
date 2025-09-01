@@ -1,9 +1,9 @@
-package com.kamikazejam.kamicommon.subsystem.modules.commands;
+package com.kamikazejam.kamicommon.subsystem.module.commands;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.subsystem.modules.Module;
+import com.kamikazejam.kamicommon.subsystem.module.Module;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import org.jetbrains.annotations.NotNull;
 

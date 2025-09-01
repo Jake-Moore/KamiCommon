@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.menu.api.icons.access.paginated;
 
-import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
@@ -24,7 +23,7 @@ public interface IPageIconsAccess<M extends Menu<M>> {
     //                        Icon Management                       //
     // ------------------------------------------------------------ //
     @NotNull
-    default MenuIcon<M> addPagedIcon(@NotNull IBuilder builder) {
+    default MenuIcon<M> addPagedIcon(@NotNull ItemBuilder builder) {
         return this.addPagedIcon(new MenuIcon<>(true, builder));
     }
 
@@ -34,7 +33,7 @@ public interface IPageIconsAccess<M extends Menu<M>> {
     }
 
     @NotNull
-    default MenuIcon<M> addPagedIcon(@NotNull String id, @NotNull IBuilder builder) {
+    default MenuIcon<M> addPagedIcon(@NotNull String id, @NotNull ItemBuilder builder) {
         return this.addPagedIcon(new MenuIcon<M>(true, builder).setId(id));
     }
 

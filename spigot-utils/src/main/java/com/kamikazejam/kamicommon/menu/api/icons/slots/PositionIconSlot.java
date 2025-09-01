@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Getter
 @SuppressWarnings("unused")
-public class PositionSlot implements IconSlot {
+public class PositionIconSlot implements IconSlot {
     private final int row;
     private final int col;
 
@@ -17,7 +17,7 @@ public class PositionSlot implements IconSlot {
      * @param row The row (1 indexed)
      * @param col The column (1 indexed)
      */
-    public PositionSlot(int row, int col) {
+    public PositionIconSlot(int row, int col) {
         this.row = row;
         this.col = col;
     }
@@ -29,6 +29,6 @@ public class PositionSlot implements IconSlot {
 
     @Override
     public @NotNull IconSlot copy() {
-        return new PositionSlot(row, col);
+        return new PositionIconSlot(row, col);
     }
 }

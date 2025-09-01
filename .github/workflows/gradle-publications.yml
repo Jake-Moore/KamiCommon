@@ -1,4 +1,4 @@
-name: Maven Deploy & Release
+name: Gradle Publish & Release
 
 on:
   push:
@@ -247,7 +247,9 @@ jobs:
             ## KamiCommon Pre-Release ${{ needs.build-core.outputs.core_version }}
             
             ⚠️ **This is a pre-release version for testing purposes.**
-            ```
+            
+            Maven Artifacts are available via the [LuxiousLabs Maven Repository](https://repo.luxiouslabs.net/).
+            - Pre-Releases are published in the `maven-releases` repository.
           tag: "pre-v${{ needs.setup.outputs.version }}"
           name: "KamiCommon ${{ needs.setup.outputs.version }} (Pre-Release)"
 
@@ -260,6 +262,376 @@ jobs:
           filename: kc-prerelease-latest.json
           label: Latest Pre-Release
           message: "${{ needs.setup.outputs.version }}"
-          color: blue
+          color: orange
 
       # We skip updating the download link, the download link only updates for stable releases
+
+  #--------------------------------------------------------------------------#
+  #                    Javadocs Job (release & pre-release)                  #
+  #--------------------------------------------------------------------------#
+  docs:
+    needs: setup
+    # Run only for commits with valid versions that match the release OR prerelease pattern
+    if: needs.setup.outputs.is_valid == 'true' && (needs.setup.outputs.is_prerelease == 'true' || needs.setup.outputs.is_release == 'true')
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Configure: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4.4.2
+        with:
+          gradle-version: '9.0.0'
+
+      - name: Display Version
+        run: echo "Version is ${{ needs.setup.outputs.version }}"
+
+      - name: Generate Javadocs
+        run: gradle aggregateJavadoc
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          path: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy versioned docs
+        run: |
+          VERSION="${{ needs.setup.outputs.version }}"
+          echo "Deploying docs for version: $VERSION"
+
+          cd gh-pages
+          
+          # Define modules
+          MODULES=(
+            "standalone-utils"
+            "standalone-jar"
+            "shared-utils"
+            "shared-jar"
+            "spigot-utils"
+            "spigot-jar"
+          )
+          
+          for MODULE in "${MODULES[@]}"; do
+            echo "Processing module: $MODULE"
+          
+            SRC_DIR="../$MODULE/build/docs/aggregateJavadoc"
+            if [ ! -d "$SRC_DIR" ]; then
+              echo "Warning: Docs not found for $MODULE at $SRC_DIR. Skipping."
+              continue
+            fi
+          
+            # Create module dir and version subdir
+            MODULE_DIR="$MODULE"
+            VERSION_DIR="$MODULE_DIR/$VERSION"
+          
+            # Remove any existing version folder for idempotency
+            rm -rf "$VERSION_DIR"
+            mkdir -p "$VERSION_DIR"
+          
+            # Copy docs
+            cp -r "$SRC_DIR/"* "$VERSION_DIR/"
+          
+            # Update 'latest' for this module
+            rm -rf "$MODULE_DIR/latest"
+            cp -r "$VERSION_DIR" "$MODULE_DIR/latest"
+          
+            echo "Created $VERSION_DIR"
+            echo "Updated $MODULE_DIR/latest to point to $VERSION"
+          done
+          
+          echo "Docs deploy complete."
+
+      - name: Generate versions.json (per module)
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.setup.outputs.version }}"
+          cd gh-pages
+
+          MODULES=(
+            "standalone-utils"
+            "standalone-jar"
+            "shared-utils"
+            "shared-jar"
+            "spigot-utils"
+            "spigot-jar"
+          )
+
+          for MODULE in "${MODULES[@]}"; do
+            echo "Generating versions.json for module: $MODULE"
+
+            # Skip if module dir doesn't exist yet (e.g., no docs published yet)
+            if [ ! -d "$MODULE" ]; then
+              echo "  Skipping: $MODULE directory not found."
+              continue
+            fi
+
+            pushd "$MODULE" >/dev/null
+
+            # Find version directories in this module (exclude latest and files)
+            # Match semantic versions like 1.2.3 and tags starting with v like v1.2.3
+            VERSIONS=$(find . -maxdepth 1 -mindepth 1 -type d \
+              \( -name "*.*.*" -o -name "v*" \) \
+              | sed 's|./||' \
+              | grep -v '^latest$' \
+              | sort -V -r || true)
+
+            echo "  Found versions: ${VERSIONS:-<none>}"
+
+            # If no versions found, clear any existing versions.json and continue
+            if [ -z "${VERSIONS}" ]; then
+              echo '{ "versions": [], "latest": "" }' > versions.json
+              echo "  Wrote empty versions.json for $MODULE"
+              popd >/dev/null
+              continue
+            fi
+
+            # Write versions.json
+            {
+              echo "{"
+              echo '  "versions": ['
+              first=true
+              for v in $VERSIONS; do
+                if [ "$first" = true ]; then
+                  first=false
+                else
+                  echo ","
+                fi
+                printf '    "%s"' "$v"
+              done
+              echo
+              echo "  ],"
+              printf '  "latest": "%s"\n' "$VERSION"
+              echo "}"
+            } > versions.json
+
+            echo "  Generated versions.json for $MODULE:"
+            cat versions.json
+
+            popd >/dev/null
+          done
+
+      - name: Generate module index.html files
+        run: |
+          cd gh-pages
+
+          MODULES=(
+            "standalone-utils"
+            "standalone-jar" 
+            "shared-utils"
+            "shared-jar"
+            "spigot-utils"
+            "spigot-jar"
+          )
+
+          # Download the HTML template once
+          curl -s https://raw.githubusercontent.com/Jake-Moore/Jake-Moore.github.io/refs/heads/main/templates/index-template.html -o template.html
+
+          for MODULE in "${MODULES[@]}"; do
+            echo "Generating index.html for module: $MODULE"
+
+            # Skip if module dir doesn't exist
+            if [ ! -d "$MODULE" ]; then
+              echo "  Skipping: $MODULE directory not found."
+              continue
+            fi
+
+            pushd "$MODULE" >/dev/null
+
+            # Create the dynamic content section
+            cat > dynamic_content.html << 'EOF'
+          <h2>📚 Latest Version</h2>
+          <a href="latest/" class="version-link latest">Latest (Recommended)</a>
+
+          <h2>📋 All Versions</h2>
+          <div id="versions" class="loading">Loading available versions...</div>
+
+          <script>
+          // Load versions
+          fetch("versions.json")
+              .then(response => {
+                  if (!response.ok) throw new Error("Failed to load versions");
+                  return response.json();
+              })
+              .then(data => {
+                  const container = document.getElementById("versions");
+                  container.innerHTML = "";
+                  container.classList.remove("loading");
+
+                  if (data.versions && data.versions.length > 0) {
+                      data.versions.forEach(version => {
+                          const link = document.createElement("a");
+                          link.href = version + "/";
+                          link.textContent = `Version ${version}`;
+                          link.className = "version-link";
+                          container.appendChild(link);
+                      });
+                  } else {
+                      container.innerHTML = "<p>No versions available yet.</p>";
+                  }
+              })
+              .catch(error => {
+                  console.error("Error loading versions:", error);
+                  document.getElementById("versions").innerHTML = 
+                      "<p style=\"color: #dc3545;\">Error loading versions. Please refresh the page.</p>";
+              });
+          </script>
+          EOF
+
+            # Replace placeholders in the template with module-specific content
+            sed "s|{{PAGE_TITLE}}|KamiCommon ${MODULE} Javadocs|g" ../template.html | \
+            sed "s|{{PAGE_HEADING}}|🚀 KamiCommon ${MODULE} Javadocs|g" | \
+            sed "s|{{PAGE_DESCRIPTION}}|Welcome to the KamiCommon ${MODULE} documentation. Choose a version below to browse its Javadocs.|g" | \
+            sed "s|{{GITHUB_PATH}}|/Jake-Moore/KamiCommon|g" > temp_index.html
+
+            # Replace the dynamic content placeholder
+            awk '
+            /{{DYNAMIC_CONTENT}}/ {
+                while ((getline line < "dynamic_content.html") > 0) {
+                    print line
+                }
+                close("dynamic_content.html")
+                next
+            }
+            { print }
+            ' temp_index.html > index.html
+
+            # Clean up module-specific files
+            rm temp_index.html dynamic_content.html
+
+            echo "  Generated index.html for $MODULE"
+            popd >/dev/null
+          done
+
+          # Clean up shared template
+          rm template.html
+
+      - name: Generate primary index.html
+        run: |
+          cd gh-pages
+          
+          # Download the HTML template
+          curl -s https://raw.githubusercontent.com/Jake-Moore/Jake-Moore.github.io/refs/heads/main/templates/index-template.html -o template.html
+          
+          # Create the dynamic content section with module cards
+          cat > dynamic_content.html << 'EOF'
+          <h2>📦 Available Modules</h2>
+          <div class="modules-grid">
+              <a href="spigot-jar/" class="module-card">
+                  <h3>🎮 spigot-jar</h3>
+                  <p>Spigot plugin JAR components</p>
+              </a>
+          
+              <a href="spigot-utils/" class="module-card">
+                  <h3>⚡ spigot-utils</h3>
+                  <p>Spigot-specific utility classes</p>
+              </a>
+          
+              <a href="standalone-jar/" class="module-card">
+                  <h3>📦 standalone-jar</h3>
+                  <p>Packaged JAR for standalone applications</p>
+              </a>
+          
+              <a href="standalone-utils/" class="module-card">
+                  <h3>🔧 standalone-utils</h3>
+                  <p>Utility classes for standalone applications</p>
+              </a>
+          
+              <a href="shared-jar/" class="module-card">
+                  <h3>📚 shared-jar</h3>
+                  <p>Shared JAR components</p>
+              </a>
+          
+              <a href="shared-utils/" class="module-card">
+                  <h3>🤝 shared-utils</h3>
+                  <p>Shared utility classes across platforms</p>
+              </a>
+          </div>
+          
+          <style>
+          .modules-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 1.5rem;
+              margin: 2rem 0;
+          }
+          
+          .module-card {
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              border: none;
+              border-radius: 12px;
+              padding: 1.5rem;
+              text-decoration: none;
+              color: white;
+              transition: all 0.3s ease;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+          
+          .module-card:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+              color: white;
+              text-decoration: none;
+          }
+          
+          .module-card h3 {
+              margin: 0 0 0.5rem 0;
+              font-size: 1.2rem;
+          }
+          
+          .module-card p {
+              margin: 0;
+              opacity: 0.9;
+              font-size: 0.9rem;
+          }
+          </style>
+          EOF
+          
+          # Replace placeholders in the template
+          sed "s|{{PAGE_TITLE}}|KamiCommon Javadocs|g" template.html | \
+          sed "s|{{PAGE_HEADING}}|🚀 KamiCommon Javadocs|g" | \
+          sed "s|{{PAGE_DESCRIPTION}}|Welcome to the KamiCommon documentation. Select a module below to browse its documentation.|g" | \
+          sed "s|{{GITHUB_PATH}}|/Jake-Moore/KamiCommon|g" > temp_index.html
+          
+          # Replace the dynamic content placeholder
+          awk '
+          /{{DYNAMIC_CONTENT}}/ {
+              while ((getline line < "dynamic_content.html") > 0) {
+                  print line
+              }
+              close("dynamic_content.html")
+              next
+          }
+          { print }
+          ' temp_index.html > index.html
+          
+          # Clean up
+          rm template.html temp_index.html dynamic_content.html
+          
+          echo "Generated primary index.html"
+
+      - name: Commit and push
+        run: |
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📚 Deploy docs for v${{ needs.setup.outputs.version }} - $(date)"
+            git push
+            echo "✅ Documentation deployed successfully!"
+          fi

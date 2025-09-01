@@ -8,11 +8,8 @@ import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
 import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
 import com.kamikazejam.kamicommon.subsystem.feature.FeatureManager;
-import com.kamikazejam.kamicommon.subsystem.integration.CitizensIntegration;
-import com.kamikazejam.kamicommon.subsystem.integration.ItemsAdderIntegration;
-import com.kamikazejam.kamicommon.subsystem.integration.MythicMobsIntegration;
-import com.kamikazejam.kamicommon.subsystem.modules.Module;
-import com.kamikazejam.kamicommon.subsystem.modules.ModuleManager;
+import com.kamikazejam.kamicommon.subsystem.module.Module;
+import com.kamikazejam.kamicommon.subsystem.module.ModuleManager;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
@@ -111,17 +108,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     }
 
     public void onEnablePost() {
-        // Register subsystem integrations
-        if (hasItemsAdder()) {
-            new ItemsAdderIntegration(this);
-        }
-        if (hasCitizens()) {
-            new CitizensIntegration(this);
-        }
-        if (hasMythicMobs()) {
-            new MythicMobsIntegration(this);
-        }
-
         long ms = System.currentTimeMillis() - this.enableTime;
         this.colorLogger.logToConsole(this.logPrefixColored + "=== ENABLE &aCOMPLETE &e(Took &d" + ms + "ms&e) ===", Level.INFO);
     }
@@ -434,13 +420,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
             getModuleManager().registerModule(module);
         }
     }
-    /**
-     * @deprecated Use singleton pattern on your modules instead of this!!
-     */
-    @Deprecated
-    public <M extends Module> M getModule(Class<M> clazz) {
-        return moduleManager.get(clazz);
-    }
 
     // -------------------------------------------- //
     // FEATURE MANAGEMENT
@@ -461,42 +440,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         for (Feature feature : features) {
             getFeatureManager().registerFeature(feature);
         }
-    }
-    /**
-     * @deprecated Use singleton pattern on your features instead of this!!
-     */
-    @Deprecated
-    public <F extends Feature> F getFeature(Class<F> clazz) {
-        return featureManager.get(clazz);
-    }
-
-
-
-    // -------------------------------------------- //
-    // STATIC INTEGRATION DETECTION
-    // -------------------------------------------- //
-    private static Boolean hasItemsAdder = null;
-    public static boolean hasItemsAdder() {
-        if (hasItemsAdder == null) {
-            return hasItemsAdder = Bukkit.getPluginManager().getPlugin("ItemsAdder") != null;
-        }
-        return hasItemsAdder;
-    }
-
-    private static Boolean hasCitizens = null;
-    public static boolean hasCitizens() {
-        if (hasCitizens == null) {
-            return hasCitizens = Bukkit.getPluginManager().getPlugin("Citizens") != null;
-        }
-        return hasCitizens;
-    }
-
-    private static Boolean hasMythicMobs = null;
-    public static boolean hasMythicMobs() {
-        if (hasMythicMobs == null) {
-            return hasMythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs") != null;
-        }
-        return hasMythicMobs;
     }
 
     public interface ErrorPropertiesCallback {
@@ -605,5 +548,15 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     @Override
     public void unregisterConfigObservers() {
         this.getKamiConfig().unregisterConfigObservers();
+    }
+
+    /**
+     * Reload the default KamiConfig for this plugin, notifying all registered observers of the change.<br>
+     * <br>
+     * Equivalent to {@link #reloadKamiConfig()}
+     */
+    @Override
+    public void reloadObservableConfig() {
+        this.reloadKamiConfig();
     }
 }

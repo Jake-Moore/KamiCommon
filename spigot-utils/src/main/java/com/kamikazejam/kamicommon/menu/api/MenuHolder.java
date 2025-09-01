@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.menu.api;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;
@@ -105,7 +105,7 @@ public class MenuHolder implements InventoryHolder {
         this.getInventory().setItem(slot, item);
     }
 
-    public void setItem(int slot, @Nullable IBuilder builder) {
+    public void setItem(int slot, @Nullable ItemBuilder builder) {
         this.setItem(slot, builder == null ? null : builder.toItemStack());
     }
 

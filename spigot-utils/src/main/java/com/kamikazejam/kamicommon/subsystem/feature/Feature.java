@@ -4,7 +4,7 @@ import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
-import com.kamikazejam.kamicommon.subsystem.modules.Module;
+import com.kamikazejam.kamicommon.subsystem.module.Module;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

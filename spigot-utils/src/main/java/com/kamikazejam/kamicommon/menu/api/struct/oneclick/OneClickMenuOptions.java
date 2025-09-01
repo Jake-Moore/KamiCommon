@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.menu.api.struct.oneclick;
 
 import com.kamikazejam.kamicommon.configuration.Configurable;
-import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.OneClickMenu;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import lombok.Getter;
@@ -27,10 +26,6 @@ public class OneClickMenuOptions extends MenuOptions<OneClickMenu> {
     // Copy Constructor
     public OneClickMenuOptions(@NotNull OneClickMenuOptions copy) {
         this.excludeFillerClickFromOneClick = copy.excludeFillerClickFromOneClick;
-    }
-
-    public interface OneClickMenuOptionsModification {
-        <T extends Menu<T>> void modify(@NotNull OneClickMenuOptions options);
     }
 
     @Override
