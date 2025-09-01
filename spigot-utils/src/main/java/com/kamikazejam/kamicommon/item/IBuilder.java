@@ -93,8 +93,18 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      */
     @Deprecated(since = "5.0.0-alpha.17")
     @NotNull
-    default T setDurability(short damage) {
-        return setDamage(damage);
+    default T setDurability(short dur) {
+        return setDamage(dur);
+    }
+
+    /**
+     * Alias of {@link #setDamage(int)}.
+     * @deprecated As of 5.0.0-alpha.17, replaced by {@link #setDamage(int)}.
+     */
+    @Deprecated(since = "5.0.0-alpha.17")
+    @NotNull
+    default T setDurability(int dur) {
+        return setDamage(dur);
     }
 
     /**
