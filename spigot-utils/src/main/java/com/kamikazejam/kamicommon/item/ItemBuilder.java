@@ -276,47 +276,6 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         return stack;
     }
 
-    @Override
-    public @NotNull ItemBuilder clone() {
-        try {
-            // 1) Shallow copy of this object (fields copied as-is)
-            ItemBuilder copy = (ItemBuilder) super.clone();
-
-            // 2) Fix up mutable fields to avoid shared state
-
-            // amount, damage, name, unbreakable, skullOwner are immutable/boxed; no action needed
-
-            // lore: create a new list if present
-            if (this.lore != null) {
-                copy.lore = new ArrayList<>(this.lore);
-            } else {
-                copy.lore = null;
-            }
-
-            // itemFlags: copy entries into a new map
-            if (!this.itemFlags.isEmpty()) {
-                copy.itemFlags.clear(); // ensure target map is empty first
-                copy.itemFlags.putAll(this.itemFlags);
-            } else {
-                copy.itemFlags.clear();
-            }
-
-            // enchantments: copy entries into a new map
-            if (!this.enchantments.isEmpty()) {
-                copy.enchantments.clear();
-                copy.enchantments.putAll(this.enchantments);
-            } else {
-                copy.enchantments.clear();
-            }
-
-            // addGlow is primitive and already copied by super.clone()
-
-            return copy;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError(e);
-        }
-    }
-
     // ------------------------------------------------------------ //
     //                  IBuilder Patch Management                   //
     // ------------------------------------------------------------ //
@@ -693,6 +652,74 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     }
 
 
+
+    // ------------------------------------------------------------ //
+    //                            CLONING                           //
+    // ------------------------------------------------------------ //
+    @Override
+    public @NotNull ItemBuilder clone() {
+        try {
+            // 1) Shallow copy of this object (fields copied as-is)
+            ItemBuilder copy = (ItemBuilder) super.clone();
+
+            // 2) Fix up mutable fields to avoid shared state
+
+            // amount, damage, name, unbreakable, skullOwner are immutable/boxed; no action needed
+
+            // lore: create a new list if present
+            if (this.lore != null) {
+                copy.lore = new ArrayList<>(this.lore);
+            } else {
+                copy.lore = null;
+            }
+
+            // itemFlags: copy entries into a new map
+            if (!this.itemFlags.isEmpty()) {
+                copy.itemFlags.clear(); // ensure target map is empty first
+                copy.itemFlags.putAll(this.itemFlags);
+            } else {
+                copy.itemFlags.clear();
+            }
+
+            // enchantments: copy entries into a new map
+            if (!this.enchantments.isEmpty()) {
+                copy.enchantments.clear();
+                copy.enchantments.putAll(this.enchantments);
+            } else {
+                copy.enchantments.clear();
+            }
+
+            // addGlow is primitive and already copied by super.clone()
+
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    @Override
+    public @NotNull ItemBuilder cloneWithNewPrototype(@NotNull ItemStack newPrototype) {
+        Preconditions.checkNotNull(newPrototype, "New prototype ItemStack cannot be null");
+        // Construct a new builder with the new prototype
+        ItemBuilder newBuilder = new ItemBuilder(newPrototype);
+        // Deep Copy all patch properties to the new builder
+        newBuilder.amount = this.amount;
+        newBuilder.damage = this.damage;
+        newBuilder.name = this.name;
+        if (this.lore != null) {
+            newBuilder.lore = new ArrayList<>(this.lore);
+        }
+        newBuilder.unbreakable = this.unbreakable;
+        if (!this.itemFlags.isEmpty()) {
+            newBuilder.itemFlags.putAll(this.itemFlags);
+        }
+        if (!this.enchantments.isEmpty()) {
+            newBuilder.enchantments.putAll(this.enchantments);
+        }
+        newBuilder.addGlow = this.addGlow;
+        newBuilder.skullOwner = this.skullOwner;
+        return newBuilder;
+    }
 
     // ------------------------------------------------------------ //
     //                        Static Loaders                        //

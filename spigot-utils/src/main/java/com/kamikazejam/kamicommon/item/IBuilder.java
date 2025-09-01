@@ -2,6 +2,9 @@ package com.kamikazejam.kamicommon.item;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XItemFlag;
+import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.util.Preconditions;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "BooleanMethodIsAlwaysInverted"})
-public sealed interface IBuilder<T extends IBuilder<T>> permits ItemBuilder {
+public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permits ItemBuilder {
+
     // ------------------------------------------------------------ //
     //                           PROTOTYPE                          //
     // ------------------------------------------------------------ //
@@ -659,5 +663,47 @@ public sealed interface IBuilder<T extends IBuilder<T>> permits ItemBuilder {
     @NotNull
     default T replaceBothPAPI(@Nullable OfflinePlayer player) {
         return replaceNamePAPI(player).replaceLorePAPI(player);
+    }
+
+    // ------------------------------------------------------------ //
+    //                            CLONING                           //
+    // ------------------------------------------------------------ //
+    @NotNull ItemBuilder clone();
+
+    /**
+     * Create a clone of this builder with all the same patches, but a different prototype {@link ItemStack}.
+     * @since 5.0.0-alpha.17
+     */
+    @NotNull ItemBuilder cloneWithNewPrototype(@NotNull ItemStack newPrototype);
+
+    /**
+     * Create a clone of this builder with all the same patches, but a different prototype {@link ItemStack}.<br>
+     * This method uses {@link XMaterial#parseItem()} to convert the {@link XMaterial} to an {@link ItemStack}.
+     * @since 5.0.0-alpha.17
+     */
+    default @NotNull ItemBuilder cloneWithNewPrototype(@NotNull XMaterial newPrototype) {
+        ItemStack stack = Preconditions.checkNotNull(
+                Preconditions.checkNotNull(newPrototype, "XMaterial cannot be null").parseItem(),
+                "XMaterial " + newPrototype.name() + " could not be parsed to a valid ItemStack!"
+        );
+        return cloneWithNewPrototype(stack);
+    }
+
+    /**
+     * Create a clone of this builder with all the same patches, but a different prototype {@link ItemStack}.<br>
+     * This method uses {@link XMaterial#matchXMaterial(Material)} to convert the {@link Material} to an {@link XMaterial},<br>
+     * then uses {@link XMaterial#parseItem()} to convert that to an {@link ItemStack}.
+     * @since 5.0.0-alpha.17
+     */
+    default @NotNull ItemBuilder cloneWithNewPrototype(@NotNull Material newPrototype) {
+        XMaterial xMat = Preconditions.checkNotNull(
+                XMaterial.matchXMaterial(Preconditions.checkNotNull(newPrototype, "Material cannot be null")),
+                "Material " + newPrototype.name() + " could not be matched to a valid XMaterial!"
+        );
+        ItemStack stack = Preconditions.checkNotNull(
+                Preconditions.checkNotNull(xMat.parseItem(), "XMaterial " + xMat.name() + " could not be parsed to a valid ItemStack!"),
+                "XMaterial " + xMat.name() + " could not be parsed to a valid ItemStack!"
+        );
+        return cloneWithNewPrototype(stack);
     }
 }
