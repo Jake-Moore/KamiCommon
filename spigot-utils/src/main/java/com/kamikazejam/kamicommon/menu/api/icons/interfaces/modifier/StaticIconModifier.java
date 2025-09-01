@@ -10,6 +10,9 @@ public non-sealed interface StaticIconModifier extends MenuIconModifier {
     /**
      * A simple modify method to edit the state of the builder.<br>
      * There is no return value because the builder is modified in place.
+     * @param builder The builder to modify.
+     * @return The modified builder (can be the same instance modified in place).
      */
-    void modify(@NotNull ItemBuilder builder);
+    @NotNull
+    ItemBuilder modify(@NotNull ItemBuilder builder);
 }
