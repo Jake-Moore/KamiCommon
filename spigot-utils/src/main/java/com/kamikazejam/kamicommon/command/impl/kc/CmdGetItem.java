@@ -37,7 +37,7 @@ public class CmdGetItem extends KamiCommand {
             return;
         }
 
-        ItemStack stack = new ItemBuilder(config.getConfigurationSection(itemKey), player).build();
+        ItemStack stack = ItemBuilder.load(config.getConfigurationSection(itemKey)).setSkullOwner(player.getName()).build();
         PlayerUtil.giveItem(player, stack);
         player.sendMessage(StringUtil.t("&aGave Item: &f" + itemKey));
     }

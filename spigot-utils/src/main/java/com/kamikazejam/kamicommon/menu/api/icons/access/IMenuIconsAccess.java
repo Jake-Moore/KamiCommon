@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.menu.api.icons.access;
 
-import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
@@ -28,12 +27,12 @@ public interface IMenuIconsAccess<M extends Menu<M>> {
     // ------------------------------------------------------------ //
 
     @NotNull
-    default MenuIcon<M> setMenuIcon(@NotNull IBuilder builder, int slot) {
+    default MenuIcon<M> setMenuIcon(@NotNull ItemBuilder builder, int slot) {
         return this.setMenuIcon(new MenuIcon<>(true, builder), new StaticIconSlot(slot));
     }
 
     @NotNull
-    default MenuIcon<M> setMenuIcon(@NotNull IBuilder builder, @NotNull IconSlot slot) {
+    default MenuIcon<M> setMenuIcon(@NotNull ItemBuilder builder, @NotNull IconSlot slot) {
         return this.setMenuIcon(new MenuIcon<>(true, builder), slot);
     }
 
@@ -48,7 +47,7 @@ public interface IMenuIconsAccess<M extends Menu<M>> {
     }
 
     @NotNull
-    default MenuIcon<M> setMenuIcon(@NotNull String id, @NotNull IBuilder builder, int slot) {
+    default MenuIcon<M> setMenuIcon(@NotNull String id, @NotNull ItemBuilder builder, int slot) {
         return this.setMenuIcon(new MenuIcon<M>(true, builder).setId(id), new StaticIconSlot(slot));
     }
 
@@ -58,7 +57,7 @@ public interface IMenuIconsAccess<M extends Menu<M>> {
     }
 
     @NotNull
-    default MenuIcon<M> setMenuIcon(@NotNull String id, @NotNull IBuilder builder, @NotNull IconSlot slot) {
+    default MenuIcon<M> setMenuIcon(@NotNull String id, @NotNull ItemBuilder builder, @NotNull IconSlot slot) {
         return this.setMenuIcon(new MenuIcon<M>(true, builder).setId(id), slot);
     }
 
@@ -170,7 +169,7 @@ public interface IMenuIconsAccess<M extends Menu<M>> {
     //                  Icon Management (by position)                  //
     // ------------------------------------------------------------ //
     @NotNull
-    default MenuIcon<M> setMenuIcon(@NotNull IBuilder builder, int row, int col) {
+    default MenuIcon<M> setMenuIcon(@NotNull ItemBuilder builder, int row, int col) {
         return this.setMenuIcon(new MenuIcon<>(true, builder), new PositionIconSlot(row, col));
     }
 
@@ -180,7 +179,7 @@ public interface IMenuIconsAccess<M extends Menu<M>> {
     }
 
     @NotNull
-    default MenuIcon<M> setMenuIcon(@NotNull String id, @NotNull IBuilder builder, int row, int col) {
+    default MenuIcon<M> setMenuIcon(@NotNull String id, @NotNull ItemBuilder builder, int row, int col) {
         return this.setMenuIcon(new MenuIcon<M>(true, builder).setId(id), new PositionIconSlot(row, col));
     }
 

@@ -3,7 +3,6 @@ package com.kamikazejam.kamicommon.menu.api.icons;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.kamikazejam.kamicommon.configuration.Configurable;
-import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.clicks.MenuClick;
@@ -29,7 +28,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Represents a menu icon that can contains the {@link ItemStack} data as {@link IBuilder}<br>
+ * Represents a menu icon that can contains the {@link ItemStack} data as {@link ItemBuilder}<br>
  * This class also holds the click data for the icon, and the auto updating logic for the icon
  */
 @Getter
@@ -48,7 +47,7 @@ public class MenuIcon<M extends Menu<M>> {
     // Allow this icon to be enabled or disabled (if it should be put in the menu)
     private boolean enabled;
     // Allow multiple possible builders, which can be cycled through
-    private final @NotNull List<IBuilder> iBuilders = new ArrayList<>();
+    private final @NotNull List<ItemBuilder> itemBuilders = new ArrayList<>();
     private int builderRotateTicks = 20; // Default to 1 second
 
     // Icon Click Sound Fields
@@ -60,28 +59,28 @@ public class MenuIcon<M extends Menu<M>> {
     //                  Constructors                 //
     // --------------------------------------------- //
 
-    public MenuIcon(@NotNull IBuilder builder) {
+    public MenuIcon(@NotNull ItemBuilder builder) {
         this(true, builder);
     }
 
-    public MenuIcon(boolean enabled, @NotNull IBuilder builder) {
+    public MenuIcon(boolean enabled, @NotNull ItemBuilder builder) {
         this.enabled = enabled;
-        this.iBuilders.add(builder);
+        this.itemBuilders.add(builder);
     }
 
-    public MenuIcon(boolean enabled, @NotNull IBuilder... builders) {
+    public MenuIcon(boolean enabled, @NotNull ItemBuilder... builders) {
         this.enabled = enabled;
-        this.iBuilders.addAll(Arrays.asList(builders));
+        this.itemBuilders.addAll(Arrays.asList(builders));
     }
 
-    public MenuIcon(boolean enabled, @NotNull Collection<IBuilder> builders) {
+    public MenuIcon(boolean enabled, @NotNull Collection<ItemBuilder> builders) {
         this.enabled = enabled;
-        this.iBuilders.addAll(builders);
+        this.itemBuilders.addAll(builders);
     }
 
     @NotNull
     public MenuIcon<M> copy() {
-        MenuIcon<M> copy = new MenuIcon<>(this.enabled, this.iBuilders);
+        MenuIcon<M> copy = new MenuIcon<>(this.enabled, this.itemBuilders);
         copy.id = this.id;
         copy.lastItem = this.lastItem;
         copy.transform = this.transform;
@@ -141,7 +140,7 @@ public class MenuIcon<M extends Menu<M>> {
         final int pre = this.builderIndex;
         boolean cycleToNextBuilder = tick > 0 && this.isCycleBuilderForTick(tick);
 
-        @Nullable IBuilder next = cycleToNextBuilder ? getNextBuilder() : getCurrentBuilder();
+        @Nullable ItemBuilder next = cycleToNextBuilder ? getNextBuilder() : getCurrentBuilder();
         if (next == null) {return null;}
 
         // Modify the builder
@@ -149,19 +148,19 @@ public class MenuIcon<M extends Menu<M>> {
             builderModifier.modify(next);
         } else if (modifier instanceof StatefulIconModifier updateModifier) {
             // Use the existing ItemStack (if available) so that stateful modifications can reference it
-            //  while building the state of the new IBuilder (which is a copy of the initial configuration)
+            //  while building the state of the new ItemBuilder (which is a copy of the initial configuration)
             updateModifier.modify(next, this.getLastItem(), player, tick);
         }
 
         ItemStack stack = next.build();
-        if (stack != null && stack.getAmount() > 64) {stack.setAmount(64);}
+        if (stack.getAmount() > 64) { stack.setAmount(64); }
         return stack;
     }
 
     @ApiStatus.Internal
     public final boolean isCycleBuilderForTick(int tick) {
-        // If we need to supply a new IBuilder from MenuIcon, then we should update
-        return this.iBuilders.size() > 1 && this.getBuilderRotateTicks() > 0 && tick % this.getBuilderRotateTicks() == 0;
+        // If we need to supply a new ItemBuilder from MenuIcon, then we should update
+        return this.itemBuilders.size() > 1 && this.getBuilderRotateTicks() > 0 && tick % this.getBuilderRotateTicks() == 0;
     }
 
     @ApiStatus.Internal
@@ -175,7 +174,7 @@ public class MenuIcon<M extends Menu<M>> {
     }
 
     // --------------------------------------------- //
-    //               IBuilder Methods                //
+    //              ItemBuilder Methods              //
     // --------------------------------------------- //
 
     @Getter(AccessLevel.NONE)
@@ -183,22 +182,22 @@ public class MenuIcon<M extends Menu<M>> {
     private int builderIndex = 0;
 
     @Nullable
-    public IBuilder getNextBuilder() {
-        if (iBuilders.isEmpty()) {return null;}
+    public ItemBuilder getNextBuilder() {
+        if (itemBuilders.isEmpty()) {return null;}
         this.builderIndex++;
-        if (this.builderIndex >= iBuilders.size()) {
+        if (this.builderIndex >= itemBuilders.size()) {
             this.builderIndex = 0;
         }
-        return iBuilders.get(this.builderIndex).clone();
+        return itemBuilders.get(this.builderIndex).clone();
     }
 
     @Nullable
-    public IBuilder getCurrentBuilder() {
-        if (iBuilders.isEmpty()) {return null;}
-        if (this.builderIndex >= iBuilders.size()) {
+    public ItemBuilder getCurrentBuilder() {
+        if (itemBuilders.isEmpty()) {return null;}
+        if (this.builderIndex >= itemBuilders.size()) {
             this.builderIndex = 0;
         }
-        return iBuilders.get(this.builderIndex).clone();
+        return itemBuilders.get(this.builderIndex).clone();
     }
 
     // --------------------------------------------- //
@@ -210,7 +209,7 @@ public class MenuIcon<M extends Menu<M>> {
         if (this == obj) {return true;}
         if (!(obj instanceof MenuIcon<?> menuIcon)) {return false;}
         return enabled == menuIcon.enabled
-                && iBuilders.equals(menuIcon.iBuilders)
+                && itemBuilders.equals(menuIcon.itemBuilders)
                 && Objects.equals(transform, menuIcon.transform)
                 && Objects.equals(updateInterval, menuIcon.updateInterval)
                 && Objects.equals(modifier, menuIcon.modifier);
@@ -218,7 +217,7 @@ public class MenuIcon<M extends Menu<M>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabled, iBuilders, transform, updateInterval, modifier);
+        return Objects.hash(enabled, itemBuilders, transform, updateInterval, modifier);
     }
 
     @NotNull
@@ -232,7 +231,7 @@ public class MenuIcon<M extends Menu<M>> {
     @Configurable
     public static class Config {
         @Getter @Setter
-        private static @NotNull IBuilder defaultFillerIconBuilder = new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" ");
+        private static @NotNull ItemBuilder defaultFillerIconBuilder = new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" ");
     }
 }
 

@@ -86,25 +86,4 @@ public class FeatureManager {
         }
         return null;
     }
-
-    public final void onItemsAdderLoaded() {
-        for (Feature feature : featureList) {
-            if (!feature.isEnabled()) { continue; }
-            feature.onItemsAdderLoaded();
-        }
-    }
-
-    public final void onMythicMobsLoaded() {
-        for (Feature feature : featureList) {
-            if (!feature.isEnabled()) { continue; }
-            feature.onMythicMobsLoaded();
-        }
-    }
-
-    public final void onCitizensLoaded() {
-        for (Feature feature : featureList) {
-            if (!feature.isEnabled()) { continue; }
-            feature.onCitizensLoaded();
-        }
-    }
 }

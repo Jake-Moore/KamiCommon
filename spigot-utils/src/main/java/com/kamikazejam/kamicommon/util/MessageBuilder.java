@@ -166,7 +166,7 @@ public class MessageBuilder {
      * Searches for the find placeholder in the text, and replaces that entire line with replacement
      * @param find The string to search for in the lore
      * @param replacement The lines to swap in, in place of the entire line containing find
-     * @return The IBuilder with replaced lore
+     * @return The ItemBuilder with replaced lore
      */
     public MessageBuilder replaceLine(String find, List<String> replacement) {
         List<String> newLines = new ArrayList<>();
