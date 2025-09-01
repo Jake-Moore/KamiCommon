@@ -1,554 +1,774 @@
 package com.kamikazejam.kamicommon.item;
 
 import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.util.StringUtilP;
-import com.kamikazejam.kamicommon.util.data.Pair;
-import com.kamikazejam.kamicommon.util.data.TriState;
-import com.kamikazejam.kamicommon.util.nms.MaterialFlatteningUtil;
-import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
-import de.tr7zw.changeme.nbtapi.NBT;
-import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.ChatColor;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
-@Getter
-@SuppressWarnings({"unused", "UnusedReturnValue"})
-public abstract class IBuilder {
+@SuppressWarnings({"unused", "UnusedReturnValue", "BooleanMethodIsAlwaysInverted"})
+public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permits ItemBuilder {
 
-    @Setter private @Nullable ItemStack base = null;
-    private @NotNull XMaterial material = XMaterial.AIR;
+    // ------------------------------------------------------------ //
+    //                           PROTOTYPE                          //
+    // ------------------------------------------------------------ //
+    /**
+     * Get the prototype {@link ItemStack} this builder is based on.<br>
+     * <br>
+     * The prototype is never modified, it is immutable, and accessed via this method.<br>
+     * Use {@link #build()} to get the final version of the item with all patches applied.
+     *
+     * @return The prototype {@link ItemStack} this builder is based on.
+     */
+    @NotNull ItemStack getPrototype();
 
-    private int amount = 1;
-    private short damage = 0;
-
-    // Name & Lore can be null if base is set
-    private @Nullable String name = " ";
-    private @Nullable List<String> lore = new ArrayList<>();
-
-    private @NotNull TriState unbreakable = TriState.NOT_SET;
-    private final @NotNull List<ItemFlag> itemFlags = new ArrayList<>();
-    private final @NotNull Map<XEnchantment, Integer> enchantments = new HashMap<>();
-    private final @NotNull Map<String, Pair<NbtType, Object>> nbtData = new HashMap<>();
-    private boolean addGlow = false;
-
-    @Setter
-    private @Nullable String skullOwner = null; // player name
-
-    public IBuilder() {}
-
-    public IBuilder(@NotNull ConfigurationSection section) {
-        loadConfigItem(section, null, true);
+    /**
+     * Get the {@link XMaterial} of the prototype item this builder is based on.<br>
+     * <br>
+     * This is a convenience method, equivalent to calling {@link XMaterial#matchXMaterial(ItemStack)} on the prototype.
+     *
+     * @return The {@link XMaterial} of the prototype item this builder is based on.
+     */
+    default @NotNull XMaterial getMaterial() {
+        return XMaterial.matchXMaterial(getPrototype());
     }
-    public IBuilder(@NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
-        loadConfigItem(section, offlinePlayer, true);
-    }
-    public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section) {
-        this.material = material;
-        this.damage = material.getData();
-        loadConfigItem(section, null, false);
-    }
-    public IBuilder(@NotNull XMaterial material, @NotNull ConfigurationSection section, @Nullable OfflinePlayer offlinePlayer) {
-        this.material = material;
-        this.damage = material.getData();
-        loadConfigItem(section, offlinePlayer, false);
-    }
-    public IBuilder(@Nullable ItemStack base, ConfigurationSection section) {
-        loadBase(base);
-        loadConfigItem(section, null, false);
-    }
-    public IBuilder(@Nullable ItemStack base, ConfigurationSection section, OfflinePlayer offlinePlayer) {
-        loadBase(base);
-        loadConfigItem(section, offlinePlayer, false);
+
+
+
+    // ------------------------------------------------------------ //
+    //                   PATCH PROPERTY MANAGEMENT                  //
+    // ------------------------------------------------------------ //
+    // ----- AMOUNT ------ //
+    /**
+     * PATCH FUNCTION - Sets the amount of items in the stack.<br>
+     * Range: 1 to {@link ItemStack#getMaxStackSize()} (inclusive) of the prototype.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetAmount()}.
+     * <br>
+     * (If the amount is out of range, it will be clamped within the valid range.)
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T setAmount(int amount);
+
+    /**
+     * PATCH FUNCTION - Clears the amount patch, the Builder will then use the prototype's value.<br>
+     * <br>
+     * NOTE: The prototype's amount is now used by the builder, this only removes any existing amount patch.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T resetAmount();
+
+    // ----- DAMAGE (FOR DAMAGEABLE ITEMS) ----- //
+    /**
+     * PATCH FUNCTION - Sets the damage of a damageable item.<br>
+     * <br>
+     * NOTE: This function has no effect on the item unless {@link #willUseDamage()} returns true,
+     * otherwise the item will be unaffected and {@link #getDamage()} will always return 0.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetDamage()}.
+     * <br>
+     * @return This builder, for chaining
+     * @param damage The damage value to set (0 = undamaged)
+     */
+    @NotNull
+    T setDamage(int damage);
+
+    /**
+     * Alias of {@link #setDamage(int)}.
+     * @deprecated As of 5.0.0-alpha.17, replaced by {@link #setDamage(int)}.
+     */
+    @Deprecated(since = "5.0.0-alpha.17")
+    @NotNull
+    default T setDurability(short dur) {
+        return setDamage(dur);
     }
 
     /**
-     * @return The item the builder has been building
+     * Alias of {@link #setDamage(int)}.
+     * @deprecated As of 5.0.0-alpha.17, replaced by {@link #setDamage(int)}.
      */
-    public ItemStack build() {
+    @Deprecated(since = "5.0.0-alpha.17")
+    @NotNull
+    default T setDurability(int dur) {
+        return setDamage(dur);
+    }
+
+    /**
+     * PATCH FUNCTION - Clears the damage patch, the Builder will then use the prototype's value.<br>
+     * <br>
+     * NOTE: This function has no effect on the item unless {@link #willUseDamage()} returns true,
+     * otherwise the item will be unaffected and {@link #getDamage()} will always return 0.<br>
+     * <br>
+     * NOTE: The prototype's damage is now used by the builder (if applicable), this only removes any existing damage patch.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T resetDamage();
+
+    // ----- NAME ------ //
+    /**
+     * PATCH FUNCTION - Applies a custom display name for the item.<br>
+     * No color translations are applied, process them BEFORE setting the name.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetName()}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T setName(@NotNull String name);
+
+    /**
+     * Alias of {@link #setName(String)}.
+     */
+    @NotNull
+    default T setDisplayName(@NotNull String name) {
+        return setName(name);
+    }
+
+    /**
+     * PATCH FUNCTION - Clears the name patch, the Builder will then use the prototype's value.<br>
+     * <br>
+     * NOTE: The prototype's name is now used by the builder, this only removes any existing name patch.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T resetName();
+
+    // ----- LORE ------ //
+    /**
+     * PATCH FUNCTION - Sets the custom lore for the item.<br>
+     * No color translations are applied, process them BEFORE setting the lore.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetLore()}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T setLore(@NotNull String... line);
+
+    /**
+     * PATCH FUNCTION - Sets the custom lore for the item.<br>
+     * No color translations are applied, process them BEFORE setting the lore.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetLore()}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T setLore(@NotNull List<@NotNull String> lore);
+
+    /**
+     * PATCH FUNCTION - Clears the lore patch, the Builder will then use the prototype's value.<br>
+     * <br>
+     * NOTE: The prototype's lore is now used by the builder, this only removes any existing lore patch.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T resetLore();
+
+    /**
+     * PATCH FUNCTION - Sets the lore to an empty list, effectively removing all lore from the item.<br>
+     * This is equivalent to calling {@link #setLore(List)} with an empty list.<br>
+     * <br>
+     * This differs from {@link #resetLore()} which clears the patch and uses the prototype's lore.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    default T removeLore() {
+        return setLore(new ArrayList<>());
+    }
+
+    /**
+     * PATCH FUNCTION - Appends additional lines to the current lore.<br>
+     * If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
+     * If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
+     * <br>
+     * No color translations are applied, process them BEFORE adding the lines.
+     * @param lines The lore lines to append
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T addLoreLines(@NotNull List<@NotNull String> lines);
+
+    /**
+     * PATCH FUNCTION - Appends additional lines to the current lore.<br>
+     * If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
+     * If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
+     * <br>
+     * No color translations are applied, process them BEFORE adding the lines.
+     * @param lines The lore lines to append
+     * @return This builder, for chaining
+     */
+    @NotNull
+    default T addLoreLines(@NotNull String... lines) {
+        return addLoreLines(Arrays.asList(lines));
+    }
+
+    // ----- UNBREAKABLE ------ //
+    /**
+     * PATCH FUNCTION - Sets if the item is unbreakable or not.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetUnbreakable()}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T setUnbreakable(boolean unbreakable);
+
+    /**
+     * PATCH FUNCTION - Clears the unbreakable patch, the Builder will then use the prototype's value.<br>
+     * <br>
+     * NOTE: The prototype's unbreakable value is now used by the builder, this only removes any existing unbreakable patch.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T resetUnbreakable();
+
+    // ----- ITEM FLAGS ------ //
+    /**
+     * PATCH FUNCTION - Adds an item flag to the item.<br>
+     * <br>
+     * Remove an item flag via {@link #removeItemFlag(XItemFlag)}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T addItemFlag(@NotNull XItemFlag flag);
+
+    /**
+     * PATCH FUNCTION - Adds several item flags to the item.<br>
+     * <br>
+     * Remove an item flag via {@link #removeItemFlag(XItemFlag)}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T addItemFlags(@NotNull Collection<XItemFlag> flags);
+
+    /**
+     * PATCH FUNCTION - Removes an item flag from the item.<br>
+     * <br>
+     * Add an item flag via {@link #addItemFlag(XItemFlag)}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T removeItemFlag(@NotNull XItemFlag flag);
+
+    /**
+     * PATCH FUNCTION - Removes several item flags from the item.<br>
+     * <br>
+     * Add an item flag via {@link #addItemFlag(XItemFlag)}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T removeItemFlags(@NotNull Collection<XItemFlag> flags);
+
+    /**
+     * PATCH FUNCTION - Sets the presence of an item flag on the item.<br>
+     * <br>
+     * @param present If true, the flag will be added, if false it will be removed.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    default T setItemFlag(@NotNull XItemFlag flag, boolean present) {
+        if (present) {
+            return addItemFlag(flag);
+        } else {
+            return removeItemFlag(flag);
+        }
+    }
+
+    /**
+     * PATCH FUNCTION - Resets an item flag patch, the Builder will then use the prototype's value for this flag.<br>
+     * <br>
+     * Other Methods:<br>
+     * - ADD an item flag via {@link #addItemFlag(XItemFlag)}<br>
+     * - REMOVE an item flag via {@link #removeItemFlag(XItemFlag)}<br>
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T resetItemFlag(@NotNull XItemFlag flag);
+
+    /**
+     * PATCH FUNCTION - Clears all item flag patches, the Builder will then use the prototype's values.<br>
+     * <br>
+     * NOTE: The prototype's item flags will still be applied, this only clears the patches.
+     */
+    @NotNull
+    T resetAllItemFlags();
+
+    /**
+     * PATCH FUNCTION HELPER - Convenience method to hide common item attributes by adding multiple item flags.<br>
+     * This method adds the following {@link XItemFlag}s to the item:<br>
+     * - {@link XItemFlag#HIDE_ATTRIBUTES}<br>
+     * - {@link XItemFlag#HIDE_ENCHANTS}<br>
+     * - {@link XItemFlag#HIDE_PLACED_ON}<br>
+     * - {@link XItemFlag#HIDE_UNBREAKABLE}<br>
+     * - {@link XItemFlag#HIDE_ADDITIONAL_TOOLTIP}<br>
+     * <br>
+     * This is equivalent to calling {@link #addItemFlag(XItemFlag)} for each of the above flags.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    default T hideAttributes() {
+        return addItemFlag(XItemFlag.HIDE_ATTRIBUTES)
+                .addItemFlag(XItemFlag.HIDE_ENCHANTS)
+                .addItemFlag(XItemFlag.HIDE_PLACED_ON)
+                .addItemFlag(XItemFlag.HIDE_UNBREAKABLE)
+                .addItemFlag(XItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+    }
+
+    // ----- ENCHANTMENTS ------ //
+    /**
+     * PATCH FUNCTION - Sets the level of an enchantment on the item.<br>
+     * <br>
+     * Other Methods:<br>
+     * - REMOVE an enchantment via {@link #removeEnchantment(XEnchantment)}<br>
+     * - RESET an enchantment (remove patch) via {@link #resetEnchantment(XEnchantment)}<br>
+     * @param level The level of the enchantment to set (MUST be greater than 0)
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T setEnchantment(@NotNull XEnchantment enchant, int level);
+
+    /**
+     * PATCH FUNCTION - Sets the level of several enchantments on the item.<br>
+     * <br>
+     * Other Methods:<br>
+     * - REMOVE an enchantment via {@link #removeEnchantment(XEnchantment)}<br>
+     * - RESET an enchantment (remove patch) via {@link #resetEnchantment(XEnchantment)}<br>
+     * @param enchantments The map of enchantments to their levels to set (all levels MUST be greater than 0)
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T setEnchantments(@NotNull Map<XEnchantment, Integer> enchantments);
+
+    /**
+     * PATCH FUNCTION - Remove an enchantment from the item.<br>
+     * <br>
+     * Other Methods:<br>
+     * - ADD or UPDATE an enchantment via {@link #setEnchantment(XEnchantment, int)}<br>
+     * - RESET an enchantment (remove patch) via {@link #resetEnchantment(XEnchantment)}<br>
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T removeEnchantment(@NotNull XEnchantment enchant);
+
+    /**
+     * PATCH FUNCTION - Reset an enchantment patch, the Builder will then use the prototype's value for this enchantment.<br>
+     * <br>
+     * Other Methods:<br>
+     * - ADD or UPDATE an enchantment via {@link #setEnchantment(XEnchantment, int)}<br>
+     * - REMOVE an enchantment via {@link #removeEnchantment(XEnchantment)}<br>
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T resetEnchantment(@NotNull XEnchantment enchant);
+
+    /**
+     * PATCH FUNCTION - Clears all enchantment patches, the Builder will then use the prototype's values.<br>
+     * <br>
+     * NOTE: The prototype's enchantments will still be applied, this only clears the patches.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T resetAllEnchantments();
+
+    // ----- GLOW ----- //
+    /**
+     * PATCH FUNCTION - Sets whether the item should have an added glow effect.<br>
+     * <br>
+     * Clear this patch by calling {@link #removeGlow()}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T addGlow();
+
+    /**
+     * PATCH FUNCTION - Removes the glow effect patch, the Builder will then use the prototype's value.<br>
+     * <br>
+     * NOTE: The prototype's glow value is now used by the builder, this only removes any existing glow patch.<br>
+     * NOTE: Even when the glow patch is removed, the item may still glow if the prototype has enchantments or a glow effect.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T removeGlow();
+
+    /**
+     * Alias of {@link #removeGlow()}.
+     */
+    @NotNull
+    default T disableGlow() {
+        return removeGlow();
+    }
+
+    /**
+     * PATCH FUNCTION - Toggle the glow effect patch on or off.<br>
+     * <br>
+     * @param glow If true, the glow effect patch will be added, if false it will be removed.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    default T setGlow(boolean glow) {
+        if (glow) {
+            return addGlow();
+        } else {
+            return removeGlow();
+        }
+    }
+
+    // ----- SKULL OWNER (FOR PLAYER HEADS) ----- //
+    /**
+     * PATCH FUNCTION - Sets the owner of a player head item.<br>
+     * <br>
+     * NOTE: This function has no effect on the item unless {@link #willUseSkullOwner()} returns true,
+     * otherwise the item will be unaffected and {@link #getSkullOwner()} will always return null.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetSkullOwner()}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T setSkullOwner(@NotNull String owner);
+
+    /**
+     * PATCH FUNCTION - Clears the skull owner patch, the Builder will then use the prototype's value.<br>
+     * <br>
+     * NOTE: This function has no effect on the item unless {@link #willUseSkullOwner()} returns true,
+     * otherwise the item will be unaffected and {@link #getSkullOwner()} will always return null.<br>
+     * <br>
+     * NOTE: The prototype's skull owner is now used by the builder (if applicable), this only removes any existing skull owner patch.<br>
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T resetSkullOwner();
+
+
+
+    // ------------------------------------------------------------ //
+    //                     ITEM PROPERTY GETTERS                    //
+    // ------------------------------------------------------------ //
+    /**
+     * Get the amount of items in the stack.<br>
+     * Range: 1 to {@link ItemStack#getMaxStackSize()} (inclusive) of the prototype.<br>
+     * <br>
+     * If the patch amount is null (not set), the prototype's amount is returned.
+     */
+    int getAmount();
+
+    /**
+     * Get the damage of a damageable item, or 0 if not damageable / undamaged.<br>
+     * <br>
+     * NOTE: This will always return 0 if {@link #willUseDamage()} returns false.
+     */
+    int getDamage();
+
+    /**
+     * Check if the prototype item supports setting damage (is damageable).<br>
+     * <br>
+     * If this returns true, then the following methods will modify the item:<br>
+     * - {@link #setDamage(int)}<br>
+     * - {@link #resetDamage()}<br>
+     * - {@link #getDamage()}<br>
+     * If this returns false, calling those methods have no effect and {@link #getDamage()} will always return 0.
+     */
+    boolean willUseDamage();
+
+    /**
+     * Get the custom display name for the item.<br>
+     * No color translations are applied, process them AFTER getting the name.<br>
+     * <br>
+     * If the patch name is null (not set), the prototype's name will be returned (if available).
+     */
+    @Nullable
+    String getName();
+
+    /**
+     * Get the custom lore for the item.<br>
+     * <br>
+     * If the patch lore is null (not set), the prototype's lore will be returned (if available).
+     */
+    @Nullable
+    List<@NotNull String> getLore();
+
+    /**
+     * Get if the item is unbreakable or not.<br>
+     * <br>
+     * If the patch unbreakable is null (not set), the prototype's unbreakable value will be returned.
+     */
+    boolean isUnbreakable();
+
+    /**
+     * Get if the item has the specified item flag.<br>
+     * <br>
+     * If the patch does not specify the presence of this flag, the prototype's value will be returned.
+     */
+    boolean hasItemFlag(@NotNull XItemFlag flag);
+
+    /**
+     * Get a set of ALL item flags on the item.<br>
+     * <br>
+     * This is the combination of the prototype's item flags and the patch item flag overrides.<br>
+     * This set is never null, but can be empty if no item flags are present on the prototype or patch.
+     */
+    @NotNull
+    Set<XItemFlag> getItemFlags();
+
+    /**
+     * Get the level of an enchantment on the item, or 0 if the item does not have this enchantment.<br>
+     * <br>
+     * If the patch does not specify a level for this enchantment, the prototype's value will be returned.
+     */
+    int getEnchantmentLevel(@NotNull XEnchantment enchant);
+
+    /**
+     * Get a map of ALL enchantments on the item.<br>
+     * <br>
+     * This is the combination of the prototype's enchantments and the patch enchantment overrides.<br>
+     * This map is never null, but can be empty if no enchantments are present on the prototype or patch.
+     */
+    @NotNull
+    Map<XEnchantment, Integer> getEnchantments();
+
+    /**
+     * Get if the item has an added glow effect.<br>
+     * <br>
+     * If the patch glow is null (not set), the prototype's glow value will be returned.
+     */
+    boolean hasGlow();
+
+    /**
+     * Alias of {@link #hasGlow()}.
+     */
+    default boolean isAddGlow() {
+        return hasGlow();
+    }
+
+    /**
+     * Get the owner of a player head item, or null if not set / not a player head.<br>
+     * <br>
+     * NOTE: This will always return null if {@link #willUseSkullOwner()} returns false.
+     */
+    @Nullable
+    String getSkullOwner();
+
+    /**
+     * Check if the prototype item supports setting a skull owner (is a player head).<br>
+     * <br>
+     * If this returns true, then the following methods will modify the item:<br>
+     * - {@link #setSkullOwner(String)}<br>
+     * - {@link #resetSkullOwner()}<br>
+     * - {@link #getSkullOwner()}<br>
+     * If this returns false, calling those methods have no effect and {@link #getSkullOwner()} will always return null.
+     */
+    boolean willUseSkullOwner();
+
+
+
+    // ------------------------------------------------------------ //
+    //                             BUILD                            //
+    // ------------------------------------------------------------ //
+    /**
+     * Compiles the patches, applying them on top of the prototype.
+     * @return The final {@link ItemStack} with all patches applied.
+     */
+    @NotNull
+    default ItemStack build() {
         return build(null);
     }
 
     /**
-     * @return The item the builder has been building
-     * @param player The player to build the item for (for placeholders)
+     * Compiles the patches, applying them on top of the prototype.
+     * @param viewer The {@link Player} viewing this item, for PlaceholderAPI support. (Can be null)
+     * @return The final {@link ItemStack} with all patches applied.
      */
-    public ItemStack build(@Nullable Player player) {
-        return this.build(player, 0);
+    @NotNull
+    ItemStack build(@Nullable Player viewer);
+
+    /**
+     * Alias of {@link #build()}.
+     * @return The final {@link ItemStack} with all patches applied.
+     */
+    @NotNull
+    default ItemStack toItemStack() {
+        return build();
     }
 
     /**
-     * @return The item the builder has been building
-     * @param player The player to build the item for (for placeholders)
-     * @param materialIndex The index of the material to use in the materials list
+     * Alias of {@link #build(Player)}.
+     * @param player The {@link Player} viewing this item, for PlaceholderAPI support. (Can be null)
+     * @return The final {@link ItemStack} with all patches applied.
      */
-    public ItemStack build(@Nullable Player player, int materialIndex) {
-        if (material == XMaterial.AIR && base == null) { return new ItemStack(Material.AIR); }
-
-        final ItemStack itemStack;
-        if (base != null) {
-            itemStack = base;
-        }else {
-            assert material.parseMaterial() != null;
-            itemStack = material.parseItem();
-            // Update the ItemStack amount
-            assert itemStack != null;
-            itemStack.setAmount(amount);
-        }
-
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null) { return itemStack; }
-
-        // Skull Meta
-        if (skullOwner != null && meta instanceof SkullMeta skullMeta) {
-            skullMeta.setOwner(skullOwner);
-        }
-
-        // Name and lore
-        if (name != null) { meta.setDisplayName(StringUtilP.p(player, name)); }
-        if (lore != null) { meta.setLore(StringUtilP.p(player, lore)); }
-
-        // Unbreakable
-        if (unbreakable != TriState.NOT_SET) {
-            meta = NmsAPI.getItemEditor().setUnbreakable(meta, unbreakable.toBoolean());
-            meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        }
-
-        // Flags
-        if (!itemFlags.isEmpty()) {
-            for (ItemFlag itemFlag : itemFlags) {
-                if (!meta.getItemFlags().contains(itemFlag)) { meta.addItemFlags(itemFlag); }
-            }
-        }
-
-        // Glow
-        if (addGlow) {
-            meta.addEnchant(XEnchantment.INFINITY.getEnchant(), 1, true);
-            if (!meta.getItemFlags().contains(ItemFlag.HIDE_ENCHANTS)) { meta.addItemFlags(ItemFlag.HIDE_ENCHANTS); }
-        }
-
-        // Enchantments
-        if (!enchantments.isEmpty()) {
-            for (Map.Entry<XEnchantment, Integer> entry : enchantments.entrySet()) {
-                meta.addEnchant(entry.getKey().getEnchant(), entry.getValue(), true);
-            }
-        }
-
-        // Apply meta
-        itemStack.setItemMeta(meta);
-
-        // Load NBT
-        if (!nbtData.isEmpty()) {
-            NBT.modify(itemStack, nbt -> {
-                for (Map.Entry<String, Pair<NbtType, Object>> entry : nbtData.entrySet()) {
-                    String nbtKey = entry.getKey();
-                    Pair<NbtType, Object> pair = entry.getValue();
-                    pair.getA().write(nbt, nbtKey, pair.getB());
-                }
-            });
-        }
-        return itemStack;
+    @NotNull
+    default ItemStack toItemStack(@Nullable Player player) {
+        return build(player);
     }
 
-    final void loadBase(@Nullable ItemStack base) {
-        this.base = base;
-        if (base == null) { return; }
-        // Copy the base's ItemMeta so it doesn't get lost
-        // Specifically name and lore, if other properties are set they will be overwritten
-        // But by default lore is an empty list and needs to be set
-        @Nullable ItemMeta meta = base.getItemMeta();
-        if (meta != null) {
-            this.name = meta.getDisplayName();
-            this.lore = meta.getLore();
-        }else {
-            this.name = null;
-            this.lore = null;
-        }
-    }
+
+
+    // ------------------------------------------------------------ //
+    //                    PATCH PROPERTY HELPERS                    //
+    // ------------------------------------------------------------ //
+    /**
+     * PATCH PROPERTY HELPER - Replaces all occurrences of a substring in the name with another string.<br>
+     * This transformation only applies to the name patch, if no name patch is set this does nothing.<br>
+     * It does NOT modify the prototype's name.
+     * @param find The substring to find
+     * @param replacement The sub
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T replaceName(@NotNull String find, @NotNull String replacement);
 
     /**
-     * @param config The configuration section to load data from
-     * @param offlinePlayer The player to use as the skull owner
+     * Alias of {@link #replaceNamePAPI(OfflinePlayer)} with a {@code null} player.
      */
-    final void loadConfigItem(ConfigurationSection config, @Nullable OfflinePlayer offlinePlayer, boolean loadMaterial) {
-        if (offlinePlayer != null) {
-            this.skullOwner = offlinePlayer.getName();
-        }
-        // Load Damage, so it's available in the Type Search
-        this.setDurability(config.getInt("damage", 0));
-
-        // Load Types, which is complicated due to the 1.13 flattening
-        if (loadMaterial) {
-            loadTypes(config);
-        }
-
-        // Load basic values from config
-        this.setAmount(config.getInt("amount", 1));
-        this.setName(config.getString("name"));
-        this.setLore(config.getStringList("lore"));
-        // Load Enchantments
-        this.loadEnchantments(config);
-        // Load Misc properties
-        if (config.getBoolean("glow") || config.getBoolean("addGlow")) {
-            this.addGlow = true;
-        }
-
-        // Load NBT
-        this.loadNBT(config);
-    }
-
-    final void loadEnchantments(ConfigurationSection config) {
-        this.enchantments.clear();
-        if (!config.isConfigurationSection("enchantments")) { return; }
-
-        // Load the sub-keys
-        for (String key : config.getConfigurationSection("enchantments").getKeys(false)) {
-            XEnchantment enchant = XEnchantment.matchXEnchantment(key).orElseThrow();
-            int level = config.getInt("enchantments." + key);
-            if (level <= 0) {
-                throw new IllegalArgumentException("Invalid enchantment level: " + level);
-            }
-            this.enchantments.put(enchant, level);
-        }
-    }
-
-    final void loadNBT(ConfigurationSection config) {
-        this.nbtData.clear();
-        if (!config.isConfigurationSection("nbt")) { return; }
-        ConfigurationSection section = config.getConfigurationSection("nbt");
-
-        // Load the sub-keys
-        for (String key : section.getKeys(false)) {
-            String nbtKey = section.getString(key + ".key");
-            NbtType type = NbtType.fromName(section.getString(key + ".type"));
-            Object value = type.readConf(section, key + ".value");
-            this.nbtData.put(nbtKey, Pair.of(type, value));
-        }
-    }
-
-    public IBuilder(XMaterial m) {
-        this(m, 1);
-    }
-
-    public IBuilder(XMaterial m, short damage) {
-        this(m, 1, damage);
-    }
-
-    public IBuilder(XMaterial m, int amount) {
-        this(m, amount, (short) 0);
-    }
-
-    public IBuilder(@NotNull XMaterial material, int amount, short damage) {
-        if (amount > 64) { amount = 64; }
-        assert material.parseMaterial() != null;
-        this.material = material;
-        this.amount = amount;
-        this.damage = damage;
-    }
-
-    public IBuilder(@NotNull ItemStack is) {
-        this(is, true);
-    }
-
-    public IBuilder(@NotNull ItemStack is, boolean clone) {
-        loadBase((clone) ? is.clone() : is);
-    }
-
-    public IBuilder setUnbreakable(boolean b) {
-        unbreakable = TriState.byBoolean(b);
-        return this;
-    }
-
-    public IBuilder setDurability(short dur) {
-        this.damage = dur;
-        return this;
-    }
-
-    public IBuilder setDurability(int dur) { return setDurability((short) dur); }
-
-    public IBuilder setType(XMaterial m) {
-        this.material = m;
-        return this;
-    }
-
-    public IBuilder setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public IBuilder setDisplayName(String name) {
-        return setName(name);
-    }
-
-    public IBuilder setMaterial(XMaterial material) {
-        this.material = material;
-        return this;
-    }
-    public IBuilder setMaterial(Material material) {
-        return setMaterial(XMaterial.matchXMaterial(material));
-    }
-
-    public IBuilder replaceName(String find, String replacement) {
-        if (name == null) { return this; }
-        name = name.replace(find, replacement);
-        return this;
-    }
-
-    public IBuilder replaceNamePAPI() {
+    @NotNull
+    default T replaceNamePAPI() {
         return replaceNamePAPI(null);
     }
-    public IBuilder replaceNamePAPI(@Nullable OfflinePlayer player) {
-        if (name == null) { return this; }
-        name = StringUtilP.p(player, name);
-        return this;
-    }
 
     /**
-     * Searches for the find placeholder in the lore, and replaces that entire line with replacement
-     * @param find The string to search for in the lore
-     * @param replacement The lines to swap in, in place of the entire line containing find
-     * @return The IBuilder with replaced lore
+     * PATCH PROPERTY HELPER - Replaces all PlaceholderAPI placeholders in the name with their respective values.<br>
+     * This transformation only applies to the name patch, if no name patch is set this does nothing.<br>
+     * It does NOT modify the prototype's name.
+     *
+     * @param player The player to use for PlaceholderAPI replacements, or null to skip player-specific placeholders
+     * @return This builder, for chaining
      */
-    public IBuilder replaceLoreLine(String find, List<String> replacement) {
-        final List<String> newLore = new ArrayList<>();
-        if (lore == null) { return this; }
-        for (String s : lore) {
-            if (ChatColor.stripColor(s).contains(ChatColor.stripColor(find))) {
-                newLore.addAll(replacement);
-            } else {
-                newLore.add(s);
-            }
-        }
-        setLore(newLore);
-        return this;
-    }
+    @NotNull
+    T replaceNamePAPI(@Nullable OfflinePlayer player);
 
-    public IBuilder replaceLore(String find, String replacement) {
-        final List<String> newLore = new ArrayList<>();
-        if (lore == null) { return this; }
-        for (String s : lore) {
-            if (s.contains(find)) {
-                newLore.add(s.replace(find, replacement));
-            }else {
-                newLore.add(s);
-            }
-        }
-        setLore(newLore);
-        return this;
-    }
+    /**
+     * PATCH PROPERTY HELPER - Searches for a substring in the lore and replaces that entire line with replacement lines.<br>
+     * This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
+     * It does NOT modify the prototype's lore.<br>
+     * <br>
+     * Uses {@link org.bukkit.ChatColor#stripColor(String)} for comparison to ignore color formatting.
+     *
+     * @param find The string to search for in the lore (color codes will be stripped for comparison)
+     * @param replacement The lines to swap in, in place of the entire line containing the find string
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T replaceLoreLine(@NotNull String find, @NotNull List<@NotNull String> replacement);
 
-    public IBuilder replaceLorePAPI() {
+    /**
+     * PATCH PROPERTY HELPER - Replaces all occurrences of a substring in each lore line with another string.<br>
+     * This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
+     * It does NOT modify the prototype's lore.
+     *
+     * @param find The substring to find in each lore line
+     * @param replacement The string to replace each occurrence with
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T replaceLore(@NotNull String find, @NotNull String replacement);
+
+    /**
+     * Alias of {@link #replaceLorePAPI(OfflinePlayer)} with a {@code null} player.
+     */
+    @NotNull
+    default T replaceLorePAPI() {
         return replaceLorePAPI(null);
     }
-    public IBuilder replaceLorePAPI(@Nullable OfflinePlayer player) {
-        if (lore == null) { return this; }
-        lore.replaceAll(s -> StringUtilP.p(player, s));
-        return this;
-    }
 
-    public IBuilder replaceBoth(String find, String replacement) {
-        replaceName(find, replacement);
-        replaceLore(find, replacement);
-        return this;
-    }
+    /**
+     * PATCH PROPERTY HELPER - Replaces all PlaceholderAPI placeholders in the lore with their respective values.<br>
+     * This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
+     * It does NOT modify the prototype's lore.
+     *
+     * @param player The player to use for PlaceholderAPI replacements, or null to skip player-specific placeholders
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T replaceLorePAPI(@Nullable OfflinePlayer player);
 
-    public IBuilder replaceBothPAPI() {
-        return replaceBothPAPI(null);
-    }
-    public IBuilder replaceBothPAPI(@Nullable OfflinePlayer player) {
-        replaceNamePAPI(player);
-        replaceLorePAPI(player);
-        return this;
-    }
-
-    public IBuilder setAmount(int amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    public IBuilder removeLore() {
-        setLore(new ArrayList<>());
-        return this;
-    }
-
-    public IBuilder hideAttributes() {
-        if (!itemFlags.contains(ItemFlag.HIDE_ATTRIBUTES)) { itemFlags.add(ItemFlag.HIDE_ATTRIBUTES); }
-        if (!itemFlags.contains(ItemFlag.HIDE_ENCHANTS)) { itemFlags.add(ItemFlag.HIDE_ENCHANTS); }
-        if (!itemFlags.contains(ItemFlag.HIDE_PLACED_ON)) { itemFlags.add(ItemFlag.HIDE_PLACED_ON); }
-        if (!itemFlags.contains(ItemFlag.HIDE_UNBREAKABLE)) { itemFlags.add(ItemFlag.HIDE_UNBREAKABLE); }
-        if (!itemFlags.contains(ItemFlag.HIDE_POTION_EFFECTS)) { itemFlags.add(ItemFlag.HIDE_POTION_EFFECTS); }
-        return this;
-    }
-
-    public IBuilder addGlow() {
-        this.addGlow = true;
-        return this;
-    }
-
-    public IBuilder disableGlow() {
-        this.addGlow = false;
-        return this;
-    }
-
-    public IBuilder addGlow(boolean glow) {
-        this.addGlow = glow;
-        return this;
-    }
-
-    public IBuilder removeEnchantment(XEnchantment enchant) {
-        this.enchantments.remove(enchant);
-        return this;
-    }
-
-    public IBuilder addEnchant(XEnchantment enchant, int level) {
-        this.enchantments.put(enchant, level);
-        return this;
-    }
-
-    public IBuilder addEnchantments(Map<XEnchantment, Integer> enchantments) {
-        this.enchantments.putAll(enchantments);
-        return this;
-    }
-
-    public IBuilder setLore(String... line) {
-        return setLore(Arrays.asList(line));
-    }
-
-    public IBuilder setLore(List<String> lore) {
-        this.lore = lore;
-        return this;
-    }
-
-    public IBuilder addLoreLines(List<String> lines) {
-        if (lore == null) { lore = new ArrayList<>(); }
-        lore.addAll(lines);
-        return this;
-    }
-
-    public IBuilder addLoreLines(String... line) {
-        return addLoreLines(Arrays.asList(line));
-    }
-
-    public IBuilder addFlag(ItemFlag flag) {
-        if (!itemFlags.contains(flag)) { itemFlags.add(flag); }
-        return this;
-    }
-
-    public ItemStack toItemStack() { return build(); }
-    public ItemStack toItemStack(Player player) { return build(player); }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    final boolean loadXMaterial(ConfigurationSection section) {
-        @Nullable String strValue = null;
-        if (section.isString("material")) {
-            strValue = section.getString("material");
-        } else if (section.isString("type")) {
-            strValue = section.getString("type");
-        }
-        if (strValue == null) { return false; }
-        strValue = strValue.toUpperCase().strip();
-
-        // Parse this string into a Material (if available)
-        @Nullable Material mat = parseMaterial(strValue);
-        if (mat != null && damage == 0) {
-            // As long as we don't want a data value, we're done & we can use this Material
-            this.material = XMaterial.matchXMaterial(mat);
-            return true;
-        }
-
-        // Parse this string into an XMaterial, this is used as a last resort
-        @Nullable XMaterial defaultParse = parseXMaterial(strValue);
-
-        // XMaterial names are latest (i.e. 1.21 or whatever) Material values, meaning if our string was "WOOL"
-        // It won't return an XMaterial.WOOL (that doesn't exist)
-        // Meaning materials with colors should never pass this check, and this is only for simple materials like
-        // XMaterial.BUCKET which has a Material.BUCKET to match
-        if (defaultParse != null && defaultParse.name().equalsIgnoreCase(strValue) && damage == 0) {
-            this.material = defaultParse;
-            return true;
-        }
-
-        // Now, we have a weird material name, or a material with a data value
-        // We need to evaluate the correct XMaterial, which we can only do if we have an original material string
-        // Why do we need to do this? Because when matching "WOOL" to an XMaterial, xseries will pick a colored wool i.e. BLACK_WOOL
-        //   (due to the way they handle legacy names, all wool colors are mapped to "WOOL" and it just picks the first one it finds)
-        // But if we have a data value (or even data value 0) we know that we want a specific wool color, and need a different enum value
-        //   i.e. XMaterial.RED_WOOL
-
-        // Let's try to fetch an XMaterial that corresponds to this material string & data
-        // Data should have already been loaded prior to calling this
-        Optional<XMaterial> o = MaterialFlatteningUtil.findMaterialAndDataMapping(strValue, (byte) damage);
-        // Fall back to the original XMaterial if we can't find a specific colored match
-        @Nullable XMaterial xMat = o.orElse(defaultParse);
-
-        if (xMat != null) {
-            this.material = xMat;
-            return true;
-        }
-
-        return false;
+    /**
+     * PATCH PROPERTY HELPER - Convenience method to replace a substring in both name and lore.<br>
+     * This is equivalent to calling {@link #replaceName(String, String)} followed by {@link #replaceLore(String, String)}.<br>
+     * <br>
+     * This transformation only applies to existing patches, if no name or lore patches are set those won't be affected.<br>
+     * It does NOT modify the prototype's name or lore.
+     *
+     * @param find The substring to find in name and lore
+     * @param replacement The string to replace each occurrence with
+     * @return This builder, for chaining
+     */
+    @NotNull
+    default T replaceBoth(@NotNull String find, @NotNull String replacement) {
+        return replaceName(find, replacement).replaceLore(find, replacement);
     }
 
     /**
-     * Nullable because the material string may be another IBuilder format (like ItemsAdder namespacedID)
+     * Alias of {@link #replaceBothPAPI(OfflinePlayer)} with a {@code null} player.
      */
-    public @Nullable XMaterial parseXMaterial(String mat) {
-        try {
-            return XMaterial.matchXMaterial(mat).orElse(null);
-        } catch (Throwable t) {
-            return null;
-        }
+    @NotNull
+    default T replaceBothPAPI() {
+        return replaceBothPAPI(null);
     }
 
-    public @Nullable Material parseMaterial(String mat) {
-        try {
-            return Material.getMaterial(mat);
-        } catch (Throwable t) {
-            return null;
-        }
+    /**
+     * PATCH PROPERTY HELPER - Convenience method to replace PlaceholderAPI placeholders in both name and lore.<br>
+     * This is equivalent to calling {@link #replaceNamePAPI(OfflinePlayer)} followed by {@link #replaceLorePAPI(OfflinePlayer)}.<br>
+     * <br>
+     * This transformation only applies to existing patches, if no name or lore patches are set those won't be affected.<br>
+     * It does NOT modify the prototype's name or lore.
+     *
+     * @param player The player to use for PlaceholderAPI replacements, or null to skip player-specific placeholders
+     * @return This builder, for chaining
+     */
+    @NotNull
+    default T replaceBothPAPI(@Nullable OfflinePlayer player) {
+        return replaceNamePAPI(player).replaceLorePAPI(player);
     }
 
-    public abstract void loadTypes(ConfigurationSection config);
+    // ------------------------------------------------------------ //
+    //                            CLONING                           //
+    // ------------------------------------------------------------ //
+    @NotNull ItemBuilder clone();
 
-    public abstract IBuilder clone();
+    /**
+     * Create a clone of this builder with all the same patches, but a different prototype {@link ItemStack}.
+     * @since 5.0.0-alpha.17
+     */
+    @NotNull ItemBuilder cloneWithNewPrototype(@NotNull ItemStack newPrototype);
 
-    public IBuilder loadClone(IBuilder builder) {
-        // Basics
-        builder.setMaterial(material);
-        builder.setAmount(amount);
-        builder.setDurability(damage);
+    /**
+     * Create a clone of this builder with all the same patches, but a different prototype {@link ItemStack}.<br>
+     * This method uses {@link XMaterial#parseItem()} to convert the {@link XMaterial} to an {@link ItemStack}.
+     * @since 5.0.0-alpha.17
+     */
+    default @NotNull ItemBuilder cloneWithNewPrototype(@NotNull XMaterial newPrototype) {
+        ItemStack stack = Preconditions.checkNotNull(
+                Preconditions.checkNotNull(newPrototype, "XMaterial cannot be null").parseItem(),
+                "XMaterial " + newPrototype.name() + " could not be parsed to a valid ItemStack!"
+        );
+        return cloneWithNewPrototype(stack);
+    }
 
-        // Meta
-        builder.name = name;
-        builder.lore = new ArrayList<>();
-        if (lore != null) { builder.lore.addAll(lore); }
-
-        // Additional Flags
-        builder.unbreakable = unbreakable;
-        builder.itemFlags.addAll(itemFlags);
-        builder.enchantments.putAll(enchantments);
-        builder.addGlow = addGlow;
-        builder.skullOwner = skullOwner;
-        if (base != null) {
-            builder.base = base.clone();
-        }
-        return builder;
+    /**
+     * Create a clone of this builder with all the same patches, but a different prototype {@link ItemStack}.<br>
+     * This method uses {@link XMaterial#matchXMaterial(Material)} to convert the {@link Material} to an {@link XMaterial},<br>
+     * then uses {@link XMaterial#parseItem()} to convert that to an {@link ItemStack}.
+     * @since 5.0.0-alpha.17
+     */
+    default @NotNull ItemBuilder cloneWithNewPrototype(@NotNull Material newPrototype) {
+        XMaterial xMat = Preconditions.checkNotNull(
+                XMaterial.matchXMaterial(Preconditions.checkNotNull(newPrototype, "Material cannot be null")),
+                "Material " + newPrototype.name() + " could not be matched to a valid XMaterial!"
+        );
+        ItemStack stack = Preconditions.checkNotNull(
+                Preconditions.checkNotNull(xMat.parseItem(), "XMaterial " + xMat.name() + " could not be parsed to a valid ItemStack!"),
+                "XMaterial " + xMat.name() + " could not be parsed to a valid ItemStack!"
+        );
+        return cloneWithNewPrototype(stack);
     }
 }

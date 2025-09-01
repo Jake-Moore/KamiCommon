@@ -5,7 +5,7 @@ import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
 import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfig;
-import com.kamikazejam.kamicommon.item.IBuilder;
+import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.util.log.JavaPluginLogger;
 import com.kamikazejam.kamicommon.util.log.LoggerService;
@@ -164,10 +164,15 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         observers.clear();
     }
 
-
-
-
-
+    /**
+     * Reload the backing config for this observable, notifying all registered observers of the change.<br>
+     * <br>
+     * Equivalent to calling {@link #reload()}
+     */
+    @Override
+    public void reloadObservableConfig() {
+        reload();
+    }
 
     // Below this point are overrides for the ConfigurationSection abstract class
     // This allows this class to be used as a swap in replacement for a YamlConfiguration (same methods)
@@ -277,9 +282,10 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     @Override public ItemStack getItemStack(String key) { return getYamlConfiguration().getItemStack(key); }
     @Override public ItemStack getItemStack(String key, ItemStack def) { return getYamlConfiguration().getItemStack(key, def); }
     @Override public void setItemStack(String key, ItemStack item) { getYamlConfiguration().setItemStack(key, item); }
-    @Override public void setItemBuilder(String key, IBuilder builder) { getYamlConfiguration().setItemBuilder(key, builder); }
-    @Override public IBuilder getItemBuilder(String key) { return getYamlConfiguration().getItemBuilder(key); }
     @Override public boolean isItemStack(String key) { return getYamlConfiguration().isItemStack(key); }
+
+    // ItemBuilder Methods
+    @Override public @NotNull ItemBuilder parseItemBuilder(@NotNull String key) { return getYamlConfiguration().parseItemBuilder(key); }
 
     @Override
     public String getCurrentPath() {

@@ -2,6 +2,7 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 
 plugins {
+    id("javadoc-publish-convention")
     // Unique plugins for this module
     id("com.gradleup.shadow")
 }
@@ -12,7 +13,7 @@ dependencies {
     implementation(project(":spigot-utils"))
 
     implementation("org.apache.httpcomponents.client5:httpclient5:5.5")
-    implementation("org.apache.httpcomponents.core5:httpcore5:5.3.4")
+    implementation("org.apache.httpcomponents.core5:httpcore5:5.3.5")
 
     // Spigot Libraries
     compileOnly(project.property("lowestSpigotDep") as String)
@@ -89,54 +90,24 @@ tasks {
     }
 }
 
-gradle.projectsEvaluated {
-    tasks.getByName("publishShadowPublicationToMavenRepository").dependsOn(tasks.jar)
-}
+//gradle.projectsEvaluated {
+//    tasks.getByName("publishShadowPublicationToMavenRepository").dependsOn(tasks.jar)
+//}
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
-@Suppress("UNCHECKED_CAST")
-val getPublishingVersion = rootProject.extra["getPublishingVersion"] as () -> Pair<String, Boolean>?
-
-publishing {
-    val versionData = getPublishingVersion() ?: run {
-        logger.warn("⚠️ Skipping publication: VERSION '${rootProject.version}' is not valid.")
-        return@publishing
-    }
-    val resolvedVersion = versionData.first
-    val isSnapshot = versionData.second
-
-    publications {
-        create<MavenPublication>("shadow") {
-            groupId = rootProject.group.toString()
-            artifactId = project.name
-            version = resolvedVersion
-            from(components["shadow"])
-        }
-    }
-
-    repositories {
-        maven {
-            credentials {
-                username = System.getenv("LUXIOUS_NEXUS_USER")
-                password = System.getenv("LUXIOUS_NEXUS_PASS")
-            }
-            // getPublishingVersion will append "-SNAPSHOT" if the version is not a SemVer release version
-            url = if (!isSnapshot) {
-                uri("https://repo.luxiouslabs.net/repository/maven-releases/")
-            } else {
-                uri("https://repo.luxiouslabs.net/repository/maven-snapshots/")
-            }
-        }
-    }
+// Configure javadoc-publish-convention
+configure<Javadoc_publish_convention_gradle.JavadocPublishExtension> {
+    // standalone-utils includes only shared-utils
+    exportedProjects = listOf(
+        ":spigot-jar",
+        ":spigot-utils",
+        ":shared-jar",
+        ":shared-utils",
+        ":standalone-utils",
+    )
+    moduleName = "spigot-jar"
+    usesShadow = true
 }
-
-// Uncomment for debug
-//tasks.register<Copy>("unpackShadow") {
-//    dependsOn(tasks.shadowJar)
-//    from(zipTree(layout.buildDirectory.dir("libs").map { it.file(tasks.shadowJar.get().archiveFileName) }))
-//    into(layout.buildDirectory.dir("unpacked-shadow"))
-//}
-//tasks.getByName("build").finalizedBy(tasks.getByName("unpackShadow"))

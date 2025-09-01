@@ -1,4 +1,4 @@
-package com.kamikazejam.kamicommon.subsystem.modules;
+package com.kamikazejam.kamicommon.subsystem.module;
 
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;

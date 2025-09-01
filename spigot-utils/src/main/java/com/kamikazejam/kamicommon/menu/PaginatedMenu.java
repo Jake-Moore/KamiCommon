@@ -234,9 +234,9 @@ public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
             this(layout, new MenuSizeType(type));
         }
 
-        public @NotNull Builder paginationOptions(PaginatedMenuOptions.@NotNull PaginatedMenuOptionsModification modification) {
-            Preconditions.checkNotNull(modification, "Modification must not be null.");
-            modification.modify((PaginatedMenuOptions) this.options);
+        public @NotNull Builder paginationOptions(@NotNull Consumer<PaginatedMenuOptions> consumer) {
+            Preconditions.checkNotNull(consumer, "consumer must not be null.");
+            consumer.accept((PaginatedMenuOptions) this.options);
             return this;
         }
 

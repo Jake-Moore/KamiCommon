@@ -14,7 +14,7 @@ import java.util.List;
  * This layout is defined by:
  * <ul>
  *     <li> A 1 block gap (border) at the top of the menu where no items are placed.</li>
- *     <li> A 1 block gap (border) at the left & right of the menu where no items are placed.</li>
+ *     <li> A 1 block gap (border) at the left and right of the menu where no items are placed.</li>
  *     <li> The last row is reserved for the pagination controls.</li>
  *     <li> The second to last row is also a gap (border) row, such that the remaining rows in between are used for the page items.</li>
  * </ul>

@@ -9,13 +9,13 @@
 // Invalid Versions:
 //   - Any version not matching one of the above formats will not be published. Publication will be skipped.
 @Suppress("PropertyName")
-var VERSION = "5.0.0-alpha.12" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
+var VERSION = "5.0.0-alpha.17" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
 
 plugins { // needed for the allprojects section to work
     id("java")
     id("java-library")
     id("maven-publish")
-    id("com.gradleup.shadow") version "9.0.2" apply false
+    id("com.gradleup.shadow") version "9.1.0" apply false
 }
 
 ext {
@@ -48,7 +48,6 @@ allprojects {
         maven("https://repo.luxiouslabs.net/repository/maven-public/")
         // Spigot Plugin Repos
         maven("https://repo.codemc.org/repository/maven-public/")
-        maven("https://maven.citizensnpcs.co/repo")
         maven("https://mvn.lumine.io/repository/maven-public/") {
             content {
                 includeGroup("io.lumine")
@@ -83,10 +82,50 @@ allprojects {
     tasks.named<Test>("test") {
         enabled = false
     }
+
+    // Configure basic UTF-8 for all Javadoc tasks
+    tasks.withType<Javadoc> {
+        (options as StandardJavadocDocletOptions).apply {
+            encoding = "UTF-8"
+            charSet = "UTF-8"
+        }
+    }
 }
 
 // Disable root project build
 tasks.jar.get().enabled = false
+
+// Register a root task called aggregateJavadoc that runs all subproject's "aggregateJavadoc" tasks
+tasks.register("aggregateJavadoc") {
+    description = "Aggregates Javadoc from all subprojects"
+    group = "documentation"
+
+    dependsOn(subprojects.map { it.tasks.named("aggregateJavadoc") })
+    // require the `build/docs/aggregateJavadoc` folder exist for all subprojects
+    doLast {
+        subprojects.forEach {
+            val javadocDir = it.layout.buildDirectory.dir("docs/aggregateJavadoc").get().asFile
+            if (!javadocDir.exists()) {
+                throw GradleException(
+                    "Javadoc directory for project ${it.name} does not exist: $javadocDir. " +
+                            "Did you run the 'aggregateJavadoc' task in that subproject?"
+                )
+            }
+        }
+    }
+}
+tasks.register("aggregateJavadocJar") {
+    description = "Aggregates Javadoc from all subprojects"
+    group = "documentation"
+
+    dependsOn(subprojects.map { it.tasks.named("aggregateJavadocJar") })
+}
+tasks.register("aggregateSourcesJar") {
+    description = "Aggregates Javadoc from all subprojects"
+    group = "documentation"
+
+    dependsOn(subprojects.map { it.tasks.named("aggregateSourcesJar") })
+}
 
 // -------------------------------------------------- //
 //          Version Management for Publishing         //

@@ -25,4 +25,9 @@ public interface ObservableConfig {
      * Intended for shutdown logic, but can be used at any time.
      */
     void unregisterConfigObservers();
+
+    /**
+     * Reload the backing config for this observable, notifying all registered observers of the change.
+     */
+    void reloadObservableConfig();
 }

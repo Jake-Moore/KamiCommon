@@ -4,6 +4,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
+/**
+ * A simple logger service that provides an abstraction for where to log messages.<br>
+ * <br>
+ * Override {@link #logToConsole} to change how log messages are processed.
+ */
 @SuppressWarnings("unused")
 public abstract class LoggerService {
 

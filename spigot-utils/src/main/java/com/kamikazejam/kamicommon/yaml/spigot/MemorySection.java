@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.yaml.spigot;
 
-import com.kamikazejam.kamicommon.item.IBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.yaml.AbstractYamlHandler;
 import com.kamikazejam.kamicommon.yaml.base.ConfigurationMethods;
@@ -58,8 +57,8 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         }
 
         // ItemBuilders
-        if (value instanceof IBuilder builder) {
-            setItemBuilder(key, builder); return;
+        if (value instanceof ItemBuilder builder) {
+            setItemStack(key, builder.build()); return;
         }
 
         super.put(key, value);
@@ -119,23 +118,16 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
     }
 
     @Override
-    public void setItemBuilder(String key, IBuilder builder) {
-        if (builder == null) { set(key, null); return; }
-        setItemStack(key, builder.toItemStack());
-    }
-
-    @Override
-    public IBuilder getItemBuilder(String key) {
-        ItemStack stack = getItemStack(key);
-        if (stack == null) { return null; }
-        return new ItemBuilder(stack);
-    }
-
-    @Override
     public boolean isItemStack(String key) {
         if (!contains(key)) { return false; }
         ItemStack stack = getItemStack(key);
         return stack != null;
+    }
+
+    @Override
+    public @NotNull ItemBuilder parseItemBuilder(@NotNull String key) {
+        MemorySection section = getConfigurationSection(key);
+        return ItemBuilder.load(section);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.kamikazejam.kamicommon.menu.api.struct.paginated.layout;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.menu.PaginatedMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
-import com.kamikazejam.kamicommon.menu.api.icons.slots.PositionSlot;
+import com.kamikazejam.kamicommon.menu.api.icons.slots.PositionIconSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,36 +15,36 @@ import java.util.List;
 
 /**
  * Represents a layout for a {@link PaginatedMenu} where the available slots for page icons are defined
- * as the grid between two positions ({@link PositionSlot})
+ * as the grid between two positions ({@link PositionIconSlot})
  */
 @Getter
 @SuppressWarnings("unused")
 public class GridPaginationLayout implements PaginationLayout {
-    private @NotNull PositionSlot min;
-    private @NotNull PositionSlot max;
+    private @NotNull PositionIconSlot min;
+    private @NotNull PositionIconSlot max;
     @Setter
     private @NotNull IconSlot prevIconSlot;
     @Setter
     private @NotNull IconSlot nextIconSlot;
 
-    public GridPaginationLayout(@NotNull PositionSlot a, @NotNull PositionSlot b, @NotNull IconSlot prevIconSlot, @NotNull IconSlot nextIconSlot) {
-        this.min = new PositionSlot(Math.min(a.getRow(), b.getRow()), Math.min(a.getCol(), b.getCol()));
-        this.max = new PositionSlot(Math.max(a.getRow(), b.getRow()), Math.max(a.getCol(), b.getCol()));
+    public GridPaginationLayout(@NotNull PositionIconSlot a, @NotNull PositionIconSlot b, @NotNull IconSlot prevIconSlot, @NotNull IconSlot nextIconSlot) {
+        this.min = new PositionIconSlot(Math.min(a.getRow(), b.getRow()), Math.min(a.getCol(), b.getCol()));
+        this.max = new PositionIconSlot(Math.max(a.getRow(), b.getRow()), Math.max(a.getCol(), b.getCol()));
         this.prevIconSlot = prevIconSlot;
         this.nextIconSlot = nextIconSlot;
     }
 
     // Copy Constructor
     private GridPaginationLayout(@NotNull GridPaginationLayout other) {
-        this.min = (PositionSlot) other.min.copy();
-        this.max = (PositionSlot) other.max.copy();
+        this.min = (PositionIconSlot) other.min.copy();
+        this.max = (PositionIconSlot) other.max.copy();
         this.prevIconSlot = other.prevIconSlot.copy();
         this.nextIconSlot = other.nextIconSlot.copy();
     }
 
-    public void update(@NotNull PositionSlot a, @NotNull PositionSlot b) {
-        this.min = new PositionSlot(Math.min(a.getRow(), b.getRow()), Math.min(a.getCol(), b.getCol()));
-        this.max = new PositionSlot(Math.max(a.getRow(), b.getRow()), Math.max(a.getCol(), b.getCol()));
+    public void update(@NotNull PositionIconSlot a, @NotNull PositionIconSlot b) {
+        this.min = new PositionIconSlot(Math.min(a.getRow(), b.getRow()), Math.min(a.getCol(), b.getCol()));
+        this.max = new PositionIconSlot(Math.max(a.getRow(), b.getRow()), Math.max(a.getCol(), b.getCol()));
     }
 
     @Override

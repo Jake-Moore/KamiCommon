@@ -187,44 +187,7 @@ class RedisManager implements Service {
         }
     }
 
-    boolean subscribeRaw(@NotNull RedisChannelCallback callback, @NotNull String... channels) {
-        try {
-            logger.info("Subscribing to channels: " + String.join(", ", channels));
-
-            // Ensure we have a valid reactive connection
-            if (reactive == null) {
-                reactive = redisPubSub.reactive();
-            }
-            final List<String> channelList = List.of(channels);
-
-            // Subscribe to the channel
-            reactive.subscribe(channels).subscribe();
-            // Register an Observer
-            reactive.observeChannels()
-                    // Listen to our channels only
-                    .filter(pm -> channelList.contains(pm.getChannel()))
-                    // Deserialize the message and call the callback
-                    .doOnNext(pm -> callback.onMessage(pm.getChannel(), pm.getMessage()))
-                    .subscribe();
-
-            subscribedChannels.addAll(channelList);
-            return true;
-        } catch (Exception ex) {
-            logger.info(ex, "Error subscribing");
-            return false;
-        }
-    }
-
     void publish(@NotNull String channel, String message, boolean sync) {
-        // Publish a message to the channel
-        if (sync) {
-            redis.sync().publish(channel, message);
-        }else {
-            redis.async().publish(channel, message);
-        }
-    }
-
-    void publishRaw(@NotNull String channel, @NotNull String message, boolean sync) {
         // Publish a message to the channel
         if (sync) {
             redis.sync().publish(channel, message);
