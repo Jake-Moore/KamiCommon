@@ -26,10 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * A builder class for wrapping {@link ItemStack}s and applying patches to them.<br>
@@ -245,10 +247,11 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
                     case PatchRemove<Integer> remove -> meta.removeEnchant(enchant);
                     case PatchAdd<Integer> add -> {
                         if (add.getValue() <= 0) {
-                            // skip invalid levels
-                            continue;
+                            // <= 0 values are treated as removal of the enchantment
+                            meta.removeEnchant(enchant);
+                        } else {
+                            meta.addEnchant(enchant, add.getValue(), true); // true - ignores level restrictions
                         }
-                        meta.addEnchant(enchant, add.getValue(), true); // true - ignores level restrictions
                     }
                 }
             }
@@ -530,11 +533,34 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     }
 
     @Override
+    public @NotNull Set<XItemFlag> getItemFlags() {
+        Set<XItemFlag> result = EnumSet.noneOf(XItemFlag.class);
+
+        // Start with prototype flags
+        @Nullable ItemMeta meta = prototype.getItemMeta();
+        if (meta != null) {
+            for (ItemFlag flag : meta.getItemFlags()) {
+                result.add(XItemFlag.of(flag));
+            }
+        }
+
+        // Apply patches
+        for (Entry<XItemFlag, PatchOp> entry : itemFlags.entrySet()) {
+            switch (entry.getValue()) {
+                case ADD -> result.add(entry.getKey());
+                case REMOVE -> result.remove(entry.getKey());
+            }
+        }
+
+        return result;
+    }
+
+    @Override
     public int getEnchantmentLevel(@NotNull XEnchantment enchant) {
         @Nullable Patch<Integer> patch = enchantments.get(enchant);
         if (patch != null) {
             switch (patch) {
-                case PatchAdd<Integer> add -> { return add.getValue(); }
+                case PatchAdd<Integer> add -> { return Math.max(0, add.getValue()); }
                 case PatchRemove<Integer> remove -> { return 0; }
             }
         }
@@ -546,6 +572,36 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         @Nullable ItemMeta meta = prototype.getItemMeta();
         if (meta == null || !meta.hasEnchant(enchantment)) { return 0; }
         return meta.getEnchantLevel(enchantment);
+    }
+
+    @Override
+    public @NotNull Map<XEnchantment, Integer> getEnchantments() {
+        Map<XEnchantment, Integer> result = new HashMap<>();
+
+        // Start with prototype enchantments
+        @Nullable ItemMeta meta = prototype.getItemMeta();
+        if (meta != null) {
+            for (Entry<Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
+                result.put(XEnchantment.of(entry.getKey()), entry.getValue());
+            }
+        }
+
+        // Apply patches
+        for (Entry<XEnchantment, Patch<Integer>> entry : enchantments.entrySet()) {
+            switch (entry.getValue()) {
+                case PatchAdd<Integer> add -> {
+                    if (add.getValue() > 0) {
+                        result.put(entry.getKey(), add.getValue());
+                    } else {
+                        // <= 0 values are treated as removal of the enchantment
+                        result.remove(entry.getKey());
+                    }
+                }
+                case PatchRemove<Integer> remove -> result.remove(entry.getKey());
+            }
+        }
+
+        return result;
     }
 
     @Override

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "BooleanMethodIsAlwaysInverted"})
 public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permits ItemBuilder {
@@ -32,6 +33,17 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * @return The prototype {@link ItemStack} this builder is based on.
      */
     @NotNull ItemStack getPrototype();
+
+    /**
+     * Get the {@link XMaterial} of the prototype item this builder is based on.<br>
+     * <br>
+     * This is a convenience method, equivalent to calling {@link XMaterial#matchXMaterial(ItemStack)} on the prototype.
+     *
+     * @return The {@link XMaterial} of the prototype item this builder is based on.
+     */
+    default @NotNull XMaterial getMaterial() {
+        return XMaterial.matchXMaterial(getPrototype());
+    }
 
 
 
@@ -473,11 +485,29 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
     boolean hasItemFlag(@NotNull XItemFlag flag);
 
     /**
+     * Get a set of ALL item flags on the item.<br>
+     * <br>
+     * This is the combination of the prototype's item flags and the patch item flag overrides.<br>
+     * This set is never null, but can be empty if no item flags are present on the prototype or patch.
+     */
+    @NotNull
+    Set<XItemFlag> getItemFlags();
+
+    /**
      * Get the level of an enchantment on the item, or 0 if the item does not have this enchantment.<br>
      * <br>
      * If the patch does not specify a level for this enchantment, the prototype's value will be returned.
      */
     int getEnchantmentLevel(@NotNull XEnchantment enchant);
+
+    /**
+     * Get a map of ALL enchantments on the item.<br>
+     * <br>
+     * This is the combination of the prototype's enchantments and the patch enchantment overrides.<br>
+     * This map is never null, but can be empty if no enchantments are present on the prototype or patch.
+     */
+    @NotNull
+    Map<XEnchantment, Integer> getEnchantments();
 
     /**
      * Get if the item has an added glow effect.<br>
