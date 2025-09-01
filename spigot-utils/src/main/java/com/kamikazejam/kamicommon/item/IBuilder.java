@@ -88,6 +88,16 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
     T setDamage(int damage);
 
     /**
+     * Alias of {@link #setDamage(int)}.
+     * @deprecated As of 5.0.0-alpha.17, replaced by {@link #setDamage(int)}.
+     */
+    @Deprecated(since = "5.0.0-alpha.17")
+    @NotNull
+    default T setDurability(short damage) {
+        return setDamage(damage);
+    }
+
+    /**
      * PATCH FUNCTION - Clears the damage patch, the Builder will then use the prototype's value.<br>
      * <br>
      * NOTE: This function has no effect on the item unless {@link #willUseDamage()} returns true,
@@ -383,6 +393,14 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
     T removeGlow();
 
     /**
+     * Alias of {@link #removeGlow()}.
+     */
+    @NotNull
+    default T disableGlow() {
+        return removeGlow();
+    }
+
+    /**
      * PATCH FUNCTION - Toggle the glow effect patch on or off.<br>
      * <br>
      * @param glow If true, the glow effect patch will be added, if false it will be removed.
@@ -515,6 +533,13 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * If the patch glow is null (not set), the prototype's glow value will be returned.
      */
     boolean hasGlow();
+
+    /**
+     * Alias of {@link #hasGlow()}.
+     */
+    default boolean isAddGlow() {
+        return hasGlow();
+    }
 
     /**
      * Get the owner of a player head item, or null if not set / not a player head.<br>
