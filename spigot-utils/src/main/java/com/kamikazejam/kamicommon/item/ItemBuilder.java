@@ -94,7 +94,7 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
      * PATCH PROPERTY (null = inherits prototype value):<br>
      * <br>
      * A custom display name for the item.<br>
-     * No color translations are applied, process them BEFORE setting the name.
+     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.
      */
     private @Nullable String name = null;
 
@@ -102,7 +102,7 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
      * PATCH PROPERTY (null = inherits prototype value):<br>
      * <br>
      * Custom lore for the item.<br>
-     * No color translations are applied, process them BEFORE setting the lore.
+     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.
      */
     private @Nullable List<String> lore = null;
 
