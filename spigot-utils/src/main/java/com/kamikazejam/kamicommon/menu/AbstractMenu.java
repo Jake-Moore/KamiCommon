@@ -92,7 +92,7 @@ public sealed abstract class AbstractMenu<M extends AbstractMenu<M>> extends Men
     }
 
     private InventoryView openInternal(boolean resetTickCounter) {
-        if (!PlayerUtil.isFullyValidPlayer(player)) {return null;}
+        if (!PlayerUtil.isFullyValidPlayer(player)) { return null; }
 
         // Reset the tick counter for icons that auto update if necessary
         if (resetTickCounter) {
@@ -103,12 +103,13 @@ public sealed abstract class AbstractMenu<M extends AbstractMenu<M>> extends Men
         // This method will also handle the filler icon placement
         placeIcons(null);
 
-        // Register this menu for auto-updating
-        SpigotUtilsSource.getMenuManager().getAutoUpdateInventories().add(this);
-
-        // Open the Menu for the Player
+        // Open the Menu for the Player (will close existing menu - deregistering it from auto-update)
         InventoryView view = Objects.requireNonNull(player.openInventory(this.getInventory()));
         events.getOpenCallbacks().values().forEach(callback -> callback.onOpen(player, view));
+
+        // Register this menu for auto-updating (must come AFTER open, since the old inventory closure will wipe out the entry)
+        SpigotUtilsSource.getMenuManager().getAutoUpdateInventories().add(this);
+
         return view;
     }
 
@@ -175,7 +176,7 @@ public sealed abstract class AbstractMenu<M extends AbstractMenu<M>> extends Men
     }
 
     // ------------------------------------------------------------ //
-    //                   Icon Update Management                     //
+    //                         UpdatingMenu                         //
     // ------------------------------------------------------------ //
     @ApiStatus.Internal
     @Override
@@ -184,6 +185,10 @@ public sealed abstract class AbstractMenu<M extends AbstractMenu<M>> extends Men
         int tick = this.tickCounter.incrementAndGet();
         this.placeIcons((m) -> m.needsModification(tick));
     }
+
+    // ------------------------------------------------------------ //
+    //                   Icon Update Management                     //
+    // ------------------------------------------------------------ //
 
     /**
      * Manually trigger an update for all icons matching this predicate.<br>
