@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +40,7 @@ import java.util.function.Predicate;
  */
 @Getter
 public final class MenuManager implements Listener, Runnable {
+    @Internal
     final Set<UpdatingMenu> autoUpdateInventories = Sets.newCopyOnWriteArraySet();
 
     // ------------------------------------------------------- //
