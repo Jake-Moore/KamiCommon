@@ -118,7 +118,7 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
      * <br>
      * Item flags to apply or remove from the item.
      */
-    private final @NotNull Map<XItemFlag, PatchOp> itemFlags = new HashMap<>();
+    private @NotNull Map<XItemFlag, PatchOp> itemFlags = new HashMap<>();
 
     /**
      * PATCH PROPERTY (empty by default, enchantments patches that override the prototype):<br>
@@ -126,7 +126,7 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
      * Enchantments to apply to the item, with their levels.<br>
      * If an enchantment for one of these patches is already present on the prototype, it will be overridden by this patch.
      */
-    private final @NotNull Map<XEnchantment, Patch<Integer>> enchantments = new HashMap<>();
+    private @NotNull Map<XEnchantment, Patch<Integer>> enchantments = new HashMap<>();
 
     /**
      * PATCH PROPERTY (false by default):<br>
@@ -716,11 +716,10 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     public @NotNull ItemBuilder clone() {
         try {
             // 1) Shallow copy of this object (fields copied as-is)
+            // Primate Fields Copied: amount, damage, name, unbreakable, skullOwner, addGlow
             ItemBuilder copy = (ItemBuilder) super.clone();
 
             // 2) Fix up mutable fields to avoid shared state
-
-            // amount, damage, name, unbreakable, skullOwner are immutable/boxed; no action needed
 
             // lore: create a new list if present
             if (this.lore != null) {
@@ -731,21 +730,17 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
             // itemFlags: copy entries into a new map
             if (!this.itemFlags.isEmpty()) {
-                copy.itemFlags.clear(); // ensure target map is empty first
-                copy.itemFlags.putAll(this.itemFlags);
+                copy.itemFlags = new HashMap<>(this.itemFlags);
             } else {
-                copy.itemFlags.clear();
+                copy.itemFlags = new HashMap<>();
             }
 
             // enchantments: copy entries into a new map
             if (!this.enchantments.isEmpty()) {
-                copy.enchantments.clear();
-                copy.enchantments.putAll(this.enchantments);
+                copy.enchantments = new HashMap<>(this.enchantments);
             } else {
-                copy.enchantments.clear();
+                copy.enchantments = new HashMap<>();
             }
-
-            // addGlow is primitive and already copied by super.clone()
 
             return copy;
         } catch (CloneNotSupportedException e) {
