@@ -140,7 +140,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
  If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
  If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
  <br>
- No color translations are applied, process them BEFORE adding the lines.</div>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IBuilder.html" title="type parameter in IBuilder">T</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#addLoreLines(java.util.List)" class="member-name-link">addLoreLines</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</code></div>
@@ -149,7 +149,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
  If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
  If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
  <br>
- No color translations are applied, process them BEFORE adding the lines.</div>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#build()" class="member-name-link">build</a>()</code></div>
@@ -243,7 +243,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get the custom display name for the item.<br>
- No color translations are applied, process them AFTER getting the name.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.<br>
  <br>
  If the patch name is null (not set), the prototype's name will be returned (if available).</div>
 </div>
@@ -567,7 +567,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setLore(java.lang.String...)" class="member-name-link">setLore</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;line)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- No color translations are applied, process them BEFORE setting the lore.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="#resetLore()"><code>resetLore()</code></a>.</div>
 </div>
@@ -575,7 +575,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setLore(java.util.List)" class="member-name-link">setLore</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lore)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- No color translations are applied, process them BEFORE setting the lore.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="#resetLore()"><code>resetLore()</code></a>.</div>
 </div>
@@ -583,7 +583,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setName(java.lang.String)" class="member-name-link">setName</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">PATCH FUNCTION - Applies a custom display name for the item.<br>
- No color translations are applied, process them BEFORE setting the name.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="#resetName()"><code>resetName()</code></a>.</div>
 </div>
@@ -778,7 +778,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 </span><span class="return-type"><a href="IBuilder.html" title="type parameter in IBuilder">T</a></span>&nbsp;<span class="element-name">setName</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
 <div class="block">PATCH FUNCTION - Applies a custom display name for the item.<br>
- No color translations are applied, process them BEFORE setting the name.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="#resetName()"><code>resetName()</code></a>.</div>
 <dl class="notes">
@@ -817,7 +817,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 </span><span class="return-type"><a href="IBuilder.html" title="type parameter in IBuilder">T</a></span>&nbsp;<span class="element-name">setLore</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;line)</span></div>
 <div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- No color translations are applied, process them BEFORE setting the lore.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="#resetLore()"><code>resetLore()</code></a>.</div>
 <dl class="notes">
@@ -833,7 +833,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 </span><span class="return-type"><a href="IBuilder.html" title="type parameter in IBuilder">T</a></span>&nbsp;<span class="element-name">setLore</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lore)</span></div>
 <div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- No color translations are applied, process them BEFORE setting the lore.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="#resetLore()"><code>resetLore()</code></a>.</div>
 <dl class="notes">
@@ -881,7 +881,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
  If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
  If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
  <br>
- No color translations are applied, process them BEFORE adding the lines.</div>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>lines</code> - The lore lines to append</dd>
@@ -900,7 +900,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
  If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
  If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
  <br>
- No color translations are applied, process them BEFORE adding the lines.</div>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>lines</code> - The lore lines to append</dd>
@@ -1273,7 +1273,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getName</span>()</div>
 <div class="block">Get the custom display name for the item.<br>
- No color translations are applied, process them AFTER getting the name.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="#build(org.bukkit.entity.Player)"><code>build(Player)</code></a> automatically.<br>
  <br>
  If the patch name is null (not set), the prototype's name will be returned (if available).</div>
 </section>

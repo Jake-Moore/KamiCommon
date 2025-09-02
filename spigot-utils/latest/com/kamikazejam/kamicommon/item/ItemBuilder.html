@@ -189,7 +189,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
  If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
  <br>
- No color translations are applied, process them BEFORE adding the lines.</div>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build(org.bukkit.entity.Player)" class="member-name-link">build</a><wbr>(@Nullable <a href="https://jd.papermc.io/paper/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;viewer)</code></div>
@@ -253,7 +253,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the custom display name for the item.<br>
- No color translations are applied, process them AFTER getting the name.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
  <br>
  If the patch name is null (not set), the prototype's name will be returned (if available).</div>
 </div>
@@ -508,7 +508,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLore(java.lang.String...)" class="member-name-link">setLore</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;loreLines)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- No color translations are applied, process them BEFORE setting the lore.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetLore()"><code>IBuilder.resetLore()</code></a>.</div>
 </div>
@@ -516,7 +516,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLore(java.util.List)" class="member-name-link">setLore</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;loreLines)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- No color translations are applied, process them BEFORE setting the lore.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetLore()"><code>IBuilder.resetLore()</code></a>.</div>
 </div>
@@ -524,7 +524,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setName(java.lang.String)" class="member-name-link">setName</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">PATCH FUNCTION - Applies a custom display name for the item.<br>
- No color translations are applied, process them BEFORE setting the name.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetName()"><code>IBuilder.resetName()</code></a>.</div>
 </div>
@@ -755,7 +755,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#setName(java.lang.String)">IBuilder</a></code></span></div>
 <div class="block">PATCH FUNCTION - Applies a custom display name for the item.<br>
- No color translations are applied, process them BEFORE setting the name.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetName()"><code>IBuilder.resetName()</code></a>.</div>
 <dl class="notes">
@@ -791,7 +791,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;loreLines)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#setLore(java.lang.String...)">IBuilder</a></code></span></div>
 <div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- No color translations are applied, process them BEFORE setting the lore.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetLore()"><code>IBuilder.resetLore()</code></a>.</div>
 <dl class="notes">
@@ -810,7 +810,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;loreLines)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#setLore(java.util.List)">IBuilder</a></code></span></div>
 <div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- No color translations are applied, process them BEFORE setting the lore.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetLore()"><code>IBuilder.resetLore()</code></a>.</div>
 <dl class="notes">
@@ -1179,7 +1179,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getName</span>()</div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#getName()">IBuilder</a></code></span></div>
 <div class="block">Get the custom display name for the item.<br>
- No color translations are applied, process them AFTER getting the name.<br>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
  <br>
  If the patch name is null (not set), the prototype's name will be returned (if available).</div>
 <dl class="notes">
@@ -1480,7 +1480,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
  If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
  <br>
- No color translations are applied, process them BEFORE adding the lines.</div>
+ Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="IBuilder.html#addLoreLines(java.util.List)">addLoreLines</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
