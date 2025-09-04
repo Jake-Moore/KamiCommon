@@ -309,7 +309,7 @@ jobs:
           filename: kc-prerelease-compatibility.json
           label: Latest Release
           message: "${{ needs.setup.outputs.oldestServerAPI }} - ${{ needs.setup.outputs.newestServerAPI }}"
-          color: blue
+          color: orange
 
       # We skip updating the download link, the download link only updates for stable releases
 
