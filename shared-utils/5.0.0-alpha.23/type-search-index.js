@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.kamikazejam.kamicommon.util.log","l":"LoggerService"}];updateSearchResults();
