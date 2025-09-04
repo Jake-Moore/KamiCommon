@@ -7,75 +7,100 @@ on:
 
 jobs:
   # -------------------------------------------------- #
-  #                  Shared Setup Job                  #
+  #                  Build Validation                  #
   # -------------------------------------------------- #
   setup:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.extract_version.outputs.version }}
+      oldestServerAPI: ${{ steps.extract_api_versions.outputs.oldestServerAPI }}
+      newestServerAPI: ${{ steps.extract_api_versions.outputs.newestServerAPI }}
       is_valid: ${{ steps.validate_version.outputs.is_valid }}
       is_release: ${{ steps.validate_version.outputs.is_release }}
       is_prerelease: ${{ steps.validate_version.outputs.is_prerelease }}
       is_snapshot: ${{ steps.validate_version.outputs.is_snapshot }}
 
     steps:
-    - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
 
-    - name: Set up JDK 21
-      uses: actions/setup-java@v5
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        server-id: github
-        settings-path: ${{ github.workspace }}
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github
+          settings-path: ${{ github.workspace }}
 
-    # Configure: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4.4.2
-      with:
-        gradle-version: '9.0.0'
+      # Configure: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4.4.2
+        with:
+          gradle-version: '9.0.0'
 
-    - name: Extract Version from Gradle
-      id: extract_version
-      run: |
-        gradle clean
-        version=$(gradle properties -q | grep "^version:" | awk '{print $2}')
-        echo "version=$version" >> $GITHUB_OUTPUT
+      - name: Build with Gradle (1.8.8)
+        run: gradle build
+        env:
+          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
+          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
+          MC_SERVER_NEWEST_API: "false"
 
-    # Step to validate and display the version
-    # We use SemVer to store if the version is a release, otherwise we won't deploy
-    - name: Validate Version
-      id: validate_version
-      run: |
-        VERSION="${{ steps.extract_version.outputs.version }}"
-        echo "Version: $VERSION"
+      - name: Build with Gradle (Latest Paper 1.21+)
+        run: gradle build
+        env:
+          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
+          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
+          MC_SERVER_NEWEST_API: "true"
 
-        # Regex patterns
-        SEMVER_RELEASE='^[0-9]+\.[0-9]+\.[0-9]+$'
-        SEMVER_PRERELEASE='^[0-9]+\.[0-9]+\.[0-9]+-(alpha|beta|rc)\.[0-9]+$'
-        SEMVER_SNAPSHOT='^.+-SNAPSHOT$'
+      - name: Extract Version from Gradle
+        id: extract_version
+        run: |
+          gradle clean
+          version=$(gradle properties -q | grep "^version:" | awk '{print $2}')
+          echo "version=$version" >> $GITHUB_OUTPUT
 
-        # Default values
-        echo "is_valid=false" >> $GITHUB_OUTPUT
-        echo "is_release=false" >> $GITHUB_OUTPUT
-        echo "is_prerelease=false" >> $GITHUB_OUTPUT
-        echo "is_snapshot=false" >> $GITHUB_OUTPUT
+      # Step to validate and display the version
+      # We use SemVer to store if the version is a release, otherwise we won't deploy
+      - name: Validate Version
+        id: validate_version
+        run: |
+          VERSION="${{ steps.extract_version.outputs.version }}"
+          echo "Version: $VERSION"
+          
+          # Regex patterns
+          SEMVER_RELEASE='^[0-9]+\.[0-9]+\.[0-9]+$'
+          SEMVER_PRERELEASE='^[0-9]+\.[0-9]+\.[0-9]+-(alpha|beta|rc)\.[0-9]+$'
+          SEMVER_SNAPSHOT='^.+-SNAPSHOT$'
+          
+          # Default values
+          echo "is_valid=false" >> $GITHUB_OUTPUT
+          echo "is_release=false" >> $GITHUB_OUTPUT
+          echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          echo "is_snapshot=false" >> $GITHUB_OUTPUT
+          
+          if [[ "$VERSION" =~ $SEMVER_RELEASE ]]; then
+            echo "is_valid=true" >> $GITHUB_OUTPUT
+            echo "is_release=true" >> $GITHUB_OUTPUT
+            echo "Version is a RELEASE"
+          elif [[ "$VERSION" =~ $SEMVER_PRERELEASE ]]; then
+            echo "is_valid=true" >> $GITHUB_OUTPUT
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+            echo "Version is a PRE-RELEASE"
+          elif [[ "$VERSION" =~ $SEMVER_SNAPSHOT ]]; then
+            echo "is_valid=true" >> $GITHUB_OUTPUT
+            echo "is_snapshot=true" >> $GITHUB_OUTPUT
+            echo "Version is a SNAPSHOT"
+          else
+            echo "❌ Invalid version format, skipping deployment"
+          fi
 
-        if [[ "$VERSION" =~ $SEMVER_RELEASE ]]; then
-          echo "is_valid=true" >> $GITHUB_OUTPUT
-          echo "is_release=true" >> $GITHUB_OUTPUT
-          echo "Version is a RELEASE"
-        elif [[ "$VERSION" =~ $SEMVER_PRERELEASE ]]; then
-          echo "is_valid=true" >> $GITHUB_OUTPUT
-          echo "is_prerelease=true" >> $GITHUB_OUTPUT
-          echo "Version is a PRE-RELEASE"
-        elif [[ "$VERSION" =~ $SEMVER_SNAPSHOT ]]; then
-          echo "is_valid=true" >> $GITHUB_OUTPUT
-          echo "is_snapshot=true" >> $GITHUB_OUTPUT
-          echo "Version is a SNAPSHOT"
-        else
-          echo "❌ Invalid version format, skipping deployment"
-        fi
+      - name: Extract API Versions from Gradle
+        id: extract_api_versions
+        run: |
+          gradle clean
+          oldestServerAPI=$(gradle printOldestServerAPI-short -q | tr -d '[:space:]')
+          newestServerAPI=$(gradle printNewestServerAPI-short -q | tr -d '[:space:]')
+          echo "oldestServerAPI=$oldestServerAPI" >> $GITHUB_OUTPUT
+          echo "newestServerAPI=$newestServerAPI" >> $GITHUB_OUTPUT
 
   #--------------------------------------------------------------------------#
   #                          Release Job (main branch)                       #
@@ -180,6 +205,17 @@ jobs:
         message: "${{ needs.setup.outputs.version }}"
         color: blue
 
+    # Update the README.md API Compatibility Badge with the new version
+    - name: Create API Compatibility Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
+        filename: kc-release-compatibility.json
+        label: Latest Release
+        message: "${{ needs.setup.outputs.oldestServerAPI }} - ${{ needs.setup.outputs.newestServerAPI }}"
+        color: blue
+
     - name: Update Download Link Gist
       env:
         GIST_ID: 5dfd7c9bb8b81ae5867c81e9a77ee821
@@ -264,6 +300,17 @@ jobs:
           message: "${{ needs.setup.outputs.version }}"
           color: orange
 
+      # Update the README.md API Compatibility Badge with the new version
+      - name: Create API Compatibility Badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
+          filename: kc-prerelease-compatibility.json
+          label: Latest Release
+          message: "${{ needs.setup.outputs.oldestServerAPI }} - ${{ needs.setup.outputs.newestServerAPI }}"
+          color: orange
+
       # We skip updating the download link, the download link only updates for stable releases
 
   #--------------------------------------------------------------------------#
@@ -271,8 +318,8 @@ jobs:
   #--------------------------------------------------------------------------#
   docs:
     needs: setup
-    # Run only for commits with valid versions that match the release OR prerelease pattern
-    if: needs.setup.outputs.is_valid == 'true' && (needs.setup.outputs.is_prerelease == 'true' || needs.setup.outputs.is_release == 'true')
+    # Run only for commits with valid versions that match the release OR prerelease pattern on their respective branches
+    if: needs.setup.outputs.is_valid == 'true' && ((github.ref == 'refs/heads/main' && needs.setup.outputs.is_release == 'true') || (github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_prerelease == 'true'))
 
     runs-on: ubuntu-latest
     permissions:

@@ -1,12 +1,15 @@
 package com.kamikazejam.kamicommon.menu.api.loaders;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.configuration.loader.ItemTypeLoader;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.item.ItemBuilderLoader;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +33,12 @@ public class MenuIconLoader {
 
         // Load the ItemBuilders
         Collection<ItemBuilder> itemBuilders = loadItemBuilders(section, player);
-        if (section.getBoolean("hideAttributes", true)) {itemBuilders.forEach(ItemBuilder::hideAttributes);}
+
+        // Toggle attributes so all Menu Icons have a clean look by default (configurable via Config class)
+        if ((!section.isSet("hide-attributes") || !section.isBoolean("hide-attributes")) && Config.isHideIconAttributes()) {
+            // There was not a config override supplied, so apply the default behavior
+            itemBuilders.forEach(ItemBuilder::hideAttributes);
+        }
 
         // Create the MenuIcon
         MenuIcon<M> icon = new MenuIcon<>(enabled, itemBuilders);
@@ -64,7 +72,7 @@ public class MenuIconLoader {
         }
 
         // Method2: Default to single item logic
-        ItemBuilder builder = ItemBuilder.load(section);
+        ItemBuilder builder = ItemBuilderLoader.load(section);
         if (player != null) { builder.setSkullOwner(player.getName()); }
         return Collections.singletonList(builder);
     }
@@ -80,5 +88,18 @@ public class MenuIconLoader {
                     if (player != null) {builder.setSkullOwner(player.getName());}
                     return builder;
                 }).toList();
+    }
+
+    @Configurable
+    public static class Config {
+        /**
+         * When enabled, all {@link ItemBuilder} instances loaded for every {@link MenuIcon} will have their attributes hidden by default.<br>
+         * <br>
+         * This is equivalent to calling {@link ItemBuilder#hideAttributes()} on every {@link ItemBuilder} instance loaded for every {@link MenuIcon}.<br>
+         * <br>
+         * This default behavior can be overridden on a per-icon basis by setting the 'hide-attributes' key in the icon's configuration section.
+         */
+        @Getter @Setter
+        private static boolean hideIconAttributes = true;
     }
 }
