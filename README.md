@@ -27,11 +27,17 @@ However:
 ---
 
 &nbsp;
+> ### Releases
 > <a href="https://github.com/Jake-Moore/KamiCommon/releases/latest"> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/kc-release-latest.json" /></a>
 > <a href="https://github.com/Jake-Moore/KamiCommon/releases"> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/kc-prerelease-latest.json" /></a>
 > 
 > The GitHub releases may be different from the spigot release
-> 
+
+> ### API Compatibility
+> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/kc-release-compatibility.json" /><br>
+> <img alt="Latest Pre-Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/kc-prerelease-compatibility.json" />
+>
+
 **DEVELOPMENT ROADMAP**: https://github.com/users/Jake-Moore/projects/3
 
 # KamiCommon
