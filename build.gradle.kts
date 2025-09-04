@@ -18,11 +18,11 @@ plugins { // needed for the allprojects section to work
     id("com.gradleup.shadow") version "9.1.0" apply false
 }
 
+// Testing server APIs (the earliest supported version, and the latest PaperMC version)
+val oldestServerAPI = "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED-KC"
+val newestServerAPI = "io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT"
 ext {
-    // Testing server APIs (the earliest supported version, and the latest PaperMC version)
-    val oldestServerAPI = "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED-KC"
-    val newestServerAPI = "io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT"
-
+    // Use ENV variable to switch between oldest and newest API for testing
     val useNewestAPI: String? = System.getenv("MC_SERVER_NEWEST_API")
     val testingServerAPI = if (useNewestAPI != null && useNewestAPI.equals("true", true)) {
         newestServerAPI
@@ -125,6 +125,38 @@ tasks.register("aggregateJavadoc") {
         }
     }
 }
+
+tasks.register("printOldestServerAPI") {
+    doLast {
+        println(oldestServerAPI)
+    }
+}
+tasks.register("printNewestServerAPI") {
+    doLast {
+        println(newestServerAPI)
+    }
+}
+
+tasks.register("printOldestServerAPI-short") {
+    val version = oldestServerAPI.split(":").lastOrNull()
+        ?: throw GradleException("Invalid oldestServerAPI format")
+    val semver = version.split("-").firstOrNull()
+        ?: throw GradleException("Invalid oldestServerAPI version format")
+    doLast {
+        println(semver)
+    }
+}
+
+tasks.register("printNewestServerAPI-short") {
+    val version = newestServerAPI.split(":").lastOrNull()
+        ?: throw GradleException("Invalid newestServerAPI format")
+    val semver = version.split("-").firstOrNull()
+        ?: throw GradleException("Invalid newestServerAPI version format")
+    doLast {
+        println(semver)
+    }
+}
+
 tasks.register("aggregateJavadocJar") {
     description = "Aggregates Javadoc from all subprojects"
     group = "documentation"
