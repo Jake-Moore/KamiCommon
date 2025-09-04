@@ -34,8 +34,16 @@ jobs:
       with:
         gradle-version: '9.0.0'
 
-    - name: Build with Gradle
+    - name: Build with Gradle (1.8.8)
       run: gradle build
       env:
         LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
         LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
+        MC_SERVER_NEWEST_API: "false"
+
+    - name: Build with Gradle (Latest Paper 1.21+)
+      run: gradle build
+      env:
+        LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
+        LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
+        MC_SERVER_NEWEST_API: "true"

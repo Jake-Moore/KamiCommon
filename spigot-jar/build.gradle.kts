@@ -7,6 +7,10 @@ plugins {
     id("com.gradleup.shadow")
 }
 
+repositories {
+    maven(url = "https://repo.papermc.io/repository/maven-public/")
+}
+
 dependencies {
     // Unique dependencies for this module
     implementation(project(":shared-jar"))
@@ -16,7 +20,7 @@ dependencies {
     implementation("org.apache.httpcomponents.core5:httpcore5:5.3.5")
 
     // Spigot Libraries
-    compileOnly(project.property("lowestSpigotDep") as String)
+    compileOnly(project.property("serverAPI") as String)
 }
 
 tasks {
@@ -111,3 +115,10 @@ configure<Javadoc_publish_convention_gradle.JavadocPublishExtension> {
     moduleName = "spigot-jar"
     usesShadow = true
 }
+
+tasks.register("printServerAPI") {
+    doFirst {
+        logger.info("[${project.name}] Using Server API: ${project.property("serverAPI") as String}")
+    }
+}
+tasks.compileJava.get().dependsOn(tasks.named("printServerAPI"))

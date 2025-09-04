@@ -9,7 +9,7 @@
 // Invalid Versions:
 //   - Any version not matching one of the above formats will not be published. Publication will be skipped.
 @Suppress("PropertyName")
-var VERSION = "5.0.0-alpha.22" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
+var VERSION = "5.0.0-alpha.23" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
 
 plugins { // needed for the allprojects section to work
     id("java")
@@ -19,9 +19,20 @@ plugins { // needed for the allprojects section to work
 }
 
 ext {
-    // reduced is just a re-zipped version of the original, without some conflicting libraries
-    //  gson, org.json, com.yaml.snakeyaml
-    set("lowestSpigotDep", "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED-KC")    // luxious nexus (public)
+    // Testing server APIs (the earliest supported version, and the latest PaperMC version)
+    val oldestServerAPI = "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED-KC"
+    val newestServerAPI = "io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT"
+
+    val useNewestAPI: String? = System.getenv("MC_SERVER_NEWEST_API")
+    val testingServerAPI = if (useNewestAPI != null && useNewestAPI.equals("true", true)) {
+        newestServerAPI
+    } else {
+        oldestServerAPI
+    }
+
+    // Run Configurations can be set up to supply alternate server API dependencies for quick compilation testing.
+    val serverVersionAPI = System.getenv("MC_SERVER_API") ?: testingServerAPI
+    set("serverAPI", serverVersionAPI)
 }
 
 allprojects {
