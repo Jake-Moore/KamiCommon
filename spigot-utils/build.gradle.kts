@@ -3,6 +3,10 @@ plugins {
     // Unique plugins for this module
 }
 
+repositories {
+    maven(url = "https://repo.papermc.io/repository/maven-public/")
+}
+
 dependencies {
     // Add NMS library from KamiCommonNMS
     api("com.kamikazejam.kamicommon:spigot-nms:1.1.5")
@@ -11,7 +15,7 @@ dependencies {
     api("com.google.code.gson:gson:2.13.1")
     api("org.apache.commons:commons-text:1.14.0") // primarily for LevenshteinDistance
 
-    compileOnly(project.property("lowestSpigotDep") as String)
+    compileOnly(project.property("serverAPI") as String)
 
     // Spigot Libs (soft-depend)
     compileOnly("me.clip:placeholderapi:2.11.6")
@@ -36,3 +40,10 @@ configure<Javadoc_publish_convention_gradle.JavadocPublishExtension> {
     )
     moduleName = "spigot-utils"
 }
+
+tasks.register("printServerAPI") {
+    doFirst {
+        println("Using Server API: ${project.property("serverAPI") as String}")
+    }
+}
+tasks.compileJava.get().dependsOn(tasks.named("printServerAPI"))

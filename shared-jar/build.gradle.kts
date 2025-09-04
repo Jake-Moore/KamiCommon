@@ -20,7 +20,7 @@ dependencies {
     api("org.slf4j:slf4j-simple:$slf4jVersion")
 
     // Lettuce Core (Redis) (6,246 KB)
-    api("io.lettuce:lettuce-core:6.8.0.RELEASE")
+    api("io.lettuce:lettuce-core:6.8.1.RELEASE")
 }
 
 // Configure javadoc-publish-convention

@@ -12,7 +12,9 @@ import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
 import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
 import com.kamikazejam.kamicommon.nms.provider.BlockUtilProvider;
 import com.kamikazejam.kamicommon.nms.provider.ChatColorProvider;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;
+import nl.marido.deluxecombat.shaded.xseries.XEnchantment;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -97,7 +99,8 @@ public class CmdNmsTest extends KamiCommand {
         // Enchant ID Provider
         (player) -> {
             player.sendMessage(StringUtil.t("&7Testing EnchantIDProvider..."));
-            player.sendMessage(StringUtil.t("    &7Success: " + NmsAPI.getNamespaced(Enchantment.DAMAGE_ALL)));
+            Enchantment enchant = Preconditions.checkNotNull(XEnchantment.DAMAGE_ALL.getEnchant(), "Enchantment not found");
+            player.sendMessage(StringUtil.t("    &7Success: " + NmsAPI.getNamespaced(enchant)));
         },
 
         // Entity Methods Test

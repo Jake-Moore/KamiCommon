@@ -61,6 +61,7 @@ public class ItemBuilderLoader {
         @Nullable Map<XEnchantment, Integer> enchantments = loadEnchantments(section);
         boolean glow = section.getBoolean("glow", false) || section.getBoolean("addGlow", false);
         @Nullable String skullOwner = section.getString("skull-owner", null);
+        @Nullable Boolean hideAttributes = (section.isSet("hide-attributes") && section.isBoolean("hide-attributes")) ? section.getBoolean("hide-attributes") : null;
 
         // Apply non-null properties as patches to ItemBuilder
         if (amount != null) { builder.setAmount(amount); }
@@ -72,6 +73,7 @@ public class ItemBuilderLoader {
         if (enchantments != null) { builder.setEnchantments(enchantments); }
         if (glow) { builder.addGlow(); }
         if (skullOwner != null && !skullOwner.isEmpty()) { builder.setSkullOwner(skullOwner); }
+        if (hideAttributes != null && hideAttributes) { builder.hideAttributes(); }
 
         return builder;
     }

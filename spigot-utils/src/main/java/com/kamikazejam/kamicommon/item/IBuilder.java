@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import com.kamikazejam.kamicommon.util.StringUtilP;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -122,7 +123,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
     // ----- NAME ------ //
     /**
      * PATCH FUNCTION - Applies a custom display name for the item.<br>
-     * No color translations are applied, process them BEFORE setting the name.<br>
+     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.<br>
      * <br>
      * Clear this patch by calling {@link #resetName()}.
      * @return This builder, for chaining
@@ -150,7 +151,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
     // ----- LORE ------ //
     /**
      * PATCH FUNCTION - Sets the custom lore for the item.<br>
-     * No color translations are applied, process them BEFORE setting the lore.<br>
+     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.<br>
      * <br>
      * Clear this patch by calling {@link #resetLore()}.
      * @return This builder, for chaining
@@ -160,7 +161,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
 
     /**
      * PATCH FUNCTION - Sets the custom lore for the item.<br>
-     * No color translations are applied, process them BEFORE setting the lore.<br>
+     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.<br>
      * <br>
      * Clear this patch by calling {@link #resetLore()}.
      * @return This builder, for chaining
@@ -194,7 +195,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
      * If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
      * <br>
-     * No color translations are applied, process them BEFORE adding the lines.
+     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.
      * @param lines The lore lines to append
      * @return This builder, for chaining
      */
@@ -206,7 +207,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
      * If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
      * <br>
-     * No color translations are applied, process them BEFORE adding the lines.
+     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.
      * @param lines The lore lines to append
      * @return This builder, for chaining
      */
@@ -483,7 +484,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
 
     /**
      * Get the custom display name for the item.<br>
-     * No color translations are applied, process them AFTER getting the name.<br>
+     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.<br>
      * <br>
      * If the patch name is null (not set), the prototype's name will be returned (if available).
      */
