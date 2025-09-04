@@ -34,9 +34,11 @@ However:
 > The GitHub releases may be different from the spigot release
 
 > ### API Compatibility
-> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/kc-release-compatibility.json" /><br>
+> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/kc-release-compatibility.json" />
 > <img alt="Latest Pre-Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/kc-prerelease-compatibility.json" />
 >
+> The latest API version may not match the latest Minecraft Version.  
+> (This is okay, as updates are not always required for every Minecraft version.)
 
 **DEVELOPMENT ROADMAP**: https://github.com/users/Jake-Moore/projects/3
 
