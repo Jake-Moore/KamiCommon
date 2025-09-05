@@ -49,6 +49,9 @@ However:
 - The spigot portions of this library aim to support all versions (since 1.8.x) via its sister project [KamiCommonNMS](https://github.com/Jake-Moore/KamiCommonNMS)
   - View the NMS disclaimers here: [NMS Disclaimers](https://github.com/Jake-Moore/KamiCommonNMS?tab=readme-ov-file#disclaimers)
 
+## JavaDoc
+- https://docs.jake-moore.dev/KamiCommon/
+
 ## Modules
 There are 6 common modules, 5 of which can be safely shaded
 - The 5 modules that can be shaded are:
