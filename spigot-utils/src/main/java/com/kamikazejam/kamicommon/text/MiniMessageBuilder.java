@@ -5,7 +5,9 @@ import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtilP;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,6 +21,7 @@ import java.util.List;
 /**
  * A cross-version MiniMessage parser and messenger.
  */
+@Getter @Accessors(chain = true)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class MiniMessageBuilder {
     private final @NotNull List<VersionedComponent> lines = new ArrayList<>();
