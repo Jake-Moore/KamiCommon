@@ -37,20 +37,6 @@ jobs:
         with:
           gradle-version: '9.0.0'
 
-      - name: Build with Gradle (1.8.8)
-        run: gradle build
-        env:
-          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
-          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
-          MC_SERVER_NEWEST_API: "false"
-
-      - name: Build with Gradle (Latest Paper 1.21+)
-        run: gradle build
-        env:
-          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
-          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
-          MC_SERVER_NEWEST_API: "true"
-
       - name: Extract Version from Gradle
         id: extract_version
         run: |
@@ -93,7 +79,24 @@ jobs:
             echo "❌ Invalid version format, skipping deployment"
           fi
 
+      - name: Build with Gradle (1.8.8)
+        if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot != 'true'
+        run: gradle build
+        env:
+          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
+          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
+          MC_SERVER_NEWEST_API: "false"
+
+      - name: Build with Gradle (Latest Paper 1.21+)
+        if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot != 'true'
+        run: gradle build
+        env:
+          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
+          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
+          MC_SERVER_NEWEST_API: "true"
+
       - name: Extract API Versions from Gradle
+        if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot != 'true'
         id: extract_api_versions
         run: |
           gradle clean
