@@ -9,7 +9,6 @@ import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuSizeLoader;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.layout.PaginationLayout;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.layout.SimplePaginationLayout;
-import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,7 +59,10 @@ public class PaginatedMenuLoader {
 
         // Load title from 'title' or 'name', defaulting to " "
         String title = section.getString("title", section.getString("name", " "));
-        PaginatedMenu.Builder builder = new PaginatedMenu.Builder(paginationLayout, MenuSizeLoader.load(section)).title(StringUtil.t(title));
+        PaginatedMenu.Builder builder = (PaginatedMenu.Builder) SimpleMenuLoader.setTitle(
+                new PaginatedMenu.Builder(paginationLayout, MenuSizeLoader.load(section)),
+                title
+        );
 
         // Load Filler Icon
         if (section.isConfigurationSection("filler")) {
