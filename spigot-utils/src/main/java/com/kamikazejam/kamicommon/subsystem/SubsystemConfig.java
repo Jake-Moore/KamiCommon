@@ -5,6 +5,7 @@ import com.kamikazejam.kamicommon.util.Preconditions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
@@ -38,6 +39,7 @@ public abstract class SubsystemConfig<S extends AbstractSubsystem<?, S>> extends
         );
     }
 
+    @Internal
     public abstract void addConfigDefaults();
 
     @NotNull

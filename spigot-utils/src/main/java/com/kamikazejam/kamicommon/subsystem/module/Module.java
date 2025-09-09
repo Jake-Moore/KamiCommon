@@ -70,10 +70,11 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
         // Create a throw-away config so that we don't start any initialization logic
         // if this module does not intend to be enabled
         ModuleConfig config = createConfig();
-        boolean enabled = config.getBoolean("enabled", isEnabledByDefault());
+        boolean enabled = config.isEnabledInConfig();
+
         // If the module is enabled in the config, begin initialization
         if (enabled) {
-            initializeConfig(config);
+            initializeConfig(createConfig());
         }
         return enabled;
     }

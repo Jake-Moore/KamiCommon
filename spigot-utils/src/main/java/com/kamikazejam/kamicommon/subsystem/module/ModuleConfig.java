@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.subsystem.module;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -21,16 +22,27 @@ public class ModuleConfig extends SubsystemConfig<Module> {
         return this.getSubsystem();
     }
 
+    @Internal
     @Override
     public final void addConfigDefaults() {
         Module module = this.getModule();
         KamiConfigExt c = module.getPlugin().getModulesConfig();
-        String name = module.getName().replace(" ", "_");
-        c.addDefault("modules." + name + ".enabled", true);
-        c.addDefault("modules." + name + ".modulePrefix", module.defaultPrefix());
+        c.addDefault(getModulesConfigKey() + ".enabled", true);
+        c.addDefault(getModulesConfigKey() + ".modulePrefix", module.defaultPrefix());
         c.save();
 
         this.save();
         this.reload();
+    }
+
+    @Internal
+    public boolean isEnabledInConfig() {
+        Module module = this.getModule();
+        KamiConfigExt c = module.getPlugin().getModulesConfig();
+        return c.getBoolean(getModulesConfigKey() + ".enabled", module.isEnabledByDefault());
+    }
+
+    private String getModulesConfigKey() {
+        return "modules." + this.getModule().getName().replace(" ", "_");
     }
 }

@@ -25,11 +25,14 @@ public class FeatureConfig extends SubsystemConfig<Feature> {
     public final void addConfigDefaults() {
         Feature feature = this.getFeature();
         KamiConfigExt c = feature.getPlugin().getFeaturesConfig();
-        String name = feature.getName().replace(" ", "_");
-        c.addDefault("features." + name + ".featurePrefix", feature.defaultPrefix());
+        c.addDefault(getFeatureConfigKey() + ".featurePrefix", feature.defaultPrefix());
         c.save();
 
         this.save();
         this.reload();
+    }
+
+    private String getFeatureConfigKey() {
+        return "features." + this.getFeature().getName().replace(" ", "_");
     }
 }
