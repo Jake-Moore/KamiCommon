@@ -1,9 +1,9 @@
 package com.kamikazejam.kamicommon.menu.api.struct.size;
 
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -25,8 +25,8 @@ public final class MenuSizeType implements MenuSize {
     }
 
     @Override
-    public @NotNull Inventory createInventory(@NotNull InventoryHolder holder, @NotNull String title) {
-        return Bukkit.createInventory(holder, type, title);
+    public @NotNull Inventory createInventory(@NotNull InventoryHolder holder, @NotNull VersionedComponent title) {
+        return title.createInventory(holder, type);
     }
 
     @Override

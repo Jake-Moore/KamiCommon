@@ -1,5 +1,8 @@
 package com.kamikazejam.kamicommon.menu.api.title;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -13,7 +16,7 @@ import java.util.Objects;
 @Getter
 @Setter
 public class MenuTitleCalculator {
-    private @Nullable MenuTitleProvider provider;
+    private @Nullable ComponentMenuTitleProvider provider;
     private final @NotNull List<MenuTitleReplacement> replacements = new ArrayList<>();
 
     public MenuTitleCalculator() {
@@ -21,12 +24,13 @@ public class MenuTitleCalculator {
     }
 
     @NotNull
-    public String buildTitle(@NotNull Player player) {
-        if (provider == null) {return " ";}
-        String title = Objects.requireNonNull(provider.getTitle(player));
+    public VersionedComponent buildTitle(@NotNull Player player) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        if (provider == null) { return serializer.fromLegacySection(" "); }
+        String miniMessage = Objects.requireNonNull(provider.getTitle(player)).serializeMiniMessage();
         for (MenuTitleReplacement replacement : replacements) {
-            title = title.replace(replacement.getTarget(), replacement.getReplacement());
+            miniMessage = miniMessage.replace(replacement.getTarget(), replacement.getReplacement());
         }
-        return title;
+        return serializer.fromMiniMessage(miniMessage);
     }
 }

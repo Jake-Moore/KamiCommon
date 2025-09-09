@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.menu.api.struct.size;
 
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ public sealed interface MenuSize permits MenuSizeRows, MenuSizeType {
      * Creates a new {@link Inventory} with the given {@link InventoryHolder} and title.<br>
      * Uses this {@link MenuSize} to determine the size of the inventory.
      */
-    @NotNull Inventory createInventory(@NotNull InventoryHolder holder, @NotNull String title);
+    @NotNull Inventory createInventory(@NotNull InventoryHolder owner, @NotNull VersionedComponent title);
 
     /**
      * Returns the slot number for the slot in the last row with the given index in that row.
