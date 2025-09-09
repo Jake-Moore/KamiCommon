@@ -7,9 +7,13 @@ import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.icons.PrioritizedMenuIconMap;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
+import com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider;
 import com.kamikazejam.kamicommon.menu.api.title.MenuTitleCalculator;
 import com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider;
 import com.kamikazejam.kamicommon.menu.api.title.MenuTitleReplacement;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,14 +51,35 @@ public sealed abstract class AbstractMenuBuilder<M extends Menu<M>, T extends Ab
         return (T) this;
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * @deprecated Use more specific method {@link #titleFromLegacySection(String)}
+     */
+    @Deprecated
     public final @NotNull T title(@Nullable String title) {
-        this.titleCalculator.setProvider((p) -> (title != null) ? title : " ");
+        return titleFromLegacySection(title);
+    }
+
+    @SuppressWarnings("unchecked")
+    public final @NotNull T titleFromLegacySection(@Nullable String title) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        VersionedComponent component = (title != null) ? serializer.fromLegacySection(title) : serializer.fromLegacySection(" ");
+        this.titleCalculator.setProvider((p) -> component);
+        return (T) this;
+    }
+
+    /**
+     * @deprecated Use {@link #title(ComponentMenuTitleProvider)} instead to modify parts of the title.
+     */
+    @Deprecated
+    @SuppressWarnings("unchecked")
+    public final @NotNull T title(@NotNull MenuTitleProvider titleProvider) {
+        Preconditions.checkNotNull(titleProvider, "Title callback must not be null.");
+        this.titleCalculator.setProvider(ComponentMenuTitleProvider.fromLegacy(titleProvider));
         return (T) this;
     }
 
     @SuppressWarnings("unchecked")
-    public final @NotNull T title(@NotNull MenuTitleProvider titleProvider) {
+    public final @NotNull T title(@NotNull ComponentMenuTitleProvider titleProvider) {
         Preconditions.checkNotNull(titleProvider, "Title callback must not be null.");
         this.titleCalculator.setProvider(titleProvider);
         return (T) this;

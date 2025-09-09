@@ -3,6 +3,8 @@ package com.kamikazejam.kamicommon.menu.api;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import lombok.AccessLevel;
@@ -34,12 +36,31 @@ public class MenuHolder implements InventoryHolder {
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     protected transient @Nullable Inventory inventory;
 
-    protected @NotNull String title;
+    protected @NotNull VersionedComponent title;
     protected @NotNull MenuSize size;
 
+    /**
+     * Constructs a new MenuHolder with the given size and legacy title string (containing color codes using the sections symbol).<br>
+     * <strong>Any ampersand color codes will be converted to sections symbols automatically.</strong>
+     * @param size the size of the menu.
+     * @param name the legacy title of the menu. If null, a single space will be used instead to prevent issues with Bukkit.
+     *
+     * @deprecated Replace with {@link #MenuHolder(MenuSize, VersionedComponent)} and use a VersionedComponent instead.
+     */
+    @Deprecated
     public MenuHolder(@NotNull MenuSize size, @Nullable String name) {
         this.size = size;
-        this.title = (name == null) ? " " : StringUtil.t(name);
+        this.title = NmsAPI.getVersionedComponentSerializer().fromLegacySection((name == null) ? " " : StringUtil.t(name));
+    }
+
+    /**
+     * Constructs a new MenuHolder with the given size and title.
+     * @param size the size of the menu.
+     * @param name the title of the menu. If null, a single space will be used instead to prevent issues with Bukkit.
+     */
+    public MenuHolder(@NotNull MenuSize size, @Nullable VersionedComponent name) {
+        this.size = size;
+        this.title = (name == null) ? NmsAPI.getVersionedComponentSerializer().fromLegacySection(" ") : name;
     }
 
     @Override
@@ -143,7 +164,9 @@ public class MenuHolder implements InventoryHolder {
     public void replaceTitle(@NotNull String find, @NotNull String replacement) {
         Preconditions.checkNotNull(find, "find cannot be null");
         Preconditions.checkNotNull(replacement, "replacement cannot be null");
-        title = title.replace(find, replacement);
+        String miniMessage = this.title.serializeMiniMessage();
+        if (!miniMessage.contains(find)) { return; }
+        this.title = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage.replace(find, replacement));
     }
 
     // --------------------------------------------------------------------- //
