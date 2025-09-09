@@ -1,14 +1,20 @@
 package com.kamikazejam.kamicommon.menu.api.loaders.menu;
 
+import com.kamikazejam.kamicommon.menu.AbstractMenuBuilder;
+import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.SimpleMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.api.loaders.IconSlotLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuSizeLoader;
+import com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Pattern;
 
 /**
  * Utility class for loading a {@link SimpleMenu.Builder} from a {@link ConfigurationSection}.
@@ -31,7 +37,7 @@ public class SimpleMenuLoader {
     public static @NotNull SimpleMenu.Builder loadMenu(@NotNull ConfigurationSection section) {
         // Load title from 'title' or 'name', defaulting to " "
         String title = section.getString("title", section.getString("name", " "));
-        SimpleMenu.Builder builder = new SimpleMenu.Builder(MenuSizeLoader.load(section)).title(StringUtil.t(title));
+        SimpleMenu.Builder builder = (SimpleMenu.Builder) setTitle(new SimpleMenu.Builder(MenuSizeLoader.load(section)), title);
 
         // Load Filler Icon
         if (section.isConfigurationSection("filler")) {
@@ -51,5 +57,43 @@ public class SimpleMenuLoader {
         }
 
         return builder;
+    }
+
+    /**
+     * Identifies the type of title string being used, and tries its best to set it correctly on the builder.<br>
+     * Supports (parsed in this order):<br>
+     * - Legacy Section (contains &sect; symbols)<br>
+     * - MiniMessage (contains &lt;tag&gt; tags)<br>
+     * - Legacy Ampersand (contains &amp; symbols)<br>
+     */
+    public static <M extends Menu<M>, T extends AbstractMenuBuilder<M, T>> @NotNull AbstractMenuBuilder<M, T> setTitle(
+            @NotNull AbstractMenuBuilder<M, T> builder,
+            @NotNull String titleString
+    ) {
+        // 1. MiniMessage cannot support &sect; symbols, so if we find one, it's definitely legacy
+        if (titleString.contains("§")) {
+            // auto translate (to maintain previous behavior)
+            return builder.titleFromLegacySection(StringUtil.t(titleString));
+        }
+        // 2. If it contains <tag> symbols, it's most likely MiniMessage
+        Pattern pattern = Pattern.compile("<[^<>]+>");
+        if (titleString.contains("<\\") || pattern.matcher(titleString).find()) {
+            return builder.title((ComponentMenuTitleProvider) (player) ->
+                    NmsAPI.getVersionedComponentSerializer().fromMiniMessage(titleString)
+            );
+        }
+        // 3. If it contains & symbols, it's most likely legacy ampersand
+        if (titleString.contains("&")) {
+            // auto translate (to maintain previous behavior)
+            String translated = StringUtil.t(titleString);
+            return builder.title((ComponentMenuTitleProvider) (player) ->
+                    NmsAPI.getVersionedComponentSerializer().fromLegacySection(translated)
+            );
+        }
+        // 4. Otherwise, just treat it as plain text
+        // (can use the mini message parses since it won't error on plain text, it just won't do anything special)
+        return builder.title((ComponentMenuTitleProvider) (player) ->
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(titleString)
+        );
     }
 }
