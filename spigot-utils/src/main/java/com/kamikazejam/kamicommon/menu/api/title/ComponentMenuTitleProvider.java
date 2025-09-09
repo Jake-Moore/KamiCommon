@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.menu.api.title;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import com.kamikazejam.kamicommon.util.StringUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,10 @@ public interface ComponentMenuTitleProvider {
      */
     @Deprecated
     static @NotNull ComponentMenuTitleProvider fromLegacy(@NotNull MenuTitleProvider provider) {
-        return (player) -> NmsAPI.getVersionedComponentSerializer().fromLegacySection(provider.getTitle(player));
+        return (player) -> {
+            // legacy behavior was to automatically translate the alternate ampersand color codes to section symbols
+            String legacyTitle = provider.getTitle(player);
+            return NmsAPI.getVersionedComponentSerializer().fromLegacySection(StringUtil.t(legacyTitle));
+        };
     }
 }
