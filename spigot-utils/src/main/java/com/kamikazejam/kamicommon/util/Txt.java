@@ -326,7 +326,7 @@ public class Txt {
         String pageTitleMini = Config.getTitleFormatMini().replace(Config.getPlaceholderTitle(), titleMini);
 
         // Calculate the length of what will be visible (Strip colors)
-        int pageTitleLength = serializer.fromMiniMessage(pageTitleMini).plainText().length();
+        int pageTitleLength = serializer.fromMiniMessage(pageTitleMini).serializePlainText().length();
 
         // Calculate how many characters we need to add on either side
         int leftPaddingSize = Math.max(0, (int) Math.ceil((TITLE_LINE_LENGTH - pageTitleLength) / 2.0));

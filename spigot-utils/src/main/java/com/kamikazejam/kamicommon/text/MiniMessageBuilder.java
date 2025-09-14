@@ -79,7 +79,7 @@ public class MiniMessageBuilder {
         Preconditions.checkNotNull(replacement, "replacement cannot be null");
         List<VersionedComponent> newLines = new ArrayList<>();
         for (VersionedComponent line : this.lines) {
-            String plainText = line.plainText();
+            String plainText = line.serializePlainText();
             if (caseSensitive ? plainText.equals(target) : plainText.equalsIgnoreCase(target)) {
                 newLines.addAll(replacement);
             } else {
@@ -114,7 +114,7 @@ public class MiniMessageBuilder {
         Preconditions.checkNotNull(replacement, "replacement cannot be null");
         List<VersionedComponent> newLines = new ArrayList<>();
         for (VersionedComponent line : this.lines) {
-            String plainText = line.plainText();
+            String plainText = line.serializePlainText();
             if (caseSensitive ? plainText.contains(target) : plainText.toLowerCase().contains(target.toLowerCase())) {
                 newLines.addAll(replacement);
             } else {

@@ -10,6 +10,7 @@ import com.kamikazejam.kamicommon.menu.api.clicks.transform.MenuClickTransform;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.MenuIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StatefulIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StaticIconModifier;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -231,7 +232,7 @@ public class MenuIcon<M extends Menu<M>> {
     @Configurable
     public static class Config {
         @Getter @Setter
-        private static @NotNull ItemBuilder defaultFillerIconBuilder = new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" ");
+        private static @NotNull ItemBuilder defaultFillerIconBuilder = new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).displayName(NmsAPI.getVersionedComponentSerializer().fromPlainText(" "));
     }
 }
 

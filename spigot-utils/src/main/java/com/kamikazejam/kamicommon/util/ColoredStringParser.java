@@ -5,6 +5,7 @@ import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -47,5 +48,14 @@ public class ColoredStringParser {
         // 4. Otherwise, just treat it as plain text
         // (can use the mini message parses since it won't error on plain text, it just won't do anything special)
         return serializer.fromMiniMessage(input);
+    }
+
+    /**
+     * Parses a list of strings into a list of {@link VersionedComponent} objects, using the same logic as {@link #parse(String)} for each line.<br>
+     * <br>
+     * This is useful for parsing lore lists from configuration files or other sources.
+     */
+    public static @NotNull List<VersionedComponent> parse(@NotNull List<String> input) {
+        return input.stream().map(ColoredStringParser::parse).toList();
     }
 }
