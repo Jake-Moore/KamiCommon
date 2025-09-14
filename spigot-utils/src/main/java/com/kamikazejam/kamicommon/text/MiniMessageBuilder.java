@@ -3,7 +3,7 @@ package com.kamikazejam.kamicommon.text;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.StringUtilP;
+import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import lombok.Getter;
 import lombok.Setter;
@@ -145,7 +145,7 @@ public class MiniMessageBuilder {
         if (translatePAPI) {
             for (VersionedComponent component : lines) {
                 // Direct PAPI parse on the MiniMessage string itself
-                String miniMessage = StringUtilP.justP(player, component.serializeMiniMessage());
+                String miniMessage = SoftPlaceholderAPI.setPlaceholders(player, component.serializeMiniMessage());
                 // Re-parse the MiniMessage string into a component
                 VersionedComponent parsed = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage);
                 // Send the parsed component

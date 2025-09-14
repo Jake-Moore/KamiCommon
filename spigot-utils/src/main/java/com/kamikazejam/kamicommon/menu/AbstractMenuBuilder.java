@@ -15,7 +15,7 @@ import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +64,7 @@ public sealed abstract class AbstractMenuBuilder<M extends Menu<M>, T extends Ab
     public final @NotNull T titleFromLegacySection(@Nullable String title) {
         VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
         // translate to keep existing behavior (translating alternate ampersand codes to section symbols)
-        VersionedComponent component = (title != null) ? serializer.fromLegacySection(StringUtil.t(title)) : serializer.fromLegacySection(" ");
+        VersionedComponent component = (title != null) ? serializer.fromLegacySection(LegacyColors.t(title)) : serializer.fromLegacySection(" ");
         this.titleCalculator.setProvider((p) -> component);
         return (T) this;
     }

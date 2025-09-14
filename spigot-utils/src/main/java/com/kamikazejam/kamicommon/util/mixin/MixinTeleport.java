@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.event.PlayerPSTeleportEvent;
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
@@ -73,7 +73,7 @@ public class MixinTeleport extends Mixin {
 
 		} catch (Exception e) {
 			String s = String.format("&cCould not calculate the location: %s", e.getMessage());
-			throw new KamiCommonException().addMsg(StringUtil.t(s));
+			throw new KamiCommonException().addMsg(LegacyColors.t(s));
 		}
 
 		// eject passengers and unmount before transport
@@ -116,7 +116,7 @@ public class MixinTeleport extends Mixin {
 		String teleporteeId = IdUtilLocal.getId(teleporteeObject);
 		if (!IdUtilLocal.isPlayerId(teleporteeId)) {
 			String s = String.format("&f%s &cis not a player.", MixinDisplayName.get().getDisplayName(teleporteeId, IdUtilLocal.getConsole()));
-			throw new KamiCommonException().addMsg(StringUtil.t(s));
+			throw new KamiCommonException().addMsg(LegacyColors.t(s));
 		}
 
 		if (delaySeconds > 0) {
@@ -129,12 +129,12 @@ public class MixinTeleport extends Mixin {
 			if (desc != null && !desc.isEmpty()) {
 				if (sender != null) {
 					String s = "&eTeleporting to &d" + desc + " &ein &d" + delaySeconds + "s &eunless you move.";
-					sender.sendMessage(StringUtil.t(s));
+					sender.sendMessage(LegacyColors.t(s));
 				}
 			} else {
 				if (sender != null) {
 					String s = "&eTeleporting in &d" + delaySeconds + "s &eunless you move.";
-					sender.sendMessage(StringUtil.t(s));
+					sender.sendMessage(LegacyColors.t(s));
 				}
 			}
 
@@ -164,7 +164,7 @@ public class MixinTeleport extends Mixin {
 				if (desc != null && !desc.isEmpty()) {
 					CommandSender sender = KUtil.getSender(teleporteeId);
 					if (sender != null) {
-						sender.sendMessage(StringUtil.t("&eTeleporting to &d" + desc + "&e."));
+						sender.sendMessage(LegacyColors.t("&eTeleporting to &d" + desc + "&e."));
 					}
 				}
 
@@ -178,7 +178,7 @@ public class MixinTeleport extends Mixin {
 				if (desc != null && !desc.isEmpty()) {
 					CommandSender sender = KUtil.getSender(teleporteeId);
 					if (sender != null) {
-						sender.sendMessage(StringUtil.t("&eTeleporting to &d" + desc + "&e."));
+						sender.sendMessage(LegacyColors.t("&eTeleporting to &d" + desc + "&e."));
 					}
 				}
 

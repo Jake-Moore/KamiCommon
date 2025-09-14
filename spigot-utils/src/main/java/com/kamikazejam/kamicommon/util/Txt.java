@@ -192,7 +192,7 @@ public class Txt {
      * @return The name of the item, or a default name ({@link #getItemName(ItemStack, String)}) if the item is null or empty.
      */
     public static @NotNull String getItemName(@Nullable ItemStack itemStack) {
-        return getItemName(itemStack, StringUtil.t("&7&oNothing"));
+        return getItemName(itemStack, LegacyColors.t("&7&oNothing"));
     }
 
     /**
@@ -313,7 +313,7 @@ public class Txt {
         String pageTitle = Config.getTitleFormat().replace(Config.getPlaceholderTitle(), title);
 
         // Calculate the length of what will be visible (Strip colors)
-        int pageTitleLength = ChatColor.stripColor(StringUtil.t(pageTitle)).length();
+        int pageTitleLength = ChatColor.stripColor(LegacyColors.t(pageTitle)).length();
 
         // Calculate how many characters we need to add on either side
         int leftPaddingSize = Math.max(0, (int) Math.ceil((TITLE_LINE_LENGTH - pageTitleLength) / 2.0));

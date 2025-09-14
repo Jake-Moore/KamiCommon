@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.engine.Engine;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({"unused", "UnstableApiUsage"})
+@SuppressWarnings({"unused"})
 public class Mixin extends Engine {
     // -------------------------------------------- //
     // DEFAULT
@@ -203,7 +203,7 @@ public class Mixin extends Engine {
         // Inform
         if (verbose) {
             String message = String.format("&eMixin &d%s&e set to &d%s", this.getBaseName(), this.getName());
-            after.getPlugin().getColorLogger().info(StringUtil.t(message));
+            after.getPlugin().getColorLogger().info(LegacyColors.t(message));
         }
 
         // Super

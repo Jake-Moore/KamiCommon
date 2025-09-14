@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import com.kamikazejam.kamicommon.util.teleport.ps.PSFormatDesc;
 import org.bukkit.Bukkit;
@@ -109,7 +109,7 @@ public class MixinWorld extends Mixin {
 		World world = Bukkit.getWorld(worldId);
 		if (world == null) {
 			if (verboseChange || verboseSame) {
-				sender.sendMessage(String.format(StringUtil.t("&cUnknown world &d%s&c."), worldId));
+				sender.sendMessage(String.format(LegacyColors.t("&cUnknown world &d%s&c."), worldId));
 			}
 			return false;
 		}
@@ -124,7 +124,7 @@ public class MixinWorld extends Mixin {
 		if (KUtil.equals(goal, current)) {
 			if (verboseSame) {
 				String s = String.format("&eSpawn location is already &d%s &efor &d%s&e.", currentFormatted, worldDisplayName);
-				sender.sendMessage(StringUtil.t(s));
+				sender.sendMessage(LegacyColors.t(s));
 			}
 			return true;
 		}
@@ -132,7 +132,7 @@ public class MixinWorld extends Mixin {
 		// Report
 		if (verboseChange) {
 			String s = String.format("&eChanging spawn location from &d%s &eto &d%s &efor &d%s&e.", currentFormatted, goalFormatted, worldDisplayName);
-			sender.sendMessage(StringUtil.t(s));
+			sender.sendMessage(LegacyColors.t(s));
 		}
 
 		// Set it

@@ -12,7 +12,7 @@ import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageBlock;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
@@ -842,8 +842,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
         // Check if there are too few arguments.
         if (args.size() < this.getParameterCountRequired(sender)) {
-            sender.sendMessage(StringUtil.t(Config.getCommandTooFewArguments()));
-            sender.sendMessage(StringUtil.t(this.getCurrentTemplateUsage(sender, false)));
+            sender.sendMessage(LegacyColors.t(Config.getCommandTooFewArguments()));
+            sender.sendMessage(LegacyColors.t(this.getCurrentTemplateUsage(sender, false)));
             return false;
         }
 
@@ -861,9 +861,9 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             );
 
             String message = String.format(Config.getCommandTooManyArguments(), extraArgsImploded);
-            sender.sendMessage(StringUtil.t(message));
-            sender.sendMessage(StringUtil.t(Config.getCommandUseLike()));
-            sender.sendMessage(StringUtil.t(this.getCurrentTemplateUsage(sender, false)));
+            sender.sendMessage(LegacyColors.t(message));
+            sender.sendMessage(LegacyColors.t(Config.getCommandUseLike()));
+            sender.sendMessage(LegacyColors.t(this.getCurrentTemplateUsage(sender, false)));
             return false;
         }
         return true;

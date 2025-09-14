@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.command.type;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.ChatColor;
@@ -59,7 +59,7 @@ public class TypeColor extends TypeAbstract<Color> {
 
         ChatColor error = KamiCommand.Config.getErrorColor();
         ChatColor param = KamiCommand.Config.getErrorParamColor();
-        throw new KamiCommonException().addMsg(StringUtil.t(error + "No color matches \"" + param + "%s" + error + "\"."), arg);
+        throw new KamiCommonException().addMsg(LegacyColors.t(error + "No color matches \"" + param + "%s" + error + "\"."), arg);
 	}
 
 	public Color readInnerRgb(String arg, CommandSender sender) throws KamiCommonException {
@@ -77,7 +77,7 @@ public class TypeColor extends TypeAbstract<Color> {
 		int ret = TypeInteger.get().read(arg, sender);
 		if (ret > 255 || ret < 0) {
             ChatColor error = KamiCommand.Config.getErrorColor();
-            throw new KamiCommonException().addMsg(StringUtil.t(error + "RGB number must be between 0 and 255."));
+            throw new KamiCommonException().addMsg(LegacyColors.t(error + "RGB number must be between 0 and 255."));
         }
 		return ret;
 	}
@@ -95,7 +95,7 @@ public class TypeColor extends TypeAbstract<Color> {
 		if (arg.length() != 6) {
 			if (verbose) {
                 ChatColor error = KamiCommand.Config.getErrorColor();
-                throw new KamiCommonException().addMsg(StringUtil.t(error + "Hex must be 6 hexadecimals."));
+                throw new KamiCommonException().addMsg(LegacyColors.t(error + "Hex must be 6 hexadecimals."));
             }
 			return null;
 		}
@@ -110,7 +110,7 @@ public class TypeColor extends TypeAbstract<Color> {
 			if (verbose) {
                 ChatColor error = KamiCommand.Config.getErrorColor();
                 ChatColor param = KamiCommand.Config.getErrorParamColor();
-                throw new KamiCommonException().addMsg(StringUtil.t(error + "\"" + param + "%s" + error + "\" is not valid hexadecimal."), arg);
+                throw new KamiCommonException().addMsg(LegacyColors.t(error + "\"" + param + "%s" + error + "\" is not valid hexadecimal."), arg);
             }
 			return null;
 		}

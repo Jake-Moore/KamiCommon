@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mixin.MixinDisplayName;
 import com.kamikazejam.kamicommon.util.mixin.MixinPlayed;
@@ -59,7 +59,7 @@ public class DestinationPlayer extends DestinationAbstract {
         return this.getDesc(watcherObject, true);
     }
 
-    private static final String offline = StringUtil.t(" &c[Offline]");
+    private static final String offline = LegacyColors.t(" &c[Offline]");
     public String getDesc(Object watcherObject, boolean prefix) {
         String ret = "";
 

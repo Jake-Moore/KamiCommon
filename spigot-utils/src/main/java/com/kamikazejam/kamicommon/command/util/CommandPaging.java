@@ -7,7 +7,7 @@ import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import lombok.Getter;
@@ -55,7 +55,7 @@ public class CommandPaging {
                 .replace(Config.getPlaceholderPageCount(), String.valueOf(pageCount));
 
         // Calculate the length of what will be visible (Strip colors & replace variables)
-        int pageTitleLength = ChatColor.stripColor(StringUtil.t(pageTitle
+        int pageTitleLength = ChatColor.stripColor(LegacyColors.t(pageTitle
                 .replace(Config.getPlaceholderPrevPage(), Config.getBackIcon())
                 .replace(Config.getPlaceholderNextPage(), Config.getForwardIcon())
         )).length();

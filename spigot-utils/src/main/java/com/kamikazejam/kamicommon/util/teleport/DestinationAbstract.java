@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import com.kamikazejam.kamicommon.util.teleport.ps.PSFormatHumanSpace;
@@ -47,7 +47,7 @@ public abstract class DestinationAbstract implements Destination {
 	public String getMessagePsNull(Object watcherObject) {
 		String desc = this.getDesc(watcherObject);
 		String f = String.format("&cLocation for &d%s&c could not be found.", desc);
-		return StringUtil.t(f);
+		return LegacyColors.t(f);
 	}
 
 	@Override

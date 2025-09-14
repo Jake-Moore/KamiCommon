@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.engine;
 
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.teleport.ScheduledTeleport;
 import org.bukkit.command.CommandSender;
@@ -103,9 +103,9 @@ public class EngineScheduledTeleport extends Engine {
 		if (sender == null) { return; }
 
 		if (scheduledTeleport.getDesc() != null) {
-			sender.sendMessage(StringUtil.t("&cCancelled &eteleport to &d" + scheduledTeleport.getDesc() + "&e."));
+			sender.sendMessage(LegacyColors.t("&cCancelled &eteleport to &d" + scheduledTeleport.getDesc() + "&e."));
 		}else {
-			sender.sendMessage(StringUtil.t("&cCancelled &eteleport."));
+			sender.sendMessage(LegacyColors.t("&cCancelled &eteleport."));
 		}
 	}
 

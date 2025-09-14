@@ -6,7 +6,7 @@ import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,7 +50,7 @@ public class MenuHolder implements InventoryHolder {
     @Deprecated
     public MenuHolder(@NotNull MenuSize size, @Nullable String name) {
         this.size = size;
-        this.title = NmsAPI.getVersionedComponentSerializer().fromLegacySection((name == null) ? " " : StringUtil.t(name));
+        this.title = NmsAPI.getVersionedComponentSerializer().fromLegacySection((name == null) ? " " : LegacyColors.t(name));
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.teleport.ps;
 
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 
 public class PSFormatHumanSpace extends PSFormatAbstract {
     // -------------------------------------------- //
@@ -15,24 +15,24 @@ public class PSFormatHumanSpace extends PSFormatAbstract {
 
     private PSFormatHumanSpace() {
         super(
-                StringUtil.t("&7&oNULL"),
-                StringUtil.t(""),
-                StringUtil.t("&d%s"),
-                StringUtil.t("&d%d"),
-                StringUtil.t("&d%d"),
-                StringUtil.t("&d%d"),
-                StringUtil.t("&d%.2f"),
-                StringUtil.t("&d%.2f"),
-                StringUtil.t("&d%.2f"),
-                StringUtil.t("&d%d"),
-                StringUtil.t("&d%d"),
-                StringUtil.t("&d%.2f"),
-                StringUtil.t("&d%.2f"),
-                StringUtil.t("&d%.2f"),
-                StringUtil.t("&d%.2f"),
-                StringUtil.t("&d%.2f"),
-                StringUtil.t(" "),
-                StringUtil.t("")
+                LegacyColors.t("&7&oNULL"),
+                LegacyColors.t(""),
+                LegacyColors.t("&d%s"),
+                LegacyColors.t("&d%d"),
+                LegacyColors.t("&d%d"),
+                LegacyColors.t("&d%d"),
+                LegacyColors.t("&d%.2f"),
+                LegacyColors.t("&d%.2f"),
+                LegacyColors.t("&d%.2f"),
+                LegacyColors.t("&d%d"),
+                LegacyColors.t("&d%d"),
+                LegacyColors.t("&d%.2f"),
+                LegacyColors.t("&d%.2f"),
+                LegacyColors.t("&d%.2f"),
+                LegacyColors.t("&d%.2f"),
+                LegacyColors.t("&d%.2f"),
+                LegacyColors.t(" "),
+                LegacyColors.t("")
         );
     }
 }

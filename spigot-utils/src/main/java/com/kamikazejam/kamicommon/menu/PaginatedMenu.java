@@ -14,7 +14,7 @@ import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeRows;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSizeType;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -130,7 +130,7 @@ public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
                     access.setMenuClick(nextInactiveIconId, (data) -> {
                         @Nullable String message = this.getOptions().getNoNextPageIconMessage();
                         if (message != null && !message.isEmpty()) {
-                            this.getPlayer().sendMessage(StringUtil.t(message));
+                            this.getPlayer().sendMessage(LegacyColors.t(message));
                         }
                     });
                 }
@@ -158,7 +158,7 @@ public final class PaginatedMenu extends AbstractMenu<PaginatedMenu> {
                     access.setMenuClick(prevInactiveIconId, (data) -> {
                         @Nullable String message = this.getOptions().getNoPrevPageIconMessage();
                         if (message != null && !message.isEmpty()) {
-                            this.getPlayer().sendMessage(StringUtil.t(message));
+                            this.getPlayer().sendMessage(LegacyColors.t(message));
                         }
                     });
                 }

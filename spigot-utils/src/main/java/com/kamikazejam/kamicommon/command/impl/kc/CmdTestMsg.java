@@ -8,7 +8,7 @@ import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ public class CmdTestMsg extends KamiCommand {
     @Override
     public void perform(@NotNull CommandContext context) {
         Player player = (Player) context.getSender();
-        player.sendMessage(StringUtil.t("&7Sending Test KMessageSingle..."));
+        player.sendMessage(LegacyColors.t("&7Sending Test KMessageSingle..."));
 
         KMessageSingle kMessage = new KMessageSingle("§f{display_name} §8» §7test [item]");
         kMessage.setTranslate(true);
