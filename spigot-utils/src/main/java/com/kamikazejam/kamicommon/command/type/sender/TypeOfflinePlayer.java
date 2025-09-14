@@ -2,12 +2,10 @@ package com.kamikazejam.kamicommon.command.type.sender;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.id.SenderPresence;
 import com.kamikazejam.kamicommon.util.id.SenderType;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
@@ -31,9 +29,12 @@ public class TypeOfflinePlayer extends TypeAbstract<OfflinePlayer> {
 	public OfflinePlayer read(String str, CommandSender sender) throws KamiCommonException {
 		OfflinePlayer offlinePlayer = IdUtilLocal.getOfflinePlayer(str);
 		if (offlinePlayer == null) {
-            ChatColor error = KamiCommand.Config.getErrorColor();
-            ChatColor param = KamiCommand.Config.getErrorParamColor();
-            throw new KamiCommonException().addMsg(LegacyColors.t(error + "No player with the name \"" + param + "%s" + error + "\" has been seen before on this server."), str);
+            String error = KamiCommand.Config.getErrorColorMini();
+            String param = KamiCommand.Config.getErrorParamColorMini();
+            throw new KamiCommonException().addMsgFromMiniMessage(
+                    error + "No player with the name \"" + param + "%s" + error + "\" has been seen before on this server.",
+                    str
+            );
 		}
 		return offlinePlayer;
 	}

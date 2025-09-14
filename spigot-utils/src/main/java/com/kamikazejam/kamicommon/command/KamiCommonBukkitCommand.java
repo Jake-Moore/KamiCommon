@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.command;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import lombok.Getter;
@@ -149,7 +149,8 @@ public class KamiCommonBukkitCommand extends Command implements PluginIdentifiab
 		int retSize = ret.size();
 		int maxSize = 100; // The limit for tab completions in the vanilla client is 100.
 		if (retSize > maxSize) {
-			sender.sendMessage(LegacyColors.t(String.format(KamiCommand.Config.getCommandTooManyTabSuggestions(), retSize)));
+            String miniMessage = String.format(KamiCommand.Config.getCommandTooManyTabSuggestionsMini(), retSize);
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage).sendTo(sender);
 			return Collections.emptyList();
 		}
 

@@ -9,8 +9,8 @@ import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.PlayerUtil;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -42,10 +42,14 @@ public class CmdLoadItem extends KamiCommand {
         KamiConfig config = new KamiConfigExt(SpigotUtilsSource.get(), file, null);
         ItemStack stack = config.getItemStack(configKey);
         if (stack == null) {
-            player.sendMessage(LegacyColors.t("&cNo item found in &f" + file.getAbsolutePath() + "&c: &f" + configKey));
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    "<red>No item found in <white>" + file.getAbsolutePath() + "<red>: <white>" + configKey
+            ).sendTo(player);
             return;
         }
         PlayerUtil.giveItem(player, stack);
-        player.sendMessage(LegacyColors.t("&aLoaded and Gave Item"));
+        NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                "<green>Loaded and Gave Item"
+        ).sendTo(player);
     }
 }

@@ -1,13 +1,18 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.mixin.MixinWorld;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
+@Setter
 @Getter
 @SuppressWarnings("unused")
 public class DestinationWorld extends DestinationAbstract {
@@ -17,10 +22,6 @@ public class DestinationWorld extends DestinationAbstract {
     // -------------------------------------------- //
 
     protected String worldId;
-
-    public void setWorldId(String worldId) {
-        this.worldId = worldId;
-    }
 
     public void setWorld(World world) {
         this.worldId = (world == null ? null : world.getName());
@@ -39,8 +40,7 @@ public class DestinationWorld extends DestinationAbstract {
     }
 
     public DestinationWorld(CommandSender sender) {
-        if (!(sender instanceof Player)) return;
-        Player player = (Player) sender;
+        if (!(sender instanceof Player player)) return;
         this.setWorld(player.getWorld());
     }
 
@@ -65,8 +65,8 @@ public class DestinationWorld extends DestinationAbstract {
     }
 
     @Override
-    public String getDesc(Object watcherObject) {
-        return "World " + MixinWorld.get().getWorldDisplayName(this.getWorldId());
+    public @NotNull VersionedComponent getDesc(Object watcherObject) {
+        return NmsAPI.getVersionedComponentSerializer().fromMiniMessage("World " + MixinWorld.get().getWorldDisplayNameMini(this.getWorldId()));
     }
 
 }

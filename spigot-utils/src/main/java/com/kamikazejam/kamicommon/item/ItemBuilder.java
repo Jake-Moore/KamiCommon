@@ -12,7 +12,6 @@ import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
@@ -672,7 +671,7 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         final List<String> newLore = new ArrayList<>();
         if (lore == null) { return this; }
         for (String s : lore) {
-            if (ChatColor.stripColor(s).contains(ChatColor.stripColor(find))) {
+            if (LegacyColors.strip(s).contains(LegacyColors.strip(find))) {
                 newLore.addAll(replacement);
             } else {
                 newLore.add(s);

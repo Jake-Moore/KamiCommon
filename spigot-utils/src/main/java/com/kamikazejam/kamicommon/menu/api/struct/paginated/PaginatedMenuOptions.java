@@ -63,17 +63,21 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
 
     /**
      * The message to send the player when they click the {@link #nextPageInactiveIcon} icon.<br>
-     * If null, no message will be sent.
+     * If null, no message will be sent.<br>
+     * <br>
+     * This MUST BE in MiniMessage format!
      */
     @Setter
-    private @Nullable String noNextPageIconMessage;
+    private @Nullable String noNextPageIconMessageMini;
 
     /**
      * The message to send the player when they click the {@link #prevPageInactiveIcon} icon.<br>
-     * If null, no message will be sent.
+     * If null, no message will be sent.<br>
+     * <br>
+     * This MUST BE in MiniMessage format!
      */
     @Setter
-    private @Nullable String noPrevPageIconMessage;
+    private @Nullable String noPrevPageIconMessageMini;
 
     public PaginatedMenuOptions(@NotNull PaginationLayout layout) {
         Preconditions.checkNotNull(layout, "layout cannot be null");
@@ -84,8 +88,8 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         this.prevPageIcon = Config.getPrevPageIcon();
         this.nextPageInactiveIcon = Config.getNextPageInactiveIcon();
         this.prevPageInactiveIcon = Config.getPrevPageInactiveIcon();
-        this.noNextPageIconMessage = Config.getNoNextPageIconMessage();
-        this.noPrevPageIconMessage = Config.getNoPrevPageIconMessage();
+        this.noNextPageIconMessageMini = Config.getNoNextPageIconMessageMini();
+        this.noPrevPageIconMessageMini = Config.getNoPrevPageIconMessageMini();
     }
 
     // Copy Constructor
@@ -97,8 +101,8 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         this.prevPageIcon = copy.prevPageIcon == null ? null : copy.prevPageIcon.copy();
         this.nextPageInactiveIcon = copy.nextPageInactiveIcon == null ? null : copy.nextPageInactiveIcon.copy();
         this.prevPageInactiveIcon = copy.prevPageInactiveIcon == null ? null : copy.prevPageInactiveIcon.copy();
-        this.noNextPageIconMessage = copy.noNextPageIconMessage;
-        this.noPrevPageIconMessage = copy.noPrevPageIconMessage;
+        this.noNextPageIconMessageMini = copy.noNextPageIconMessageMini;
+        this.noPrevPageIconMessageMini = copy.noPrevPageIconMessageMini;
     }
 
     public void setLayout(@NotNull PaginationLayout layout) {
@@ -126,9 +130,9 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         private static @NotNull AbstractPaginatedMenuTitle titleFormat = new DefaultPaginatedMenuTitle();
         @Getter @Setter
         private static boolean fillerFillsEmptyPageIconSlots = true;
-        @Getter @Setter
+        @Getter @Setter // TODO convert to component
         private static @Nullable MenuIcon<PaginatedMenu> nextPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶"));
-        @Getter @Setter
+        @Getter @Setter // TODO convert to component
         private static @Nullable MenuIcon<PaginatedMenu> prevPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page"));
         @Getter @Setter
         private static @Nullable MenuIcon<PaginatedMenu> nextPageInactiveIcon = null;
@@ -138,11 +142,11 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
          * Only applies to the {@link #getNextPageInactiveIcon()} click (if enabled).
          */
         @Getter @Setter
-        private static @Nullable String noNextPageIconMessage = "&cNo next page available";
+        private static @Nullable String noNextPageIconMessageMini = "<red>No next page available";
         /**
          * Only applies to the {@link #getPrevPageInactiveIcon()} click (if enabled).
          */
         @Getter @Setter
-        private static @Nullable String noPrevPageIconMessage = "&cNo previous page available";
+        private static @Nullable String noPrevPageIconMessageMini = "<red>No previous page available";
     }
 }

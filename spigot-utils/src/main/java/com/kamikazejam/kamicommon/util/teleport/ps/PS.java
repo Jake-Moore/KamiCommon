@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.util.teleport.ps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import com.kamikazejam.kamicommon.util.comparator.ComparatorSmart;
@@ -926,16 +927,27 @@ public final class PS implements Serializable, Comparable<PS> {
 	// TO STRING
 	// -------------------------------------------- //
 
+    /**
+     * @return a MiniMessage string of the PS using the given format
+     */
 	@Override
 	public String toString() {
-		return this.toString(PSFormatFormal.get());
+		return this.toString(PSFormatFormal.get()).serializeMiniMessage();
 	}
 
-	public String toString(@NotNull PSFormat format) {
+    /**
+     * @return a MiniMessage string of the PS using the given format
+     */
+    @NotNull
+	public VersionedComponent toString(@NotNull PSFormat format) {
 		return format.format(this);
 	}
 
-	public static String toString(PS ps, @NotNull PSFormat format) {
+    /**
+     * @return a MiniMessage string of the PS using the given format
+     */
+    @NotNull
+	public static VersionedComponent toString(@Nullable PS ps, @NotNull PSFormat format) {
 		return format.format(ps);
 	}
 
@@ -1059,10 +1071,9 @@ public final class PS implements Serializable, Comparable<PS> {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof PS)) return false;
-		PS that = (PS) object;
+		if (!(object instanceof PS that)) return false;
 
-		return KUtil.equals(
+        return KUtil.equals(
 				this.world, that.world,
 				this.blockX, that.blockX,
 				this.blockY, that.blockY,

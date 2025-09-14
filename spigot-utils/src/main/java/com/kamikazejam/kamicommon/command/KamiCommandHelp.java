@@ -4,10 +4,9 @@ import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
 import com.kamikazejam.kamicommon.command.util.CommandPaging;
 import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,13 +57,14 @@ public class KamiCommandHelp extends KamiCommand {
 		KamiCommand parent = this.getParent();
 
 		// Create Lines
-		List<KMessageSingle> lines = new ArrayList<>();
+		List<VersionedComponent> lines = new ArrayList<>();
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
 
 		// Add comments (if specified), using the comment format from the config
-		List<KMessageSingle> comments = parent.getHelpComments();
-		for (KMessageSingle single : comments) {
-            String text = String.format(KamiCommand.Config.getHelpCommentFormat(), single.getLine());
-			lines.add(new KMessageSingle(LegacyColors.t(text)));
+		List<VersionedComponent> comments = parent.getHelpComments();
+		for (VersionedComponent single : comments) {
+            String miniMessage = String.format(KamiCommand.Config.getHelpCommentFormatMini(), single.serializeMiniMessage());
+            lines.add(serializer.fromMiniMessage(miniMessage));
 		}
 
 		CommandSender sender = context.getSender();
@@ -80,8 +80,9 @@ public class KamiCommandHelp extends KamiCommand {
 		// Add title line (becomes the first line)
         @NotNull CommandContext parentContext = Preconditions.checkNotNull(parent.getContext(), "Parent command context cannot be null");
 		String title = KamiCommandHelp.Config.getHelpTitleFormat().replace(KamiCommandHelp.Config.getPlaceholderTitle(), parentContext.getLabel());
-        List<KMessage> messages = CommandPaging.getPage(this, lines, page, title);
-		NmsAPI.getMessageManager().processAndSend(sender, messages);
+
+        // Send page lines
+        CommandPaging.getPage(this, lines, page, title).forEach(line -> line.sendTo(sender));
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Txt;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -48,15 +49,19 @@ public class RequirementHasItemInHand extends RequirementAbstract {
 	}
 
 	@Override
-	public String createErrorMessage(CommandSender sender, KamiCommand command) {
+	public @NotNull VersionedComponent createErrorMessage(CommandSender sender, KamiCommand command) {
 		if (!(sender instanceof Player player)) {
 			return RequirementIsPlayer.get().createErrorMessage(sender, command);
 		}
 		ItemStack inHand = NmsAPI.getItemInMainHand(player);
 		if (inHand == null) {
-			return KamiCommand.Config.getErrorColor() + "You must be holding an item in your hand.";
+            return NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    KamiCommand.Config.getErrorColorMini() + "You must be holding an item in your hand."
+            );
 		}
-		return KamiCommand.Config.getErrorColor() + "Invalid Item: " + Txt.getNicedEnum(inHand.getType());
+		return NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                KamiCommand.Config.getErrorColorMini() + "Invalid Item: " + Txt.getNicedEnum(inHand.getType())
+        );
 	}
 
 }

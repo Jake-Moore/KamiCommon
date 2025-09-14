@@ -1,16 +1,16 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import com.kamikazejam.kamicommon.util.teleport.ps.PSFormatDesc;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +65,8 @@ public class MixinWorld extends Mixin {
 		return ret;
 	}
 
-	public ChatColor getWorldColor(String worldId) {
-		return ChatColor.WHITE;
+	public @NotNull String getWorldColorMini(String worldId) {
+		return "<white>";
 	}
 
 	public List<String> getWorldAliases(String worldId) {
@@ -79,8 +79,8 @@ public class MixinWorld extends Mixin {
 		return worldId;
 	}
 
-	public String getWorldDisplayName(String worldId) {
-		return this.getWorldColor(worldId).toString() + this.getWorldAliasOrId(worldId);
+	public String getWorldDisplayNameMini(String worldId) {
+		return this.getWorldColorMini(worldId) + this.getWorldAliasOrId(worldId);
 	}
 
 	public PS getWorldSpawnPs(String worldId) {
@@ -109,30 +109,38 @@ public class MixinWorld extends Mixin {
 		World world = Bukkit.getWorld(worldId);
 		if (world == null) {
 			if (verboseChange || verboseSame) {
-				sender.sendMessage(String.format(LegacyColors.t("&cUnknown world &d%s&c."), worldId));
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                        String.format("<red>Unknown world <light_purple>%s<red>.", worldId)
+                ).sendTo(sender);
 			}
 			return false;
 		}
 
 		// Pre Calculations
-		String worldDisplayName = MixinWorld.get().getWorldDisplayName(worldId);
+		String worldDisplayNameMini = MixinWorld.get().getWorldDisplayNameMini(worldId);
 		PS current = this.getWorldSpawnPs(worldId);
-		String currentFormatted = current.toString(PSFormatDesc.get());
-		String goalFormatted = goal.toString(PSFormatDesc.get());
+		String currentFormattedMini = current.toString(PSFormatDesc.get()).serializeMiniMessage();
+		String goalFormattedMini = goal.toString(PSFormatDesc.get()).serializeMiniMessage();
 
 		// No change?
 		if (KUtil.equals(goal, current)) {
 			if (verboseSame) {
-				String s = String.format("&eSpawn location is already &d%s &efor &d%s&e.", currentFormatted, worldDisplayName);
-				sender.sendMessage(LegacyColors.t(s));
+				String miniMessage = String.format(
+                        "<yellow>Spawn location is already <light_purple>%s <yellow>for <light_purple>%s<yellow>.",
+                        currentFormattedMini, worldDisplayNameMini
+                );
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage).sendTo(sender);
 			}
 			return true;
 		}
 
 		// Report
 		if (verboseChange) {
-			String s = String.format("&eChanging spawn location from &d%s &eto &d%s &efor &d%s&e.", currentFormatted, goalFormatted, worldDisplayName);
-			sender.sendMessage(LegacyColors.t(s));
+			String miniMessage = String.format(
+                    "<yellow>Changing spawn location from <light_purple>%s <yellow>to <light_purple>%s <yellow>for <light_purple>%s<yellow>.",
+                    currentFormattedMini, goalFormattedMini, worldDisplayNameMini
+            );
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage).sendTo(sender);
 		}
 
 		// Set it

@@ -1,9 +1,11 @@
 package com.kamikazejam.kamicommon.command.type;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.util.LegacyColors;
-import org.bukkit.ChatColor;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class TypeAbstractSimple<T> extends TypeAbstractException<T> {
 	// -------------------------------------------- //
@@ -19,10 +21,13 @@ public abstract class TypeAbstractSimple<T> extends TypeAbstractException<T> {
 	// -------------------------------------------- //
 
     @Override
-    public String extractErrorMessage(String arg, CommandSender sender, Exception ex) {
-        ChatColor error = KamiCommand.Config.getErrorColor();
-        ChatColor param = KamiCommand.Config.getErrorParamColor();
-        return LegacyColors.t(String.format(error + "\"" + param + "%s" + error + "\" is not a %s.", arg, this.getName()));
+    public @NotNull VersionedComponent extractErrorMessageMini(String arg, CommandSender sender, Exception ex) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+
+        String error = KamiCommand.Config.getErrorColorMini();
+        String param = KamiCommand.Config.getErrorParamColorMini();
+        String miniMessage = String.format(error + "\"" + param + "%s" + error + "\" is not a %s.", arg, this.getName());
+        return serializer.fromMiniMessage(miniMessage);
     }
 
 }

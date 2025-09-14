@@ -7,12 +7,16 @@ import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.type.Type;
 import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageBlock;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.Component;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.event.ClickEvent;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.MiniMessage;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
@@ -23,7 +27,6 @@ import com.kamikazejam.kamicommon.util.predicate.PredicateLevenshteinClose;
 import com.kamikazejam.kamicommon.util.predicate.PredicateStartsWithIgnoreCase;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
@@ -206,7 +209,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     // Free text displayed at the top of the help command.
     // prefixed with a # character and a space.
     @Getter
-    private @NotNull List<KMessageSingle> helpComments = new KamiList<>();
+    private @NotNull List<VersionedComponent> helpComments = new KamiList<>();
 
     // The visibility of this command in help command.
     @Setter
@@ -673,7 +676,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         return RequirementAbstract.isRequirementsMet(this.getRequirements(), sender, this, verbose);
     }
 
-    public String getRequirementsError(@NotNull CommandSender sender, boolean verbose) {
+    @Nullable
+    public VersionedComponent getRequirementsError(@NotNull CommandSender sender, boolean verbose) {
         return RequirementAbstract.getRequirementsError(this.getRequirements(), sender, this, verbose);
     }
 
@@ -750,48 +754,53 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
                 }
                 // Crap!
                 else {
-                    String errorContent;
+                    String errorContentMini;
                     Collection<KamiCommand> suggestions;
 
                     if (matches.isEmpty()) {
                         // Use levenshtein distance to find the closest subcommand match.
-                        errorContent = Config.getCommandChildNone();
+                        errorContentMini = Config.getCommandChildNoneMini();
                         suggestions = this.getChildren(token, true, sender, false);
                         onUnmatchedArg(context);
                     } else {
                         // Had multiple possible matches, inform the user
-                        errorContent = Config.getCommandChildAmbiguous();
+                        errorContentMini = Config.getCommandChildAmbiguousMini();
                         suggestions = this.getChildren(token, false, sender, false);
                     }
 
                     // Message: "The sub command X couldn't be found."
                     // OR
                     // Message: "The sub command X is ambiguous."
-                    errorContent = errorContent.replace(Config.placeholderReplacement, Config.commandColor + token);
+                    errorContentMini = errorContentMini.replace("<" + Config.tagReplacement + ">", Config.commandColorMini + token);
 
-                    // Create the KMessage informing the user about the matching error.
+                    // Send the message informing the user about the matching error.
                     // This is kind of like the title line, with additional possible commands listed after it.
-                    NmsAPI.getMessageManager().processAndSend(sender, new KMessageSingle(errorContent));
+                    NmsAPI.getVersionedComponentSerializer().fromMiniMessage(errorContentMini).sendTo(sender);
 
                     // Send all possible subcommand matches as suggestions. I.E.:
                     //   "/command test ..."
                     //   "/command temp ..."
                     for (KamiCommand suggestion : suggestions) {
-                        KMessage template = this.getSuggestionClickable(
+                        this.getSuggestionClickable(
                                 suggestion,
                                 token, // token that triggered this suggestion
                                 sender
-                        );
-                        NmsAPI.getMessageManager().processAndSend(sender, template);
+                        ).sendTo(sender);
                     }
 
                     // Message: "Use /<command> to see all commands."
-                    KMessage help = new KMessageSingle(Config.getCommandChildHelp()).addClickSuggestCommand(
-                            Config.placeholderReplacement,
-                            this.getCurrentTemplateChain(),
-                            this.getCurrentCommandLine()
+                    // Constructs an internal adventure component, then uses the VersionedComponent API to send it.
+                    //  In this way, we maintain compatibility with all Minecraft versions, using spigot-nms for sending
+
+                    // Resolve the <replacement> tag to the current command chain component
+                    TagResolver.Single resolver = Placeholder.component(
+                            Config.tagReplacement,
+                            MiniMessage.miniMessage().deserialize(this.getCurrentTemplateChainMini()).clickEvent(
+                                    ClickEvent.suggestCommand(this.getCurrentCommandLine())
+                            )
                     );
-                    NmsAPI.getMessageManager().processAndSend(sender, help);
+                    Component component = MiniMessage.miniMessage().deserialize(Config.getCommandChildHelpMini(), resolver);
+                    NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component).sendTo(sender);
                 }
 
                 // NOTE: This return statement will jump to the 'finally' block.
@@ -805,9 +814,9 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             this.perform(context);
         } catch (KamiCommonException ex) {
             // Sometimes Types (or commands themselves) throw exceptions, to stop executing and notify the user.
-            KMessageSingle message = ex.getKMessage();
+            @Nullable VersionedComponent message = ex.getComponent();
             if (message != null) {
-                NmsAPI.getMessageManager().processAndSend(sender, message);
+                message.sendTo(sender);
             }
         } catch (Throwable other) {
             other.printStackTrace();
@@ -839,11 +848,12 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     private boolean isArgsValid(@NotNull CommandContext context) {
         @NotNull CommandSender sender = context.getSender();
         @NotNull List<String> args = context.getArgs();
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
 
         // Check if there are too few arguments.
         if (args.size() < this.getParameterCountRequired(sender)) {
-            sender.sendMessage(LegacyColors.t(Config.getCommandTooFewArguments()));
-            sender.sendMessage(LegacyColors.t(this.getCurrentTemplateUsage(sender, false)));
+            serializer.fromMiniMessage(Config.getCommandTooFewArgumentsMini()).sendTo(sender);
+            serializer.fromMiniMessage(this.getCurrentTemplateUsageMini(sender, false)).sendTo(sender);
             return false;
         }
 
@@ -854,16 +864,16 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             List<String> extraArgs = args.subList(this.getParameterCount(sender), args.size());
             String extraArgsImploded = Txt.implodeCommaAndDot(
                     extraArgs,
-                    Config.commandColor + "%s",
-                    Config.errorColor + ", ",
-                    Config.errorColor + " and ",
+                    Config.commandColorMini + "%s",
+                    Config.errorColorMini + ", ",
+                    Config.errorColorMini + " and ",
                     ""
             );
 
-            String message = String.format(Config.getCommandTooManyArguments(), extraArgsImploded);
-            sender.sendMessage(LegacyColors.t(message));
-            sender.sendMessage(LegacyColors.t(Config.getCommandUseLike()));
-            sender.sendMessage(LegacyColors.t(this.getCurrentTemplateUsage(sender, false)));
+            String miniMessage = String.format(Config.getCommandTooManyArgumentsMini(), extraArgsImploded);
+            serializer.fromMiniMessage(miniMessage).sendTo(sender);
+            serializer.fromMiniMessage(Config.getCommandUseLikeMini()).sendTo(sender);
+            serializer.fromMiniMessage(this.getCurrentTemplateUsageMini(sender, false)).sendTo(sender);
             return false;
         }
         return true;
@@ -878,13 +888,13 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
      * @param token The token used that triggered this possible suggestion. (likely a partial alias)
      */
     @NotNull
-    public KMessageSingle getSuggestionClickable(
+    public VersionedComponent getSuggestionClickable(
             @NotNull KamiCommand suggested,
             @NotNull String token,
             @NotNull CommandSender sender
     ) {
         // The current chain of args leading to the suggestion (does NOT include the suggestion itself).
-        StringBuilder templateBuilder = new StringBuilder(this.getCurrentTemplateChain());
+        StringBuilder miniMessage = new StringBuilder(this.getCurrentTemplateChainMini());
 
         // Find the aliases of suggested that match the token. (using startsWith Predicate)
         Predicate<String> predicate = PredicateStartsWithIgnoreCase.get(token);
@@ -899,17 +909,21 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         // Compose the subCommand aliases concatenated with commas.
         //   fall back to the first alias if no matches were found.
         String subCommandAliases = matchingAliases.isEmpty() ? suggested.getAliases().getFirst() : Txt.implode(matchingAliases, ",");
-        templateBuilder.append(" ").append(Config.commandColor).append(subCommandAliases.trim());
+        miniMessage.append(" ").append(Config.commandColorMini).append(subCommandAliases.trim());
 
         // Add 'suggested' parameters to the template string
         for (String parameter : suggested.getTemplateParameters(sender)) {
-            templateBuilder.append(" ").append(Config.parameterColor).append(parameter);
+            miniMessage.append(" ").append(Config.parameterColorMini).append(parameter);
         }
 
-        // Content of the KMessageSingle
-        String messageContent = templateBuilder.toString().trim(); // remove trailing spaces
+        // Content of the MiniMessage Component
+        String messageContent = miniMessage.toString().trim(); // remove trailing spaces
 
-        return KMessageSingle.ofClickSuggestCommand(messageContent, getSuggestionCommandLine(suggested, token));
+        // Use the internal component, then wrap into a VersionedComponent
+        Component component = MiniMessage.miniMessage().deserialize(messageContent).clickEvent(
+                ClickEvent.suggestCommand(getSuggestionCommandLine(suggested, token))
+        );
+        return NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component);
     }
 
     /**
@@ -949,29 +963,33 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
      * @param child The command that should be suggested to the user. (subcommand of this command)
      */
     @NotNull
-    public KMessageSingle getHelpClickable(
+    public VersionedComponent getHelpClickable(
             @NotNull KamiCommand child,
             @NotNull CommandSender sender
     ) {
         // The current chain of args leading to the suggestion (does NOT include the suggestion itself).
-        StringBuilder templateBuilder = new StringBuilder(this.getCurrentTemplateChain());
+        StringBuilder miniMessage = new StringBuilder(this.getCurrentTemplateChainMini());
 
         // Compose the subCommand aliases concatenated with commas.
         String subCommandAliases = Txt.implode(child.getAliases(), ",");
-        templateBuilder.append(" ").append(Config.commandColor).append(subCommandAliases.trim());
+        miniMessage.append(" ").append(Config.commandColorMini).append(subCommandAliases.trim());
 
         // Add parameters to the template string
         for (String parameter : child.getTemplateParameters(sender)) {
-            templateBuilder.append(" ").append(Config.parameterColor).append(parameter);
+            miniMessage.append(" ").append(Config.parameterColorMini).append(parameter);
         }
 
         // Add desc (always want to show the description in help display)
-        templateBuilder.append(" ").append(Config.descriptionColor).append(child.getDesc());
+        miniMessage.append(" ").append(Config.descriptionColorMini).append(child.getDesc());
 
-        // Content of the KMessageSingle
-        String messageContent = templateBuilder.toString().trim(); // remove trailing spaces
+        // Content of the MiniMessage Component
+        String messageContent = miniMessage.toString().trim(); // remove trailing spaces
 
-        return KMessageSingle.ofClickSuggestCommand(messageContent, getHelpCommandLine(child));
+        // Construct an internal component, then wrap into a VersionedComponent
+        Component component = MiniMessage.miniMessage().deserialize(messageContent).clickEvent(
+                ClickEvent.suggestCommand(getHelpCommandLine(child))
+        );
+        return NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component);
     }
 
     /**
@@ -1001,23 +1019,23 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
      * The chain is the color coded concatenation of all command labels thus far (no parameters or descriptions).
      */
     @NotNull
-    public String getCurrentTemplateChain() {
-        StringBuilder ret = new StringBuilder(Config.commandColor + "/");
+    public String getCurrentTemplateChainMini() {
+        StringBuilder miniMessage = new StringBuilder(Config.commandColorMini + "/");
         List<KamiCommand> commands = this.getChain(true);
 
         boolean first = true;
         for (KamiCommand command : commands) {
             @NotNull CommandContext context = Preconditions.checkNotNull(command.context);
-            String base = Config.commandColor + context.getLabel();
+            String base = Config.commandColorMini + context.getLabel();
 
             if (!first) {
-                ret.append(" ");
+                miniMessage.append(" ");
             }
-            ret.append(base);
+            miniMessage.append(base);
             first = false;
         }
 
-        return ret.toString().trim(); // remove trailing space
+        return miniMessage.toString().trim(); // remove trailing space
     }
 
     /**
@@ -1025,20 +1043,20 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
      * The usage is the color coded concatenation of all command labels thus far, followed by parameters and description.
      */
     @NotNull
-    public String getCurrentTemplateUsage(@NotNull CommandSender sender, boolean addDesc) {
-        StringBuilder ret = new StringBuilder(this.getCurrentTemplateChain());
+    public String getCurrentTemplateUsageMini(@NotNull CommandSender sender, boolean addDesc) {
+        StringBuilder miniMessage = new StringBuilder(this.getCurrentTemplateChainMini());
 
         // Add args
         for (String parameter : this.getTemplateParameters(sender)) {
-            ret.append(" ").append(Config.parameterColor).append(parameter);
+            miniMessage.append(" ").append(Config.parameterColorMini).append(parameter);
         }
 
         // Add desc
         if (addDesc) {
-            ret.append(" ").append(Config.descriptionColor).append(this.getDesc());
+            miniMessage.append(" ").append(Config.descriptionColorMini).append(this.getDesc());
         }
 
-        return ret.toString().trim(); // remove trailing space
+        return miniMessage.toString().trim(); // remove trailing space
     }
 
     /**
@@ -1067,25 +1085,26 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     @NotNull
     public String getFullTemplate(boolean addDesc, boolean onlyFirstAlias, boolean onlyOneSubAlias, @Nullable CommandSender sender) {
         // Get base
-        StringBuilder ret = new StringBuilder(this.getTemplateChain(onlyFirstAlias, onlyOneSubAlias, sender));
+        StringBuilder miniMessage = new StringBuilder(this.getTemplateChainMini(onlyFirstAlias, onlyOneSubAlias, sender));
 
         // Add args
         for (String parameter : this.getTemplateParameters(sender)) {
-            ret.append(" ").append(Config.parameterColor).append(parameter);
+            miniMessage.append(" ").append(Config.parameterColorMini).append(parameter);
         }
 
         // Add desc
         if (addDesc) {
-            ret.append(" ").append(Config.descriptionColor).append(this.getDesc());
+            miniMessage.append(" ").append(Config.descriptionColorMini).append(this.getDesc());
         }
 
         // Return Ret
-        return ret.toString();
+        Component component = MiniMessage.miniMessage().deserialize(miniMessage.toString());
+        return LegacyComponentSerializer.legacySection().serialize(component);
     }
 
     @NotNull
-    private  String getTemplateChain(boolean onlyFirstAlias, boolean onlyOneSubAlias, @Nullable CommandSender sender) {
-        StringBuilder ret = new StringBuilder(Config.commandColor + "/");
+    private  String getTemplateChainMini(boolean onlyFirstAlias, boolean onlyOneSubAlias, @Nullable CommandSender sender) {
+        StringBuilder miniMessage = new StringBuilder(Config.commandColorMini + "/");
 
         // Get commands
         List<KamiCommand> commands = this.getChain(true);
@@ -1102,19 +1121,19 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             }
 
             if (sender != null && !command.isRequirementsMet(sender, false)) {
-                base = Config.inaccessibleCommandColor + base;
+                base = Config.inaccessibleCommandColorMini + base;
             } else {
-                base = Config.commandColor + base;
+                base = Config.commandColorMini + base;
             }
 
             if (!first) {
-                ret.append(" ");
+                miniMessage.append(" ");
             }
-            ret.append(base);
+            miniMessage.append(base);
             first = false;
         }
 
-        return ret.toString();
+        return miniMessage.toString();
     }
 
     public boolean isFullChainMet(CommandSender sender) {
@@ -1332,15 +1351,13 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     }
 
 
-    public void setHelpComments(@NotNull List<KMessageSingle> helpComments) {
+    public void setHelpComments(@NotNull List<VersionedComponent> helpComments) {
         this.helpComments = helpComments;
     }
 
-    public void setHelpComments(@NotNull KMessageBlock block) {
+    public void setHelpComments(@NotNull VersionedComponent... helpComments) {
         this.helpComments.clear();
-        for (String line : block.getLines()) {
-            this.helpComments.add(new KMessageSingle(line));
-        }
+        this.helpComments.addAll(Arrays.asList(helpComments));
     }
 
     /**
@@ -1397,8 +1414,9 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
                     permission
             );
             String message2 = "[KamiCommand] Consider setting a dedicated permission for this command using setBukkitCommandPermission(String).";
-            this.getActivePlugin().getColorLogger().warn(message1);
-            this.getActivePlugin().getColorLogger().warn(message2);
+            VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+            this.getActivePlugin().getColorComponentLogger().warn(serializer.fromPlainText(message1));
+            this.getActivePlugin().getColorComponentLogger().warn(serializer.fromPlainText(message2));
         }
         return permission; // Return the derived permission.
     }
@@ -1410,62 +1428,62 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     public static class Config {
         // Command Colors and Formats
         @Getter @Setter
-        private static @NotNull String helpCommentFormat = ChatColor.GOLD + "# %s";
+        private static @NotNull String helpCommentFormatMini = "<gold># %s";
         @Getter @Setter
-        private static @NotNull ChatColor commandColor = ChatColor.AQUA;
+        private static @NotNull String commandColorMini = "<aqua>";
         @Getter @Setter
-        private static @NotNull ChatColor inaccessibleCommandColor = ChatColor.RED;
+        private static @NotNull String inaccessibleCommandColorMini = "<red>";
         @Getter @Setter
-        private static @NotNull ChatColor parameterColor = ChatColor.DARK_AQUA;
+        private static @NotNull String parameterColorMini = "<dark_aqua>";
         @Getter @Setter
-        private static @NotNull ChatColor descriptionColor = ChatColor.YELLOW;
+        private static @NotNull String descriptionColorMini = "<yellow>";
 
         // Placeholders
-        public static final @NotNull String placeholderReplacement = "{REPLACEMENT}";
+        public static final @NotNull String tagReplacement = "replacement";
         public static final @NotNull String placeholderErrorColor = "{ERROR_COLOR}";
         public static final @NotNull String placeholderErrorParamColor = "{ERROR_PARAM_COLOR}";
 
         // Placeholder Values
         @Getter @Setter
-        private static @NotNull ChatColor errorColor = ChatColor.RED;
+        private static @NotNull String errorColorMini = "<red>";
         @Getter @Setter
-        private static @NotNull ChatColor errorParamColor = ChatColor.LIGHT_PURPLE;
+        private static @NotNull String errorParamColorMini = "<light_purple>";
 
         // Configurable Strings
         //   Errors
-        @Setter private static @NotNull String requirementPermissionDenied =    placeholderErrorColor + "You don't have permission to do that.";
-        @Setter private static @NotNull String senderMustBePlayer =             placeholderErrorColor + "This command can only be used by ingame players.";
-        @Setter private static @NotNull String senderMustNotBePlayer =          placeholderErrorColor + "This command can not be used by ingame players.";
-        @Setter private static @NotNull String commandTooFewArguments =         placeholderErrorColor + "Not enough command input. " + ChatColor.YELLOW + "You should use it like this:";
-        @Setter private static @NotNull String commandTooManyArguments =        placeholderErrorColor + "Too much command input %s" + placeholderErrorColor + ".";
-        @Setter private static @NotNull String commandTooManyTabSuggestions =   placeholderErrorParamColor + "%d " + placeholderErrorColor + "tab completions available. Be more specific and try again.";
+        @Setter private static @NotNull String requirementPermissionDeniedMini =    placeholderErrorColor + "You don't have permission to do that.";
+        @Setter private static @NotNull String senderMustBePlayerMini =             placeholderErrorColor + "This command can only be used by ingame players.";
+        @Setter private static @NotNull String senderMustNotBePlayerMini =          placeholderErrorColor + "This command can not be used by ingame players.";
+        @Setter private static @NotNull String commandTooFewArgumentsMini =         placeholderErrorColor + "Not enough command input. <yellow>You should use it like this:";
+        @Setter private static @NotNull String commandTooManyArgumentsMini =        placeholderErrorColor + "Too much command input %s" + placeholderErrorColor + ".";
+        @Setter private static @NotNull String commandTooManyTabSuggestionsMini =   placeholderErrorParamColor + "%d " + placeholderErrorColor + "tab completions available. Be more specific and try again.";
 
         //   Other
-        @Getter @Setter private static @NotNull String commandUseLike =         ChatColor.YELLOW + "You should use the command like this:";
-        @Getter @Setter private static @NotNull String commandChildAmbiguous =  ChatColor.YELLOW + "The sub command " + placeholderReplacement + ChatColor.YELLOW + " is ambiguous.";
-        @Getter @Setter private static @NotNull String commandChildNone =       ChatColor.YELLOW + "The sub command " + placeholderReplacement + ChatColor.YELLOW + " couldn't be found.";
-        @Getter @Setter private static @NotNull String commandChildHelp =       ChatColor.YELLOW + "Use " + placeholderReplacement + ChatColor.YELLOW + " to see all commands.";
+        @Getter @Setter private static @NotNull String commandUseLikeMini =         "<yellow>You should use the command like this:";
+        @Getter @Setter private static @NotNull String commandChildAmbiguousMini =  "<yellow>The sub command <" + tagReplacement + "><yellow> is ambiguous.";
+        @Getter @Setter private static @NotNull String commandChildNoneMini =       "<yellow>The sub command <" + tagReplacement + "><yellow> couldn't be found.";
+        @Getter @Setter private static @NotNull String commandChildHelpMini =       "<yellow>Use <" + tagReplacement + "><yellow> to see all commands.";
 
         // Derived Strings
-        public static @NotNull String getRequirementPermissionDenied() {
-            return requirementPermissionDenied.replace(placeholderErrorColor, errorColor.toString());
+        public static @NotNull String getRequirementPermissionDeniedMini() {
+            return requirementPermissionDeniedMini.replace(placeholderErrorColor, errorColorMini);
         }
-        public static @NotNull String getSenderMustBePlayer() {
-            return senderMustBePlayer.replace(placeholderErrorColor, errorColor.toString());
+        public static @NotNull String getSenderMustBePlayerMini() {
+            return senderMustBePlayerMini.replace(placeholderErrorColor, errorColorMini);
         }
-        public static @NotNull String getSenderMustNotBePlayer() {
-            return senderMustNotBePlayer.replace(placeholderErrorColor, errorColor.toString());
+        public static @NotNull String getSenderMustNotBePlayerMini() {
+            return senderMustNotBePlayerMini.replace(placeholderErrorColor, errorColorMini);
         }
-        public static @NotNull String getCommandTooFewArguments() {
-            return commandTooFewArguments.replace(placeholderErrorColor, errorColor.toString());
+        public static @NotNull String getCommandTooFewArgumentsMini() {
+            return commandTooFewArgumentsMini.replace(placeholderErrorColor, errorColorMini);
         }
-        public static @NotNull String getCommandTooManyArguments() {
-            return commandTooManyArguments.replace(placeholderErrorColor, errorColor.toString());
+        public static @NotNull String getCommandTooManyArgumentsMini() {
+            return commandTooManyArgumentsMini.replace(placeholderErrorColor, errorColorMini);
         }
-        public static @NotNull String getCommandTooManyTabSuggestions() {
-            return commandTooManyTabSuggestions
-                    .replace(placeholderErrorColor, errorColor.toString())
-                    .replace(placeholderErrorParamColor, errorParamColor.toString());
+        public static @NotNull String getCommandTooManyTabSuggestionsMini() {
+            return commandTooManyTabSuggestionsMini
+                    .replace(placeholderErrorColor, errorColorMini)
+                    .replace(placeholderErrorParamColor, errorParamColorMini);
         }
     }
 }

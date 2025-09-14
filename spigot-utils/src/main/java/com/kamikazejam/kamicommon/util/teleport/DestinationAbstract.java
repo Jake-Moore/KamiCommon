@@ -1,9 +1,12 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
-import com.kamikazejam.kamicommon.util.LegacyColors;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import com.kamikazejam.kamicommon.util.teleport.ps.PSFormatHumanSpace;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class DestinationAbstract implements Destination {
 
@@ -11,13 +14,13 @@ public abstract class DestinationAbstract implements Destination {
 	// FIELDS
 	// -------------------------------------------- //
 
-	protected String desc = null;
+	protected @Nullable VersionedComponent desc = null;
 
 	// -------------------------------------------- //
 	// ABSTRACT
 	// -------------------------------------------- //
 
-	public PS getPsInner() {
+	public @Nullable PS getPsInner() {
 		return null;
 	}
 
@@ -44,25 +47,28 @@ public abstract class DestinationAbstract implements Destination {
 	}
 
 	@Override
-	public String getMessagePsNull(Object watcherObject) {
-		String desc = this.getDesc(watcherObject);
-		String f = String.format("&cLocation for &d%s&c could not be found.", desc);
-		return LegacyColors.t(f);
+	public @NotNull VersionedComponent getMessagePsNull(Object watcherObject) {
+        String miniMessageDesc = this.getDesc(watcherObject).serializeMiniMessage();
+		String miniMessage = String.format(
+                "<red>Location for <light_purple>%s<red> could not be found.",
+                miniMessageDesc
+        );
+        return NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage);
 	}
 
 	@Override
-	public String getDesc(Object watcherObject) {
+	public @NotNull VersionedComponent getDesc(Object watcherObject) {
 		if (this.desc != null) return this.desc;
 		try {
 			PS ps = this.getPs(watcherObject);
 			return PSFormatHumanSpace.get().format(ps);
 		} catch (KamiCommonException e) {
-			return "null";
+			return NmsAPI.getVersionedComponentSerializer().fromPlainText("null");
 		}
 	}
 
 	@Override
-	public void setDesc(String desc) {
+	public void setDesc(@NotNull VersionedComponent desc) {
 		this.desc = desc;
 	}
 

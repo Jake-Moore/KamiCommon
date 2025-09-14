@@ -1,8 +1,9 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.engine.Engine;
@@ -202,8 +203,13 @@ public class Mixin extends Engine {
 
         // Inform
         if (verbose) {
-            String message = String.format("&eMixin &d%s&e set to &d%s", this.getBaseName(), this.getName());
-            after.getPlugin().getColorLogger().info(LegacyColors.t(message));
+            String miniMessage = String.format(
+                    "<yellow>Mixin <light_purple>%s<yellow> set to <light_purple>%s",
+                    this.getBaseName(),
+                    this.getName()
+            );
+            VersionedComponent component = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage);
+            after.getPlugin().getColorComponentLogger().info(component);
         }
 
         // Super

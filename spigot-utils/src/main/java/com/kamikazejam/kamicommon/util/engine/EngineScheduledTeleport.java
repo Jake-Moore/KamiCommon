@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.engine;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.teleport.ScheduledTeleport;
 import org.bukkit.command.CommandSender;
@@ -102,11 +102,15 @@ public class EngineScheduledTeleport extends Engine {
 		CommandSender sender = KUtil.getSender(scheduledTeleport.getTeleporteeId());
 		if (sender == null) { return; }
 
-		if (scheduledTeleport.getDesc() != null) {
-			sender.sendMessage(LegacyColors.t("&cCancelled &eteleport to &d" + scheduledTeleport.getDesc() + "&e."));
-		}else {
-			sender.sendMessage(LegacyColors.t("&cCancelled &eteleport."));
-		}
+        if (scheduledTeleport.getDesc() != null) {
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    "<red>Cancelled <yellow>teleport to <light_purple>" + scheduledTeleport.getDesc() + "<yellow>."
+            ).sendTo(sender);
+        }else {
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    "<red>Cancelled <yellow>teleport."
+            ).sendTo(sender);
+        }
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

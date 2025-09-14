@@ -8,10 +8,9 @@ import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
 import com.kamikazejam.kamicommon.command.util.CommandPaging;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -59,19 +58,19 @@ public class CmdSubsystems extends KamiCommand {
         subsystems.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
         // Create each line of the subsystem list
-        List<KMessageSingle> lines = new ArrayList<>();
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        List<VersionedComponent> lines = new ArrayList<>();
         int size = subsystems.size();
         for (int i = 0; i < size; i++) {
             AbstractSubsystem<?,?> subsystem = subsystems.get(i);
             int pos = i + 1;
-            String status = subsystem.isEnabled() ? (subsystem.isSuccessfullyEnabled() ? "&aENABLED" : "&cERROR") : "&6DISABLED";
-            String content = " &7- &f" + getPaddedNumber(pos, size) + ". " + subsystem.getName() + " &7- " + status;
-            lines.add(new KMessageSingle(LegacyColors.t(content)));
+            String status = subsystem.isEnabled() ? (subsystem.isSuccessfullyEnabled() ? "<green>ENABLED" : "<red>ERROR") : "<gold>DISABLED";
+            String miniMessage = " <gray>- <white>" + getPaddedNumber(pos, size) + ". " + subsystem.getName() + " <gray>- " + status;
+            lines.add(serializer.fromMiniMessage(miniMessage));
         }
 
         // Create the Pagination of Each Subsystem Line
-        List<KMessage> messages = CommandPaging.getPage(this, lines, page, paginationTitle);
-        NmsAPI.getMessageManager().processAndSend(sender, messages);
+        CommandPaging.getPage(this, lines, page, paginationTitle).forEach(message -> message.sendTo(sender));
     }
 
     private @NotNull String getPaddedNumber(int value, int maxValue) {

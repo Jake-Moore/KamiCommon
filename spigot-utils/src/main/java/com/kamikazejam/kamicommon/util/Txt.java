@@ -1,11 +1,13 @@
 package com.kamikazejam.kamicommon.util;
 
 import com.kamikazejam.kamicommon.configuration.Configurable;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import com.kamikazejam.kamicommon.util.predicate.PredicateStartsWithIgnoreCase;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -189,28 +191,37 @@ public class Txt {
     }
 
     /**
-     * @return The name of the item, or a default name ({@link #getItemName(ItemStack, String)}) if the item is null or empty.
+     * Determines the correct visible name of an item, based on its data (custom name and enchantment glint).<br>
+     * Uses a default name of "<gray><italic>Nothing" if the item is null or empty.<br>
+     * See also {@link Txt#getItemName(ItemStack, VersionedComponent)} for supplying your own default name.
+     *
+     * @return The name of the item, or a default name if the item is null or empty.
      */
-    public static @NotNull String getItemName(@Nullable ItemStack itemStack) {
-        return getItemName(itemStack, LegacyColors.t("&7&oNothing"));
+    public static @NotNull VersionedComponent getItemName(@Nullable ItemStack itemStack) {
+        return getItemName(itemStack, NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<gray><italic>Nothing"));
     }
 
     /**
+     * Determines the correct visible name of an item, based on its data (custom name and enchantment glint).<br>
+     * Uses the supplied {@param defaultName} if the item is null or empty.
+     *
      * @return The name of the item, or the supplied default name if the item is null or empty.
      */
-    public static @NotNull String getItemName(@Nullable ItemStack itemStack, @NotNull String defaultName) {
+    public static @NotNull VersionedComponent getItemName(@Nullable ItemStack itemStack, @NotNull VersionedComponent defaultName) {
         if (KUtil.isNothing(itemStack)) return defaultName;
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
 
-        ChatColor color = (!itemStack.getEnchantments().isEmpty()) ? ChatColor.AQUA : ChatColor.WHITE;
+        String color = (!itemStack.getEnchantments().isEmpty()) ? "<aqua>" : "<white>";
 
         if (itemStack.hasItemMeta()) {
             ItemMeta itemMeta = itemStack.getItemMeta();
             if (itemMeta != null && itemMeta.hasDisplayName()) {
-                return color.toString() + ChatColor.ITALIC + itemMeta.getDisplayName();
+                VersionedComponent prefix = serializer.fromMiniMessage(color + "<italic>");
+                return prefix.append(serializer.fromLegacySection(itemMeta.getDisplayName()));
             }
         }
 
-        return color + Txt.getMaterialName(itemStack.getType());
+        return serializer.fromMiniMessage(color + getMaterialName(itemStack.getType()));
     }
 
     // -------------------------------------------- //
@@ -303,35 +314,37 @@ public class Txt {
      * Titleized lines can be configured in {@link Txt.Config}<br><br>
      * They feature the {@param title} centered in additional 'titleized' line characters.<br>
      *
-     * @param title The unformatted title, which will be titleized.
+     * @param titleMini The unformatted title, which will be titleized (still in MiniMessage format).
      *
-     * @return The titleized page title String.
+     * @return The titleized page title as a {@link VersionedComponent}.
      */
     @NotNull
-    public static String titleize(@NotNull String title) {
+    public static VersionedComponent titleize(@NotNull String titleMini) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+
         // Create the title string
-        String pageTitle = Config.getTitleFormat().replace(Config.getPlaceholderTitle(), title);
+        String pageTitleMini = Config.getTitleFormatMini().replace(Config.getPlaceholderTitle(), titleMini);
 
         // Calculate the length of what will be visible (Strip colors)
-        int pageTitleLength = ChatColor.stripColor(LegacyColors.t(pageTitle)).length();
+        int pageTitleLength = serializer.fromMiniMessage(pageTitleMini).plainText().length();
 
         // Calculate how many characters we need to add on either side
         int leftPaddingSize = Math.max(0, (int) Math.ceil((TITLE_LINE_LENGTH - pageTitleLength) / 2.0));
         int rightPaddingSize = Math.max(0, TITLE_LINE_LENGTH - pageTitleLength - leftPaddingSize);
 
         // Create the title line with padding
-        String leftPadding = Txt.Config.getTitlePaddingColor() + Txt.Config.getTitlePaddingChar().toString().repeat(leftPaddingSize);
-        String rightPadding = Txt.Config.getTitlePaddingColor() + Txt.Config.getTitlePaddingChar().toString().repeat(rightPaddingSize);
+        String leftPaddingMini = Txt.Config.getTitlePaddingColorMini() + Txt.Config.getTitlePaddingChar().toString().repeat(leftPaddingSize);
+        String rightPaddingMini = Txt.Config.getTitlePaddingColorMini() + Txt.Config.getTitlePaddingChar().toString().repeat(rightPaddingSize);
 
         // Construct the final title line (adds padding to both sides)
-        return leftPadding + pageTitle + rightPadding;
+        return serializer.fromMiniMessage(leftPaddingMini + pageTitleMini + rightPaddingMini);
     }
 
     /**
      * Forms a page title using {@param title}, {@param pageNum} and {@param pageCount}, and then passes
      * it to {@link Txt#titleize(String)}.<br><br>
      *
-     * Default format is configured in {@link Config#pageTitleFormat} and looks like:<br>
+     * Default format is configured in {@link Config#pageTitleFormatMini} and looks like:<br>
      *
      * @param title The unformatted title, which will be titleized.
      * @param pageNum The current page number, 1-based (e.g. 1 for the first page).
@@ -340,14 +353,14 @@ public class Txt {
      * @return The titleized page title String.
      */
     @NotNull
-    public static String titleizedPageTitle(
+    public static VersionedComponent titleizedPageTitle(
             @NotNull String title,
             int pageNum,
             int pageCount,
             @NotNull List<String> args
     ) {
-        String pageTitle = String.format(Config.getPageTitleFormat(), title, pageNum, pageCount);
-        return Txt.titleize(pageTitle);
+        String pageTitleMini = String.format(Config.getPageTitleFormatMini(), title, pageNum, pageCount);
+        return Txt.titleize(pageTitleMini);
     }
 
     @Configurable
@@ -359,22 +372,19 @@ public class Txt {
         @Getter @Setter
         private static @NotNull Character titlePaddingChar = '_';
         @Getter @Setter
-        private static @NotNull ChatColor titlePaddingColor = ChatColor.GOLD;
+        private static @NotNull String titlePaddingColorMini = "<gold>";
 
         // Placeholders
         @Getter private static final @NotNull String placeholderTitle = "{title}";
 
         // Configurable values
         @Getter @Setter
-        private static @NotNull String titleFormat =
-                ChatColor.GOLD + ".[ "
-                + ChatColor.DARK_GREEN + placeholderTitle
-                + ChatColor.GOLD + " ].";
+        private static @NotNull String titleFormatMini = "<gold>.[ <dark_green>" + placeholderTitle + "<gold> ].";
 
         /**
          * See {@link Txt#titleizedPageTitle(String, int, int, List)} for information.
          */
         @Getter @Setter
-        private static @NotNull String pageTitleFormat = "%s " + ChatColor.GOLD + "%d/%d";
+        private static @NotNull String pageTitleFormatMini = "%s <gold>%d/%d";
     }
 }

@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
-import com.kamikazejam.kamicommon.util.LegacyColors;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.mixin.MixinDisplayName;
 import com.kamikazejam.kamicommon.util.mixin.MixinPlayed;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @Setter
 @Getter
@@ -55,28 +57,30 @@ public class DestinationPlayer extends DestinationAbstract {
     }
 
     @Override
-    public String getDesc(Object watcherObject) {
+    public @NotNull VersionedComponent getDesc(Object watcherObject) {
         return this.getDesc(watcherObject, true);
     }
 
-    private static final String offline = LegacyColors.t(" &c[Offline]");
-    public String getDesc(Object watcherObject, boolean prefix) {
-        String ret = "";
+    private static final String offlineMiniMessage = " <red>[Offline]";
+    public @NotNull VersionedComponent getDesc(Object watcherObject, boolean prefix) {
+        String miniMessage = "";
 
         // Player Prefix
         if (prefix) {
-            ret += "Player ";
+            miniMessage += "Player ";
         }
 
         // Display Name
-        ret += MixinDisplayName.get().getDisplayName(this.getPlayerId(), watcherObject);
+        miniMessage += "<white>";
+        miniMessage += MixinDisplayName.get().getDisplayName(this.getPlayerId(), watcherObject);
+        miniMessage += "</white>";
 
         // Offline Suffix
         if (MixinPlayed.get().isOffline(this.getPlayerId())) {
-            ret += offline;
+            miniMessage += offlineMiniMessage;
         }
 
-        return ret;
+        return NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage);
     }
 
 }

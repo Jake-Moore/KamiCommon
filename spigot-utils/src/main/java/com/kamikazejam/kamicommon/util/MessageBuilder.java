@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -171,7 +170,7 @@ public class MessageBuilder {
     public MessageBuilder replaceLine(String find, List<String> replacement) {
         List<String> newLines = new ArrayList<>();
         for (String line : this.lines) {
-            if (ChatColor.stripColor(line).contains(ChatColor.stripColor(find))) {
+            if (LegacyColors.strip(line).contains(LegacyColors.strip(find))) {
                 newLines.addAll(replacement);
             } else {
                 newLines.add(line);
