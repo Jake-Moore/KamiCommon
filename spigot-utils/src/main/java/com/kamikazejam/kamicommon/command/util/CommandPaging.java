@@ -65,7 +65,7 @@ public class CommandPaging {
                 rawTitleMini
                         .replace("<" + Config.getTagPrevPage() + ">", Config.getBackIcon())
                         .replace("<" + Config.getTagNextPage() + ">", Config.getForwardIcon())
-        ).plainText().length();
+        ).serializePlainText().length();
 
         // Calculate how many characters we need to add on either side
         int leftPaddingSize = Math.max(0, (int) Math.ceil((TITLE_LINE_LENGTH - pageTitleLength) / 2.0));

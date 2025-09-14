@@ -9,6 +9,7 @@ import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.layout.PaginationLayout;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.title.AbstractPaginatedMenuTitle;
 import com.kamikazejam.kamicommon.menu.api.struct.paginated.title.DefaultPaginatedMenuTitle;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import lombok.Getter;
 import lombok.Setter;
@@ -130,10 +131,10 @@ public class PaginatedMenuOptions extends MenuOptions<PaginatedMenu> {
         private static @NotNull AbstractPaginatedMenuTitle titleFormat = new DefaultPaginatedMenuTitle();
         @Getter @Setter
         private static boolean fillerFillsEmptyPageIconSlots = true;
-        @Getter @Setter // TODO convert to component
-        private static @Nullable MenuIcon<PaginatedMenu> nextPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a&lNext Page &a▶"));
-        @Getter @Setter // TODO convert to component
-        private static @Nullable MenuIcon<PaginatedMenu> prevPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).setName("&a◀ &a&lPrevious Page"));
+        @Getter @Setter
+        private static @Nullable MenuIcon<PaginatedMenu> nextPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).displayName(NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<green><bold>Next Page <green>▶")));
+        @Getter @Setter
+        private static @Nullable MenuIcon<PaginatedMenu> prevPageIcon = new MenuIcon<>(true, new ItemBuilder(XMaterial.ARROW).displayName(NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<green>◀ <green><bold>Previous Page")));
         @Getter @Setter
         private static @Nullable MenuIcon<PaginatedMenu> nextPageInactiveIcon = null;
         @Getter @Setter

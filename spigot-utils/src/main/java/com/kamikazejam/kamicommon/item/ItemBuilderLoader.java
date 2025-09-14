@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.configuration.loader.ItemTypeLoader;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
+import com.kamikazejam.kamicommon.util.ColoredStringParser;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -66,8 +67,8 @@ public class ItemBuilderLoader {
         // Apply non-null properties as patches to ItemBuilder
         if (amount != null) { builder.setAmount(amount); }
         if (damage != null) { builder.setDamage(damage); }
-        if (name != null) { builder.setName(name); }
-        if (lore != null) { builder.setLore(lore); }
+        if (name != null) { builder.displayName(ColoredStringParser.parse(name)); }
+        if (lore != null) { builder.lore(ColoredStringParser.parse(lore)); }
         if (unbreakable != null) { builder.setUnbreakable(unbreakable); }
         if (itemFlags != null) { builder.addItemFlags(itemFlags); }
         if (enchantments != null) { builder.setEnchantments(enchantments); }

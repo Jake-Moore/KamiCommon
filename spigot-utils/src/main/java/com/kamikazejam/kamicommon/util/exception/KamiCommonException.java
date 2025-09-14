@@ -31,7 +31,7 @@ public class KamiCommonException extends Exception {
     @Override
     public @Nullable String getMessage() {
         if (this.message == null) { return null; }
-        return message.plainText();
+        return message.serializePlainText();
     }
 
     public @Nullable VersionedComponent getComponent() {

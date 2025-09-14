@@ -3,6 +3,9 @@ package com.kamikazejam.kamicommon.item;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
@@ -19,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "BooleanMethodIsAlwaysInverted"})
 public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permits ItemBuilder {
@@ -123,23 +127,44 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
 
     // ----- NAME ------ //
     /**
+     * Alias of {@link #setDisplayName(String)}.
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #displayName(VersionedComponent)}.
+     * @return This builder, for chaining
+     */
+    @Deprecated
+    @NotNull
+    default T setName(@NotNull String name) {
+        return setDisplayName(name);
+    }
+
+    /**
      * PATCH FUNCTION - Applies a custom display name for the item.<br>
      * Colors are translated automatically via {@link LegacyColors#t(String)}.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetName()}.
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #displayName(VersionedComponent)}.
+     * @return This builder, for chaining
+     */
+    @Deprecated
+    @NotNull
+    default T setDisplayName(@NotNull String name) {
+        Preconditions.checkNotNull(name, "Display name cannot be null");
+        // Convert to component and use proper method
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        return this.displayName(serializer.fromLegacySection(LegacyColors.t(name)));
+    }
+
+    /**
+     * PATCH FUNCTION - Applies a custom display name for the item.<br>
+     * Colors are assumed to be already handled in the component.<br>
      * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
      * <br>
      * Clear this patch by calling {@link #resetName()}.
      * @return This builder, for chaining
      */
     @NotNull
-    T setName(@NotNull String name);
-
-    /**
-     * Alias of {@link #setName(String)}.
-     */
-    @NotNull
-    default T setDisplayName(@NotNull String name) {
-        return setName(name);
-    }
+    T displayName(@NotNull VersionedComponent name);
 
     /**
      * PATCH FUNCTION - Clears the name patch, the Builder will then use the prototype's value.<br>
@@ -157,10 +182,21 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
      * <br>
      * Clear this patch by calling {@link #resetLore()}.
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #lore(VersionedComponent...)}.
      * @return This builder, for chaining
      */
+    @Deprecated
     @NotNull
-    T setLore(@NotNull String... line);
+    default T setLore(@NotNull String... line) {
+        Preconditions.checkNotNull(line, "Lore lines cannot be null");
+        // Convert to component and use proper method
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        VersionedComponent[] components = new VersionedComponent[line.length];
+        for (int i = 0; i < line.length; i++) {
+            components[i] = serializer.fromLegacySection(LegacyColors.t(line[i]));
+        }
+        return this.lore(components);
+    }
 
     /**
      * PATCH FUNCTION - Sets the custom lore for the item.<br>
@@ -168,10 +204,45 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
      * <br>
      * Clear this patch by calling {@link #resetLore()}.
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #lore(List)}
+     * @return This builder, for chaining
+     */
+    @Deprecated
+    @NotNull
+    default T setLore(@NotNull List<@NotNull String> lore) {
+        Preconditions.checkNotNull(lore, "Lore lines cannot be null");
+        // Convert to components and use proper method
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        List<VersionedComponent> components = new ArrayList<>(lore.size());
+        for (String line : lore) {
+            components.add(serializer.fromLegacySection(LegacyColors.t(line)));
+        }
+        return this.lore(components);
+    }
+
+    /**
+     * PATCH FUNCTION - Sets the custom lore for the item.<br>
+     * Colors are assumed to be already handled in the components.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetLore()}.
      * @return This builder, for chaining
      */
     @NotNull
-    T setLore(@NotNull List<@NotNull String> lore);
+    default T lore(@NotNull VersionedComponent... lines) {
+        return lore(Arrays.asList(lines));
+    }
+
+    /**
+     * PATCH FUNCTION - Sets the custom lore for the item.<br>
+     * Colors are assumed to be already handled in the components.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
+     * <br>
+     * Clear this patch by calling {@link #resetLore()}.
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T lore(@NotNull List<@NotNull VersionedComponent> lines);
 
     /**
      * PATCH FUNCTION - Clears the lore patch, the Builder will then use the prototype's value.<br>
@@ -191,7 +262,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      */
     @NotNull
     default T removeLore() {
-        return setLore(new ArrayList<>());
+        return lore(new ArrayList<>());
     }
 
     /**
@@ -202,10 +273,21 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * Colors are translated automatically via {@link LegacyColors#t(String)}.<br>
      * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
      * @param lines The lore lines to append
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #addLoreComponents(List)}
      * @return This builder, for chaining
      */
+    @Deprecated
     @NotNull
-    T addLoreLines(@NotNull List<@NotNull String> lines);
+    default T addLoreLines(@NotNull List<@NotNull String> lines) {
+        Preconditions.checkNotNull(lines, "Lore lines cannot be null");
+        // Convert to components and use proper method
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        List<VersionedComponent> components = new ArrayList<>(lines.size());
+        for (String line : lines) {
+            components.add(serializer.fromLegacySection(LegacyColors.t(line)));
+        }
+        return this.addLoreComponents(components);
+    }
 
     /**
      * PATCH FUNCTION - Appends additional lines to the current lore.<br>
@@ -215,11 +297,41 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * Colors are translated automatically via {@link LegacyColors#t(String)}.<br>
      * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
      * @param lines The lore lines to append
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #addLoreComponents(VersionedComponent...)}
      * @return This builder, for chaining
      */
+    @Deprecated
     @NotNull
     default T addLoreLines(@NotNull String... lines) {
         return addLoreLines(Arrays.asList(lines));
+    }
+
+    /**
+     * PATCH FUNCTION - Appends additional lines to the current lore.<br>
+     * If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
+     * If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
+     * <br>
+     * Colors are assumed to be already handled in the components.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
+     * @param lines The lore lines to append
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T addLoreComponents(@NotNull List<@NotNull VersionedComponent> lines);
+
+    /**
+     * PATCH FUNCTION - Appends additional lines to the current lore.<br>
+     * If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
+     * If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
+     * <br>
+     * Colors are assumed to be already handled in the components.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
+     * @param lines The lore lines to append
+     * @return This builder, for chaining
+     */
+    @NotNull
+    default T addLoreComponents(@NotNull VersionedComponent... lines) {
+        return addLoreComponents(Arrays.asList(lines));
     }
 
     // ----- UNBREAKABLE ------ //
@@ -490,13 +602,53 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
 
     /**
      * Get the custom display name for the item.<br>
-     * Colors are translated automatically via {@link LegacyColors#t(String)}.<br>
-     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
      * <br>
      * If the patch name is null (not set), the prototype's name will be returned (if available).
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #displayName()} which returns a component.
+     */
+    @Deprecated
+    @Nullable
+    default String getName() {
+        // Get the component and convert to legacy string
+        @Nullable VersionedComponent name = displayName();
+        if (name == null) { return null; }
+        return name.serializeLegacySection();
+    }
+
+    /**
+     * Get the custom display name for the item.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
+     * <br>
+     * If the patch name is null (not set), the prototype's name will be returned (if available).<br>
      */
     @Nullable
-    String getName();
+    default VersionedComponent displayName() {
+        return customName();
+    }
+
+    /**
+     * Get the custom display name for the item.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.<br>
+     * <br>
+     * If the patch name is null (not set), the prototype's name will be returned (if available).<br>
+     */
+    @Nullable
+    VersionedComponent customName();
+
+    /**
+     * Get the custom lore for the item.<br>
+     * <br>
+     * If the patch lore is null (not set), the prototype's lore will be returned (if available).
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #lore()} which returns components.
+     */
+    @Deprecated
+    @Nullable
+    default List<@NotNull String> getLore() {
+        // Get the components and convert to legacy strings
+        @Nullable List<VersionedComponent> lore = lore();
+        if (lore == null) { return null; }
+        return lore.stream().map(VersionedComponent::serializeLegacySection).toList();
+    }
 
     /**
      * Get the custom lore for the item.<br>
@@ -504,7 +656,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * If the patch lore is null (not set), the prototype's lore will be returned (if available).
      */
     @Nullable
-    List<@NotNull String> getLore();
+    List<@NotNull VersionedComponent> lore();
 
     /**
      * Get if the item is unbreakable or not.<br>
@@ -630,10 +782,32 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * It does NOT modify the prototype's name.
      * @param find The substring to find
      * @param replacement The sub
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #replaceName(String, VersionedComponent)} which supports components.
+     * @return This builder, for chaining
+     */
+    @Deprecated
+    @NotNull
+    default T replaceName(@NotNull String find, @NotNull String replacement) {
+        Preconditions.checkNotNull(find, "Find string cannot be null");
+        Preconditions.checkNotNull(replacement, "Replacement string cannot be null");
+        // Convert to component and use proper method
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        return this.replaceName(find, serializer.fromLegacySection(LegacyColors.t(replacement)));
+    }
+
+    /**
+     * PATCH PROPERTY HELPER - Replaces all occurrences of a substring in the name with another component.<br>
+     * This transformation only applies to the name patch, if no name patch is set this does nothing.<br>
+     * It does NOT modify the prototype's name.
+     * <br>
+     * It will serialize the name into message format, perform the replacement, then deserialize it back to a component.
+     *
+     * @param find The substring to find
+     * @param replacement The component to replace each occurrence with
      * @return This builder, for chaining
      */
     @NotNull
-    T replaceName(@NotNull String find, @NotNull String replacement);
+    T replaceName(@NotNull String find, @NotNull VersionedComponent replacement);
 
     /**
      * Alias of {@link #replaceNamePAPI(OfflinePlayer)} with a {@code null} player.
@@ -659,14 +833,60 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
      * It does NOT modify the prototype's lore.<br>
      * <br>
-     * Uses {@link org.bukkit.ChatColor#stripColor(String)} for comparison to ignore color formatting.
+     * For each line, it checks if the component plain text OR the component mini message contains the find string.<br>
+     * If either matches, that line is substituted with the replacement lines.
      *
      * @param find The string to search for in the lore (color codes will be stripped for comparison)
-     * @param replacement The lines to swap in, in place of the entire line containing the find string
+     * @param replacements The lines to swap in, in place of the entire line containing the find string
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #replaceLoreLineComponent(String, List)} which supports components.
+     * @return This builder, for chaining
+     */
+    @Deprecated
+    @NotNull
+    default T replaceLoreLine(@NotNull String find, @NotNull List<@NotNull String> replacements) {
+        Preconditions.checkNotNull(find, "Find string cannot be null");
+        Preconditions.checkNotNull(replacements, "Replacement lines cannot be null");
+        // Convert to components and use proper method
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        List<VersionedComponent> components = new ArrayList<>(replacements.size());
+        for (String line : replacements) {
+            components.add(serializer.fromLegacySection(LegacyColors.t(line)));
+        }
+        return this.replaceLoreLineComponent(find, components);
+    }
+
+    /**
+     * PATCH PROPERTY HELPER - Searches for a substring in the lore and replaces that entire line with replacement lines.<br>
+     * This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
+     * It does NOT modify the prototype's lore.<br>
+     * <br>
+     * For each line, it checks if the component plain text OR the component mini message contains the find string.<br>
+     * If either matches, that line is substituted with the replacement lines.
+     *
+     * @param find The string to search for in the lore
+     * @param replacements The lines to swap in, in place of the entire line containing the find string
      * @return This builder, for chaining
      */
     @NotNull
-    T replaceLoreLine(@NotNull String find, @NotNull List<@NotNull String> replacement);
+    default T replaceLoreLineComponent(@NotNull String find, @NotNull List<@NotNull VersionedComponent> replacements) {
+        Predicate<VersionedComponent> defaultFilter = line ->
+                line.serializePlainText().contains(find) || line.serializeMiniMessage().contains(find);
+        return replaceLoreLineComponent(defaultFilter, replacements);
+    }
+
+    /**
+     * PATCH PROPERTY HELPER - Replaces all occurrences of lines matching the given predicate in the lore with replacement lines.<br>
+     * This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
+     * It does NOT modify the prototype's lore.<br>
+     * <br>
+     * For each line, it checks if the predicate returns true, and if so that line is replaced with the replacement lines.
+     *
+     * @param filter The predicate to test each lore line against, if it returns true that line is replaced
+     * @param replacements The lines to swap in, in place of the entire line containing the find string
+     * @return This builder, for chaining
+     */
+    @NotNull
+    T replaceLoreLineComponent(@NotNull Predicate<@NotNull VersionedComponent> filter, @NotNull List<@NotNull VersionedComponent> replacements);
 
     /**
      * PATCH PROPERTY HELPER - Replaces all occurrences of a substring in each lore line with another string.<br>
@@ -675,10 +895,32 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      *
      * @param find The substring to find in each lore line
      * @param replacement The string to replace each occurrence with
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #replaceLore(String, VersionedComponent)} which supports components.
      * @return This builder, for chaining
      */
+    @Deprecated
     @NotNull
-    T replaceLore(@NotNull String find, @NotNull String replacement);
+    default T replaceLore(@NotNull String find, @NotNull String replacement) {
+        Preconditions.checkNotNull(find, "Find string cannot be null");
+        Preconditions.checkNotNull(replacement, "Replacement string cannot be null");
+        // Convert to component and use proper method
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        VersionedComponent replacementComp = serializer.fromLegacySection(LegacyColors.t(replacement));
+        return this.replaceLore(find, replacementComp);
+    }
+
+    /**
+     * PATCH PROPERTY HELPER - Replaces all occurrences of a substring in each lore line with another component.<br>
+     * This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
+     * It does NOT modify the prototype's lore.<br>
+     * <br>
+     * It will serialize each lore line into mini message format, perform the replacement, then deserialize it back to a component.
+     *
+     * @param find The substring to find in each lore line
+     * @param replacement The component to replace each occurrence with
+     * @return This builder, for chaining
+     */
+    T replaceLore(@NotNull String find, @NotNull VersionedComponent replacement);
 
     /**
      * Alias of {@link #replaceLorePAPI(OfflinePlayer)} with a {@code null} player.
@@ -708,10 +950,35 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      *
      * @param find The substring to find in name and lore
      * @param replacement The string to replace each occurrence with
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #replaceBoth(String, VersionedComponent)} which supports components.
+     * @return This builder, for chaining
+     */
+    @Deprecated
+    @NotNull
+    default T replaceBoth(@NotNull String find, @NotNull String replacement) {
+        Preconditions.checkNotNull(find, "Find string cannot be null");
+        Preconditions.checkNotNull(replacement, "Replacement string cannot be null");
+        // Convert to component and use proper method
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        VersionedComponent replacementComp = serializer.fromLegacySection(LegacyColors.t(replacement));
+        return replaceName(find, replacementComp).replaceLore(find, replacementComp);
+    }
+
+    /**
+     * PATCH PROPERTY HELPER - Convenience method to replace a substring in both name and lore.<br>
+     * This is equivalent to calling {@link #replaceName(String, VersionedComponent)} followed by {@link #replaceLore(String, VersionedComponent)}.<br>
+     * <br>
+     * This transformation only applies to existing patches, if no name or lore patches are set those won't be affected.<br>
+     * It does NOT modify the prototype's name or lore.
+     *
+     * @param find The substring to find in name and lore
+     * @param replacement The component to replace each occurrence with
      * @return This builder, for chaining
      */
     @NotNull
-    default T replaceBoth(@NotNull String find, @NotNull String replacement) {
+    default T replaceBoth(@NotNull String find, @NotNull VersionedComponent replacement) {
+        Preconditions.checkNotNull(find, "Find string cannot be null");
+        Preconditions.checkNotNull(replacement, "Replacement component cannot be null");
         return replaceName(find, replacement).replaceLore(find, replacement);
     }
 

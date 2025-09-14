@@ -131,7 +131,7 @@ public class MixinTeleport extends Mixin {
 
             // With delay
             CommandSender sender = KUtil.getSender(teleporteeId);
-            if (desc != null && !desc.plainText().trim().isEmpty()) {
+            if (desc != null && !desc.serializePlainText().trim().isEmpty()) {
                 if (sender != null) {
                     String s = "<yellow>Teleporting to <light_purple>" + desc + " <yellow>in <light_purple>" + delaySeconds + "s <yellow>unless you move.";
                     NmsAPI.getVersionedComponentSerializer().fromMiniMessage(s).sendTo(sender);
@@ -166,7 +166,7 @@ public class MixinTeleport extends Mixin {
 				destination = event.getDestination();
 				desc = destination.getDesc(teleporteeId);
 
-				if (!desc.plainText().trim().isEmpty()) {
+				if (!desc.serializePlainText().trim().isEmpty()) {
 					CommandSender sender = KUtil.getSender(teleporteeId);
 					if (sender != null) {
                         NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
@@ -182,7 +182,7 @@ public class MixinTeleport extends Mixin {
 					MixinSenderPs.get().setSenderPs(teleporteeId, ps);
 				}
 			}else {
-				if (desc != null && !desc.plainText().trim().isEmpty()) {
+				if (desc != null && !desc.serializePlainText().trim().isEmpty()) {
 					CommandSender sender = KUtil.getSender(teleporteeId);
 					if (sender != null) {
                         NmsAPI.getVersionedComponentSerializer().fromMiniMessage(

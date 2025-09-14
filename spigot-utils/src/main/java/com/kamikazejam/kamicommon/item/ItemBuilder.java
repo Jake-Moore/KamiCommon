@@ -8,7 +8,9 @@ import com.kamikazejam.kamicommon.item.patch.PatchAdd;
 import com.kamikazejam.kamicommon.item.patch.PatchOp;
 import com.kamikazejam.kamicommon.item.patch.PatchRemove;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.util.LegacyColors;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import com.kamikazejam.kamicommon.nms.util.VersionedComponentUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
@@ -24,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * A builder class for wrapping {@link ItemStack}s and applying patches to them.<br>
@@ -94,19 +96,19 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
      * PATCH PROPERTY (null = inherits prototype value):<br>
      * <br>
      * A custom display name for the item.<br>
-     * Colors are translated automatically via {@link LegacyColors#t(String)}.<br>
+     * Colors are assumed to be already handled in the component.<br>
      * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.
      */
-    private @Nullable String name = null;
+    private @Nullable VersionedComponent name = null;
 
     /**
      * PATCH PROPERTY (null = inherits prototype value):<br>
      * <br>
      * Custom lore for the item.<br>
-     * Colors are translated automatically via {@link LegacyColors#t(String)}.<br>
+     * Colors are assumed to be already handled in the component.<br>
      * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.
      */
-    private @Nullable List<String> lore = null;
+    private @Nullable List<VersionedComponent> lore = null;
 
     /**
      * PATCH PROPERTY (null = inherits prototype value):<br>
@@ -213,14 +215,20 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
         // Name and lore
         if (name != null) {
-            meta.setDisplayName(SoftPlaceholderAPI.setPlaceholders(viewer, LegacyColors.t(name)));
+            // Map to MiniMessage, perform placeholder API replacements, then serialize back to components
+            VersionedComponent papiName = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    SoftPlaceholderAPI.setPlaceholders(viewer, this.name.serializeMiniMessage())
+            );
+            VersionedComponentUtil.setDisplayName(meta, papiName);
         }
         if (lore != null) {
-            List<String> translated = lore.stream()
-                .map(LegacyColors::t)
-                .map(s -> SoftPlaceholderAPI.setPlaceholders(viewer, s))
-                .toList();
-            meta.setLore(translated);
+            // Map to MiniMessage, perform placeholder API replacements, then serialize back to components
+            List<VersionedComponent> papiLore = this.lore.stream()
+                    .map(s -> NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                            SoftPlaceholderAPI.setPlaceholders(viewer, s.serializeMiniMessage())
+                    ))
+                    .toList();
+            VersionedComponentUtil.setLore(meta, papiLore);
         }
 
         // Unbreakable
@@ -324,7 +332,7 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
     // ----- NAME ------ //
     @Override
-    public @NotNull ItemBuilder setName(@NotNull String name) {
+    public @NotNull ItemBuilder displayName(@NotNull VersionedComponent name) {
         Preconditions.checkNotNull(name, "Name cannot be null");
         this.name = name;
         return this;
@@ -338,15 +346,9 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
     // ----- LORE ------ //
     @Override
-    public @NotNull ItemBuilder setLore(@NotNull String... loreLines) {
-        Preconditions.checkNotNull(loreLines, "Lore lines cannot be null");
-        return setLore(Arrays.asList(loreLines));
-    }
-
-    @Override
-    public @NotNull ItemBuilder setLore(@NotNull List<String> loreLines) {
-        Preconditions.checkNotNull(loreLines, "Lore lines cannot be null");
-        this.lore = loreLines;
+    public @NotNull ItemBuilder lore(@NotNull List<@NotNull VersionedComponent> lines) {
+        Preconditions.checkNotNull(lines, "Lore lines cannot be null");
+        this.lore = lines;
         return this;
     }
 
@@ -498,19 +500,19 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     }
 
     @Override
-    public @Nullable String getName() {
+    public @Nullable VersionedComponent customName() {
         if (name != null) { return name; }
         @Nullable ItemMeta meta = prototype.getItemMeta();
         if (meta == null || !meta.hasDisplayName()) { return null; }
-        return meta.getDisplayName();
+        return VersionedComponentUtil.getDisplayName(meta);
     }
 
     @Override
-    public @Nullable List<@NotNull String> getLore() {
+    public @Nullable List<@NotNull VersionedComponent> lore() {
         if (lore != null) { return lore; }
         @Nullable ItemMeta meta = prototype.getItemMeta();
         if (meta == null || !meta.hasLore()) { return null; }
-        return meta.getLore();
+        return VersionedComponentUtil.getLore(meta);
     }
 
     @Override
@@ -652,62 +654,80 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     //                    PATCH PROPERTY HELPERS                    //
     // ------------------------------------------------------------ //
     @Override
-    public @NotNull ItemBuilder replaceName(@NotNull String find, @NotNull String replacement) {
+    public @NotNull ItemBuilder replaceName(@NotNull String find, @NotNull VersionedComponent replacement) {
         if (name == null) { return this; }
-        name = name.replace(find, replacement);
+        String miniMessage = name.serializeMiniMessage();
+        // Use MiniMessage as intermediary format for replacement
+        name = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage.replace(find, replacement.serializeMiniMessage()));
         return this;
     }
 
     @Override
     public @NotNull ItemBuilder replaceNamePAPI(@Nullable OfflinePlayer player) {
-        if (name == null) { return this; }
-        name = SoftPlaceholderAPI.setPlaceholders(player, name);
+        if (this.name == null) { return this; }
+        // Use MiniMessage as intermediary format for replacement
+        String papiMiniMessage = SoftPlaceholderAPI.setPlaceholders(player, this.name.serializeMiniMessage());
+        this.name = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(papiMiniMessage);
         return this;
     }
 
     @Override
-    @NotNull
-    public ItemBuilder replaceLoreLine(@NotNull String find, @NotNull List<@NotNull String> replacement) {
-        final List<String> newLore = new ArrayList<>();
-        if (lore == null) { return this; }
-        for (String s : lore) {
-            if (LegacyColors.strip(s).contains(LegacyColors.strip(find))) {
-                newLore.addAll(replacement);
+    public @NotNull ItemBuilder replaceLoreLineComponent(
+            @NotNull Predicate<@NotNull VersionedComponent> filter,
+            @NotNull List<@NotNull VersionedComponent> replacements
+    ) {
+        final List<VersionedComponent> newLore = new ArrayList<>();
+        if (this.lore == null) { return this;}
+
+        for (VersionedComponent line : this.lore) {
+            if (filter.test(line)) {
+                newLore.addAll(replacements);
             } else {
-                newLore.add(s);
+                newLore.add(line);
             }
         }
-        setLore(newLore);
+
+        this.lore(newLore);
         return this;
     }
 
     @Override
     @NotNull
-    public ItemBuilder replaceLore(@NotNull String find, @NotNull String replacement) {
-        final List<String> newLore = new ArrayList<>();
+    public ItemBuilder replaceLore(@NotNull String find, @NotNull VersionedComponent replacement) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+
+        final List<VersionedComponent> newLore = new ArrayList<>();
         if (lore == null) { return this; }
-        for (String s : lore) {
-            if (s.contains(find)) {
-                newLore.add(s.replace(find, replacement));
+        for (VersionedComponent line : lore) {
+            String miniMessage = line.serializeMiniMessage();
+            if (miniMessage.contains(find)) {
+                // Use MiniMessage as intermediary format for replacement
+                newLore.add(serializer.fromMiniMessage(miniMessage.replace(find, replacement.serializeMiniMessage())));
             }else {
-                newLore.add(s);
+                newLore.add(line);
             }
         }
-        setLore(newLore);
+        this.lore(newLore);
         return this;
     }
 
     @Override
     @NotNull
     public ItemBuilder replaceLorePAPI(@Nullable OfflinePlayer player) {
-        if (lore == null) { return this; }
-        lore.replaceAll(s -> SoftPlaceholderAPI.setPlaceholders(player, s));
+        if (this.lore == null) { return this; }
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        this.lore.replaceAll(s -> {
+            // Use MiniMessage as intermediary format for replacement
+            String miniMessage = s.serializeMiniMessage();
+            String papiMiniMessage = SoftPlaceholderAPI.setPlaceholders(player, miniMessage);
+            return serializer.fromMiniMessage(papiMiniMessage);
+        });
         return this;
     }
 
     @Override
     @NotNull
-    public ItemBuilder addLoreLines(@NotNull List<@NotNull String> lines) {
+    public ItemBuilder addLoreComponents(@NotNull List<@NotNull VersionedComponent> lines) {
         if (lore == null) { lore = new ArrayList<>(); }
         lore.addAll(lines);
         return this;
