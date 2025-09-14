@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.command.type;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -22,7 +22,7 @@ public abstract class TypeAbstractSimple<T> extends TypeAbstractException<T> {
     public String extractErrorMessage(String arg, CommandSender sender, Exception ex) {
         ChatColor error = KamiCommand.Config.getErrorColor();
         ChatColor param = KamiCommand.Config.getErrorParamColor();
-        return StringUtil.t(String.format(error + "\"" + param + "%s" + error + "\" is not a %s.", arg, this.getName()));
+        return LegacyColors.t(String.format(error + "\"" + param + "%s" + error + "\" is not a %s.", arg, this.getName()));
     }
 
 }

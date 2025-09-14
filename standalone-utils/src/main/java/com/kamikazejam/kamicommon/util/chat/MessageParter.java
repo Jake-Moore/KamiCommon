@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.util.chat;
 
 import com.kamikazejam.kamicommon.actions.StandaloneAction;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +25,8 @@ public class MessageParter {
     //  and cause the entire message to get cleared and set to an empty string
     private static List<MessagePart> injectAction(String original, List<MessagePart> parts, StandaloneAction action) {
         // Placeholder, which may be included fully inside of one part, or split between several parts
-        String placeholder = StringUtil.t(action.getPlaceholder());
-        String replacement = StringUtil.t(action.getReplacement());
+        String placeholder = LegacyColors.t(action.getPlaceholder());
+        String replacement = LegacyColors.t(action.getReplacement());
 
         // Assume everything is translated, original and the placeholder/replacement are at this point
 

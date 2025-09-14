@@ -10,7 +10,7 @@ import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuSizeLoader;
 import com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,7 @@ public class SimpleMenuLoader {
         // 1. MiniMessage cannot support &sect; symbols, so if we find one, it's definitely legacy
         if (titleString.contains("§")) {
             // auto translate (to maintain previous behavior)
-            return builder.titleFromLegacySection(StringUtil.t(titleString));
+            return builder.titleFromLegacySection(LegacyColors.t(titleString));
         }
         // 2. If it contains <tag> symbols, it's most likely MiniMessage
         Pattern pattern = Pattern.compile("<[^<>]+>");
@@ -85,7 +85,7 @@ public class SimpleMenuLoader {
         // 3. If it contains & symbols, it's most likely legacy ampersand
         if (titleString.contains("&")) {
             // auto translate (to maintain previous behavior)
-            String translated = StringUtil.t(titleString);
+            String translated = LegacyColors.t(titleString);
             return builder.title((ComponentMenuTitleProvider) (player) ->
                     NmsAPI.getVersionedComponentSerializer().fromLegacySection(translated)
             );

@@ -11,7 +11,7 @@ import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +66,7 @@ public class CmdSubsystems extends KamiCommand {
             int pos = i + 1;
             String status = subsystem.isEnabled() ? (subsystem.isSuccessfullyEnabled() ? "&aENABLED" : "&cERROR") : "&6DISABLED";
             String content = " &7- &f" + getPaddedNumber(pos, size) + ". " + subsystem.getName() + " &7- " + status;
-            lines.add(new KMessageSingle(StringUtil.t(content)));
+            lines.add(new KMessageSingle(LegacyColors.t(content)));
         }
 
         // Create the Pagination of Each Subsystem Line

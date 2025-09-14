@@ -10,11 +10,11 @@ import com.kamikazejam.kamicommon.subsystem.feature.Feature;
 import com.kamikazejam.kamicommon.subsystem.feature.FeatureManager;
 import com.kamikazejam.kamicommon.subsystem.module.Module;
 import com.kamikazejam.kamicommon.subsystem.module.ModuleManager;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
 import com.kamikazejam.kamicommon.util.log.LoggerService;
-import com.kamikazejam.kamicommon.util.log.PluginLogger;
+import com.kamikazejam.kamicommon.util.log.LegacyColorsLogger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -44,7 +44,6 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     private KamiConfigExt modulesConfig = null;
     private KamiConfigExt featuresConfig = null;
     private @Nullable KamiConfigExt config = null;
-    @Getter
     private LoggerService colorLogger;
     // CoreMethods Fields
     private final List<Listener> listenerList = new ArrayList<>();
@@ -65,7 +64,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     public void onLoadPre() {
         String[] version = this.getDescription().getVersion().split(" ");
-        this.logPrefixColored = StringUtil.t(String.format("&3[&b%s %s&3] &e", this.getDescription().getName(), version[version.length - 1]));
+        this.logPrefixColored = LegacyColors.t(String.format("&3[&b%s %s&3] &e", this.getDescription().getName(), version[version.length - 1]));
     }
     public void onLoadInner() {}
     public void onLoadPost() {}
@@ -80,7 +79,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     public boolean onEnablePre() {
         this.enableTime = System.currentTimeMillis();
-        this.colorLogger = new PluginLogger(this);
+        this.colorLogger = new LegacyColorsLogger(this);
         this.colorLogger.logToConsole(this.logPrefixColored + "=== ENABLE START ===", Level.INFO);
 
         // Create the Subsystem Managers
@@ -558,5 +557,16 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     @Override
     public void reloadObservableConfig() {
         this.reloadKamiConfig();
+    }
+
+    // -------------------------------------------- //
+    // Getters
+    // -------------------------------------------- //
+//    /**
+//     * @deprecated Use {@link #getComponentLogger()} instead, which supports the same legacy string methods, but also component methods.
+//     */
+    @Deprecated
+    public LoggerService getColorLogger() {
+        return this.colorLogger;
     }
 }

@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +38,7 @@ public abstract class RequirementAbstract implements Requirement, Serializable {
 	public static boolean isRequirementsMet(@NotNull Iterable<@NotNull Requirement> requirements, @NotNull CommandSender sender, KamiCommand command, boolean verbose) {
 		String error = getRequirementsError(requirements, sender, command, verbose);
 		if (error != null && verbose) {
-			sender.sendMessage(StringUtil.t(error));
+			sender.sendMessage(LegacyColors.t(error));
 		}
 		return error == null;
 	}

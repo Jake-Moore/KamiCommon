@@ -7,7 +7,7 @@ import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfig;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
-import com.kamikazejam.kamicommon.util.log.JavaPluginLogger;
+import com.kamikazejam.kamicommon.util.log.LegacyColorsLogger;
 import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSequenceSpigot;
@@ -298,7 +298,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         if (plugin instanceof KamiPlugin kp) {
             return kp.getColorLogger();
         } else {
-            return new JavaPluginLogger(plugin);
+            return new LegacyColorsLogger(plugin);
         }
     }
 }

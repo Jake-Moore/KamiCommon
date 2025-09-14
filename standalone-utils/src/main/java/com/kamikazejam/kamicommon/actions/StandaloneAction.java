@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.actions;
 
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public class StandaloneAction {
 
     public StandaloneAction(@NotNull String placeholder, @NotNull String replacement) {
         this.placeholder = placeholder;
-        this.replacement = StringUtil.t(replacement);
+        this.replacement = LegacyColors.t(replacement);
     }
 
 

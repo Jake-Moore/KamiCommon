@@ -7,7 +7,7 @@ import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,7 +64,7 @@ public class KamiCommandHelp extends KamiCommand {
 		List<KMessageSingle> comments = parent.getHelpComments();
 		for (KMessageSingle single : comments) {
             String text = String.format(KamiCommand.Config.getHelpCommentFormat(), single.getLine());
-			lines.add(new KMessageSingle(StringUtil.t(text)));
+			lines.add(new KMessageSingle(LegacyColors.t(text)));
 		}
 
 		CommandSender sender = context.getSender();

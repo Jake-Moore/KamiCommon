@@ -4,7 +4,7 @@ import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
 import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -33,7 +33,7 @@ public class TypePlayer extends TypeAbstract<Player> {
 		if (target == null) {
             ChatColor error = KamiCommand.Config.getErrorColor();
             ChatColor param = KamiCommand.Config.getErrorParamColor();
-			throw new KamiCommonException().addMsg(StringUtil.t(error + "No player matching \"" + param + "%s" + error + "\"."), str);
+			throw new KamiCommonException().addMsg(LegacyColors.t(error + "No player matching \"" + param + "%s" + error + "\"."), str);
 		}
 
 		@Nullable PremiumVanishIntegration integration = SpigotUtilsSource.getVanishIntegration();
@@ -41,7 +41,7 @@ public class TypePlayer extends TypeAbstract<Player> {
             if (!integration.canSee(viewer, target)) {
                 ChatColor error = KamiCommand.Config.getErrorColor();
                 ChatColor param = KamiCommand.Config.getErrorParamColor();
-                throw new KamiCommonException().addMsg(StringUtil.t(error + "No player matching \"" + param + "%s" + error + "\"."), str);
+                throw new KamiCommonException().addMsg(LegacyColors.t(error + "No player matching \"" + param + "%s" + error + "\"."), str);
 			}
 		}
 		return target;

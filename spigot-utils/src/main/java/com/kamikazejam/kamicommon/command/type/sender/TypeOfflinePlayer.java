@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.command.type.sender;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
 import com.kamikazejam.kamicommon.util.id.SenderPresence;
@@ -33,7 +33,7 @@ public class TypeOfflinePlayer extends TypeAbstract<OfflinePlayer> {
 		if (offlinePlayer == null) {
             ChatColor error = KamiCommand.Config.getErrorColor();
             ChatColor param = KamiCommand.Config.getErrorParamColor();
-            throw new KamiCommonException().addMsg(StringUtil.t(error + "No player with the name \"" + param + "%s" + error + "\" has been seen before on this server."), str);
+            throw new KamiCommonException().addMsg(LegacyColors.t(error + "No player with the name \"" + param + "%s" + error + "\" has been seen before on this server."), str);
 		}
 		return offlinePlayer;
 	}

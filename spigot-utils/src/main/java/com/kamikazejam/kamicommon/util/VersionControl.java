@@ -89,16 +89,16 @@ public class VersionControl {
 
         @Nullable Version version = getVersion(plugin);
         if (version != null && version.isLoaded()) {
-            sender.sendMessage(StringUtil.t("&bName: " + version.getName()));
-            sender.sendMessage(StringUtil.t("&bVersion: " + version.getVersionStr()));
+            sender.sendMessage(LegacyColors.t("&bName: " + version.getName()));
+            sender.sendMessage(LegacyColors.t("&bVersion: " + version.getVersionStr()));
 
             Instant buildDate = version.getBuildDate();
             if (buildDate != null) {
-                sender.sendMessage(StringUtil.t("&bBuild ago: " + formatDateDiff(buildDate.getEpochSecond())));
-                sender.sendMessage(StringUtil.t("&bBuild date: " + formatDate(buildDate)));
+                sender.sendMessage(LegacyColors.t("&bBuild ago: " + formatDateDiff(buildDate.getEpochSecond())));
+                sender.sendMessage(LegacyColors.t("&bBuild date: " + formatDate(buildDate)));
             }
         }else {
-            sender.sendMessage(StringUtil.t("&cVersion Information not available!"));
+            sender.sendMessage(LegacyColors.t("&cVersion Information not available!"));
         }
     }
 

@@ -10,7 +10,7 @@ import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.util.PlayerUtil;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,12 +33,12 @@ public class CmdGetItem extends KamiCommand {
         String itemKey = readArg();
         KamiConfig config = SpigotUtilsSource.getKamiConfig();
         if (!config.isConfigurationSection(itemKey)) {
-            player.sendMessage(StringUtil.t("&cInvalid Item Key: &f" + itemKey));
+            player.sendMessage(LegacyColors.t("&cInvalid Item Key: &f" + itemKey));
             return;
         }
 
         ItemStack stack = ItemBuilder.load(config.getConfigurationSection(itemKey)).setSkullOwner(player.getName()).build();
         PlayerUtil.giveItem(player, stack);
-        player.sendMessage(StringUtil.t("&aGave Item: &f" + itemKey));
+        player.sendMessage(LegacyColors.t("&aGave Item: &f" + itemKey));
     }
 }

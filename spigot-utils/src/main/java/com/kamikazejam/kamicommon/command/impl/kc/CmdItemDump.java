@@ -7,7 +7,7 @@ import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.item.NbtType;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTType;
@@ -40,14 +40,14 @@ public class CmdItemDump extends KamiCommand {
 
         ItemStack item = NmsAPI.getItemInMainHand(plr);
         if (item == null || item.getType() == Material.AIR) {
-            plr.sendMessage(StringUtil.t("&cYou must be holding an item to dump it's NBT data!"));
+            plr.sendMessage(LegacyColors.t("&cYou must be holding an item to dump it's NBT data!"));
             return;
         }
 
         ItemMeta meta = item.getItemMeta();
-        if (meta == null) { plr.sendMessage(StringUtil.t("&cThis item has no meta!")); return; }
+        if (meta == null) { plr.sendMessage(LegacyColors.t("&cThis item has no meta!")); return; }
 
-        plr.sendMessage(StringUtil.t("&aDumping data to console for current item in hand..."));
+        plr.sendMessage(LegacyColors.t("&aDumping data to console for current item in hand..."));
         if (meta.hasDisplayName()) {
             logger.info("Name: " + item.getItemMeta().getDisplayName());
         }

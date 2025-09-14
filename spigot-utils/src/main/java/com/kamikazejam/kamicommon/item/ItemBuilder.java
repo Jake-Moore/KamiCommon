@@ -8,8 +8,9 @@ import com.kamikazejam.kamicommon.item.patch.PatchAdd;
 import com.kamikazejam.kamicommon.item.patch.PatchOp;
 import com.kamikazejam.kamicommon.item.patch.PatchRemove;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.StringUtilP;
+import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -94,7 +95,8 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
      * PATCH PROPERTY (null = inherits prototype value):<br>
      * <br>
      * A custom display name for the item.<br>
-     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.
+     * Colors are translated automatically via {@link LegacyColors#t(String)}.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.
      */
     private @Nullable String name = null;
 
@@ -102,7 +104,8 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
      * PATCH PROPERTY (null = inherits prototype value):<br>
      * <br>
      * Custom lore for the item.<br>
-     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.
+     * Colors are translated automatically via {@link LegacyColors#t(String)}.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.
      */
     private @Nullable List<String> lore = null;
 
@@ -211,10 +214,14 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
         // Name and lore
         if (name != null) {
-            meta.setDisplayName(StringUtilP.p(viewer, name));
+            meta.setDisplayName(SoftPlaceholderAPI.setPlaceholders(viewer, LegacyColors.t(name)));
         }
         if (lore != null) {
-            meta.setLore(StringUtilP.p(viewer, lore));
+            List<String> translated = lore.stream()
+                .map(LegacyColors::t)
+                .map(s -> SoftPlaceholderAPI.setPlaceholders(viewer, s))
+                .toList();
+            meta.setLore(translated);
         }
 
         // Unbreakable
@@ -655,7 +662,7 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     @Override
     public @NotNull ItemBuilder replaceNamePAPI(@Nullable OfflinePlayer player) {
         if (name == null) { return this; }
-        name = StringUtilP.p(player, name);
+        name = SoftPlaceholderAPI.setPlaceholders(player, name);
         return this;
     }
 
@@ -695,7 +702,7 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     @NotNull
     public ItemBuilder replaceLorePAPI(@Nullable OfflinePlayer player) {
         if (lore == null) { return this; }
-        lore.replaceAll(s -> StringUtilP.p(player, s));
+        lore.replaceAll(s -> SoftPlaceholderAPI.setPlaceholders(player, s));
         return this;
     }
 

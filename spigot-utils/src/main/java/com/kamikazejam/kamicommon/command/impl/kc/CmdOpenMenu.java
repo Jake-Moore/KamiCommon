@@ -9,7 +9,7 @@ import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
 import com.kamikazejam.kamicommon.menu.SimpleMenu;
 import com.kamikazejam.kamicommon.menu.api.loaders.menu.SimpleMenuLoader;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class CmdOpenMenu extends KamiCommand {
         SimpleMenu.Builder builder = SimpleMenuLoader.loadMenu(SpigotUtilsSource.getKamiConfig(), menuKey);
         builder.modifyIcons((access) -> {
             for (String id : access.getMenuIconIDs()) {
-                access.setMenuClick(id, (data) -> data.getPlayer().sendMessage(StringUtil.t("&7Menu Item Click (&f" + data.getClickType().name() + "&7) on &f" + id)));
+                access.setMenuClick(id, (data) -> data.getPlayer().sendMessage(LegacyColors.t("&7Menu Item Click (&f" + data.getClickType().name() + "&7) on &f" + id)));
             }
         });
 

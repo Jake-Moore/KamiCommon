@@ -10,7 +10,7 @@ import com.kamikazejam.kamicommon.command.type.primitive.TypeString;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,7 +36,7 @@ public class CmdSaveItem extends KamiCommand {
         Player player = (Player) context.getSender();
         @Nullable ItemStack mainHand = NmsAPI.getItemInMainHand(player);
         if (mainHand == null) {
-            player.sendMessage(StringUtil.t("&cYou must be holding an item to save it!"));
+            player.sendMessage(LegacyColors.t("&cYou must be holding an item to save it!"));
             return;
         }
         String configKey = readArg();
@@ -48,6 +48,6 @@ public class CmdSaveItem extends KamiCommand {
         config.setItemStack(configKey, NmsAPI.getItemInMainHand(player));
         config.save();
 
-        player.sendMessage(StringUtil.t("&aSaved Item to &f" + file.getAbsolutePath() + "&a: &f" + configKey));
+        player.sendMessage(LegacyColors.t("&aSaved Item to &f" + file.getAbsolutePath() + "&a: &f" + configKey));
     }
 }

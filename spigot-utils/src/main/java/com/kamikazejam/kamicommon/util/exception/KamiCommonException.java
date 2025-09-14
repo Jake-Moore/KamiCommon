@@ -2,7 +2,7 @@ package com.kamikazejam.kamicommon.util.exception;
 
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.util.LegacyColors;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,14 +51,14 @@ public class KamiCommonException extends Exception {
     public @NotNull KamiCommonException addMsg(@Nullable String msg) {
         if (msg == null) { return this; }
         checkForOldTxtFormat(msg);
-        this.message = new KMessageSingle(StringUtil.t(msg));
+        this.message = new KMessageSingle(LegacyColors.t(msg));
         return this;
     }
 
     public @NotNull KamiCommonException addMsg(@Nullable String msg, Object... args) {
         if (msg == null) { return this; }
         checkForOldTxtFormat(msg);
-        return this.addMsg(String.format(StringUtil.t(msg), args));
+        return this.addMsg(String.format(LegacyColors.t(msg), args));
     }
 
     public @NotNull KamiCommonException addMsg(@NotNull KMessageSingle msg) {
