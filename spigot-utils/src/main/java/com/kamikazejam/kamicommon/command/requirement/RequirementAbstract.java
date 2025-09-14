@@ -1,7 +1,8 @@
 package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
-import com.kamikazejam.kamicommon.util.LegacyColors;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public abstract class RequirementAbstract implements Requirement, Serializable {
 	}
 
 	@Override
-	public String createErrorMessage(CommandSender sender) {
+	public @NotNull VersionedComponent createErrorMessage(CommandSender sender) {
 		return this.createErrorMessage(sender, null);
 	}
 
@@ -36,17 +37,17 @@ public abstract class RequirementAbstract implements Requirement, Serializable {
 	// -------------------------------------------- //
 
 	public static boolean isRequirementsMet(@NotNull Iterable<@NotNull Requirement> requirements, @NotNull CommandSender sender, KamiCommand command, boolean verbose) {
-		String error = getRequirementsError(requirements, sender, command, verbose);
+        @Nullable VersionedComponent error = getRequirementsError(requirements, sender, command, verbose);
 		if (error != null && verbose) {
-			sender.sendMessage(LegacyColors.t(error));
+            error.sendTo(sender);
 		}
 		return error == null;
 	}
 
-	public static @Nullable String getRequirementsError(@NotNull Iterable<@NotNull Requirement> requirements, @NotNull CommandSender sender, KamiCommand command, boolean verbose) {
+	public static @Nullable VersionedComponent getRequirementsError(@NotNull Iterable<@NotNull Requirement> requirements, @NotNull CommandSender sender, KamiCommand command, boolean verbose) {
 		for (Requirement requirement : requirements) {
 			if (requirement.apply(sender, command)) continue;
-			if (!verbose) return "";
+			if (!verbose) return NmsAPI.getVersionedComponentSerializer().fromPlainText("");
 			return requirement.createErrorMessage(sender, command);
 		}
 		return null;

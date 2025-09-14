@@ -2,6 +2,8 @@ package com.kamikazejam.kamicommon.util;
 
 import com.kamikazejam.kamicommon.util.nms.NmsVersionParser;
 import org.jetbrains.annotations.ApiStatus.Obsolete;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,20 +13,36 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * TODO - java doc update (including all methods)<br>
- * TODO - move non-color related methods to new class StringUtil
- * A color translator for LEGACY Color Codes. Translates the alternate code &amp; into &sect;<br>
- * <br>
- * This translator supports basic color codes and formats (i.e. {@code &a}, {@code &l}, etc.) and hex colors codes in the format of {@code &#FFAA00} (1.16+ only)<br>
- * <br>
- * Use StringUtilP for methods with players (translating PAPI placeholders) (part of the spigot-utils module)
+ * A legacy color-code translator for Minecraft-style formatting codes.<br>
+ * Translates the alternate code character {@code &} into the legacy section sign ({@code §}) and optionally expands 1.16+ hex color codes of the form {@code &#RRGGBB} into the §x§R§R§G§G§B§B sequence used by legacy clients.<br>
+ * Notes:<br>
+ * - This API is marked {@code @Obsolete}. Prefer modern text/color APIs where possible.<br>
+ * - Basic legacy color/format codes supported: 0-9, a-f, k-o, r (case-insensitive), e.g. {@code &a}, {@code &l}, {@code &r}, etc.<br>
+ * - Hex color support requires either {@code forceTranslateHex = true} or {@code BukkitAdapter.supportsHexCodes()} to be true.
  */
 @Obsolete
 @SuppressWarnings("unused")
 public class LegacyColors {
+    /**
+     * The legacy color code character (section sign), {@code '\u00A7'}.
+     */
     @SuppressWarnings("all")
     public static final char COLOR_CHAR = '\u00A7';
+    /**
+     * Case-insensitive pattern that matches legacy color and format codes to strip.<br>
+     * Matches:<br>
+     * - {@code §[0-9A-FK-OR]} (single legacy codes), and<br>
+     * - {@code §x(§[0-9A-F0-9]){6}} (expanded hex color sequences).
+     */
+    public static final @NotNull Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)§[0-9A-FK-OR]|§x(§[0-9A-F0-9]){6}");
 
+    /**
+     * Translates alternate color codes in a message from {@code &} to {@code §} and, if enabled or supported, converts hex colors of the form {@code &#RRGGBB} into the legacy expanded {@code §x§R§R§G§G§B§B} sequence.
+     *
+     * @param msg the input message (non-null expected)
+     * @param forceTranslateHex if true, hex codes are translated regardless of {@code BukkitAdapter.supportsHexCodes()}
+     * @return the translated message with legacy codes applied
+     */
     @Obsolete
     public static String t(String msg, boolean forceTranslateHex) {
         String s = translateAlternateColorCodes(msg);
@@ -46,11 +64,24 @@ public class LegacyColors {
         return s;
     }
 
+    /**
+     * Translates alternate color codes in a message from {@code &} to {@code §}.<br>
+     * Hex colors of the form {@code &#RRGGBB} are translated only if supported by the runtime ({@code BukkitAdapter.supportsHexCodes()} is true).
+     *
+     * @param msg the input message (non-null expected)
+     * @return the translated message with legacy codes applied
+     */
     @Obsolete
     public static String t(String msg) {
         return t(msg, false);
     }
 
+    /**
+     * Translates alternate color codes for a list of messages using {@link #t(String)} behavior (hex translation only if supported).
+     *
+     * @param msgs list of input messages
+     * @return a new list containing translated messages
+     */
     @Obsolete
     public static List<String> t(List<String> msgs) {
         List<String> translated = new ArrayList<>();
@@ -60,6 +91,13 @@ public class LegacyColors {
         return translated;
     }
 
+    /**
+     * Translates alternate color codes for an array of messages using
+     * {@link #t(String)} behavior (hex translation only if supported).
+     *
+     * @param msgs array of input messages
+     * @return a new list containing translated messages
+     */
     @Obsolete
     public static List<String> t(String... msgs) {
         List<String> translated = new ArrayList<>();
@@ -69,11 +107,37 @@ public class LegacyColors {
         return translated;
     }
 
+    /**
+     * Removes all legacy color and format codes from the provided string.<br>
+     * Supports stripping single legacy codes and expanded hex sequences.
+     *
+     * @param s the input string, may be null
+     * @return the input without legacy color/format codes, or null if input is null
+     */
+    @Obsolete
+    @Contract(value = "null -> null; !null -> !null", pure = true)
+    public static String strip(String s) {
+        if (s == null) { return null; }
+        return STRIP_COLOR_PATTERN.matcher(s).replaceAll("");
+    }
+
+    /**
+     * Replaces the legacy section sign {@code §} with the alternate color code character {@code &} in a single string.
+     *
+     * @param s the input string
+     * @return the string with {@code §} replaced by {@code &}
+     */
     @Obsolete
     public static String reverseT(String s) {
         return s.replace(COLOR_CHAR, '&');
     }
 
+    /**
+     * Replaces the legacy section sign {@code §} with {@code &} in each string of the provided list.
+     *
+     * @param s a list of strings to transform
+     * @return a new list with {@code §} replaced by {@code &} in each element
+     */
     @Obsolete
     public static List<String> reverseT(List<String> s) {
         List<String> reversed = new ArrayList<>();
@@ -83,6 +147,12 @@ public class LegacyColors {
         return reversed;
     }
 
+    /**
+     * Replaces the legacy section sign {@code §} with {@code &} in each string of the provided array.
+     *
+     * @param s an array of strings to transform
+     * @return a new array with {@code §} replaced by {@code &} in each element
+     */
     @Obsolete
     public static String[] reverseT(String[] s) {
         List<String> reversed = new ArrayList<>();
@@ -92,6 +162,14 @@ public class LegacyColors {
         return reversed.toArray(new String[0]);
     }
 
+    /**
+     * Converts alternate color codes using {@code &} to legacy section sign codes using {@code §} for basic color/format codes.<br>
+     * This method does not handle hex colors; use {@link #t(String, boolean)} for full translation including hex.<br>
+     * Characters following {@code &} that are in {@code 0-9, a-f, k-o, r} (case-insensitive) are converted, and the code letter is lowercased to match legacy expectations.
+     *
+     * @param textToTranslate the string containing alternate color codes
+     * @return a new string with {@code &X} sequences converted to {@code §x}
+     */
     @Obsolete
     private static String translateAlternateColorCodes(String textToTranslate) {
         char[] b = textToTranslate.toCharArray();

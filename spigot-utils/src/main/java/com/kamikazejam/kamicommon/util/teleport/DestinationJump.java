@@ -1,8 +1,11 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class DestinationJump extends DestinationPlayer {
@@ -34,8 +37,9 @@ public class DestinationJump extends DestinationPlayer {
     }
 
     @Override
-    public String getDesc(Object watcherObject) {
-        return "Jump for " + super.getDesc(watcherObject, false);
+    public @NotNull VersionedComponent getDesc(Object watcherObject) {
+        return NmsAPI.getVersionedComponentSerializer().fromPlainText("Jump for ")
+                .append(super.getDesc(watcherObject, false));
     }
 
 }

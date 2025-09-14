@@ -1,8 +1,9 @@
 package com.kamikazejam.kamicommon.util.mixin;
 
 import com.kamikazejam.kamicommon.event.PlayerPSTeleportEvent;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.KUtil;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import com.kamikazejam.kamicommon.util.id.IdUtilLocal;
@@ -72,8 +73,10 @@ public class MixinTeleport extends Mixin {
 			location = ps.asBukkitLocation();
 
 		} catch (Exception e) {
-			String s = String.format("&cCould not calculate the location: %s", e.getMessage());
-			throw new KamiCommonException().addMsg(LegacyColors.t(s));
+			throw new KamiCommonException().addMsgFromMiniMessage(
+                    "<red>Could not calculate the location: %s",
+                    e.getMessage()
+            );
 		}
 
 		// eject passengers and unmount before transport
@@ -108,15 +111,17 @@ public class MixinTeleport extends Mixin {
 	public void teleport(Object teleporteeObject, TeleportCallback callback, int delaySeconds) throws KamiCommonException {
 		this.teleportInternal(teleporteeObject, null, callback, null, delaySeconds);
 	}
-	public void teleport(Object teleporteeObject, TeleportCallback callback, String desc, int delaySeconds) throws KamiCommonException {
+	public void teleport(Object teleporteeObject, TeleportCallback callback, VersionedComponent desc, int delaySeconds) throws KamiCommonException {
 		this.teleportInternal(teleporteeObject, null, callback, desc, delaySeconds);
 	}
 
-	public void teleportInternal(Object teleporteeObject, @Nullable Destination destination, @Nullable TeleportCallback callback, @Nullable String desc, int delaySeconds) throws KamiCommonException {
+	public void teleportInternal(Object teleporteeObject, @Nullable Destination destination, @Nullable TeleportCallback callback, @Nullable VersionedComponent desc, int delaySeconds) throws KamiCommonException {
 		String teleporteeId = IdUtilLocal.getId(teleporteeObject);
 		if (!IdUtilLocal.isPlayerId(teleporteeId)) {
-			String s = String.format("&f%s &cis not a player.", MixinDisplayName.get().getDisplayName(teleporteeId, IdUtilLocal.getConsole()));
-			throw new KamiCommonException().addMsg(LegacyColors.t(s));
+			throw new KamiCommonException().addMsgFromMiniMessage(
+                    "<white>%s <red>is not a player.",
+                    MixinDisplayName.get().getDisplayName(teleporteeId, IdUtilLocal.getConsole())
+            );
 		}
 
 		if (delaySeconds > 0) {
@@ -124,19 +129,19 @@ public class MixinTeleport extends Mixin {
 				desc = destination.getDesc(teleporteeId);
 			}
 
-			// With delay
-			CommandSender sender = KUtil.getSender(teleporteeId);
-			if (desc != null && !desc.isEmpty()) {
-				if (sender != null) {
-					String s = "&eTeleporting to &d" + desc + " &ein &d" + delaySeconds + "s &eunless you move.";
-					sender.sendMessage(LegacyColors.t(s));
-				}
-			} else {
-				if (sender != null) {
-					String s = "&eTeleporting in &d" + delaySeconds + "s &eunless you move.";
-					sender.sendMessage(LegacyColors.t(s));
-				}
-			}
+            // With delay
+            CommandSender sender = KUtil.getSender(teleporteeId);
+            if (desc != null && !desc.plainText().trim().isEmpty()) {
+                if (sender != null) {
+                    String s = "<yellow>Teleporting to <light_purple>" + desc + " <yellow>in <light_purple>" + delaySeconds + "s <yellow>unless you move.";
+                    NmsAPI.getVersionedComponentSerializer().fromMiniMessage(s).sendTo(sender);
+                }
+            } else {
+                if (sender != null) {
+                    String s = "<yellow>Teleporting in <light_purple>" + delaySeconds + "s <yellow>unless you move.";
+                    NmsAPI.getVersionedComponentSerializer().fromMiniMessage(s).sendTo(sender);
+                }
+            }
 
 			if (destination != null) {
 				new ScheduledTeleport(teleporteeId, destination, desc, delaySeconds).schedule();
@@ -151,7 +156,7 @@ public class MixinTeleport extends Mixin {
 				try {
 					ps = destination.getPs(teleporteeId);
 				} catch (Exception e) {
-					throw new KamiCommonException().addMsg(e.getMessage());
+					throw new KamiCommonException().addMsgFromPlainText(e.getMessage());
 				}
 
 				// Run event
@@ -161,10 +166,12 @@ public class MixinTeleport extends Mixin {
 				destination = event.getDestination();
 				desc = destination.getDesc(teleporteeId);
 
-				if (desc != null && !desc.isEmpty()) {
+				if (!desc.plainText().trim().isEmpty()) {
 					CommandSender sender = KUtil.getSender(teleporteeId);
 					if (sender != null) {
-						sender.sendMessage(LegacyColors.t("&eTeleporting to &d" + desc + "&e."));
+                        NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                                "<yellow>Teleporting to <light_purple>" + desc + "<yellow>."
+                        ).sendTo(sender);
 					}
 				}
 
@@ -175,10 +182,12 @@ public class MixinTeleport extends Mixin {
 					MixinSenderPs.get().setSenderPs(teleporteeId, ps);
 				}
 			}else {
-				if (desc != null && !desc.isEmpty()) {
+				if (desc != null && !desc.plainText().trim().isEmpty()) {
 					CommandSender sender = KUtil.getSender(teleporteeId);
 					if (sender != null) {
-						sender.sendMessage(LegacyColors.t("&eTeleporting to &d" + desc + "&e."));
+                        NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                                "<yellow>Teleporting to <light_purple>" + desc + "<yellow>."
+                        ).sendTo(sender);
 					}
 				}
 

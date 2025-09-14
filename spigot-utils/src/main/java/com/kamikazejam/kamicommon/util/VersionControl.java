@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -89,16 +90,26 @@ public class VersionControl {
 
         @Nullable Version version = getVersion(plugin);
         if (version != null && version.isLoaded()) {
-            sender.sendMessage(LegacyColors.t("&bName: " + version.getName()));
-            sender.sendMessage(LegacyColors.t("&bVersion: " + version.getVersionStr()));
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    "<aqua>Name: " + version.getName()
+            ).sendTo(sender);
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    "<aqua>Version: " + version.getVersionStr()
+            ).sendTo(sender);
 
             Instant buildDate = version.getBuildDate();
             if (buildDate != null) {
-                sender.sendMessage(LegacyColors.t("&bBuild ago: " + formatDateDiff(buildDate.getEpochSecond())));
-                sender.sendMessage(LegacyColors.t("&bBuild date: " + formatDate(buildDate)));
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                        "<aqua>Build ago: " + formatDateDiff(buildDate.getEpochSecond())
+                ).sendTo(sender);
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                        "<aqua>Build date: " + formatDate(buildDate)
+                ).sendTo(sender);
             }
         }else {
-            sender.sendMessage(LegacyColors.t("&cVersion Information not available!"));
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    "<red>Version Information not available!"
+            ).sendTo(sender);
         }
     }
 

@@ -7,7 +7,6 @@ import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.command.requirement.RequirementIsPlayer;
 import com.kamikazejam.kamicommon.item.NbtType;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTType;
@@ -40,14 +39,17 @@ public class CmdItemDump extends KamiCommand {
 
         ItemStack item = NmsAPI.getItemInMainHand(plr);
         if (item == null || item.getType() == Material.AIR) {
-            plr.sendMessage(LegacyColors.t("&cYou must be holding an item to dump it's NBT data!"));
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<red>You must be holding an item to dump it's NBT data!").sendTo(plr);
             return;
         }
 
         ItemMeta meta = item.getItemMeta();
-        if (meta == null) { plr.sendMessage(LegacyColors.t("&cThis item has no meta!")); return; }
+        if (meta == null) {
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<red>This item has no meta!").sendTo(plr);
+            return;
+        }
 
-        plr.sendMessage(LegacyColors.t("&aDumping data to console for current item in hand..."));
+        NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<green>Dumping data to console for current item in hand...").sendTo(plr);
         if (meta.hasDisplayName()) {
             logger.info("Name: " + item.getItemMeta().getDisplayName());
         }

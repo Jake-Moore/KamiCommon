@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.command.type;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.configuration.Configurable;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.ReflectionUtil;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
@@ -13,10 +14,10 @@ import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.text.similarity.LevenshteinDistance;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,9 +42,9 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
         return this;
     }
 
-    protected String help = null;
+    protected @Nullable VersionedComponent help = null;
 
-    public TypeAbstractChoice<T> setHelp(String help) {
+    public TypeAbstractChoice<T> setHelp(@Nullable VersionedComponent help) {
         this.help = help;
         return this;
     }
@@ -141,15 +142,15 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
         boolean suggestAll = false;
 
         // Nothing Found
-        String message;
+        String miniMessage;
         if (matches.isEmpty()) {
-            message = String.format(Config.getMessageMatchNothing(), this.getName(), arg);
-            exception.addMsg(message);
+            miniMessage = String.format(Config.getMessageMatchNothingMini(), this.getName(), arg);
+            exception.addMsgFromMiniMessage(miniMessage);
         }
         // Ambiguous
         else {
-            message = String.format(Config.getMessageMatchAmbiguous(), matches.size(), this.getName(), arg);
-            exception.addMsg(message);
+            miniMessage = String.format(Config.getMessageMatchAmbiguousMini(), matches.size(), this.getName(), arg);
+            exception.addMsgFromMiniMessage(miniMessage);
             suggestAmbiguous = true;
         }
 
@@ -159,27 +160,27 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
 
         if (this.canList(sender)) {
             if (suggestNone) {
-                message = String.format(Config.getMessageAvailableEmpty(), this.getName());
-                exception.addMsg(message);
+                miniMessage = String.format(Config.getMessageAvailableEmptyMini(), this.getName());
+                exception.addMsgFromMiniMessage(miniMessage);
             } else {
                 Collection<T> suggestions;
 
                 if (suggestAmbiguous) {
                     suggestions = matches;
-                    message = Config.getMessageColonAmbiguous();
+                    miniMessage = Config.getMessageColonAmbiguousMini();
                 } else if (suggestAll) {
                     suggestions = all;
-                    message = Config.getMessageColonAll();
+                    miniMessage = Config.getMessageColonAllMini();
                 } else {
                     suggestions = this.getMatches(options, arg, true);
-                    message = Config.getMessageColonSimilar();
+                    miniMessage = Config.getMessageColonSimilarMini();
                 }
 
                 if (suggestions.isEmpty()) {
-                    exception.addMsg(Config.getMessageSuggestionsEmpty());
+                    exception.addMsgFromMiniMessage(Config.getMessageSuggestionsEmptyMini());
                 } else if (suggestions.size() > this.getListCountMax()) {
-                    message = String.format(Config.getMessageSuggestionsMuch(), this.getListCountMax());
-                    exception.addMsg(message);
+                    miniMessage = String.format(Config.getMessageSuggestionsMuchMini(), this.getListCountMax());
+                    exception.addMsgFromMiniMessage(miniMessage);
                 } else {
                     List<String> visuals = new KamiList<>();
                     for (T value : suggestions) {
@@ -189,18 +190,18 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
                     }
                     String explode = Txt.implodeCommaAndDot(
                             visuals,
-                            KamiCommand.Config.getErrorParamColor() + "%s",
-                            " " + ChatColor.GRAY + "| ",
-                            " " + ChatColor.GRAY + "| ",
+                            KamiCommand.Config.getErrorParamColorMini() + "%s",
+                            " <gray>| ",
+                            " <gray>| ",
                             ""
                     );
-                    exception.addMsg(message + explode);
+                    exception.addMsgFromMiniMessage(miniMessage + explode);
                 }
             }
         }
 
         // Help
-        String help = this.getHelp();
+        @Nullable VersionedComponent help = this.getHelp();
         if (help != null) exception.addMsg(help);
 
         throw exception;
@@ -405,27 +406,27 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
     @Configurable
     public static class Config {
         // Messages
-        @Setter private static @NotNull String messageMatchNothing =        KamiCommand.Config.placeholderErrorColor + "No %s matches \"" + KamiCommand.Config.placeholderErrorParamColor + "%s" + KamiCommand.Config.placeholderErrorColor + "\".";
-        @Setter private static @NotNull String messageMatchAmbiguous =      KamiCommand.Config.placeholderErrorColor + "%d %ss matches \"" + KamiCommand.Config.placeholderErrorParamColor + "%s" + KamiCommand.Config.placeholderErrorColor + "\".";
-        @Setter @Getter private static @NotNull String messageAvailableEmpty =      ChatColor.YELLOW + "Note: There is no %s available.";
+        @Setter private static @NotNull String messageMatchNothingMini =        KamiCommand.Config.placeholderErrorColor + "No %s matches \"" + KamiCommand.Config.placeholderErrorParamColor + "%s" + KamiCommand.Config.placeholderErrorColor + "\".";
+        @Setter private static @NotNull String messageMatchAmbiguousMini =      KamiCommand.Config.placeholderErrorColor + "%d %ss matches \"" + KamiCommand.Config.placeholderErrorParamColor + "%s" + KamiCommand.Config.placeholderErrorColor + "\".";
+        @Setter @Getter private static @NotNull String messageAvailableEmptyMini =      "<yellow>Note: There is no %s available.";
 
-        @Setter @Getter private static @NotNull String messageColonAmbiguous =      ChatColor.AQUA + "Ambiguous" + ChatColor.GRAY + ": ";
-        @Setter @Getter private static @NotNull String messageColonAll =            ChatColor.AQUA + "All" + ChatColor.GRAY + ": ";
-        @Setter @Getter private static @NotNull String messageColonSimilar =        ChatColor.AQUA + "Similar" + ChatColor.GRAY + ": ";
+        @Setter @Getter private static @NotNull String messageColonAmbiguousMini =      "<aqua>Ambiguous<gray>: ";
+        @Setter @Getter private static @NotNull String messageColonAllMini =            "<aqua>All<gray>: ";
+        @Setter @Getter private static @NotNull String messageColonSimilarMini =        "<aqua>Similar<gray>: ";
 
-        @Setter @Getter private static @NotNull String messageSuggestionsEmpty =    ChatColor.YELLOW + "No suggestions found.";
-        @Setter @Getter private static @NotNull String messageSuggestionsMuch =     ChatColor.YELLOW + "Over %d suggestions found (hiding output).";
+        @Setter @Getter private static @NotNull String messageSuggestionsEmptyMini =    "<yellow>No suggestions found.";
+        @Setter @Getter private static @NotNull String messageSuggestionsMuchMini =     "<yellow>Over %d suggestions found (hiding output).";
 
         // Derived Getters
-        public static @NotNull String getMessageMatchNothing() {
-            return messageMatchNothing
-                    .replace(KamiCommand.Config.placeholderErrorColor, KamiCommand.Config.getErrorColor().toString())
-                    .replace(KamiCommand.Config.placeholderErrorParamColor, KamiCommand.Config.getErrorParamColor().toString());
+        public static @NotNull String getMessageMatchNothingMini() {
+            return messageMatchNothingMini
+                    .replace(KamiCommand.Config.placeholderErrorColor, KamiCommand.Config.getErrorColorMini())
+                    .replace(KamiCommand.Config.placeholderErrorParamColor, KamiCommand.Config.getErrorParamColorMini());
         }
-        public static @NotNull String getMessageMatchAmbiguous() {
-            return messageMatchAmbiguous
-                    .replace(KamiCommand.Config.placeholderErrorColor, KamiCommand.Config.getErrorColor().toString())
-                    .replace(KamiCommand.Config.placeholderErrorParamColor, KamiCommand.Config.getErrorParamColor().toString());
+        public static @NotNull String getMessageMatchAmbiguousMini() {
+            return messageMatchAmbiguousMini
+                    .replace(KamiCommand.Config.placeholderErrorColor, KamiCommand.Config.getErrorColorMini())
+                    .replace(KamiCommand.Config.placeholderErrorParamColor, KamiCommand.Config.getErrorParamColorMini());
         }
     }
 }

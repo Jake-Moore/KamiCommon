@@ -1,8 +1,12 @@
 package com.kamikazejam.kamicommon.command.type;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class TypeAbstractException<T> extends TypeAbstract<T> {
     // -------------------------------------------- //
@@ -28,7 +32,7 @@ public abstract class TypeAbstractException<T> extends TypeAbstract<T> {
         try {
             return this.valueOf(arg, sender);
         } catch (Exception ex) {
-            throw new KamiCommonException().addMsg(this.extractErrorMessage(arg, sender, ex));
+            throw new KamiCommonException().addMsg(this.extractErrorMessageMini(arg, sender, ex));
         }
     }
 
@@ -36,8 +40,11 @@ public abstract class TypeAbstractException<T> extends TypeAbstract<T> {
     // MESSAGE (OVERRIDABLE)
     // -------------------------------------------- //
 
-    public String extractErrorMessage(String arg, CommandSender sender, Exception ex) {
-        return KamiCommand.Config.getErrorColor() + ex.getMessage();
+    @NotNull
+    public VersionedComponent extractErrorMessageMini(String arg, CommandSender sender, Exception ex) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        return serializer.fromMiniMessage(KamiCommand.Config.getErrorColorMini())
+                .append(serializer.fromPlainText(ex.getMessage()));
     }
 
 }

@@ -5,6 +5,8 @@ import com.kamikazejam.kamicommon.menu.PaginatedMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.PositionIconSlot;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +57,10 @@ public class GridPaginationLayout implements PaginationLayout {
                 try {
                     slots.add(size.mapPositionToSlot(row, col));
                 } catch (Exception e) {
-                    SpigotUtilsSource.get().getColorLogger().warn("[GridPaginationLayout] Error while trying to map position (" + row + "," + col + ") to slot: " + e.getMessage());
+                    VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+                    SpigotUtilsSource.get().getColorComponentLogger().warn(serializer.fromPlainText(
+                        "[GridPaginationLayout] Error while trying to map position (" + row + "," + col + ") to slot: " + e.getMessage()
+                    ));
                 }
             }
         }

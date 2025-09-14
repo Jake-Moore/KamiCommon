@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.configuration.spigot;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -76,7 +75,7 @@ public class ConfigHelper {
         try {
             config.save(f);
         } catch (IOException e) {
-            plugin.getLogger().info(ChatColor.RED + e.toString());
+            plugin.getLogger().info(e.toString());
         }
         return config;
     }
@@ -93,7 +92,7 @@ public class ConfigHelper {
         try {
             config.save(f);
         } catch (IOException e) {
-            plugin.getLogger().info(ChatColor.RED + e.toString());
+            plugin.getLogger().info(e.toString());
         }
         return config;
     }
@@ -117,13 +116,13 @@ public class ConfigHelper {
         if (!file.exists()) {
             try {
                 if (file.createNewFile()) {
-                    plugin.getLogger().info("&aCreated plugin file: " + fileName);
+                    plugin.getLogger().info("Created plugin file: " + fileName);
                 }else {
                     plugin.getLogger().warning("Could not create plugin file: " + fileName);
                     Bukkit.getPluginManager().disablePlugin(plugin);
                 }
             } catch (IOException e) {
-                plugin.getLogger().info("&cCould not create plugin file: " + fileName);
+                plugin.getLogger().info("Could not create plugin file: " + fileName);
             }
         }
 

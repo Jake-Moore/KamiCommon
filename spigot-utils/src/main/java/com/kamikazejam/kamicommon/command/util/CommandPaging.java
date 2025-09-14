@@ -4,15 +4,19 @@ import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.Parameter;
 import com.kamikazejam.kamicommon.configuration.Configurable;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.KMessage;
-import com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.Component;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.event.ClickEvent;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.MiniMessage;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,12 +39,14 @@ public class CommandPaging {
      */
     @SuppressWarnings("ExtractMethodRecommender")
     @NotNull
-    public static KMessageSingle titleizedPageTitle(
+    public static VersionedComponent titleizedPageTitle(
             @NotNull KamiCommand command,
             @NotNull String title,
             int pageNum,
             int pageCount
     ) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+
         // Validate KamiCommand context
         Preconditions.checkNotNull(
                 command.getContext(),
@@ -49,30 +55,31 @@ public class CommandPaging {
         );
 
         // Create the title string, using placeholders for the prev/next arrows
-        String pageTitle = Config.getTitleFormat()
+        String rawTitleMini = Config.getTitleFormatMini()
                 .replace(Config.getPlaceholderTitle(), title)
                 .replace(Config.getPlaceholderPageNum(), String.valueOf(pageNum))
                 .replace(Config.getPlaceholderPageCount(), String.valueOf(pageCount));
 
         // Calculate the length of what will be visible (Strip colors & replace variables)
-        int pageTitleLength = ChatColor.stripColor(LegacyColors.t(pageTitle
-                .replace(Config.getPlaceholderPrevPage(), Config.getBackIcon())
-                .replace(Config.getPlaceholderNextPage(), Config.getForwardIcon())
-        )).length();
+        int pageTitleLength = serializer.fromMiniMessage(
+                rawTitleMini
+                        .replace("<" + Config.getTagPrevPage() + ">", Config.getBackIcon())
+                        .replace("<" + Config.getTagNextPage() + ">", Config.getForwardIcon())
+        ).plainText().length();
 
         // Calculate how many characters we need to add on either side
         int leftPaddingSize = Math.max(0, (int) Math.ceil((TITLE_LINE_LENGTH - pageTitleLength) / 2.0));
         int rightPaddingSize = Math.max(0, TITLE_LINE_LENGTH - pageTitleLength - leftPaddingSize);
 
         // Create the title line with padding
-        String leftPadding = Txt.Config.getTitlePaddingColor() + Txt.Config.getTitlePaddingChar().toString().repeat(leftPaddingSize);
-        String rightPadding = Txt.Config.getTitlePaddingColor() + Txt.Config.getTitlePaddingChar().toString().repeat(rightPaddingSize);
+        String leftPaddingMini = Txt.Config.getTitlePaddingColorMini() + Txt.Config.getTitlePaddingChar().toString().repeat(leftPaddingSize);
+        String rightPaddingMini = Txt.Config.getTitlePaddingColorMini() + Txt.Config.getTitlePaddingChar().toString().repeat(rightPaddingSize);
 
         // Construct the final title line (adds padding to both sides)
-        String finalTitle = leftPadding + pageTitle + rightPadding;
+        String miniMessageTitleMini = leftPaddingMini + rawTitleMini + rightPaddingMini;
 
         // Create the
-        return applyPageActions(command, new KMessageSingle(finalTitle), pageNum, pageCount);
+        return applyPageActions(command, miniMessageTitleMini, pageNum, pageCount);
     }
 
     /**
@@ -83,12 +90,12 @@ public class CommandPaging {
      * @param lines The lines of 'content' to paginate. This should be ALL the lines you want to show, not just the ones for this page.
      * @param pageNum The page number, 1-based (e.g. 1 for the first page).
      * @param title The unformatted title, which will be titleized.
-     * @return The ordered list of {@link KMessage} objects, for sending to any Player or CommandSender.
+     * @return The ordered list of {@link VersionedComponent} objects, for sending to any Player or CommandSender.
      */
     @NotNull
-    public static List<KMessage> getPage(
+    public static List<VersionedComponent> getPage(
             @NotNull KamiCommand command,
-            @NotNull List<KMessageSingle> lines,
+            @NotNull List<VersionedComponent> lines,
             int pageNum,
             @NotNull String title
     ) {
@@ -110,28 +117,30 @@ public class CommandPaging {
      * @param pageNum The page number, 1-based (e.g. 1 for the first page).
      * @param title The unformatted title, which will be titleized.
      * @param pageheight The height of an individual page, in lines.
-     * @return The ordered list of {@link KMessage} objects, for sending to any Player or CommandSender.
+     * @return The ordered list of {@link VersionedComponent} objects, for sending to any Player or CommandSender.
      */
     @NotNull
-    public static List<KMessage> getPage(
+    public static List<VersionedComponent> getPage(
             @NotNull KamiCommand command,
-            @NotNull List<KMessageSingle> lines,
+            @NotNull List<VersionedComponent> lines,
             int pageNum,
             @NotNull String title,
             int pageheight
     ) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+
         // Create Ret
-        List<KMessage> ret = new KamiList<>();
+        List<VersionedComponent> ret = new KamiList<>();
         int pageIndex = pageNum - 1; // 0-based index
         int pageCount = (int) Math.ceil(((double) lines.size()) / pageheight);
 
         // Add Title
-        KMessageSingle kTitle = titleizedPageTitle(command, title, pageNum, pageCount);
-        ret.add(kTitle);
+        VersionedComponent titleComponent = titleizedPageTitle(command, title, pageNum, pageCount);
+        ret.add(titleComponent);
 
         // Check empty and invalid
         if (pageCount == 0) {
-            ret.add(new KMessageSingle(Config.getNoPagesMessage()));
+            ret.add(serializer.fromMiniMessage(Config.getNoPagesMessageMini()));
             return ret;
         } else if (pageIndex < 0 || pageNum > pageCount) {
             ret.add(getInvalidPageMessage(pageCount));
@@ -153,16 +162,16 @@ public class CommandPaging {
     }
 
     /**
-     * @param title The titleized message line to which the page actions will be applied.
+     * @param miniMessageTitle The titleized message line (in MiniMessage format) to which the page actions will be applied.
      * @param pageNum The current page number, 1-based (e.g. 1 for the first page).
      * @param pageCount The total number of pages.
      *
-     * @return The same {@link KMessageSingle} for chaining, with the page actions applied.
+     * @return The same {@link VersionedComponent} for chaining, with the page actions applied.
      */
-    @NotNull
-    private static KMessageSingle applyPageActions(
+    @SuppressWarnings("PatternValidation") @NotNull
+    private static VersionedComponent applyPageActions(
             @NotNull KamiCommand command,
-            @NotNull KMessageSingle title,
+            @NotNull String miniMessageTitle,
             int pageNum,
             int pageCount
     ) {
@@ -176,36 +185,56 @@ public class CommandPaging {
 
         // Add flip backwards command
         @Nullable String forwardCmd = getFlipPageCommand(command, pageNum - 1, args);
+        @NotNull TagResolver.Single forwardTag;
         if (pageNum > 1 && forwardCmd != null) {
-            String replacement = Config.getActiveIconColor() + Config.getBackIcon();
-            title.addClickRunCommand(Config.getPlaceholderPrevPage(), replacement, forwardCmd);
+            String replacement = Config.getActiveIconColorMini() + Config.getBackIcon();
+            forwardTag = Placeholder.component(
+                    Config.getTagPrevPage(),
+                    MiniMessage.miniMessage().deserialize(replacement).clickEvent(
+                            ClickEvent.runCommand(forwardCmd)
+                    )
+            );
         } else {
-            String replacement = Config.getInactiveIconColor() + Config.getBackIcon();
-            title.setLine(title.getLine().replace(Config.getPlaceholderPrevPage(), replacement));
+            String replacement = Config.getInactiveIconColorMini() + Config.getBackIcon();
+            forwardTag = Placeholder.component(
+                    Config.getTagPrevPage(),
+                    MiniMessage.miniMessage().deserialize(replacement)
+            );
         }
 
         // Add flip forwards command
         @Nullable String backCmd = getFlipPageCommand(command, pageNum + 1, args);
+        @NotNull TagResolver.Single backTag;
         if (pageCount > pageNum && backCmd != null) {
-            String replacement = Config.getActiveIconColor() + Config.getForwardIcon();
-            title.addClickRunCommand(Config.getPlaceholderNextPage(), replacement, backCmd);
+            String replacement = Config.getActiveIconColorMini() + Config.getForwardIcon();
+            backTag = Placeholder.component(
+                    Config.getTagNextPage(),
+                    MiniMessage.miniMessage().deserialize(replacement).clickEvent(
+                            ClickEvent.runCommand(backCmd)
+                    )
+            );
         } else {
-            String replacement = Config.getInactiveIconColor() + Config.getForwardIcon();
-            title.setLine(title.getLine().replace(Config.getPlaceholderNextPage(), replacement));
+            String replacement = Config.getInactiveIconColorMini() + Config.getForwardIcon();
+            backTag = Placeholder.component(
+                    Config.getTagNextPage(),
+                    MiniMessage.miniMessage().deserialize(replacement)
+            );
         }
 
-        return title;
+        Component component = MiniMessage.miniMessage().deserialize(miniMessageTitle, TagResolver.resolver(forwardTag, backTag));
+        return NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component);
     }
 
     @NotNull
-    private static KMessageSingle getInvalidPageMessage(int size) {
+    private static VersionedComponent getInvalidPageMessage(int size) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+
         if (size == 0) {
-            return new KMessageSingle(Config.getNoPagesMessage());
+            return serializer.fromMiniMessage(Config.getNoPagesMessageMini());
         } else if (size == 1) {
-            return new KMessageSingle(Config.getOnlyOnePageMessage());
+            return serializer.fromMiniMessage(Config.getOnlyOnePageMessageMini());
         } else {
-            String message = String.format(Config.getInvalidPageMessage(), size);
-            return new KMessageSingle(message);
+            return serializer.fromMiniMessage(String.format(Config.getInvalidPageMessageMini(), size));
         }
     }
 
@@ -252,10 +281,10 @@ public class CommandPaging {
     public static class Config {
         // Placeholders
         @Getter private static final @NotNull String placeholderTitle = "{title}";
-        @Getter private static final @NotNull String placeholderPrevPage = "{prevPage}";
-        @Getter private static final @NotNull String placeholderNextPage = "{nextPage}";
         @Getter private static final @NotNull String placeholderPageNum = "{pageNum}";
         @Getter private static final @NotNull String placeholderPageCount = "{pageCount}";
+        @Getter private static final @NotNull String tagPrevPage = "prev_page";
+        @Getter private static final @NotNull String tagNextPage = "next_page";
 
         // Configurable values
         @Getter @Setter
@@ -264,25 +293,19 @@ public class CommandPaging {
         private static @NotNull String forwardIcon = "[>]";
 
         @Getter @Setter
-        private static @NotNull ChatColor activeIconColor = ChatColor.AQUA;
+        private static @NotNull String activeIconColorMini = "<aqua>";
         @Getter @Setter
-        private static @NotNull ChatColor inactiveIconColor = ChatColor.GRAY;
+        private static @NotNull String inactiveIconColorMini = "<gray>";
 
         @Getter @Setter
-        private static @NotNull String titleFormat =
-                ChatColor.GOLD + ".[ "
-                + ChatColor.DARK_GREEN + placeholderTitle
-                + " " + placeholderPrevPage + " "
-                + ChatColor.GOLD + placeholderPageNum + "/" + placeholderPageCount
-                + " " + placeholderNextPage
-                + ChatColor.GOLD + " ].";
+        private static @NotNull String titleFormatMini = "<gold>.[ <dark_green>" + placeholderTitle + " <" + tagPrevPage + "> <gold>" + placeholderPageNum + "/" + placeholderPageCount + " <" + tagNextPage + "><gold>" + " ].";
 
         @Getter @Setter
-        private static @NotNull String noPagesMessage = ChatColor.YELLOW + "Sorry, no pages available.";
+        private static @NotNull String noPagesMessageMini = "<yellow>Sorry, no pages available.";
         @Getter @Setter
-        private static @NotNull String onlyOnePageMessage = ChatColor.RED + "Invalid, there is only one page.";
+        private static @NotNull String onlyOnePageMessageMini = "<red>Invalid, there is only one page.";
         @Getter @Setter
-        private static @NotNull String invalidPageMessage = ChatColor.RED + "Invalid, page must be between 1 and %d.";
+        private static @NotNull String invalidPageMessageMini = "<red>Invalid, page must be between 1 and %d.";
 
     }
 }

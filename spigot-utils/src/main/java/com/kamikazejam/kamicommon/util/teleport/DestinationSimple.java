@@ -1,7 +1,11 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.teleport.ps.PS;
+import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 
+@Setter
 @SuppressWarnings("unused")
 public class DestinationSimple extends DestinationAbstract {
 
@@ -9,11 +13,7 @@ public class DestinationSimple extends DestinationAbstract {
     // FIELDS
     // -------------------------------------------- //
 
-    protected PS ps;
-
-    public void setPs(PS ps) {
-        this.ps = ps;
-    }
+    protected @Nullable PS ps;
 
     // -------------------------------------------- //
     // CONSTRUCT
@@ -23,11 +23,11 @@ public class DestinationSimple extends DestinationAbstract {
         this(null, null);
     }
 
-    public DestinationSimple(PS ps) {
+    public DestinationSimple(@Nullable PS ps) {
         this(ps, null);
     }
 
-    public DestinationSimple(PS ps, String desc) {
+    public DestinationSimple(@Nullable PS ps, @Nullable VersionedComponent desc) {
         this.ps = ps;
         this.desc = desc;
     }
@@ -37,7 +37,7 @@ public class DestinationSimple extends DestinationAbstract {
     // -------------------------------------------- //
 
     @Override
-    public PS getPsInner() {
+    public @Nullable PS getPsInner() {
         return this.ps;
     }
 

@@ -4,7 +4,7 @@ import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
-import com.kamikazejam.kamicommon.util.LegacyColors;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import org.jetbrains.annotations.NotNull;
 
 public class CmdReload extends KamiCommand {
@@ -17,6 +17,8 @@ public class CmdReload extends KamiCommand {
     public void perform(@NotNull CommandContext context) {
         SpigotUtilsSource.get().reloadConfig();
         SpigotUtilsSource.getKamiConfig().reload();
-        context.getSender().sendMessage(LegacyColors.t("&a[KamiCommon] Reloaded."));
+        NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                "<green>[KamiCommon] Reloaded."
+        ).sendTo(context.getSender());
     }
 }

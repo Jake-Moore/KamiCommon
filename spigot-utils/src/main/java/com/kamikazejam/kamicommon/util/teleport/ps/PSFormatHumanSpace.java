@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.teleport.ps;
 
-import com.kamikazejam.kamicommon.util.LegacyColors;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 
 public class PSFormatHumanSpace extends PSFormatAbstract {
     // -------------------------------------------- //
@@ -15,24 +15,24 @@ public class PSFormatHumanSpace extends PSFormatAbstract {
 
     private PSFormatHumanSpace() {
         super(
-                LegacyColors.t("&7&oNULL"),
-                LegacyColors.t(""),
-                LegacyColors.t("&d%s"),
-                LegacyColors.t("&d%d"),
-                LegacyColors.t("&d%d"),
-                LegacyColors.t("&d%d"),
-                LegacyColors.t("&d%.2f"),
-                LegacyColors.t("&d%.2f"),
-                LegacyColors.t("&d%.2f"),
-                LegacyColors.t("&d%d"),
-                LegacyColors.t("&d%d"),
-                LegacyColors.t("&d%.2f"),
-                LegacyColors.t("&d%.2f"),
-                LegacyColors.t("&d%.2f"),
-                LegacyColors.t("&d%.2f"),
-                LegacyColors.t("&d%.2f"),
-                LegacyColors.t(" "),
-                LegacyColors.t("")
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<gray><italic>NULL"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(""),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%s"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%d"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%d"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%d"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%d"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%d"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("<light_purple>%.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(" "),
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage("")
         );
     }
 }

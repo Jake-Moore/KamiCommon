@@ -7,10 +7,11 @@ import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
 import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.log.ComponentLogger;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
-import com.kamikazejam.kamicommon.util.log.LoggerService;
 import lombok.Getter;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
@@ -24,12 +25,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 
 @SuppressWarnings("unused")
-public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> extends LoggerService implements CoreMethods, ObservableConfig {
+public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> implements CoreMethods, ObservableConfig {
     @Getter private boolean successfullyEnabled = false;
     @Getter private boolean enabled = false;
+    @Getter private ComponentLogger logger;
 
     // CoreMethods Fields
     private final List<Listener> listenerList = new ArrayList<>();
@@ -43,7 +44,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     /**
      * @return The KamiPlugin that this subsystem is registered to
      */
-    public abstract KamiPlugin getPlugin();
+    public abstract @NotNull KamiPlugin getPlugin();
 
     /**
      * This method is called at {@link AbstractSubsystem} initialization. <br>
@@ -202,8 +203,12 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     // ENABLE/DISABLE HANDLING
     // -------------------------------------------- //
     public final void handleEnable() {
+        // Create this subsystem's logger with an extra prefix of this subsystem's name
+        this.logger = new ComponentLogger(getPlugin()).setMessagePrefix(
+                NmsAPI.getVersionedComponentSerializer().fromPlainText("[" + getName() + "] ")
+        );
         onEnable();
-        info("Successfully enabled!");
+        this.logger.info(NmsAPI.getVersionedComponentSerializer().fromPlainText("Successfully enabled!"));
         successfullyEnabled = true;
         enabled = true;
     }
@@ -211,7 +216,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     public final void handleDisable() {
         onDisable();
         onDisableLater();
-        info("Successfully disabled!");
+        this.logger.info(NmsAPI.getVersionedComponentSerializer().fromPlainText("Successfully disabled!"));
         enabled = false;
         // Clear config
         if (subsystemConfig != null) {
@@ -401,22 +406,6 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     @Override
     public final int unregisterDisableables() {
         return unregisterDisableables(disableableList.toArray(new Disableable[0]));
-    }
-
-    // -------------------------------------------- //
-    // LoggerService
-    // -------------------------------------------- //
-    public String getLoggerName() {
-        return this.getName();
-    }
-    public boolean isDebug() {
-        // Inherit from KamiPlugin
-        return this.getPlugin().getColorLogger().isDebug();
-    }
-    public void logToConsole(String message, Level level) {
-        // Use the plugin's logger, appending this logger name to the start of the message
-        String subsystemPrefix = "[" + this.getName() + "] ";
-        getPlugin().getColorLogger().logToConsole(subsystemPrefix + message, level);
     }
 
     /**

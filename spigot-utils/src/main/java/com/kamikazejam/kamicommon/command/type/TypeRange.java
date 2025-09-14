@@ -3,7 +3,6 @@ package com.kamikazejam.kamicommon.command.type;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.primitive.TypeInteger;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -46,9 +45,9 @@ public class TypeRange extends TypeInteger {
 		Integer ret = super.read(arg, sender);
 
 		if (ret <= MIN_RANGE || ret > MAX_RANGE) {
-            ChatColor error = KamiCommand.Config.getErrorColor();
-            ChatColor param = KamiCommand.Config.getErrorParamColor();
-            throw new KamiCommonException().addMsg(
+            String error = KamiCommand.Config.getErrorColorMini();
+            String param = KamiCommand.Config.getErrorParamColorMini();
+            throw new KamiCommonException().addMsgFromMiniMessage(
                     error + "Invalid range " + param + "%d." + error + " Range must be between %d and %d.",
                     ret, MIN_RANGE, MAX_RANGE
             );

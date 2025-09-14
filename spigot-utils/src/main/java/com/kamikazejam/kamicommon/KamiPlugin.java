@@ -6,15 +6,16 @@ import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
 import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.log.ComponentLogger;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
 import com.kamikazejam.kamicommon.subsystem.feature.FeatureManager;
 import com.kamikazejam.kamicommon.subsystem.module.Module;
 import com.kamikazejam.kamicommon.subsystem.module.ModuleManager;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
-import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.util.log.LegacyColorsLogger;
+import com.kamikazejam.kamicommon.util.log.LoggerService;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -25,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,13 +38,24 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     @Getter
     private long enableTime;
-    private String logPrefixColored = null;
+    private String logPrefixMini = null;
     @Getter ModuleManager moduleManager;
     @Getter FeatureManager featureManager;
     private KamiConfigExt modulesConfig = null;
     private KamiConfigExt featuresConfig = null;
     private @Nullable KamiConfigExt config = null;
+
+    /**
+     * @deprecated Use {@link #getColorComponentLogger()} instead, which supports the same legacy string methods, but also component methods.
+     */
+    @Deprecated @Getter
     private LoggerService colorLogger;
+
+    /**
+     * An improved color-supporting logger, which supports both legacy color codes and component-based messages.
+     */
+    @Getter
+    private ComponentLogger colorComponentLogger;
     // CoreMethods Fields
     private final List<Listener> listenerList = new ArrayList<>();
     private final List<BukkitTask> taskList = new ArrayList<>();
@@ -64,7 +75,11 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     public void onLoadPre() {
         String[] version = this.getDescription().getVersion().split(" ");
-        this.logPrefixColored = LegacyColors.t(String.format("&3[&b%s %s&3] &e", this.getDescription().getName(), version[version.length - 1]));
+        this.logPrefixMini = String.format(
+                "<dark_aqua>[<aqua>%s %s<dark_aqua>] <yellow>",
+                this.getDescription().getName(),
+                version[version.length - 1]
+        );
     }
     public void onLoadInner() {}
     public void onLoadPost() {}
@@ -80,7 +95,11 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     public boolean onEnablePre() {
         this.enableTime = System.currentTimeMillis();
         this.colorLogger = new LegacyColorsLogger(this);
-        this.colorLogger.logToConsole(this.logPrefixColored + "=== ENABLE START ===", Level.INFO);
+        this.colorComponentLogger = new ComponentLogger(this);
+        this.colorComponentLogger.logToConsole(
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(this.logPrefixMini + "=== ENABLE START ==="),
+                Level.INFO
+        );
 
         // Create the Subsystem Managers
         this.moduleManager = new ModuleManager(this);
@@ -108,7 +127,12 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     public void onEnablePost() {
         long ms = System.currentTimeMillis() - this.enableTime;
-        this.colorLogger.logToConsole(this.logPrefixColored + "=== ENABLE &aCOMPLETE &e(Took &d" + ms + "ms&e) ===", Level.INFO);
+        this.colorComponentLogger.logToConsole(
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                        this.logPrefixMini + "=== ENABLE <green>COMPLETE <yellow>(Took <light_purple>" + ms + "ms<yellow>) ==="
+                ),
+                Level.INFO
+        );
     }
 
     public @NotNull KamiConfigExt getKamiConfig() {
@@ -163,7 +187,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         }
 
         // Log Shutdown
-        this.colorLogger.logToConsole(this.logPrefixColored + "Disabled", Level.INFO);
+        this.colorComponentLogger.logToConsole(
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(this.logPrefixMini + "Disabled"),
+                Level.INFO
+        );
     }
 
     /**
@@ -402,20 +429,9 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     // -------------------------------------------- //
     // MODULE MANAGEMENT
     // -------------------------------------------- //
-    public <M extends Module> void registerModule(Class<M> clazz) {
-        Constructor<M> s;
-        try {
-            s = clazz.getDeclaredConstructor();
-            s.setAccessible(true);
-            M instance = s.newInstance();
-            registerModule(instance);
-        } catch (Throwable t) {
-            Bukkit.getLogger().severe("Failed to initialize the module: " + clazz.getName());
-            t.printStackTrace();
-        }
-    }
     public void registerModule(Module... modules) {
         for (Module module : modules) {
+            if (module == null) { continue; }
             getModuleManager().registerModule(module);
         }
     }
@@ -423,20 +439,9 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     // -------------------------------------------- //
     // FEATURE MANAGEMENT
     // -------------------------------------------- //
-    public <F extends Feature> void registerFeature(Class<F> clazz) {
-        Constructor<F> s;
-        try {
-            s = clazz.getDeclaredConstructor();
-            s.setAccessible(true);
-            F instance = s.newInstance();
-            registerFeature(instance);
-        } catch (Throwable t) {
-            Bukkit.getLogger().severe("Failed to initialize the feature: " + clazz.getName());
-            t.printStackTrace();
-        }
-    }
     public void registerFeature(Feature... features) {
         for (Feature feature : features) {
+            if (feature == null) { continue; }
             getFeatureManager().registerFeature(feature);
         }
     }
@@ -557,16 +562,5 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     @Override
     public void reloadObservableConfig() {
         this.reloadKamiConfig();
-    }
-
-    // -------------------------------------------- //
-    // Getters
-    // -------------------------------------------- //
-//    /**
-//     * @deprecated Use {@link #getComponentLogger()} instead, which supports the same legacy string methods, but also component methods.
-//     */
-    @Deprecated
-    public LoggerService getColorLogger() {
-        return this.colorLogger;
     }
 }

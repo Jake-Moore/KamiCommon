@@ -3,8 +3,8 @@ package com.kamikazejam.kamicommon.command.impl.kc;
 import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -17,6 +17,8 @@ public class CmdNmsVersion extends KamiCommand {
 
     @Override
     public void perform(@NotNull CommandContext context) {
-        context.getSender().sendMessage(LegacyColors.t("&7NMS Version: &f" + NmsVersion.getMCVersion() + " &7(&f" + NmsVersion.getFormattedNmsInteger() + "&7)"));
+        NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                "<gray>NMS Version: <white>" + NmsVersion.getMCVersion() + " <gray>(<white>" + NmsVersion.getFormattedNmsInteger() + "<gray>)"
+        ).sendTo(context.getSender());
     }
 }

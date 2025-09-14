@@ -89,7 +89,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
      * - Providing a null supplier will disable defaults
      */
     public KamiConfig(@NotNull AbstractSubsystem<?, ?> subsystem, File file, @Nullable Supplier<InputStream> defaultsStream) {
-        this((LoggerService) subsystem, file, defaultsStream);
+        this(subsystem.getLogger(), file, defaultsStream);
     }
 
     // -------------------------------------------------- //
@@ -296,7 +296,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     @NotNull
     private static LoggerService parseLogger(@NotNull JavaPlugin plugin) {
         if (plugin instanceof KamiPlugin kp) {
-            return kp.getColorLogger();
+            return kp.getColorComponentLogger();
         } else {
             return new LegacyColorsLogger(plugin);
         }

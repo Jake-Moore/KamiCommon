@@ -2,9 +2,7 @@ package com.kamikazejam.kamicommon.command.type.enumeration;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.type.TypeAbstract;
-import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -52,9 +50,12 @@ public abstract class TypeEnumChoice<T extends Enum<T>> extends TypeAbstract<T> 
 
             return t;
         }catch (IllegalArgumentException | NullPointerException e) {
-            ChatColor error = KamiCommand.Config.getErrorColor();
-            ChatColor param = KamiCommand.Config.getErrorParamColor();
-            throw new KamiCommonException().addMsg(LegacyColors.t(error + "No %s matches \"" + param + "%s" + error + "\"."), enumName, arg);
+            String error = KamiCommand.Config.getErrorColorMini();
+            String param = KamiCommand.Config.getErrorParamColorMini();
+            throw new KamiCommonException().addMsgFromMiniMessage(
+                    error + "No %s matches \"" + param + "%s" + error + "\".",
+                    enumName, arg
+            );
         }
     }
 

@@ -1,6 +1,8 @@
 package com.kamikazejam.kamicommon.command.requirement;
 
 import com.kamikazejam.kamicommon.command.KamiCommand;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
@@ -42,11 +44,13 @@ public class RequirementHasPerm extends RequirementAbstract {
 	}
 
 	@Override
-	public String createErrorMessage(CommandSender sender, KamiCommand command) {
+	public @NotNull VersionedComponent createErrorMessage(CommandSender sender, KamiCommand command) {
 		return getPermissionDeniedMessage();
 	}
 
-	public static String getPermissionDeniedMessage() {
-		return KamiCommand.Config.getRequirementPermissionDenied();
+	public static @NotNull VersionedComponent getPermissionDeniedMessage() {
+        return NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                KamiCommand.Config.getRequirementPermissionDeniedMini()
+        );
 	}
 }
