@@ -2,9 +2,11 @@ package com.kamikazejam.kamicommon.subsystem.module;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
+import com.kamikazejam.kamicommon.util.ColoredStringParser;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +31,7 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
      * @return The default logging prefix for this subsystem (saved under the KamiPlugin modulesConfig modulePrefix)
      */
     @Override
-    public abstract @NotNull String defaultPrefix();
+    public abstract @NotNull VersionedComponent defaultPrefix();
 
     // -------------------------------------------- //
     // MODULE CONFIG
@@ -80,13 +82,13 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
     }
 
     @Override
-    public final @NotNull String getPrefix() {
+    public final @NotNull VersionedComponent getPrefix() {
         KamiConfigExt c = getPlugin().getModulesConfig();
         String prefix = c.getString("modules." + getName() + ".modulePrefix", null);
-        if (prefix != null) { return prefix; }
+        if (prefix != null) { return ColoredStringParser.parse(prefix); }
 
-        String def = defaultPrefix();
-        c.setString("modules." + getName() + ".modulePrefix", def);
+        VersionedComponent def = defaultPrefix();
+        c.setString("modules." + getName() + ".modulePrefix", def.serializeMiniMessage());
         c.save();
         return def;
     }

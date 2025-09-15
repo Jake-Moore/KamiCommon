@@ -2,9 +2,11 @@ package com.kamikazejam.kamicommon.subsystem.feature;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.module.Module;
+import com.kamikazejam.kamicommon.util.ColoredStringParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -23,7 +25,7 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
      * @return The default logging prefix for this subsystem (saved under the KamiPlugin featuresConfig featurePrefix)
      */
     @Override
-    public abstract @NotNull String defaultPrefix();
+    public abstract @NotNull VersionedComponent defaultPrefix();
 
     // -------------------------------------------- //
     // FEATURE CONFIG
@@ -60,13 +62,13 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
     }
 
     @Override
-    public final @NotNull String getPrefix() {
+    public final @NotNull VersionedComponent getPrefix() {
         KamiConfigExt c = getPlugin().getModulesConfig();
         String prefix = c.getString("features." + getName() + ".featurePrefix", null);
-        if (prefix != null) { return prefix; }
+        if (prefix != null) { return ColoredStringParser.parse(prefix); }
 
-        String def = defaultPrefix();
-        c.setString("features." + getName() + ".featurePrefix", def);
+        VersionedComponent def = defaultPrefix();
+        c.setString("features." + getName() + ".featurePrefix", def.serializeMiniMessage());
         c.save();
         return def;
     }
