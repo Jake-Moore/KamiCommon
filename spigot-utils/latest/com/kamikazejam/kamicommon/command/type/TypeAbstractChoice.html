@@ -138,7 +138,7 @@ implements <a href="AllAble.html" title="interface in com.kamikazejam.kamicommon
 <div class="col-first odd-row-color"><code>protected boolean</code></div>
 <div class="col-second odd-row-color"><code><a href="#canSeeOverridden" class="member-name-link">canSeeOverridden</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color"><code>protected @Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
 <div class="col-second even-row-color"><code><a href="#help" class="member-name-link">help</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>protected int</code></div>
@@ -245,7 +245,7 @@ implements <a href="AllAble.html" title="interface in com.kamikazejam.kamicommon
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAll(T...)" class="member-name-link">setAll</a><wbr>(<a href="TypeAbstractChoice.html" title="type parameter in TypeAbstractChoice">T</a> @NotNull ...&nbsp;all)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TypeAbstractChoice.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstractChoice</a><wbr>&lt;<a href="TypeAbstractChoice.html" title="type parameter in TypeAbstractChoice">T</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setHelp(java.lang.String)" class="member-name-link">setHelp</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;help)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setHelp(com.kamikazejam.kamicommon.nms.text.VersionedComponent)" class="member-name-link">setHelp</a><wbr>(@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;help)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TypeAbstractChoice.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstractChoice</a><wbr>&lt;<a href="TypeAbstractChoice.html" title="type parameter in TypeAbstractChoice">T</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setListCountMax(int)" class="member-name-link">setListCountMax</a><wbr>(int&nbsp;listCountMax)</code></div>
@@ -288,7 +288,8 @@ implements <a href="AllAble.html" title="interface in com.kamikazejam.kamicommon
 <li>
 <section class="detail" id="help">
 <h3>help</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">help</span></div>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">protected</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">help</span></div>
 </section>
 </li>
 <li>
@@ -350,9 +351,10 @@ implements <a href="AllAble.html" title="interface in com.kamikazejam.kamicommon
 </section>
 </li>
 <li>
-<section class="detail" id="setHelp(java.lang.String)">
+<section class="detail" id="setHelp(com.kamikazejam.kamicommon.nms.text.VersionedComponent)">
 <h3>setHelp</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="TypeAbstractChoice.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstractChoice</a>&lt;<a href="TypeAbstractChoice.html" title="type parameter in TypeAbstractChoice">T</a>&gt;</span>&nbsp;<span class="element-name">setHelp</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;help)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="TypeAbstractChoice.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstractChoice</a>&lt;<a href="TypeAbstractChoice.html" title="type parameter in TypeAbstractChoice">T</a>&gt;</span>&nbsp;<span class="element-name">setHelp</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;help)</span></div>
 </section>
 </li>
 <li>

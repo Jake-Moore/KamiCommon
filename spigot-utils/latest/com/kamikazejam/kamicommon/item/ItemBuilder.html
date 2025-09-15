@@ -38,7 +38,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li>Nested</li>
+<li><a href="#nested-class-summary">Nested</a></li>
 <li>Field</li>
 <li><a href="#constructor-summary">Constr</a></li>
 <li><a href="#method-summary">Method</a></li>
@@ -58,7 +58,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -119,6 +119,21 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static class&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="ItemBuilder.Config.html" class="type-name-link" title="class in com.kamikazejam.kamicommon.item">ItemBuilder.Config</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+</div>
+</section>
+</li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <li>
 <section class="constructor-summary" id="constructor-summary">
@@ -183,13 +198,14 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  Remove an item flag via <a href="IBuilder.html#removeItemFlag(com.cryptomorin.xseries.XItemFlag)"><code>IBuilder.removeItemFlag(XItemFlag)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addLoreLines(java.util.List)" class="member-name-link">addLoreLines</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addLoreComponents(java.util.List)" class="member-name-link">addLoreComponents</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;lines)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">PATCH FUNCTION - Appends additional lines to the current lore.<br>
  If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
  If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
  <br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.</div>
+ Colors are assumed to be already handled in the components.<br>
+ Placeholders are set automatically via <a href="../util/SoftPlaceholderAPI.html#setPlaceholders(org.bukkit.OfflinePlayer,java.lang.String)"><code>SoftPlaceholderAPI.setPlaceholders(OfflinePlayer, String)</code></a>.<br></div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build(org.bukkit.entity.Player)" class="member-name-link">build</a><wbr>(@Nullable <a href="https://jd.papermc.io/paper/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;viewer)</code></div>
@@ -203,6 +219,23 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#cloneWithNewPrototype(org.bukkit.inventory.ItemStack)" class="member-name-link">cloneWithNewPrototype</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;newPrototype)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Create a clone of this builder with all the same patches, but a different prototype <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>ItemStack</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#customName()" class="member-name-link">customName</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get the custom display name for the item.<br>
+ Placeholders are set automatically via <a href="../util/SoftPlaceholderAPI.html#setPlaceholders(org.bukkit.OfflinePlayer,java.lang.String)"><code>SoftPlaceholderAPI.setPlaceholders(OfflinePlayer, String)</code></a>.<br>
+ <br>
+ If the patch name is null (not set), the prototype's name will be returned (if available).<br></div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#displayName(com.kamikazejam.kamicommon.nms.text.VersionedComponent)" class="member-name-link">displayName</a><wbr>(@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;name)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">PATCH FUNCTION - Applies a custom display name for the item.<br>
+ Colors are assumed to be already handled in the component.<br>
+ Placeholders are set automatically via <a href="../util/SoftPlaceholderAPI.html#setPlaceholders(org.bukkit.OfflinePlayer,java.lang.String)"><code>SoftPlaceholderAPI.setPlaceholders(OfflinePlayer, String)</code></a>.<br>
+ <br>
+ Clear this patch by calling <a href="IBuilder.html#resetName()"><code>IBuilder.resetName()</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getAmount()" class="member-name-link">getAmount</a>()</code></div>
@@ -241,21 +274,6 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  <br>
  This is the combination of the prototype's item flags and the patch item flag overrides.<br>
  This set is never null, but can be empty if no item flags are present on the prototype or patch.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLore()" class="member-name-link">getLore</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Get the custom lore for the item.<br>
- <br>
- If the patch lore is null (not set), the prototype's lore will be returned (if available).</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Get the custom display name for the item.<br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
- <br>
- If the patch name is null (not set), the prototype's name will be returned (if available).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPrototype()" class="member-name-link">getPrototype</a>()</code></div>
@@ -316,6 +334,22 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  <br>
  The section can define the amount, name, lore, and many additional attributes of the item.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#lore()" class="member-name-link">lore</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get the custom lore for the item.<br>
+ <br>
+ If the patch lore is null (not set), the prototype's lore will be returned (if available).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#lore(java.util.List)" class="member-name-link">lore</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;lines)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
+ Colors are assumed to be already handled in the components.<br>
+ Placeholders are set automatically via <a href="../util/SoftPlaceholderAPI.html#setPlaceholders(org.bukkit.OfflinePlayer,java.lang.String)"><code>SoftPlaceholderAPI.setPlaceholders(OfflinePlayer, String)</code></a>.<br>
+ <br>
+ Clear this patch by calling <a href="IBuilder.html#resetLore()"><code>IBuilder.resetLore()</code></a>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeEnchantment(com.cryptomorin.xseries.XEnchantment)" class="member-name-link">removeEnchantment</a><wbr>(@NotNull com.cryptomorin.xseries.XEnchantment&nbsp;enchant)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -348,22 +382,24 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  Add an item flag via <a href="IBuilder.html#addItemFlag(com.cryptomorin.xseries.XItemFlag)"><code>IBuilder.addItemFlag(XItemFlag)</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replaceLore(java.lang.String,java.lang.String)" class="member-name-link">replaceLore</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;find,
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;replacement)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replaceLore(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)" class="member-name-link">replaceLore</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;find,
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;replacement)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of a substring in each lore line with another string.<br>
- This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
- It does NOT modify the prototype's lore.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replaceLoreLine(java.lang.String,java.util.List)" class="member-name-link">replaceLoreLine</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;find,
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;replacement)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">PATCH PROPERTY HELPER - Searches for a substring in the lore and replaces that entire line with replacement lines.<br>
+<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of a substring in each lore line with another component.<br>
  This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
  It does NOT modify the prototype's lore.<br>
  <br>
- Uses <a href="https://jd.papermc.io/paper/org/bukkit/ChatColor.html#stripColor(java.lang.String)" title="class or interface in org.bukkit" class="external-link"><code>ChatColor.stripColor(String)</code></a> for comparison to ignore color formatting.</div>
+ It will serialize each lore line into mini message format, perform the replacement, then deserialize it back to a component.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replaceLoreLineComponent(java.util.function.Predicate,java.util.List)" class="member-name-link">replaceLoreLineComponent</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;filter,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;replacements)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of lines matching the given predicate in the lore with replacement lines.<br>
+ This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
+ It does NOT modify the prototype's lore.<br>
+ <br>
+ For each line, it checks if the predicate returns true, and if so that line is replaced with the replacement lines.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replaceLorePAPI(org.bukkit.OfflinePlayer)" class="member-name-link">replaceLorePAPI</a><wbr>(@Nullable <a href="https://jd.papermc.io/paper/org/bukkit/OfflinePlayer.html" title="class or interface in org.bukkit" class="external-link">OfflinePlayer</a>&nbsp;player)</code></div>
@@ -373,10 +409,10 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  It does NOT modify the prototype's lore.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replaceName(java.lang.String,java.lang.String)" class="member-name-link">replaceName</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;find,
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;replacement)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replaceName(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)" class="member-name-link">replaceName</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;find,
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;replacement)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of a substring in the name with another string.<br>
+<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of a substring in the name with another component.<br>
  This transformation only applies to the name patch, if no name patch is set this does nothing.<br>
  It does NOT modify the prototype's name.</div>
 </div>
@@ -505,32 +541,8 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  - RESET an enchantment (remove patch) via <a href="IBuilder.html#resetEnchantment(com.cryptomorin.xseries.XEnchantment)"><code>IBuilder.resetEnchantment(XEnchantment)</code></a><br></div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLore(java.lang.String...)" class="member-name-link">setLore</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;loreLines)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSkullOwner(java.lang.String)" class="member-name-link">setSkullOwner</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;skullOwner)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
- <br>
- Clear this patch by calling <a href="IBuilder.html#resetLore()"><code>IBuilder.resetLore()</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLore(java.util.List)" class="member-name-link">setLore</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;loreLines)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
- <br>
- Clear this patch by calling <a href="IBuilder.html#resetLore()"><code>IBuilder.resetLore()</code></a>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setName(java.lang.String)" class="member-name-link">setName</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">PATCH FUNCTION - Applies a custom display name for the item.<br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
- <br>
- Clear this patch by calling <a href="IBuilder.html#resetName()"><code>IBuilder.resetName()</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSkullOwner(java.lang.String)" class="member-name-link">setSkullOwner</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;skullOwner)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">PATCH FUNCTION - Sets the owner of a player head item.<br>
  <br>
  NOTE: This function has no effect on the item unless <a href="IBuilder.html#willUseSkullOwner()"><code>IBuilder.willUseSkullOwner()</code></a> returns true,
@@ -538,16 +550,16 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetSkullOwner()"><code>IBuilder.resetSkullOwner()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setUnbreakable(boolean)" class="member-name-link">setUnbreakable</a><wbr>(boolean&nbsp;unbreakable)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setUnbreakable(boolean)" class="member-name-link">setUnbreakable</a><wbr>(boolean&nbsp;unbreakable)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">PATCH FUNCTION - Sets if the item is unbreakable or not.<br>
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetUnbreakable()"><code>IBuilder.resetUnbreakable()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#willUseDamage()" class="member-name-link">willUseDamage</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#willUseDamage()" class="member-name-link">willUseDamage</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Check if the prototype item supports setting damage (is damageable).<br>
  <br>
  If this returns true, then the following methods will modify the item:<br>
@@ -556,9 +568,9 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
  - <a href="IBuilder.html#getDamage()"><code>IBuilder.getDamage()</code></a><br>
  If this returns false, calling those methods have no effect and <a href="IBuilder.html#getDamage()"><code>IBuilder.getDamage()</code></a> will always return 0.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#willUseSkullOwner()" class="member-name-link">willUseSkullOwner</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#willUseSkullOwner()" class="member-name-link">willUseSkullOwner</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Check if the prototype item supports setting a skull owner (is a player head).<br>
  <br>
  If this returns true, then the following methods will modify the item:<br>
@@ -575,7 +587,7 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.kamikazejam.kamicommon.item.IBuilder">Methods inherited from interface&nbsp;com.kamikazejam.kamicommon.item.<a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a></h3>
-<code><a href="IBuilder.html#addLoreLines(java.lang.String...)">addLoreLines</a>, <a href="IBuilder.html#build()">build</a>, <a href="IBuilder.html#cloneWithNewPrototype(com.cryptomorin.xseries.XMaterial)">cloneWithNewPrototype</a>, <a href="IBuilder.html#cloneWithNewPrototype(org.bukkit.Material)">cloneWithNewPrototype</a>, <a href="IBuilder.html#disableGlow()">disableGlow</a>, <a href="IBuilder.html#getMaterial()">getMaterial</a>, <a href="IBuilder.html#hideAttributes()">hideAttributes</a>, <a href="IBuilder.html#isAddGlow()">isAddGlow</a>, <a href="IBuilder.html#removeLore()">removeLore</a>, <a href="IBuilder.html#replaceBoth(java.lang.String,java.lang.String)">replaceBoth</a>, <a href="IBuilder.html#replaceBothPAPI()">replaceBothPAPI</a>, <a href="IBuilder.html#replaceBothPAPI(org.bukkit.OfflinePlayer)">replaceBothPAPI</a>, <a href="IBuilder.html#replaceLorePAPI()">replaceLorePAPI</a>, <a href="IBuilder.html#replaceNamePAPI()">replaceNamePAPI</a>, <a href="IBuilder.html#setDisplayName(java.lang.String)">setDisplayName</a>, <a href="IBuilder.html#setDurability(int)">setDurability</a>, <a href="IBuilder.html#setDurability(short)">setDurability</a>, <a href="IBuilder.html#setGlow(boolean)">setGlow</a>, <a href="IBuilder.html#setItemFlag(com.cryptomorin.xseries.XItemFlag,boolean)">setItemFlag</a>, <a href="IBuilder.html#toItemStack()">toItemStack</a>, <a href="IBuilder.html#toItemStack(org.bukkit.entity.Player)">toItemStack</a></code></div>
+<code><a href="IBuilder.html#addLoreComponents(com.kamikazejam.kamicommon.nms.text.VersionedComponent...)">addLoreComponents</a>, <a href="IBuilder.html#addLoreLines(java.lang.String...)">addLoreLines</a>, <a href="IBuilder.html#addLoreLines(java.util.List)">addLoreLines</a>, <a href="IBuilder.html#build()">build</a>, <a href="IBuilder.html#cloneWithNewPrototype(com.cryptomorin.xseries.XMaterial)">cloneWithNewPrototype</a>, <a href="IBuilder.html#cloneWithNewPrototype(org.bukkit.Material)">cloneWithNewPrototype</a>, <a href="IBuilder.html#disableGlow()">disableGlow</a>, <a href="IBuilder.html#displayName()">displayName</a>, <a href="IBuilder.html#getLore()">getLore</a>, <a href="IBuilder.html#getMaterial()">getMaterial</a>, <a href="IBuilder.html#getName()">getName</a>, <a href="IBuilder.html#hideAttributes()">hideAttributes</a>, <a href="IBuilder.html#isAddGlow()">isAddGlow</a>, <a href="IBuilder.html#lore(com.kamikazejam.kamicommon.nms.text.VersionedComponent...)">lore</a>, <a href="IBuilder.html#removeLore()">removeLore</a>, <a href="IBuilder.html#replaceBoth(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">replaceBoth</a>, <a href="IBuilder.html#replaceBoth(java.lang.String,java.lang.String)">replaceBoth</a>, <a href="IBuilder.html#replaceBothPAPI()">replaceBothPAPI</a>, <a href="IBuilder.html#replaceBothPAPI(org.bukkit.OfflinePlayer)">replaceBothPAPI</a>, <a href="IBuilder.html#replaceLore(java.lang.String,java.lang.String)">replaceLore</a>, <a href="IBuilder.html#replaceLoreLine(java.lang.String,java.util.List)">replaceLoreLine</a>, <a href="IBuilder.html#replaceLoreLineComponent(java.lang.String,java.util.List)">replaceLoreLineComponent</a>, <a href="IBuilder.html#replaceLorePAPI()">replaceLorePAPI</a>, <a href="IBuilder.html#replaceName(java.lang.String,java.lang.String)">replaceName</a>, <a href="IBuilder.html#replaceNamePAPI()">replaceNamePAPI</a>, <a href="IBuilder.html#setDisplayName(java.lang.String)">setDisplayName</a>, <a href="IBuilder.html#setDurability(int)">setDurability</a>, <a href="IBuilder.html#setDurability(short)">setDurability</a>, <a href="IBuilder.html#setGlow(boolean)">setGlow</a>, <a href="IBuilder.html#setItemFlag(com.cryptomorin.xseries.XItemFlag,boolean)">setItemFlag</a>, <a href="IBuilder.html#setLore(java.lang.String...)">setLore</a>, <a href="IBuilder.html#setLore(java.util.List)">setLore</a>, <a href="IBuilder.html#setName(java.lang.String)">setName</a>, <a href="IBuilder.html#toItemStack()">toItemStack</a>, <a href="IBuilder.html#toItemStack(org.bukkit.entity.Player)">toItemStack</a></code></div>
 </section>
 </li>
 </ul>
@@ -748,19 +760,20 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 </section>
 </li>
 <li>
-<section class="detail" id="setName(java.lang.String)">
-<h3>setName</h3>
+<section class="detail" id="displayName(com.kamikazejam.kamicommon.nms.text.VersionedComponent)">
+<h3>displayName</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">setName</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#setName(java.lang.String)">IBuilder</a></code></span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">displayName</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;name)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#displayName(com.kamikazejam.kamicommon.nms.text.VersionedComponent)">IBuilder</a></code></span></div>
 <div class="block">PATCH FUNCTION - Applies a custom display name for the item.<br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
+ Colors are assumed to be already handled in the component.<br>
+ Placeholders are set automatically via <a href="../util/SoftPlaceholderAPI.html#setPlaceholders(org.bukkit.OfflinePlayer,java.lang.String)"><code>SoftPlaceholderAPI.setPlaceholders(OfflinePlayer, String)</code></a>.<br>
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetName()"><code>IBuilder.resetName()</code></a>.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IBuilder.html#setName(java.lang.String)">setName</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
+<dd><code><a href="IBuilder.html#displayName(com.kamikazejam.kamicommon.nms.text.VersionedComponent)">displayName</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>This builder, for chaining</dd>
 </dl>
@@ -784,38 +797,20 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 </section>
 </li>
 <li>
-<section class="detail" id="setLore(java.lang.String...)">
-<h3>setLore</h3>
+<section class="detail" id="lore(java.util.List)">
+<h3>lore</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">setLore</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;loreLines)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#setLore(java.lang.String...)">IBuilder</a></code></span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">lore</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;lines)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#lore(java.util.List)">IBuilder</a></code></span></div>
 <div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
+ Colors are assumed to be already handled in the components.<br>
+ Placeholders are set automatically via <a href="../util/SoftPlaceholderAPI.html#setPlaceholders(org.bukkit.OfflinePlayer,java.lang.String)"><code>SoftPlaceholderAPI.setPlaceholders(OfflinePlayer, String)</code></a>.<br>
  <br>
  Clear this patch by calling <a href="IBuilder.html#resetLore()"><code>IBuilder.resetLore()</code></a>.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IBuilder.html#setLore(java.lang.String...)">setLore</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
-<dt>Returns:</dt>
-<dd>This builder, for chaining</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="setLore(java.util.List)">
-<h3>setLore</h3>
-<div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">setLore</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;loreLines)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#setLore(java.util.List)">IBuilder</a></code></span></div>
-<div class="block">PATCH FUNCTION - Sets the custom lore for the item.<br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
- <br>
- Clear this patch by calling <a href="IBuilder.html#resetLore()"><code>IBuilder.resetLore()</code></a>.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="IBuilder.html#setLore(java.util.List)">setLore</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
+<dd><code><a href="IBuilder.html#lore(java.util.List)">lore</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>This builder, for chaining</dd>
 </dl>
@@ -1173,33 +1168,33 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 </section>
 </li>
 <li>
-<section class="detail" id="getName()">
-<h3>getName</h3>
+<section class="detail" id="customName()">
+<h3>customName</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getName</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#getName()">IBuilder</a></code></span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">customName</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#customName()">IBuilder</a></code></span></div>
 <div class="block">Get the custom display name for the item.<br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.<br>
+ Placeholders are set automatically via <a href="../util/SoftPlaceholderAPI.html#setPlaceholders(org.bukkit.OfflinePlayer,java.lang.String)"><code>SoftPlaceholderAPI.setPlaceholders(OfflinePlayer, String)</code></a>.<br>
  <br>
- If the patch name is null (not set), the prototype's name will be returned (if available).</div>
+ If the patch name is null (not set), the prototype's name will be returned (if available).<br></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IBuilder.html#getName()">getName</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
+<dd><code><a href="IBuilder.html#customName()">customName</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getLore()">
-<h3>getLore</h3>
+<section class="detail" id="lore()">
+<h3>lore</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getLore</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#getLore()">IBuilder</a></code></span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;</span>&nbsp;<span class="element-name">lore</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#lore()">IBuilder</a></code></span></div>
 <div class="block">Get the custom lore for the item.<br>
  <br>
  If the patch lore is null (not set), the prototype's lore will be returned (if available).</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IBuilder.html#getLore()">getLore</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
+<dd><code><a href="IBuilder.html#lore()">lore</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
 </dl>
 </section>
 </li>
@@ -1359,23 +1354,25 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 </section>
 </li>
 <li>
-<section class="detail" id="replaceName(java.lang.String,java.lang.String)">
+<section class="detail" id="replaceName(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">
 <h3>replaceName</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">replaceName</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;find,
  @NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;replacement)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#replaceName(java.lang.String,java.lang.String)">IBuilder</a></code></span></div>
-<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of a substring in the name with another string.<br>
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;replacement)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#replaceName(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">IBuilder</a></code></span></div>
+<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of a substring in the name with another component.<br>
  This transformation only applies to the name patch, if no name patch is set this does nothing.<br>
- It does NOT modify the prototype's name.</div>
+ It does NOT modify the prototype's name.
+ <br>
+ It will serialize the name into message format, perform the replacement, then deserialize it back to a component.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IBuilder.html#replaceName(java.lang.String,java.lang.String)">replaceName</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
+<dd><code><a href="IBuilder.html#replaceName(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">replaceName</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>find</code> - The substring to find</dd>
-<dd><code>replacement</code> - The sub</dd>
+<dd><code>replacement</code> - The component to replace each occurrence with</dd>
 <dt>Returns:</dt>
 <dd>This builder, for chaining</dd>
 </dl>
@@ -1402,48 +1399,50 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 </section>
 </li>
 <li>
-<section class="detail" id="replaceLoreLine(java.lang.String,java.util.List)">
-<h3>replaceLoreLine</h3>
+<section class="detail" id="replaceLoreLineComponent(java.util.function.Predicate,java.util.List)">
+<h3>replaceLoreLineComponent</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">replaceLoreLine</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;find,
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">replaceLoreLineComponent</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;filter,
  @NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;replacement)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#replaceLoreLine(java.lang.String,java.util.List)">IBuilder</a></code></span></div>
-<div class="block">PATCH PROPERTY HELPER - Searches for a substring in the lore and replaces that entire line with replacement lines.<br>
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;replacements)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#replaceLoreLineComponent(java.util.function.Predicate,java.util.List)">IBuilder</a></code></span></div>
+<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of lines matching the given predicate in the lore with replacement lines.<br>
  This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
  It does NOT modify the prototype's lore.<br>
  <br>
- Uses <a href="https://jd.papermc.io/paper/org/bukkit/ChatColor.html#stripColor(java.lang.String)" title="class or interface in org.bukkit" class="external-link"><code>ChatColor.stripColor(String)</code></a> for comparison to ignore color formatting.</div>
+ For each line, it checks if the predicate returns true, and if so that line is replaced with the replacement lines.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IBuilder.html#replaceLoreLine(java.lang.String,java.util.List)">replaceLoreLine</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
+<dd><code><a href="IBuilder.html#replaceLoreLineComponent(java.util.function.Predicate,java.util.List)">replaceLoreLineComponent</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>find</code> - The string to search for in the lore (color codes will be stripped for comparison)</dd>
-<dd><code>replacement</code> - The lines to swap in, in place of the entire line containing the find string</dd>
+<dd><code>filter</code> - The predicate to test each lore line against, if it returns true that line is replaced</dd>
+<dd><code>replacements</code> - The lines to swap in, in place of the entire line containing the find string</dd>
 <dt>Returns:</dt>
 <dd>This builder, for chaining</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="replaceLore(java.lang.String,java.lang.String)">
+<section class="detail" id="replaceLore(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">
 <h3>replaceLore</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">replaceLore</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;find,
  @NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;replacement)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#replaceLore(java.lang.String,java.lang.String)">IBuilder</a></code></span></div>
-<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of a substring in each lore line with another string.<br>
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;replacement)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#replaceLore(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">IBuilder</a></code></span></div>
+<div class="block">PATCH PROPERTY HELPER - Replaces all occurrences of a substring in each lore line with another component.<br>
  This transformation only applies to the lore patch, if no lore patch is set this does nothing.<br>
- It does NOT modify the prototype's lore.</div>
+ It does NOT modify the prototype's lore.<br>
+ <br>
+ It will serialize each lore line into mini message format, perform the replacement, then deserialize it back to a component.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IBuilder.html#replaceLore(java.lang.String,java.lang.String)">replaceLore</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
+<dd><code><a href="IBuilder.html#replaceLore(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">replaceLore</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>find</code> - The substring to find in each lore line</dd>
-<dd><code>replacement</code> - The string to replace each occurrence with</dd>
+<dd><code>replacement</code> - The component to replace each occurrence with</dd>
 <dt>Returns:</dt>
 <dd>This builder, for chaining</dd>
 </dl>
@@ -1470,20 +1469,21 @@ implements <a href="IBuilder.html" title="interface in com.kamikazejam.kamicommo
 </section>
 </li>
 <li>
-<section class="detail" id="addLoreLines(java.util.List)">
-<h3>addLoreLines</h3>
+<section class="detail" id="addLoreComponents(java.util.List)">
+<h3>addLoreComponents</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">addLoreLines</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#addLoreLines(java.util.List)">IBuilder</a></code></span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span>&nbsp;<span class="element-name">addLoreComponents</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;lines)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="IBuilder.html#addLoreComponents(java.util.List)">IBuilder</a></code></span></div>
 <div class="block">PATCH FUNCTION - Appends additional lines to the current lore.<br>
  If no lore patch is currently set, this will create a new lore patch with the provided lines.<br>
  If a lore patch is already set, the new lines will be added to the end of the existing lore.<br>
  <br>
- Color translations using <a href="../util/StringUtilP.html#p(org.bukkit.OfflinePlayer,java.lang.String)"><code>StringUtilP.p(OfflinePlayer, String)</code></a> will be applied during <a href="IBuilder.html#build(org.bukkit.entity.Player)"><code>IBuilder.build(Player)</code></a> automatically.</div>
+ Colors are assumed to be already handled in the components.<br>
+ Placeholders are set automatically via <a href="../util/SoftPlaceholderAPI.html#setPlaceholders(org.bukkit.OfflinePlayer,java.lang.String)"><code>SoftPlaceholderAPI.setPlaceholders(OfflinePlayer, String)</code></a>.<br></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IBuilder.html#addLoreLines(java.util.List)">addLoreLines</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
+<dd><code><a href="IBuilder.html#addLoreComponents(java.util.List)">addLoreComponents</a></code>&nbsp;in interface&nbsp;<code><a href="IBuilder.html" title="interface in com.kamikazejam.kamicommon.item">IBuilder</a>&lt;<a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>lines</code> - The lore lines to append</dd>
 <dt>Returns:</dt>

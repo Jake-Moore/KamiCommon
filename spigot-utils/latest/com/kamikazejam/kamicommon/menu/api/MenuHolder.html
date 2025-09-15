@@ -121,7 +121,7 @@ implements <a href="https://jd.papermc.io/paper/org/bukkit/inventory/InventoryHo
 <div class="col-first odd-row-color"><code>protected @NotNull <a href="struct/size/MenuSize.html" title="interface in com.kamikazejam.kamicommon.menu.api.struct.size">MenuSize</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#size" class="member-name-link">size</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color"><code>protected @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
 <div class="col-second even-row-color"><code><a href="#title" class="member-name-link">title</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
@@ -135,9 +135,18 @@ implements <a href="https://jd.papermc.io/paper/org/bukkit/inventory/InventoryHo
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize,java.lang.String)" class="member-name-link">MenuHolder</a><wbr>(@NotNull <a href="struct/size/MenuSize.html" title="interface in com.kamikazejam.kamicommon.menu.api.struct.size">MenuSize</a>&nbsp;size,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize,com.kamikazejam.kamicommon.nms.text.VersionedComponent)" class="member-name-link">MenuHolder</a><wbr>(@NotNull <a href="struct/size/MenuSize.html" title="interface in com.kamikazejam.kamicommon.menu.api.struct.size">MenuSize</a>&nbsp;size,
+ @Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;name)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Constructs a new MenuHolder with the given size and title.</div>
+</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize,java.lang.String)" class="member-name-link">MenuHolder</a><wbr>(@NotNull <a href="struct/size/MenuSize.html" title="interface in com.kamikazejam.kamicommon.menu.api.struct.size">MenuSize</a>&nbsp;size,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Replace with <a href="#%3Cinit%3E(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize,com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>MenuHolder(MenuSize, VersionedComponent)</code></a> and use a VersionedComponent instead.</div>
+</div>
+</div>
 </div>
 </section>
 </li>
@@ -237,7 +246,7 @@ implements <a href="https://jd.papermc.io/paper/org/bukkit/inventory/InventoryHo
 <section class="detail" id="title">
 <h3>title</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">protected</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">title</span></div>
+</span><span class="modifiers">protected</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">title</span></div>
 </section>
 </li>
 <li>
@@ -258,10 +267,36 @@ implements <a href="https://jd.papermc.io/paper/org/bukkit/inventory/InventoryHo
 <li>
 <section class="detail" id="&lt;init&gt;(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize,java.lang.String)">
 <h3>MenuHolder</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">MenuHolder</span><wbr><span class="parameters">(@NotNull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="element-name">MenuHolder</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="struct/size/MenuSize.html" title="interface in com.kamikazejam.kamicommon.menu.api.struct.size">MenuSize</a>&nbsp;size,
  @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Replace with <a href="#%3Cinit%3E(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize,com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>MenuHolder(MenuSize, VersionedComponent)</code></a> and use a VersionedComponent instead.</div>
+</div>
+<div class="block">Constructs a new MenuHolder with the given size and legacy title string (containing color codes using the sections symbol).<br>
+ <strong>Any ampersand color codes will be converted to sections symbols automatically.</strong></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>size</code> - the size of the menu.</dd>
+<dd><code>name</code> - the legacy title of the menu. If null, a single space will be used instead to prevent issues with Bukkit.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">
+<h3>MenuHolder</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">MenuHolder</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="struct/size/MenuSize.html" title="interface in com.kamikazejam.kamicommon.menu.api.struct.size">MenuSize</a>&nbsp;size,
+ @Nullable
+ @Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;name)</span></div>
+<div class="block">Constructs a new MenuHolder with the given size and title.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>size</code> - the size of the menu.</dd>
+<dd><code>name</code> - the title of the menu. If null, a single space will be used instead to prevent issues with Bukkit.</dd>
+</dl>
 </section>
 </li>
 </ul>

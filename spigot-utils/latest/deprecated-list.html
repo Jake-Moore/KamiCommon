@@ -52,8 +52,25 @@ loadScripts(document, 'script');</script>
 </div>
 <h2 title="Contents">Contents</h2>
 <ul class="contents-list">
+<li id="contents-interface"><a href="#interface">Interfaces</a></li>
 <li id="contents-field"><a href="#field">Fields</a></li>
 <li id="contents-method"><a href="#method">Methods</a></li>
+<li id="contents-constructor"><a href="#constructor">Constructors</a></li>
+</ul>
+<ul class="block-list">
+<li>
+<div id="interface">
+<div class="caption"><span>Deprecated Interfaces</span></div>
+<div class="summary-table two-column-summary">
+<div class="table-header col-first">Interface</div>
+<div class="table-header col-last">Description</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/menu/api/title/MenuTitleProvider.html" title="interface in com.kamikazejam.kamicommon.menu.api.title">com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider</a></div>
+<div class="col-last even-row-color">
+<div class="block">Replace with <a href="com/kamikazejam/kamicommon/menu/api/title/ComponentMenuTitleProvider.html" title="interface in com.kamikazejam.kamicommon.menu.api.title"><code>ComponentMenuTitleProvider</code></a> using <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link"><code>VersionedComponent</code></a></div>
+</div>
+</div>
+</div>
+</li>
 </ul>
 <ul class="block-list">
 <li>
@@ -101,18 +118,111 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#setDurability(int)">com.kamikazejam.kamicommon.item.IBuilder.setDurability<wbr>(int)</a></div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#addLoreLines(java.lang.String...)">com.kamikazejam.kamicommon.item.IBuilder.addLoreLines<wbr>(String...)</a></div>
+<div class="col-last even-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#addLoreComponents(com.kamikazejam.kamicommon.nms.text.VersionedComponent...)"><code>IBuilder.addLoreComponents(VersionedComponent...)</code></a></div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#addLoreLines(java.util.List)">com.kamikazejam.kamicommon.item.IBuilder.addLoreLines<wbr>(List&lt;String&gt;)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#addLoreComponents(java.util.List)"><code>IBuilder.addLoreComponents(List)</code></a></div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#getLore()">com.kamikazejam.kamicommon.item.IBuilder.getLore()</a></div>
+<div class="col-last even-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#lore()"><code>IBuilder.lore()</code></a> which returns components.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#getName()">com.kamikazejam.kamicommon.item.IBuilder.getName()</a></div>
+<div class="col-last odd-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#displayName()"><code>IBuilder.displayName()</code></a> which returns a component.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#replaceBoth(java.lang.String,java.lang.String)">com.kamikazejam.kamicommon.item.IBuilder.replaceBoth<wbr>(String, String)</a></div>
+<div class="col-last even-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#replaceBoth(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>IBuilder.replaceBoth(String, VersionedComponent)</code></a> which supports components.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#replaceLore(java.lang.String,java.lang.String)">com.kamikazejam.kamicommon.item.IBuilder.replaceLore<wbr>(String, String)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#replaceLore(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>IBuilder.replaceLore(String, VersionedComponent)</code></a> which supports components.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#replaceLoreLine(java.lang.String,java.util.List)">com.kamikazejam.kamicommon.item.IBuilder.replaceLoreLine<wbr>(String, List&lt;String&gt;)</a></div>
+<div class="col-last even-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#replaceLoreLineComponent(java.lang.String,java.util.List)"><code>IBuilder.replaceLoreLineComponent(String, List)</code></a> which supports components.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#replaceName(java.lang.String,java.lang.String)">com.kamikazejam.kamicommon.item.IBuilder.replaceName<wbr>(String, String)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#replaceName(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>IBuilder.replaceName(String, VersionedComponent)</code></a> which supports components.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#setDisplayName(java.lang.String)">com.kamikazejam.kamicommon.item.IBuilder.setDisplayName<wbr>(String)</a></div>
+<div class="col-last even-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#displayName(com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>IBuilder.displayName(VersionedComponent)</code></a>.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#setDurability(int)">com.kamikazejam.kamicommon.item.IBuilder.setDurability<wbr>(int)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">As of 5.0.0-alpha.17, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#setDamage(int)"><code>IBuilder.setDamage(int)</code></a>.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#setDurability(short)">com.kamikazejam.kamicommon.item.IBuilder.setDurability<wbr>(short)</a></div>
 <div class="col-last even-row-color">
 <div class="block">As of 5.0.0-alpha.17, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#setDamage(int)"><code>IBuilder.setDamage(int)</code></a>.</div>
 </div>
-<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#setDurability(short)">com.kamikazejam.kamicommon.item.IBuilder.setDurability<wbr>(short)</a></div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#setLore(java.lang.String...)">com.kamikazejam.kamicommon.item.IBuilder.setLore<wbr>(String...)</a></div>
 <div class="col-last odd-row-color">
-<div class="block">As of 5.0.0-alpha.17, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#setDamage(int)"><code>IBuilder.setDamage(int)</code></a>.</div>
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#lore(com.kamikazejam.kamicommon.nms.text.VersionedComponent...)"><code>IBuilder.lore(VersionedComponent...)</code></a>.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#setLore(java.util.List)">com.kamikazejam.kamicommon.item.IBuilder.setLore<wbr>(List&lt;String&gt;)</a></div>
+<div class="col-last even-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#lore(java.util.List)"><code>IBuilder.lore(List)</code></a></div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/item/IBuilder.html#setName(java.lang.String)">com.kamikazejam.kamicommon.item.IBuilder.setName<wbr>(String)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/item/IBuilder.html#displayName(com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>IBuilder.displayName(VersionedComponent)</code></a>.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/menu/AbstractMenuBuilder.html#title(com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider)">com.kamikazejam.kamicommon.menu.AbstractMenuBuilder.title<wbr>(MenuTitleProvider)</a></div>
+<div class="col-last even-row-color">
+<div class="block">Use <a href="com/kamikazejam/kamicommon/menu/AbstractMenuBuilder.html#title(com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider)"><code>AbstractMenuBuilder.title(ComponentMenuTitleProvider)</code></a> instead to modify parts of the title.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/menu/AbstractMenuBuilder.html#title(java.lang.String)">com.kamikazejam.kamicommon.menu.AbstractMenuBuilder.title<wbr>(String)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">Use more specific method <a href="com/kamikazejam/kamicommon/menu/AbstractMenuBuilder.html#titleFromLegacySection(java.lang.String)"><code>AbstractMenuBuilder.titleFromLegacySection(String)</code></a></div>
 </div>
 <div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/menu/api/struct/MenuEvents.html#addPlayerSlotClick(com.kamikazejam.kamicommon.menu.api.clicks.PlayerSlotClick)">com.kamikazejam.kamicommon.menu.api.struct.MenuEvents.addPlayerSlotClick<wbr>(PlayerSlotClick&lt;M&gt;)</a></div>
 <div class="col-last even-row-color">
 <div class="block">Use <a href="com/kamikazejam/kamicommon/menu/api/struct/MenuEvents.html#addPlayerInvClick(com.kamikazejam.kamicommon.menu.api.clicks.PlayerSlotClick)"><code>MenuEvents.addPlayerInvClick(PlayerSlotClick)</code></a> instead.
  This method will be removed in a future release.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/menu/api/title/ComponentMenuTitleProvider.html#fromLegacy(com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider)">com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider.fromLegacy<wbr>(MenuTitleProvider)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">Construct your own <a href="com/kamikazejam/kamicommon/menu/api/title/ComponentMenuTitleProvider.html" title="interface in com.kamikazejam.kamicommon.menu.api.title"><code>ComponentMenuTitleProvider</code></a> using <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link"><code>VersionedComponent</code></a> instead.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/subsystem/AbstractSubsystem.html#buildMessage(java.lang.String)">com.kamikazejam.kamicommon.subsystem.AbstractSubsystem.buildMessage<wbr>(String)</a></div>
+<div class="col-last even-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/subsystem/AbstractSubsystem.html#buildMiniMessage(java.lang.String)"><code>AbstractSubsystem.buildMiniMessage(String)</code></a></div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/subsystem/AbstractSubsystem.html#getMessage(java.lang.String)">com.kamikazejam.kamicommon.subsystem.AbstractSubsystem.getMessage<wbr>(String)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">As of 5.0.0-alpha.26, replaced by <a href="com/kamikazejam/kamicommon/subsystem/AbstractSubsystem.html#buildMiniMessage(java.lang.String)"><code>AbstractSubsystem.buildMiniMessage(String)</code></a></div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/subsystem/AbstractSubsystem.html#getMiniMessage(java.lang.String)">com.kamikazejam.kamicommon.subsystem.AbstractSubsystem.getMiniMessage<wbr>(String)</a></div>
+<div class="col-last even-row-color"></div>
+<div class="col-summary-item-name odd-row-color"><a href="com/kamikazejam/kamicommon/util/exception/KamiCommonException.html#addMsg(java.lang.String)">com.kamikazejam.kamicommon.util.exception.KamiCommonException.addMsg<wbr>(String)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">Use <a href="com/kamikazejam/kamicommon/util/exception/KamiCommonException.html#addMsgFromLegacyColors(java.lang.String)"><code>KamiCommonException.addMsgFromLegacyColors(String)</code></a> instead for clarity</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/util/exception/KamiCommonException.html#addMsg(java.lang.String,java.lang.Object...)">com.kamikazejam.kamicommon.util.exception.KamiCommonException.addMsg<wbr>(String, Object...)</a></div>
+<div class="col-last even-row-color">
+<div class="block">Use <a href="com/kamikazejam/kamicommon/util/exception/KamiCommonException.html#addMsgFromLegacyColors(java.lang.String,java.lang.Object...)"><code>KamiCommonException.addMsgFromLegacyColors(String, Object...)</code></a> instead for clarity</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+<ul class="block-list">
+<li>
+<div id="constructor">
+<div class="caption"><span>Deprecated Constructors</span></div>
+<div class="summary-table two-column-summary">
+<div class="table-header col-first">Constructor</div>
+<div class="table-header col-last">Description</div>
+<div class="col-summary-item-name even-row-color"><a href="com/kamikazejam/kamicommon/menu/api/MenuHolder.html#%3Cinit%3E(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize,java.lang.String)">com.kamikazejam.kamicommon.menu.api.MenuHolder<wbr>(MenuSize, String)</a></div>
+<div class="col-last even-row-color">
+<div class="block">Replace with <a href="com/kamikazejam/kamicommon/menu/api/MenuHolder.html#%3Cinit%3E(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize,com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>MenuHolder(MenuSize, VersionedComponent)</code></a> and use a VersionedComponent instead.</div>
 </div>
 </div>
 </div>

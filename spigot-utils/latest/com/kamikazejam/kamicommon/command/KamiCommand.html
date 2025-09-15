@@ -95,7 +95,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>Direct Known Subclasses:</dt>
-<dd><code><a href="impl/kc/CmdGetItem.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdGetItem</a></code>, <code><a href="impl/kc/CmdItemDump.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdItemDump</a></code>, <code><a href="impl/kc/CmdLoadItem.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdLoadItem</a></code>, <code><a href="../subsystem/module/commands/CmdModules.html" title="class in com.kamikazejam.kamicommon.subsystem.module.commands">CmdModules</a></code>, <code><a href="impl/kc/CmdNmsTest.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdNmsTest</a></code>, <code><a href="impl/kc/CmdNmsVersion.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdNmsVersion</a></code>, <code><a href="impl/kc/CmdOpenMenu.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdOpenMenu</a></code>, <code><a href="impl/kc/CmdReload.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdReload</a></code>, <code><a href="impl/kc/CmdSaveItem.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdSaveItem</a></code>, <code><a href="impl/kc/CmdTestMsg.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdTestMsg</a></code>, <code><a href="KamiCommandHelp.html" title="class in com.kamikazejam.kamicommon.command">KamiCommandHelp</a></code>, <code><a href="impl/KamiCommandVersion.html" title="class in com.kamikazejam.kamicommon.command.impl">KamiCommandVersion</a></code>, <code><a href="impl/kc/KamiCommonCommand.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">KamiCommonCommand</a></code>, <code><a href="../subsystem/module/commands/UnmatchedCommand.html" title="class in com.kamikazejam.kamicommon.subsystem.module.commands">UnmatchedCommand</a></code></dd>
+<dd><code><a href="impl/kc/CmdGetItem.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdGetItem</a></code>, <code><a href="impl/kc/CmdItemDump.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdItemDump</a></code>, <code><a href="impl/kc/CmdLoadItem.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdLoadItem</a></code>, <code><a href="impl/kc/CmdNmsTest.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdNmsTest</a></code>, <code><a href="impl/kc/CmdNmsVersion.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdNmsVersion</a></code>, <code><a href="impl/kc/CmdOpenMenu.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdOpenMenu</a></code>, <code><a href="impl/kc/CmdReload.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdReload</a></code>, <code><a href="impl/kc/CmdSaveItem.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdSaveItem</a></code>, <code><a href="../subsystem/commands/CmdSubsystems.html" title="class in com.kamikazejam.kamicommon.subsystem.commands">CmdSubsystems</a></code>, <code><a href="impl/kc/CmdTestMsg.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">CmdTestMsg</a></code>, <code><a href="KamiCommandHelp.html" title="class in com.kamikazejam.kamicommon.command">KamiCommandHelp</a></code>, <code><a href="impl/KamiCommandVersion.html" title="class in com.kamikazejam.kamicommon.command.impl">KamiCommandVersion</a></code>, <code><a href="impl/kc/KamiCommonCommand.html" title="class in com.kamikazejam.kamicommon.command.impl.kc">KamiCommonCommand</a></code>, <code><a href="../subsystem/module/commands/UnmatchedCommand.html" title="class in com.kamikazejam.kamicommon.subsystem.module.commands">UnmatchedCommand</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">KamiCommand</span>
@@ -227,12 +227,12 @@ implements <a href="../util/interfaces/Active.html" title="interface in com.kami
 <div class="block">Returns the current command ran by the player.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCurrentTemplateChain()" class="member-name-link">getCurrentTemplateChain</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCurrentTemplateChainMini()" class="member-name-link">getCurrentTemplateChainMini</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the current template chain for this command.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCurrentTemplateUsage(org.bukkit.command.CommandSender,boolean)" class="member-name-link">getCurrentTemplateUsage</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCurrentTemplateUsageMini(org.bukkit.command.CommandSender,boolean)" class="member-name-link">getCurrentTemplateUsageMini</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender,
  boolean&nbsp;addDesc)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the current template usage for this command.</div>
@@ -249,7 +249,7 @@ implements <a href="../util/interfaces/Active.html" title="interface in com.kami
  boolean&nbsp;onlyOneSubAlias,
  @Nullable <a href="https://jd.papermc.io/paper/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getHelpClickable(com.kamikazejam.kamicommon.command.KamiCommand,org.bukkit.command.CommandSender)" class="member-name-link">getHelpClickable</a><wbr>(@NotNull <a href="KamiCommand.html" title="class in com.kamikazejam.kamicommon.command">KamiCommand</a>&nbsp;child,
  @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -289,14 +289,14 @@ implements <a href="../util/interfaces/Active.html" title="interface in com.kami
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPlugin()" class="member-name-link">getPlugin</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getRequirementsError(org.bukkit.command.CommandSender,boolean)" class="member-name-link">getRequirementsError</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender,
  boolean&nbsp;verbose)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="KamiCommand.html" title="class in com.kamikazejam.kamicommon.command">KamiCommand</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getRoot()" class="member-name-link">getRoot</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSuggestionClickable(com.kamikazejam.kamicommon.command.KamiCommand,java.lang.String,org.bukkit.command.CommandSender)" class="member-name-link">getSuggestionClickable</a><wbr>(@NotNull <a href="KamiCommand.html" title="class in com.kamikazejam.kamicommon.command">KamiCommand</a>&nbsp;suggested,
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token,
  @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender)</code></div>
@@ -429,10 +429,10 @@ implements <a href="../util/interfaces/Active.html" title="interface in com.kami
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDesc(java.lang.String)" class="member-name-link">setDesc</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;desc)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setHelpComments(com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageBlock)" class="member-name-link">setHelpComments</a><wbr>(@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageBlock.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageBlock</a>&nbsp;block)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setHelpComments(com.kamikazejam.kamicommon.nms.text.VersionedComponent...)" class="member-name-link">setHelpComments</a><wbr>(@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>...&nbsp;helpComments)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setHelpComments(java.util.List)" class="member-name-link">setHelpComments</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a>&gt;&nbsp;helpComments)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setHelpComments(java.util.List)" class="member-name-link">setHelpComments</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;helpComments)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setOverflowSensitive(boolean)" class="member-name-link">setOverflowSensitive</a><wbr>(boolean&nbsp;overflowSensitive)</code></div>
@@ -896,7 +896,8 @@ implements <a href="../util/interfaces/Active.html" title="interface in com.kami
 <li>
 <section class="detail" id="getRequirementsError(org.bukkit.command.CommandSender,boolean)">
 <h3>getRequirementsError</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getRequirementsError</span><wbr><span class="parameters">(@NotNull
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">getRequirementsError</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender,
  boolean&nbsp;verbose)</span></div>
 </section>
@@ -957,7 +958,7 @@ implements <a href="../util/interfaces/Active.html" title="interface in com.kami
 <section class="detail" id="getSuggestionClickable(com.kamikazejam.kamicommon.command.KamiCommand,java.lang.String,org.bukkit.command.CommandSender)">
 <h3>getSuggestionClickable</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a></span>&nbsp;<span class="element-name">getSuggestionClickable</span><wbr><span class="parameters">(@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">getSuggestionClickable</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="KamiCommand.html" title="class in com.kamikazejam.kamicommon.command">KamiCommand</a>&nbsp;suggested,
  @NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token,
@@ -987,7 +988,7 @@ implements <a href="../util/interfaces/Active.html" title="interface in com.kami
 <section class="detail" id="getHelpClickable(com.kamikazejam.kamicommon.command.KamiCommand,org.bukkit.command.CommandSender)">
 <h3>getHelpClickable</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a></span>&nbsp;<span class="element-name">getHelpClickable</span><wbr><span class="parameters">(@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">getHelpClickable</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="KamiCommand.html" title="class in com.kamikazejam.kamicommon.command">KamiCommand</a>&nbsp;child,
  @NotNull
  @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender)</span></div>
@@ -1008,19 +1009,19 @@ implements <a href="../util/interfaces/Active.html" title="interface in com.kami
 </section>
 </li>
 <li>
-<section class="detail" id="getCurrentTemplateChain()">
-<h3>getCurrentTemplateChain</h3>
+<section class="detail" id="getCurrentTemplateChainMini()">
+<h3>getCurrentTemplateChainMini</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getCurrentTemplateChain</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getCurrentTemplateChainMini</span>()</div>
 <div class="block">Returns the current template chain for this command. Requires an active command instance with non-null context.<br>
  The chain is the color coded concatenation of all command labels thus far (no parameters or descriptions).</div>
 </section>
 </li>
 <li>
-<section class="detail" id="getCurrentTemplateUsage(org.bukkit.command.CommandSender,boolean)">
-<h3>getCurrentTemplateUsage</h3>
+<section class="detail" id="getCurrentTemplateUsageMini(org.bukkit.command.CommandSender,boolean)">
+<h3>getCurrentTemplateUsageMini</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getCurrentTemplateUsage</span><wbr><span class="parameters">(@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getCurrentTemplateUsageMini</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender,
  boolean&nbsp;addDesc)</span></div>
 <div class="block">Returns the current template usage for this command. Requires an active command instance with non-null context.<br>
@@ -1141,14 +1142,14 @@ implements <a href="../util/interfaces/Active.html" title="interface in com.kami
 <section class="detail" id="setHelpComments(java.util.List)">
 <h3>setHelpComments</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setHelpComments</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a>&gt;&nbsp;helpComments)</span></div>
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&gt;&nbsp;helpComments)</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="setHelpComments(com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageBlock)">
+<section class="detail" id="setHelpComments(com.kamikazejam.kamicommon.nms.text.VersionedComponent...)">
 <h3>setHelpComments</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setHelpComments</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageBlock.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageBlock</a>&nbsp;block)</span></div>
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>...&nbsp;helpComments)</span></div>
 </section>
 </li>
 <li>

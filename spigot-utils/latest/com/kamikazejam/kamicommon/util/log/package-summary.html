@@ -88,16 +88,26 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="JavaPluginLogger.html" title="class in com.kamikazejam.kamicommon.util.log">JavaPluginLogger</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="LegacyColorsLogger.html" title="class in com.kamikazejam.kamicommon.util.log">LegacyColorsLogger</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Simple colored logger that automatically parse legacy color codes using the section symbol (&sect;) or ampersand (&amp;).<br>
+ <br>
+ This logger is designed for use in Bukkit/Spigot/Paper plugins, and will prepend the plugin name to each message.<br>
+ <br>
+ It supports different log levels, and will colorize the output accordingly:<br>
+ - DEBUG (Level.FINE): Gray<br>
+ - INFO (Level.INFO): No colorization<br>
+ - WARNING (Level.WARNING): Yellow<br>
+ - SEVERE (Level.SEVERE): Red<br>
+ <br>
+ Note: The logger does not currently support other log levels.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="LoggerService.html" title="class in com.kamikazejam.kamicommon.util.log">LoggerService</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A simple logger service that provides an abstraction for where to log messages.<br>
  <br>
  Override <a href="LoggerService.html#logToConsole(java.lang.String,java.util.logging.Level)"><code>LoggerService.logToConsole(java.lang.String, java.util.logging.Level)</code></a> to change how log messages are processed.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PluginLogger.html" title="class in com.kamikazejam.kamicommon.util.log">PluginLogger</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
 </div>
 </div>
 </li>

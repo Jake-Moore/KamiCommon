@@ -120,7 +120,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>protected @Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a></code></div>
+<div class="col-first even-row-color"><code>protected @Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
 <div class="col-second even-row-color"><code><a href="#message" class="member-name-link">message</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
@@ -144,31 +144,56 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMsg(com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle)" class="member-name-link">addMsg</a><wbr>(@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a>&nbsp;msg)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMsg(com.kamikazejam.kamicommon.nms.text.VersionedComponent)" class="member-name-link">addMsg</a><wbr>(@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;msg)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addMsg(java.lang.String)" class="member-name-link">addMsg</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#addMsgFromLegacyColors(java.lang.String)"><code>addMsgFromLegacyColors(String)</code></a> instead for clarity</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addMsg(java.lang.String,java.lang.Object...)" class="member-name-link">addMsg</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#addMsgFromLegacyColors(java.lang.String,java.lang.Object...)"><code>addMsgFromLegacyColors(String, Object...)</code></a> instead for clarity</div>
+</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMsg(java.lang.String)" class="member-name-link">addMsg</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMsgFromLegacyColors(java.lang.String)" class="member-name-link">addMsgFromLegacyColors</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMsg(java.lang.String,java.lang.Object...)" class="member-name-link">addMsg</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMsgFromLegacyColors(java.lang.String,java.lang.Object...)" class="member-name-link">addMsgFromLegacyColors</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getKMessage()" class="member-name-link">getKMessage</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMsgFromMiniMessage(java.lang.String)" class="member-name-link">addMsgFromMiniMessage</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;miniMessage)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessage()" class="member-name-link">getMessage</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMsgFromMiniMessage(java.lang.String,java.lang.Object...)" class="member-name-link">addMsgFromMiniMessage</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;miniMessage,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasMessage()" class="member-name-link">hasMessage</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMsgFromPlainText(java.lang.String)" class="member-name-link">addMsgFromPlainText</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;plainText)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getComponent()" class="member-name-link">getComponent</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessage()" class="member-name-link">getMessage</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasMessage()" class="member-name-link">hasMessage</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -193,7 +218,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="message">
 <h3>message</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">protected</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a></span>&nbsp;<span class="element-name">message</span></div>
+</span><span class="modifiers">protected</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">message</span></div>
 </section>
 </li>
 </ul>
@@ -236,35 +261,85 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getKMessage()">
-<h3>getKMessage</h3>
+<section class="detail" id="getComponent()">
+<h3>getComponent</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a></span>&nbsp;<span class="element-name">getKMessage</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">getComponent</span>()</div>
 </section>
 </li>
 <li>
 <section class="detail" id="addMsg(java.lang.String)">
 <h3>addMsg</h3>
-<div class="member-signature"><span class="annotations">@NotNull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></span>&nbsp;<span class="element-name">addMsg</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#addMsgFromLegacyColors(java.lang.String)"><code>addMsgFromLegacyColors(String)</code></a> instead for clarity</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="addMsgFromLegacyColors(java.lang.String)">
+<h3>addMsgFromLegacyColors</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></span>&nbsp;<span class="element-name">addMsgFromLegacyColors</span><wbr><span class="parameters">(@Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="addMsg(java.lang.String,java.lang.Object...)">
 <h3>addMsg</h3>
-<div class="member-signature"><span class="annotations">@NotNull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></span>&nbsp;<span class="element-name">addMsg</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#addMsgFromLegacyColors(java.lang.String,java.lang.Object...)"><code>addMsgFromLegacyColors(String, Object...)</code></a> instead for clarity</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="addMsgFromLegacyColors(java.lang.String,java.lang.Object...)">
+<h3>addMsgFromLegacyColors</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></span>&nbsp;<span class="element-name">addMsgFromLegacyColors</span><wbr><span class="parameters">(@Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="addMsg(com.kamikazejam.kamicommon.nms.abstraction.chat.impl.KMessageSingle)">
+<section class="detail" id="addMsg(com.kamikazejam.kamicommon.nms.text.VersionedComponent)">
 <h3>addMsg</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></span>&nbsp;<span class="element-name">addMsg</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/abstraction/chat/impl/KMessageSingle.html" title="class or interface in com.kamikazejam.kamicommon.nms.abstraction.chat.impl" class="external-link">KMessageSingle</a>&nbsp;msg)</span></div>
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;msg)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="addMsgFromMiniMessage(java.lang.String)">
+<h3>addMsgFromMiniMessage</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></span>&nbsp;<span class="element-name">addMsgFromMiniMessage</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;miniMessage)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="addMsgFromMiniMessage(java.lang.String,java.lang.Object...)">
+<h3>addMsgFromMiniMessage</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></span>&nbsp;<span class="element-name">addMsgFromMiniMessage</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;miniMessage,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="addMsgFromPlainText(java.lang.String)">
+<h3>addMsgFromPlainText</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception">KamiCommonException</a></span>&nbsp;<span class="element-name">addMsgFromPlainText</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;plainText)</span></div>
 </section>
 </li>
 </ul>

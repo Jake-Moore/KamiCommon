@@ -149,7 +149,7 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -174,10 +174,30 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#size(com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize)" class="member-name-link">size</a><wbr>(@NotNull <a href="api/struct/size/MenuSize.html" title="interface in com.kamikazejam.kamicommon.menu.api.struct.size">MenuSize</a>&nbsp;size)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#title(com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider)" class="member-name-link">title</a><wbr>(@NotNull <a href="api/title/MenuTitleProvider.html" title="interface in com.kamikazejam.kamicommon.menu.api.title">MenuTitleProvider</a>&nbsp;titleProvider)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#title(com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider)" class="member-name-link">title</a><wbr>(@NotNull <a href="api/title/ComponentMenuTitleProvider.html" title="interface in com.kamikazejam.kamicommon.menu.api.title">ComponentMenuTitleProvider</a>&nbsp;titleProvider)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>final <a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#title(com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider)" class="member-name-link">title</a><wbr>(@NotNull <a href="api/title/MenuTitleProvider.html" title="interface in com.kamikazejam.kamicommon.menu.api.title">MenuTitleProvider</a>&nbsp;titleProvider)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#title(com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider)"><code>title(ComponentMenuTitleProvider)</code></a> instead to modify parts of the title.</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>final <a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#title(java.lang.String)" class="member-name-link">title</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use more specific method <a href="#titleFromLegacySection(java.lang.String)"><code>titleFromLegacySection(String)</code></a></div>
+</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#titleFromComponent(com.kamikazejam.kamicommon.nms.text.VersionedComponent)" class="member-name-link">titleFromComponent</a><wbr>(@Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;title)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#titleFromLegacySection(java.lang.String)" class="member-name-link">titleFromLegacySection</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#title(java.lang.String)" class="member-name-link">title</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#titleFromMiniMessage(java.lang.String)" class="member-name-link">titleFromMiniMessage</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#titleReplacement(java.lang.CharSequence,java.lang.CharSequence)" class="member-name-link">titleReplacement</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/CharSequence.html" title="class or interface in java.lang" class="external-link">CharSequence</a>&nbsp;target,
@@ -277,17 +297,57 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="title(java.lang.String)">
 <h3>title</h3>
-<div class="member-signature"><span class="annotations">@NotNull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@NotNull
 </span><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></span>&nbsp;<span class="element-name">title</span><wbr><span class="parameters">(@Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use more specific method <a href="#titleFromLegacySection(java.lang.String)"><code>titleFromLegacySection(String)</code></a></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="titleFromLegacySection(java.lang.String)">
+<h3>titleFromLegacySection</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></span>&nbsp;<span class="element-name">titleFromLegacySection</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="titleFromMiniMessage(java.lang.String)">
+<h3>titleFromMiniMessage</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></span>&nbsp;<span class="element-name">titleFromMiniMessage</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="titleFromComponent(com.kamikazejam.kamicommon.nms.text.VersionedComponent)">
+<h3>titleFromComponent</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></span>&nbsp;<span class="element-name">titleFromComponent</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;title)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="title(com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider)">
 <h3>title</h3>
-<div class="member-signature"><span class="annotations">@NotNull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@NotNull
 </span><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></span>&nbsp;<span class="element-name">title</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="api/title/MenuTitleProvider.html" title="interface in com.kamikazejam.kamicommon.menu.api.title">MenuTitleProvider</a>&nbsp;titleProvider)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#title(com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider)"><code>title(ComponentMenuTitleProvider)</code></a> instead to modify parts of the title.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="title(com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider)">
+<h3>title</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="AbstractMenuBuilder.html" title="type parameter in AbstractMenuBuilder">T</a></span>&nbsp;<span class="element-name">title</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="api/title/ComponentMenuTitleProvider.html" title="interface in com.kamikazejam.kamicommon.menu.api.title">ComponentMenuTitleProvider</a>&nbsp;titleProvider)</span></div>
 </section>
 </li>
 <li>

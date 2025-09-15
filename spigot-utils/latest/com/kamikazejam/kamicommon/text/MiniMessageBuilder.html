@@ -224,6 +224,52 @@ loadScripts(document, 'script');</script>
  <br>
  Does not convert or support legacy codes (&amp; or &sect;).</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromStringParser(com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection,java.lang.String)" class="member-name-link">fromStringParser</a><wbr>(@NotNull <a href="../yaml/spigot/ConfigurationSection.html" title="interface in com.kamikazejam.kamicommon.yaml.spigot">ConfigurationSection</a>&nbsp;section,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Parses an unknown string (formatted message) from the config located at the provided key.<br>
+ <br>
+ Both <code>String</code> and <code>List&lt;String&gt;</code> are supported types for the config value.<br>
+ For list messages, the returned <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> will contain each list entry as a separate line (component).<br>
+ (Single String config values are returned as a builder with only one line.)<br>
+ <br>
+ This conversion is handled by <a href="../util/ColoredStringParser.html" title="class in com.kamikazejam.kamicommon.util"><code>ColoredStringParser</code></a> which attempts to support section codes, mini message, and legacy ampersand codes.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromStringParser(java.lang.String)" class="member-name-link">fromStringParser</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Parses an unknown format string into a <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> containing the parsed line.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromStringParser(java.lang.String...)" class="member-name-link">fromStringParser</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;miniMessageLines)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Parses a series of unknown format strings (treated as individual lines) into a <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> containing each parsed line.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromStringParser(java.util.Collection)" class="member-name-link">fromStringParser</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;miniMessageLines)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Parses a collection of unknown format strings (treated as individual lines) into a <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> containing each parsed line.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromStringParser(org.bukkit.configuration.ConfigurationSection,java.lang.String)" class="member-name-link">fromStringParser</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/configuration/ConfigurationSection.html" title="class or interface in org.bukkit.configuration" class="external-link">ConfigurationSection</a>&nbsp;section,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Parses an unknown string (formatted message) from the config located at the provided key.<br>
+ <br>
+ Both <code>String</code> and <code>List&lt;String&gt;</code> are supported types for the config value.<br>
+ For list messages, the returned <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> will contain each list entry as a separate line (component).<br>
+ (Single String config values are returned as a builder with only one line.)<br>
+ <br>
+ This conversion is handled by <a href="../util/ColoredStringParser.html" title="class in com.kamikazejam.kamicommon.util"><code>ColoredStringParser</code></a> which attempts to support section codes, mini message, and legacy ampersand codes.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replace(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)" class="member-name-link">replace</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;target,
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;replacement)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Performs a plain text replacement on all lines in this builder.<br>
+ The replacement is the provided component, mapped to MiniMessage and inserted in as the replacement text.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replace(java.lang.String,java.lang.String)" class="member-name-link">replace</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;target,
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;replacement)</code></div>
@@ -311,6 +357,22 @@ loadScripts(document, 'script');</script>
  @NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;replacement)</span></div>
 <div class="block">Performs a plain text replacement on all lines in this builder.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>This builder, for chaining.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="replace(java.lang.String,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">
+<h3>replace</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></span>&nbsp;<span class="element-name">replace</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;target,
+ @NotNull
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;replacement)</span></div>
+<div class="block">Performs a plain text replacement on all lines in this builder.<br>
+ The replacement is the provided component, mapped to MiniMessage and inserted in as the replacement text.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>This builder, for chaining.</dd>
@@ -498,6 +560,25 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="fromStringParser(java.lang.String)">
+<h3>fromStringParser</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></span>&nbsp;<span class="element-name">fromStringParser</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</span></div>
+<div class="block">Parses an unknown format string into a <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> containing the parsed line.
+ <br>
+ This conversion is handled by <a href="../util/ColoredStringParser.html" title="class in com.kamikazejam.kamicommon.util"><code>ColoredStringParser</code></a> which attempts to support section codes, mini message, and legacy ampersand codes.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="../util/ColoredStringParser.html#parse(java.lang.String)"><code>ColoredStringParser.parse(String)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="fromMiniMessage(java.util.Collection)">
 <h3>fromMiniMessage</h3>
 <div class="member-signature"><span class="annotations">@NotNull
@@ -564,6 +645,44 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="fromStringParser(java.util.Collection)">
+<h3>fromStringParser</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></span>&nbsp;<span class="element-name">fromStringParser</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;miniMessageLines)</span></div>
+<div class="block">Parses a collection of unknown format strings (treated as individual lines) into a <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> containing each parsed line.
+ <br>
+ This conversion is handled by <a href="../util/ColoredStringParser.html" title="class in com.kamikazejam.kamicommon.util"><code>ColoredStringParser</code></a> which attempts to support section codes, mini message, and legacy ampersand codes.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="../util/ColoredStringParser.html#parse(java.lang.String)"><code>ColoredStringParser.parse(String)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="fromStringParser(java.lang.String...)">
+<h3>fromStringParser</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></span>&nbsp;<span class="element-name">fromStringParser</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;miniMessageLines)</span></div>
+<div class="block">Parses a series of unknown format strings (treated as individual lines) into a <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> containing each parsed line.
+ <br>
+ This conversion is handled by <a href="../util/ColoredStringParser.html" title="class in com.kamikazejam.kamicommon.util"><code>ColoredStringParser</code></a> which attempts to support section codes, mini message, and legacy ampersand codes.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="../util/ColoredStringParser.html#parse(java.lang.String)"><code>ColoredStringParser.parse(String)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="fromMiniMessage(org.bukkit.configuration.ConfigurationSection,java.lang.String)">
 <h3>fromMiniMessage</h3>
 <div class="member-signature"><span class="annotations">@NotNull
@@ -615,6 +734,31 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="fromStringParser(org.bukkit.configuration.ConfigurationSection,java.lang.String)">
+<h3>fromStringParser</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></span>&nbsp;<span class="element-name">fromStringParser</span><wbr><span class="parameters">(@NotNull
+ <a href="https://jd.papermc.io/paper/org/bukkit/configuration/ConfigurationSection.html" title="class or interface in org.bukkit.configuration" class="external-link">ConfigurationSection</a>&nbsp;section,
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</span></div>
+<div class="block">Parses an unknown string (formatted message) from the config located at the provided key.<br>
+ <br>
+ Both <code>String</code> and <code>List&lt;String&gt;</code> are supported types for the config value.<br>
+ For list messages, the returned <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> will contain each list entry as a separate line (component).<br>
+ (Single String config values are returned as a builder with only one line.)<br>
+ <br>
+ This conversion is handled by <a href="../util/ColoredStringParser.html" title="class in com.kamikazejam.kamicommon.util"><code>ColoredStringParser</code></a> which attempts to support section codes, mini message, and legacy ampersand codes.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="../util/ColoredStringParser.html#parse(java.lang.String)"><code>ColoredStringParser.parse(String)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="fromMiniMessage(com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection,java.lang.String)">
 <h3>fromMiniMessage</h3>
 <div class="member-signature"><span class="annotations">@NotNull
@@ -663,6 +807,31 @@ loadScripts(document, 'script');</script>
  (Single String config values are returned as a builder with only one line.)<br>
  <br>
  Will ignore ampersand (&amp;) codes. See <a href="#fromLegacyAmpersand(com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection,java.lang.String)"><code>fromLegacyAmpersand(ConfigurationSection, String)</code></a> for that.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="fromStringParser(com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection,java.lang.String)">
+<h3>fromStringParser</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text">MiniMessageBuilder</a></span>&nbsp;<span class="element-name">fromStringParser</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../yaml/spigot/ConfigurationSection.html" title="interface in com.kamikazejam.kamicommon.yaml.spigot">ConfigurationSection</a>&nbsp;section,
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</span></div>
+<div class="block">Parses an unknown string (formatted message) from the config located at the provided key.<br>
+ <br>
+ Both <code>String</code> and <code>List&lt;String&gt;</code> are supported types for the config value.<br>
+ For list messages, the returned <a href="MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> will contain each list entry as a separate line (component).<br>
+ (Single String config values are returned as a builder with only one line.)<br>
+ <br>
+ This conversion is handled by <a href="../util/ColoredStringParser.html" title="class in com.kamikazejam.kamicommon.util"><code>ColoredStringParser</code></a> which attempts to support section codes, mini message, and legacy ampersand codes.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="../util/ColoredStringParser.html#parse(java.lang.String)"><code>ColoredStringParser.parse(String)</code></a></li>
+</ul>
+</dd>
+</dl>
 </section>
 </li>
 </ul>

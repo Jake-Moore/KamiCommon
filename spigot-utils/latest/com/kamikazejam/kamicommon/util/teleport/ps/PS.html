@@ -625,11 +625,11 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString(com.kamikazejam.kamicommon.util.teleport.ps.PSFormat)" class="member-name-link">toString</a><wbr>(@NotNull <a href="PSFormat.html" title="interface in com.kamikazejam.kamicommon.util.teleport.ps">PSFormat</a>&nbsp;format)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toString(com.kamikazejam.kamicommon.util.teleport.ps.PS,com.kamikazejam.kamicommon.util.teleport.ps.PSFormat)" class="member-name-link">toString</a><wbr>(<a href="PS.html" title="class in com.kamikazejam.kamicommon.util.teleport.ps">PS</a>&nbsp;ps,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toString(com.kamikazejam.kamicommon.util.teleport.ps.PS,com.kamikazejam.kamicommon.util.teleport.ps.PSFormat)" class="member-name-link">toString</a><wbr>(@Nullable <a href="PS.html" title="class in com.kamikazejam.kamicommon.util.teleport.ps">PS</a>&nbsp;ps,
  @NotNull <a href="PSFormat.html" title="interface in com.kamikazejam.kamicommon.util.teleport.ps">PSFormat</a>&nbsp;format)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a></code></div>
@@ -2391,22 +2391,35 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>
+<dt>Returns:</dt>
+<dd>a MiniMessage string of the PS using the given format</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="toString(com.kamikazejam.kamicommon.util.teleport.ps.PSFormat)">
 <h3>toString</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toString</span><wbr><span class="parameters">(@NotNull
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">toString</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="PSFormat.html" title="interface in com.kamikazejam.kamicommon.util.teleport.ps">PSFormat</a>&nbsp;format)</span></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a MiniMessage string of the PS using the given format</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="toString(com.kamikazejam.kamicommon.util.teleport.ps.PS,com.kamikazejam.kamicommon.util.teleport.ps.PSFormat)">
 <h3>toString</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toString</span><wbr><span class="parameters">(<a href="PS.html" title="class in com.kamikazejam.kamicommon.util.teleport.ps">PS</a>&nbsp;ps,
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">toString</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="PS.html" title="class in com.kamikazejam.kamicommon.util.teleport.ps">PS</a>&nbsp;ps,
  @NotNull
  @NotNull <a href="PSFormat.html" title="interface in com.kamikazejam.kamicommon.util.teleport.ps">PSFormat</a>&nbsp;format)</span></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a MiniMessage string of the PS using the given format</dd>
+</dl>
 </section>
 </li>
 <li>

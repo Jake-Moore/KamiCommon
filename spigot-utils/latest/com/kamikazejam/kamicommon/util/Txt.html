@@ -193,13 +193,20 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFiltered(T%5B%5D,com.kamikazejam.kamicommon.util.predicate.Predicate)" class="member-name-link">getFiltered</a><wbr>(T @NotNull []&nbsp;elements,
  @NotNull <a href="predicate/Predicate.html" title="interface in com.kamikazejam.kamicommon.util.predicate">Predicate</a>&lt;T&gt;&nbsp;predicate)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getItemName(org.bukkit.inventory.ItemStack)" class="member-name-link">getItemName</a><wbr>(@Nullable <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getItemName(org.bukkit.inventory.ItemStack,java.lang.String)" class="member-name-link">getItemName</a><wbr>(@Nullable <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack,
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;defaultName)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Determines the correct visible name of an item, based on its data (custom name and enchantment glint).<br>
+ Uses a default name of "<gray><italic>Nothing" if the item is null or empty.<br>
+ See also <a href="#getItemName(org.bukkit.inventory.ItemStack,com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>getItemName(ItemStack, VersionedComponent)</code></a> for supplying your own default name.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getItemName(org.bukkit.inventory.ItemStack,com.kamikazejam.kamicommon.nms.text.VersionedComponent)" class="member-name-link">getItemName</a><wbr>(@Nullable <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack,
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;defaultName)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Determines the correct visible name of an item, based on its data (custom name and enchantment glint).<br>
+ Uses the supplied  if the item is null or empty.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMaterialName(org.bukkit.Material)" class="member-name-link">getMaterialName</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/Material.html" title="class or interface in org.bukkit" class="external-link">Material</a>&nbsp;material)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
@@ -259,14 +266,14 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#removeSmartQuotes(java.lang.String)" class="member-name-link">removeSmartQuotes</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;string)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#titleize(java.lang.String)" class="member-name-link">titleize</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#titleize(java.lang.String)" class="member-name-link">titleize</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;titleMini)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Formats a given title to be centered in a titleized line.<br><br>
  Titleized lines can be configured in <a href="Txt.Config.html" title="class in com.kamikazejam.kamicommon.util"><code>Txt.Config</code></a><br><br>
  They feature the  centered in additional 'titleized' line characters.<br></div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#titleizedPageTitle(java.lang.String,int,int,java.util.List)" class="member-name-link">titleizedPageTitle</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title,
  int&nbsp;pageNum,
  int&nbsp;pageCount,
@@ -275,7 +282,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Forms a page title using ,  and , and then passes
  it to <a href="#titleize(java.lang.String)"><code>titleize(String)</code></a>.<br><br>
 
- Default format is configured in <code>Txt.Config.pageTitleFormat</code> and looks like:<br></div>
+ Default format is configured in <code>Txt.Config.pageTitleFormatMini</code> and looks like:<br></div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tokenizeArguments(java.lang.String)" class="member-name-link">tokenizeArguments</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;str)</code></div>
@@ -612,22 +619,27 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getItemName(org.bukkit.inventory.ItemStack)">
 <h3>getItemName</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getItemName</span><wbr><span class="parameters">(@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">getItemName</span><wbr><span class="parameters">(@Nullable
  @Nullable <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack)</span></div>
+<div class="block">Determines the correct visible name of an item, based on its data (custom name and enchantment glint).<br>
+ Uses a default name of "<gray><italic>Nothing" if the item is null or empty.<br>
+ See also <a href="#getItemName(org.bukkit.inventory.ItemStack,com.kamikazejam.kamicommon.nms.text.VersionedComponent)"><code>getItemName(ItemStack, VersionedComponent)</code></a> for supplying your own default name.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>The name of the item, or a default name (<a href="#getItemName(org.bukkit.inventory.ItemStack,java.lang.String)"><code>getItemName(ItemStack, String)</code></a>) if the item is null or empty.</dd>
+<dd>The name of the item, or a default name if the item is null or empty.</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getItemName(org.bukkit.inventory.ItemStack,java.lang.String)">
+<section class="detail" id="getItemName(org.bukkit.inventory.ItemStack,com.kamikazejam.kamicommon.nms.text.VersionedComponent)">
 <h3>getItemName</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getItemName</span><wbr><span class="parameters">(@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">getItemName</span><wbr><span class="parameters">(@Nullable
  @Nullable <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack,
  @NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;defaultName)</span></div>
+ @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a>&nbsp;defaultName)</span></div>
+<div class="block">Determines the correct visible name of an item, based on its data (custom name and enchantment glint).<br>
+ Uses the supplied  if the item is null or empty.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>The name of the item, or the supplied default name if the item is null or empty.</dd>
@@ -653,16 +665,16 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="titleize(java.lang.String)">
 <h3>titleize</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">titleize</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title)</span></div>
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">titleize</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;titleMini)</span></div>
 <div class="block">Formats a given title to be centered in a titleized line.<br><br>
  Titleized lines can be configured in <a href="Txt.Config.html" title="class in com.kamikazejam.kamicommon.util"><code>Txt.Config</code></a><br><br>
  They feature the  centered in additional 'titleized' line characters.<br></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>title</code> - The unformatted title, which will be titleized.</dd>
+<dd><code>titleMini</code> - The unformatted title, which will be titleized (still in MiniMessage format).</dd>
 <dt>Returns:</dt>
-<dd>The titleized page title String.</dd>
+<dd>The titleized page title as a <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link"><code>VersionedComponent</code></a>.</dd>
 </dl>
 </section>
 </li>
@@ -670,7 +682,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="titleizedPageTitle(java.lang.String,int,int,java.util.List)">
 <h3>titleizedPageTitle</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">titleizedPageTitle</span><wbr><span class="parameters">(@NotNull
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></span>&nbsp;<span class="element-name">titleizedPageTitle</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title,
  int&nbsp;pageNum,
  int&nbsp;pageCount,
@@ -679,7 +691,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Forms a page title using ,  and , and then passes
  it to <a href="#titleize(java.lang.String)"><code>titleize(String)</code></a>.<br><br>
 
- Default format is configured in <code>Txt.Config.pageTitleFormat</code> and looks like:<br></div>
+ Default format is configured in <code>Txt.Config.pageTitleFormatMini</code> and looks like:<br></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>title</code> - The unformatted title, which will be titleized.</dd>

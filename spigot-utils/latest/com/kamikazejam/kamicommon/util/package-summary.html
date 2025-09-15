@@ -117,43 +117,64 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="DiscordWebhook.html" title="class in com.kamikazejam.kamicommon.util">DiscordWebhook</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ColoredStringParser.html" title="class in com.kamikazejam.kamicommon.util">ColoredStringParser</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Utility for mapping <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a> objects into <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link"><code>VersionedComponent</code></a> objects,
+ handling both legacy color codes and modern MiniMessage format.<br>
+ <br>
+ See individual methods for specific parsing behavior.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="DiscordWebhook.html" title="class in com.kamikazejam.kamicommon.util">DiscordWebhook</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A simple class for sending discord webhooks, supports basic embeds and such</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="DiscordWebhook.EmbedObject.html" title="class in com.kamikazejam.kamicommon.util">DiscordWebhook.EmbedObject</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="DiscordWebhook.FileObject.html" title="class in com.kamikazejam.kamicommon.util">DiscordWebhook.FileObject</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="DiscordWebhook.EmbedObject.html" title="class in com.kamikazejam.kamicommon.util">DiscordWebhook.EmbedObject</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="DiskUtil.html" title="class in com.kamikazejam.kamicommon.util">DiskUtil</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="DiscordWebhook.FileObject.html" title="class in com.kamikazejam.kamicommon.util">DiscordWebhook.FileObject</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ItemUtil.html" title="class in com.kamikazejam.kamicommon.util">ItemUtil</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="DiskUtil.html" title="class in com.kamikazejam.kamicommon.util">DiskUtil</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="KUtil.html" title="class in com.kamikazejam.kamicommon.util">KUtil</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ItemUtil.html" title="class in com.kamikazejam.kamicommon.util">ItemUtil</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="MessageBuilder.html" title="class in com.kamikazejam.kamicommon.util">MessageBuilder</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="KUtil.html" title="class in com.kamikazejam.kamicommon.util">KUtil</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="LegacyChatColors.html" title="class in com.kamikazejam.kamicommon.util">LegacyChatColors</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Legacy methods related to <a href="https://jd.papermc.io/paper/org/bukkit/ChatColor.html" title="class or interface in org.bukkit" class="external-link"><code>ChatColor</code></a> and legacy color codes.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="LegacyColors.html" title="class in com.kamikazejam.kamicommon.util">LegacyColors</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A legacy color-code translator for Minecraft-style formatting codes.<br>
+ Translates the alternate code character <code>&amp;</code> into the legacy section sign (<code>§</code>) and optionally expands 1.16+ hex color codes of the form <code>&amp;#RRGGBB</code> into the §x§R§R§G§G§B§B sequence used by legacy clients.<br>
+ Notes:<br>
+ - This API is marked <code>@Obsolete</code>.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="MessageBuilder.html" title="class in com.kamikazejam.kamicommon.util">MessageBuilder</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A utility class for sending building messages built from a config.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PlayerUtil.html" title="class in com.kamikazejam.kamicommon.util">PlayerUtil</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PlayerUtil.html" title="class in com.kamikazejam.kamicommon.util">PlayerUtil</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for helping with players
  You can give items (which drop near them if they are full), and clean their inventory (with or without armor)</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Preconditions.html" title="class in com.kamikazejam.kamicommon.util">Preconditions</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Preconditions.html" title="class in com.kamikazejam.kamicommon.util">Preconditions</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Some basic preconditions for when the Google preconditions are not available on the classpath</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ReflectionUtil.html" title="class in com.kamikazejam.kamicommon.util">ReflectionUtil</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="StringUtil.html" title="class in com.kamikazejam.kamicommon.util">StringUtil</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">A standalone compatible class for translating strings with color codes
- Use StringUtilP for methods with players (translating PAPI placeholders) (part of the spigot-utils module)</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="StringUtilP.html" title="class in com.kamikazejam.kamicommon.util">StringUtilP</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ReflectionUtil.html" title="class in com.kamikazejam.kamicommon.util">ReflectionUtil</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="SoftPlaceholderAPI.html" title="class in com.kamikazejam.kamicommon.util">SoftPlaceholderAPI</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">The same as <a href="StringUtil.html" title="class in com.kamikazejam.kamicommon.util"><code>StringUtil</code></a> except with methods for players and compatible with Bukkit</div>
+<div class="block">A utility class for soft PlaceholderAPI integration<br>
+ <br>
+ This class will utilize PlaceholderAPI if it is present on the server, safely ignoring replacements if it is not.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="SoftPlaceholderAPI.Config.html" title="class in com.kamikazejam.kamicommon.util">SoftPlaceholderAPI.Config</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TextUtil.html" title="class in com.kamikazejam.kamicommon.util">TextUtil</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Utility methods for working with text strings.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="TimeUtil.html" title="class in com.kamikazejam.kamicommon.util">TimeUtil</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
