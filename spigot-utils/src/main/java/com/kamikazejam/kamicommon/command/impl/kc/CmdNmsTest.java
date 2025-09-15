@@ -1,5 +1,6 @@
 package com.kamikazejam.kamicommon.command.impl.kc;
 
+import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.actions.Action;
 import com.kamikazejam.kamicommon.command.CommandContext;
@@ -16,7 +17,6 @@ import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.util.VersionedComponentUtil;
 import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import nl.marido.deluxecombat.shaded.xseries.XEnchantment;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -159,7 +159,7 @@ public class CmdNmsTest extends KamiCommand {
                     serializer.fromMiniMessage(
                             "<gray>Testing EnchantIDProvider..."
                     ).sendTo(player);
-                    Enchantment enchant = Preconditions.checkNotNull(XEnchantment.DAMAGE_ALL.getEnchant(), "Enchantment not found");
+                    Enchantment enchant = Preconditions.checkNotNull(XEnchantment.SHARPNESS.get(), "Enchantment not found");
                     serializer.fromMiniMessage(
                             "    <gray>Success: " + NmsAPI.getNamespaced(enchant)
                     ).sendTo(player);
