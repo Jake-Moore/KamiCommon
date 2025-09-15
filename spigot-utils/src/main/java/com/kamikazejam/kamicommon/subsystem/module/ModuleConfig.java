@@ -28,7 +28,7 @@ public class ModuleConfig extends SubsystemConfig<Module> {
         Module module = this.getModule();
         KamiConfigExt c = module.getPlugin().getModulesConfig();
         c.addDefault(getModulesConfigKey() + ".enabled", module.isEnabledByDefault());
-        c.addDefault(getModulesConfigKey() + ".modulePrefix", module.defaultPrefix());
+        c.addDefault(getModulesConfigKey() + ".modulePrefix", module.defaultPrefix().serializeMiniMessage());
         c.save();
 
         this.save();
