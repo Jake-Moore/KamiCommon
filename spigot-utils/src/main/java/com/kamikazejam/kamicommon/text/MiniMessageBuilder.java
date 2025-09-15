@@ -58,6 +58,25 @@ public class MiniMessageBuilder {
     }
 
     /**
+     * Performs a plain text replacement on all lines in this builder.<br>
+     * The replacement is the provided component, mapped to MiniMessage and inserted in as the replacement text.
+     * @return This builder, for chaining.
+     */
+    @NotNull
+    public MiniMessageBuilder replace(@NotNull String target, @NotNull VersionedComponent replacement) {
+        Preconditions.checkNotNull(target, "target cannot be null");
+        Preconditions.checkNotNull(replacement, "replacement cannot be null");
+        List<VersionedComponent> newLines = new ArrayList<>();
+        for (VersionedComponent line : this.lines) {
+            String miniMessage = line.serializeMiniMessage().replace(target, replacement.serializeMiniMessage());
+            newLines.add(NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage));
+        }
+        this.lines.clear();
+        this.lines.addAll(newLines);
+        return this;
+    }
+
+    /**
      * Performs a plain text line replacement for all lines matching the target in this builder.<br>
      * More specifically, every line that matches the target (case-insensitive, color-stripped) will be replaced with the provided replacement lines.
      * @see #replaceLine(String, List, boolean)
