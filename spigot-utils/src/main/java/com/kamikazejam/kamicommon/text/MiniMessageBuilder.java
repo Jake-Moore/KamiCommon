@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.text;
 
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import com.kamikazejam.kamicommon.util.ColoredStringParser;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
@@ -235,6 +236,16 @@ public class MiniMessageBuilder {
         return new MiniMessageBuilder(NmsAPI.getVersionedComponentSerializer().fromLegacySection(legacy));
     }
 
+    /**
+     * Parses an unknown format string into a {@link MiniMessageBuilder} containing the parsed line.
+     * <br>
+     * This conversion is handled by {@link ColoredStringParser} which attempts to support section codes, mini message, and legacy ampersand codes.
+     * @see ColoredStringParser#parse(String)
+     */
+    public static @NotNull MiniMessageBuilder fromStringParser(@NotNull String text) {
+        return new MiniMessageBuilder(ColoredStringParser.parse(text));
+    }
+
     // -------------------------------------------------- //
     //          DIRECT CONSTRUCTION (MULTI-LINE)          //
     // -------------------------------------------------- //
@@ -317,6 +328,34 @@ public class MiniMessageBuilder {
         return new MiniMessageBuilder(components);
     }
 
+    /**
+     * Parses a collection of unknown format strings (treated as individual lines) into a {@link MiniMessageBuilder} containing each parsed line.
+     * <br>
+     * This conversion is handled by {@link ColoredStringParser} which attempts to support section codes, mini message, and legacy ampersand codes.
+     * @see ColoredStringParser#parse(String)
+     */
+    public static @NotNull MiniMessageBuilder fromStringParser(@NotNull Collection<String> miniMessageLines) {
+        List<VersionedComponent> components = new ArrayList<>();
+        for (String line : miniMessageLines) {
+            components.add(ColoredStringParser.parse(line));
+        }
+        return new MiniMessageBuilder(components);
+    }
+
+    /**
+     * Parses a series of unknown format strings (treated as individual lines) into a {@link MiniMessageBuilder} containing each parsed line.
+     * <br>
+     * This conversion is handled by {@link ColoredStringParser} which attempts to support section codes, mini message, and legacy ampersand codes.
+     * @see ColoredStringParser#parse(String)
+     */
+    public static @NotNull MiniMessageBuilder fromStringParser(@NotNull String... miniMessageLines) {
+        List<VersionedComponent> components = new ArrayList<>();
+        for (String line : miniMessageLines) {
+            components.add(ColoredStringParser.parse(line));
+        }
+        return new MiniMessageBuilder(components);
+    }
+
     // -------------------------------------------------- //
     //              BUKKIT CONFIG CONSTRUCTION            //
     // -------------------------------------------------- //
@@ -381,6 +420,27 @@ public class MiniMessageBuilder {
         throw new IllegalArgumentException("Config Key is not a string or list: " + key);
     }
 
+    /**
+     * Parses an unknown string (formatted message) from the config located at the provided key.<br>
+     * <br>
+     * Both {@code String} and {@code List<String>} are supported types for the config value.<br>
+     * For list messages, the returned {@link MiniMessageBuilder} will contain each list entry as a separate line (component).<br>
+     * (Single String config values are returned as a builder with only one line.)<br>
+     * <br>
+     * This conversion is handled by {@link ColoredStringParser} which attempts to support section codes, mini message, and legacy ampersand codes.
+     * @see ColoredStringParser#parse(String)
+     */
+    public static @NotNull MiniMessageBuilder fromStringParser(@NotNull org.bukkit.configuration.ConfigurationSection section, @NotNull String key) {
+        Preconditions.checkNotNull(section, "section cannot be null");
+        Preconditions.checkNotNull(key, "key cannot be null");
+        if (section.isString(key)) {
+            return fromStringParser(section.getString(key));
+        } else if (section.isList(key)) {
+            return fromStringParser(section.getStringList(key));
+        }
+        throw new IllegalArgumentException("Config Key is not a string or list: " + key);
+    }
+
     // -------------------------------------------------- //
     //               KAMI CONFIG CONSTRUCTION             //
     // -------------------------------------------------- //
@@ -441,6 +501,27 @@ public class MiniMessageBuilder {
             return fromLegacySection(section.getString(key));
         } else if (section.isList(key)) {
             return fromLegacySection(section.getStringList(key));
+        }
+        throw new IllegalArgumentException("Config Key is not a string or list: " + key);
+    }
+
+    /**
+     * Parses an unknown string (formatted message) from the config located at the provided key.<br>
+     * <br>
+     * Both {@code String} and {@code List<String>} are supported types for the config value.<br>
+     * For list messages, the returned {@link MiniMessageBuilder} will contain each list entry as a separate line (component).<br>
+     * (Single String config values are returned as a builder with only one line.)<br>
+     * <br>
+     * This conversion is handled by {@link ColoredStringParser} which attempts to support section codes, mini message, and legacy ampersand codes.
+     * @see ColoredStringParser#parse(String)
+     */
+    public static @NotNull MiniMessageBuilder fromStringParser(@NotNull ConfigurationSection section, @NotNull String key) {
+        Preconditions.checkNotNull(section, "section cannot be null");
+        Preconditions.checkNotNull(key, "key cannot be null");
+        if (section.isString(key)) {
+            return fromStringParser(section.getString(key));
+        } else if (section.isList(key)) {
+            return fromStringParser(section.getStringList(key));
         }
         throw new IllegalArgumentException("Config Key is not a string or list: " + key);
     }
