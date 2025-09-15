@@ -25,7 +25,7 @@ public class FeatureConfig extends SubsystemConfig<Feature> {
     public final void addConfigDefaults() {
         Feature feature = this.getFeature();
         KamiConfigExt c = feature.getPlugin().getFeaturesConfig();
-        c.addDefault(getFeatureConfigKey() + ".featurePrefix", feature.defaultPrefix());
+        c.addDefault(getFeatureConfigKey() + ".featurePrefix", feature.defaultPrefix().serializeMiniMessage());
         c.save();
 
         this.save();
