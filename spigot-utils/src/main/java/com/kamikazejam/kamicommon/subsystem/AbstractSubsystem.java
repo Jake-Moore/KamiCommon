@@ -9,6 +9,8 @@ import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
 import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.log.ComponentLogger;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import com.kamikazejam.kamicommon.text.MiniMessageBuilder;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
@@ -132,7 +134,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     /**
      * @return The default logging prefix for this subsystem
      */
-    public abstract @NotNull String defaultPrefix();
+    public abstract @NotNull VersionedComponent defaultPrefix();
 
     // -------------------------------------------- //
     // SUBSYSTEM CONFIG
@@ -411,29 +413,60 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     /**
      * @return The prefix for this subsystem, as defined in the subsystem config
      */
-    public abstract @NotNull String getPrefix();
+    public abstract @NotNull VersionedComponent getPrefix();
 
     /**
      * Builds a {@link MessageBuilder} using this Subsystems' config and the provided key <br>
      * It will also automatically replace any {prefix} placeholders in the message with this subsystem's prefix
      * @param key The key to get the message from the config
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #buildMiniMessage(String)}
      * @return The MessageBuilder (see above)
      */
-    public MessageBuilder buildMessage(String key) {
+    @Deprecated
+    public @NotNull MessageBuilder buildMessage(@NotNull String key) {
+        Preconditions.checkNotNull(key, "Message key cannot be null!");
+        String sectionedPrefix = getPrefix().serializeLegacySection();
         return MessageBuilder.of(getConfig(), key)
+                .replace("{prefix}", sectionedPrefix)
+                .replace("%prefix%", sectionedPrefix);
+    }
+
+    /**
+     * Builds a {@link MessageBuilder} using this Subsystems' config and the provided key <br>
+     * It will also automatically replace any {prefix} placeholders in the message with this subsystem's prefix
+     * @param key The key to get the message from the config
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #buildMiniMessage(String)}
+     * @return The MessageBuilder (see above)
+     */
+    @Deprecated
+    public MessageBuilder getMessage(String key) {
+        return buildMessage(key);
+    }
+
+    /**
+     * Builds a {@link MiniMessageBuilder} using this Subsystems' config and the provided key <br>
+     * It will also automatically replace any {prefix} placeholders in the message with this subsystem's prefix
+     * @param key The key to get the message from the config
+     * @return The MiniMessageBuilder (see above)
+     */
+    public @NotNull MiniMessageBuilder buildMiniMessage(@NotNull String key) {
+        Preconditions.checkNotNull(key, "Message key cannot be null!");
+        return MiniMessageBuilder.fromMiniMessage(getConfig(), key)
                 .replace("{prefix}", getPrefix())
                 .replace("%prefix%", getPrefix());
     }
 
     /**
-     * Builds a MessageBuilder using this Subsystems' config and the provided key <br>
+     * Builds a {@link MiniMessageBuilder} using this Subsystems' config and the provided key <br>
      * It will also automatically replace any {prefix} placeholders in the message with this subsystem's prefix
      * @param key The key to get the message from the config
-     * @return The MessageBuilder (see above)
+     * @return The MiniMessageBuilder (see above)
      */
-    public MessageBuilder getMessage(String key) {
-        return buildMessage(key);
+    @Deprecated
+    public MiniMessageBuilder getMiniMessage(String key) {
+        return buildMiniMessage(key);
     }
+
 
     // -------------------------------------------- //
     // ObservableConfig
