@@ -9,6 +9,7 @@ import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.Component;
 import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.event.ClickEvent;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.event.HoverEvent;
 import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.MiniMessage;
 import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -184,15 +185,16 @@ public class CommandPaging {
         List<String> args = context.getArgs();
 
         // Add flip backwards command
-        @Nullable String forwardCmd = getFlipPageCommand(command, pageNum - 1, args);
+        @Nullable String backwardCmd = getFlipPageCommand(command, pageNum - 1, args);
         @NotNull TagResolver.Single forwardTag;
-        if (pageNum > 1 && forwardCmd != null) {
+        if (pageNum > 1 && backwardCmd != null) {
+            Component hoverText = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(Config.getBackIconHoverMini()).asInternalComponent();
             String replacement = Config.getActiveIconColorMini() + Config.getBackIcon();
             forwardTag = Placeholder.component(
                     Config.getTagPrevPage(),
-                    MiniMessage.miniMessage().deserialize(replacement).clickEvent(
-                            ClickEvent.runCommand(forwardCmd)
-                    )
+                    MiniMessage.miniMessage().deserialize(replacement)
+                            .clickEvent(ClickEvent.runCommand(backwardCmd))
+                            .hoverEvent(HoverEvent.showText(hoverText))
             );
         } else {
             String replacement = Config.getInactiveIconColorMini() + Config.getBackIcon();
@@ -203,15 +205,16 @@ public class CommandPaging {
         }
 
         // Add flip forwards command
-        @Nullable String backCmd = getFlipPageCommand(command, pageNum + 1, args);
+        @Nullable String forwardCmd = getFlipPageCommand(command, pageNum + 1, args);
         @NotNull TagResolver.Single backTag;
-        if (pageCount > pageNum && backCmd != null) {
+        if (pageCount > pageNum && forwardCmd != null) {
+            Component hoverText = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(Config.getForwardIconHoverMini()).asInternalComponent();
             String replacement = Config.getActiveIconColorMini() + Config.getForwardIcon();
             backTag = Placeholder.component(
                     Config.getTagNextPage(),
-                    MiniMessage.miniMessage().deserialize(replacement).clickEvent(
-                            ClickEvent.runCommand(backCmd)
-                    )
+                    MiniMessage.miniMessage().deserialize(replacement)
+                            .clickEvent(ClickEvent.runCommand(forwardCmd))
+                            .hoverEvent(HoverEvent.showText(hoverText))
             );
         } else {
             String replacement = Config.getInactiveIconColorMini() + Config.getForwardIcon();
@@ -291,6 +294,10 @@ public class CommandPaging {
         private static @NotNull String backIcon = "[<]";
         @Getter @Setter
         private static @NotNull String forwardIcon = "[>]";
+        @Getter @Setter
+        private static @NotNull String backIconHoverMini = "<gray>Go to previous page.";
+        @Getter @Setter
+        private static @NotNull String forwardIconHoverMini = "<gray>Go to next page.";
 
         @Getter @Setter
         private static @NotNull String activeIconColorMini = "<aqua>";
