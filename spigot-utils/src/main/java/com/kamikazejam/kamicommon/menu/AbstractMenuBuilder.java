@@ -69,6 +69,24 @@ public sealed abstract class AbstractMenuBuilder<M extends Menu<M>, T extends Ab
         return (T) this;
     }
 
+    @SuppressWarnings("unchecked")
+    public final @NotNull T titleFromMiniMessage(@Nullable String title) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        // translate to keep existing behavior (translating alternate ampersand codes to section symbols)
+        VersionedComponent component = (title != null) ? serializer.fromMiniMessage(title) : serializer.fromPlainText(" ");
+        this.titleCalculator.setProvider((p) -> component);
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final @NotNull T titleFromComponent(@Nullable VersionedComponent title) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        // translate to keep existing behavior (translating alternate ampersand codes to section symbols)
+        VersionedComponent component = (title != null) ? title : serializer.fromPlainText(" ");
+        this.titleCalculator.setProvider((p) -> component);
+        return (T) this;
+    }
+
     /**
      * @deprecated Use {@link #title(ComponentMenuTitleProvider)} instead to modify parts of the title.
      */
