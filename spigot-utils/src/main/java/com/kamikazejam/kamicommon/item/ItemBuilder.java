@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.item;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.item.patch.Patch;
 import com.kamikazejam.kamicommon.item.patch.PatchAdd;
 import com.kamikazejam.kamicommon.item.patch.PatchOp;
@@ -10,10 +11,14 @@ import com.kamikazejam.kamicommon.item.patch.PatchRemove;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.Component;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.format.TextDecoration;
 import com.kamikazejam.kamicommon.nms.util.VersionedComponentUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
@@ -219,7 +224,20 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
             VersionedComponent papiName = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
                     SoftPlaceholderAPI.setPlaceholders(viewer, this.name.serializeMiniMessage())
             );
-            VersionedComponentUtil.setDisplayName(meta, papiName);
+            // Minecraft made a change where all names and lore are automatically italicized unless explicitly set to false
+            // We want to mirror backwards compatibility and more specifically always follow the mini message formatting
+            // Thus, we need to set it to false so that our mini message is represented exactly as intended
+            Component component;
+            if (Config.isRemoveAutomaticComponentItalics()) {
+                component = papiName.asInternalComponent().decoration(TextDecoration.ITALIC, false);
+            } else {
+                component = papiName.asInternalComponent();
+            }
+            // Set the name using the updated component
+            VersionedComponentUtil.setDisplayName(
+                    meta,
+                    NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component)
+            );
         }
         if (lore != null) {
             // Map to MiniMessage, perform placeholder API replacements, then serialize back to components
@@ -228,7 +246,20 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
                             SoftPlaceholderAPI.setPlaceholders(viewer, s.serializeMiniMessage())
                     ))
                     .toList();
-            VersionedComponentUtil.setLore(meta, papiLore);
+            // Minecraft made a change where all names and lore are automatically italicized unless explicitly set to false
+            // We want to mirror backwards compatibility and more specifically always follow the mini message formatting
+            // Thus, we need to set it to false so that our mini message is represented exactly as intended
+            List<Component> components;
+            if (Config.isRemoveAutomaticComponentItalics()) {
+                components = papiLore.stream().map(c -> c.asInternalComponent().decoration(TextDecoration.ITALIC, false)).toList();
+            } else {
+                components = papiLore.stream().map(VersionedComponent::asInternalComponent).toList();
+            }
+            // Set the name using the updated component
+            VersionedComponentUtil.setLore(
+                    meta,
+                    components.stream().map(c -> NmsAPI.getVersionedComponentSerializer().fromInternalComponent(c)).toList()
+            );
         }
 
         // Unbreakable
@@ -842,5 +873,15 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         Preconditions.checkNotNull(prototype, "ItemStack cannot be null");
         Preconditions.checkNotNull(section, "ConfigurationSection cannot be null");
         return ItemBuilderLoader.loadPatches(prototype, section);
+    }
+
+    @Configurable
+    public static class Config {
+        /**
+         * When enabled, the default italic style applied to item names and lore by Minecraft will be disabled.<br>
+         * This means that the mini message formatting will be displayed 'as intended' without the automatic italicization.
+         */
+        @Getter @Setter
+        private static boolean removeAutomaticComponentItalics = true;
     }
 }
