@@ -15,12 +15,12 @@ plugins { // needed for the allprojects section to work
     id("java")
     id("java-library")
     id("maven-publish")
-    id("com.gradleup.shadow") version "9.1.0" apply false
+    id("com.gradleup.shadow") version "9.2.1" apply false
 }
 
 // Testing server APIs (the earliest supported version, and the latest PaperMC version)
 val oldestServerAPI = "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED-KC"
-val newestServerAPI = "io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT"
+val newestServerAPI = "io.papermc.paper:paper-api:1.21.9-pre4-R0.1-SNAPSHOT"
 ext {
     // Use ENV variable to switch between oldest and newest API for testing
     val useNewestAPI: String? = System.getenv("MC_SERVER_NEWEST_API")
@@ -74,10 +74,10 @@ allprojects {
 
     dependencies {
         // Lombok
-        compileOnly("org.projectlombok:lombok:1.18.40")
-        annotationProcessor("org.projectlombok:lombok:1.18.40")
-        testImplementation("org.projectlombok:lombok:1.18.40")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.40")
+        compileOnly("org.projectlombok:lombok:1.18.42")
+        annotationProcessor("org.projectlombok:lombok:1.18.42")
+        testImplementation("org.projectlombok:lombok:1.18.42")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
 
         // IntelliJ annotations
         compileOnly("org.jetbrains:annotations:26.0.2")
