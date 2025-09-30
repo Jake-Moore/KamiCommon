@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.yaml;
 import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.util.data.Pair;
 import com.kamikazejam.kamicommon.yaml.base.MemorySectionMethods;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,96 +15,120 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
-    protected final AbstractConfig<?> abstractConfig;
-    protected final File configFile;
-    protected final String fileName;
+    protected final @NotNull AbstractConfig<?> abstractConfig;
+    protected final @NotNull ConfigSource source;
     protected final @Nullable Supplier<InputStream> defaultsStream;
-    protected T config;
+    // Should not be null after loadConfig() is called
+    protected @Nullable T config;
 
     /**
      * @param abstractConfig The parent config instance who holds this handler.
-     * @param configFile The file to read/write the configuration to/from.
+     * @param source The source of the configuration file (yaml content).
      * @param defaultsStream An optional stream (of a YAML config) to read default values from, can be null.
      */
-    public AbstractYamlHandler(AbstractConfig<?> abstractConfig, File configFile, @Nullable Supplier<InputStream> defaultsStream) {
+    public AbstractYamlHandler(
+            @NotNull AbstractConfig<?> abstractConfig,
+            @NotNull ConfigSource source,
+            @Nullable Supplier<InputStream> defaultsStream
+    ) {
         this.abstractConfig = abstractConfig;
-        this.configFile = configFile;
-        this.fileName = configFile.getName();
+        this.source = source;
         this.defaultsStream = defaultsStream;
         this.config = null;
     }
 
-    public abstract T newConfig(MappingNode node, File configFile);
-    public abstract MemorySectionMethods<?> newMemorySection(MappingNode node);
-
     @NotNull
-    public T loadConfig() {
-        try {
-            if (!configFile.exists()) {
-                if (!configFile.getParentFile().exists()) {
-                    if (!configFile.getParentFile().mkdirs()) {
-                        error("Could not create config file dirs for (" + configFile.getAbsolutePath() + "), stopping");
-                    }
-                }
-                if (!configFile.createNewFile()) {
-                    error("Could not create config file, stopping");
-                    System.exit(0);
-                }
-            }
-
-            Reader reader = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8);
-            config = newConfig((MappingNode) (YamlUtil.getYaml()).compose(reader), configFile);
-
-            if (defaultsStream != null) {
-                config = addDefaults(defaultsStream);
-            }
-
-            config.save();
-            return config;
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-        return newConfig(createNewMappingNode(), configFile);
-    }
-
     public static MappingNode createNewMappingNode() {
         return new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
     }
 
+    public abstract @NotNull T newConfig(@NotNull MappingNode node, @NotNull ConfigSource source);
+
+    public abstract @NotNull MemorySectionMethods<?> newMemorySection(@NotNull MappingNode node);
+
+    @NotNull
+    public T loadConfig() {
+        try {
+            // If writable file source, ensure file exists (and that dirs exist)
+            if (source.isWritable()) {
+                try {
+                    source.ensureExistsIfWritable();
+                } catch (IOException e) {
+                    error("Could not prepare writable source (" + source.id() + "): " + e.getMessage());
+                }
+            }
+
+            Optional<InputStream> opt = source.openStream();
+            MappingNode rootNode;
+
+            // Parse the content into a yaml mapping node
+            if (opt.isPresent()) {
+                try (Reader reader = new InputStreamReader(opt.get(), StandardCharsets.UTF_8)) {
+                    // Require that the yaml root is parsed as a map
+                    rootNode = (MappingNode) YamlUtil.getYaml().compose(reader);
+                }
+            } else {
+                // No data available from source, create empty root node
+                rootNode = createNewMappingNode();
+            }
+
+            // Create the new config object
+            @NotNull T config = newConfig(rootNode, source);
+
+            // Add defaults if a stream was provided
+            if (defaultsStream != null) {
+                config = addDefaults(defaultsStream);
+            }
+
+            // Persist only if the source is writable (i.e. file-based)
+            if (source.isWritable()) {
+                save();
+            }
+
+            return this.config = config;
+        }catch (IOException e) {
+            e.printStackTrace();
+            // Fallback to empty config on error
+            return newConfig(createNewMappingNode(), source);
+        }
+    }
 
     /**
      * Saves the config to the file
      * @return true IFF the config was saved successfully (can be skipped if the config is not changed)
      */
     private boolean save() {
-        if (config != null) { return config.save(); }
-        return false;
+        // Require a valid config and writable source
+        if (config == null) return false;
+        if (!source.isWritable()) return false;
+        return config.save();
     }
 
     private static final DecimalFormat DF_THOUSANDS = new DecimalFormat("#,###");
     private T addDefaults(@NotNull Supplier<InputStream> defaultsStream) {
+        if (config == null) throw new IllegalStateException("Config must be loaded before adding defaults!");
+
         // Use passed arg unless it's null, then grab the IS from the plugin
         InputStream defConfigStream = defaultsStream.get();
 
         // Error if we still don't have a default config stream
         if (defConfigStream == null) {
-            error("Error: Could NOT find config resource (" + configFile.getName() + "), could not add defaults!");
+            error("Error: Could NOT find config resource (" + source.id() + "), could not add defaults!");
             save();
             return config;
         }
@@ -130,7 +155,7 @@ public abstract class AbstractYamlHandler<T extends AbstractYamlConfiguration> {
             if (!defaultKeys.contains(key)) { defaultKeys.add(key); }
         }
 
-        T newConfig = newConfig(createNewMappingNode(), configFile);
+        T newConfig = newConfig(createNewMappingNode(), source);
 
         // Compile the Nodes for the user config and default config
         //   We can do this while we update defaults, saving cycles later by using this cached data

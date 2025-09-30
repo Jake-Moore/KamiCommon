@@ -7,6 +7,7 @@ import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.module.Module;
 import com.kamikazejam.kamicommon.util.ColoredStringParser;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -52,8 +53,9 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
         }
     }
 
+    @OverrideOnly
     @Override
-    protected @NotNull FeatureConfig createConfig() {
+    public @NotNull FeatureConfig createConfig() {
         @NotNull String configResourcePath = this.getConfigResourcePath();
         // Double check we can obtain the resource stream (may throw)
         SubsystemConfig.getIS(this, configResourcePath);

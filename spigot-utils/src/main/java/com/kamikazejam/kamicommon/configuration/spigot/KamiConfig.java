@@ -9,6 +9,8 @@ import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.util.log.LegacyColorsLogger;
 import com.kamikazejam.kamicommon.util.log.LoggerService;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
+import com.kamikazejam.kamicommon.yaml.source.FileConfigSource;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSequenceSpigot;
 import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
@@ -39,9 +41,9 @@ import java.util.function.Supplier;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class KamiConfig extends AbstractConfig<YamlConfiguration> implements ConfigurationSection, ObservableConfig {
     private final @NotNull LoggerService logger;
-    private final File file;
-    private final YamlHandler yamlHandler;
-    private YamlConfiguration config;
+    private final @NotNull ConfigSource source;
+    private final @NotNull YamlHandler yamlHandler;
+    private @NotNull YamlConfiguration config;
     private final @NotNull Set<ConfigObserver> observers = new HashSet<>();
 
     // -------------------------------------------------- //
@@ -53,7 +55,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
      * This constructor enables defaults using the following resource file method:<br>
      * - Assumes a resource file with the same name as the provided file, exists in the current jar.
      */
-    public KamiConfig(@NotNull JavaPlugin plugin, File file) {
+    public KamiConfig(@NotNull JavaPlugin plugin, @NotNull File file) {
         this(plugin, file, () -> plugin.getResource(file.getName()));
     }
 
@@ -65,8 +67,32 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
      *
      * @param defaultsStream The optional supplier to load defaults from.
      */
-    public KamiConfig(@NotNull JavaPlugin plugin, File file, @Nullable Supplier<InputStream> defaultsStream) {
-        this(parseLogger(plugin), file, defaultsStream);
+    public KamiConfig(@NotNull JavaPlugin plugin, @NotNull File file, @Nullable Supplier<InputStream> defaultsStream) {
+        this(parseLogger(plugin), new FileConfigSource(file), defaultsStream);
+    }
+
+    /**
+     * Creates a new config instance with the given plugin and config source.<br><br>
+     * This constructor enables defaults using the following resource file method:<br>
+     * - Fetches the resource file. Its path is determined by {@link ConfigSource#getResourceStreamPath()}
+     *
+     * @param source The source to load and save the config from.
+     */
+    public KamiConfig(@NotNull JavaPlugin plugin, @NotNull ConfigSource source) {
+        this(parseLogger(plugin), source, () -> plugin.getResource(source.getResourceStreamPath()));
+    }
+
+    /**
+     * Creates a new config instance with the given plugin and config source.<br><br>
+     * This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+     * - Providing a non-null supplier will enable defaults using the provided InputStream
+     * - Providing a null supplier will disable defaults
+     *
+     * @param source The source to load and save the config from.
+     * @param defaultsStream The optional supplier to load defaults from.
+     */
+    public KamiConfig(@NotNull JavaPlugin plugin, @NotNull ConfigSource source, @Nullable Supplier<InputStream> defaultsStream) {
+        this(parseLogger(plugin), source, defaultsStream);
     }
 
     // -------------------------------------------------- //
@@ -76,10 +102,10 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     /**
      * Creates a new config instance with the given subsystem and destination file.<br><br>
      * This constructor enables defaults using the following resource file method:<br>
-     * - Fetches the resource file using the provided file name, from {@link AbstractSubsystem#getSupplementalConfigResource(String)}
+     * - Fetches the resource file using the provided file name, from {@link AbstractSubsystem#getSupplementalConfigResource(File)}
      */
-    public KamiConfig(@NotNull AbstractSubsystem<?, ?> subsystem, File file) {
-        this(subsystem, file, () -> subsystem.getSupplementalConfigResource(file.getName()));
+    public KamiConfig(@NotNull AbstractSubsystem<?, ?> subsystem, @NotNull File file) {
+        this(subsystem, file, () -> subsystem.getSupplementalConfigResource(file));
     }
 
     /**
@@ -88,25 +114,46 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
      * - Providing a non-null supplier will enable defaults using the provided InputStream
      * - Providing a null supplier will disable defaults
      */
-    public KamiConfig(@NotNull AbstractSubsystem<?, ?> subsystem, File file, @Nullable Supplier<InputStream> defaultsStream) {
-        this(subsystem.getLogger(), file, defaultsStream);
+    public KamiConfig(@NotNull AbstractSubsystem<?, ?> subsystem, @NotNull File file, @Nullable Supplier<InputStream> defaultsStream) {
+        this(subsystem.getLogger(), new FileConfigSource(file), defaultsStream);
+    }
+
+    /**
+     * Creates a new config instance with the given subsystem and config source.<br><br>
+     * This constructor enables defaults using the following resource file method:<br>
+     * - Fetches the resource file using the provided source, from {@link AbstractSubsystem#getSupplementalConfigResource(ConfigSource)}
+     *
+     * @param source The source to load and save the config from.
+     */
+    public KamiConfig(@NotNull AbstractSubsystem<?, ?> subsystem, @NotNull ConfigSource source) {
+        this(subsystem.getLogger(), source, () -> subsystem.getSupplementalConfigResource(source));
+    }
+
+    /**
+     * Creates a new config instance with the given subsystem and config source.<br><br>
+     * This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+     * - Providing a non-null supplier will enable defaults using the provided InputStream
+     * - Providing a null supplier will disable defaults
+     *
+     * @param source The source to load and save the config from.
+     * @param defaultsStream The optional supplier to load defaults from.
+     */
+    public KamiConfig(@NotNull AbstractSubsystem<?, ?> subsystem, @NotNull ConfigSource source, @Nullable Supplier<InputStream> defaultsStream) {
+        this(subsystem.getLogger(), source, defaultsStream);
     }
 
     // -------------------------------------------------- //
     //                 Internal Constructors              //
     // -------------------------------------------------- //
 
-    /**
-     * @param file The target file on the destination filesystem to save and load config data from.
-     * @param defaultsStream The optional supplier to load defaults from.
-     */
-    private KamiConfig(@NotNull LoggerService logger, @NotNull File file, @Nullable Supplier<InputStream> defaultsStream) {
+    // Internal
+    private KamiConfig(@NotNull LoggerService logger, @NotNull ConfigSource source, @Nullable Supplier<InputStream> defaultsStream) {
         this.logger = logger;
-        this.file = file;
+        this.source = source;
 
-        ensureFile();
+        ensureExistsIfWritable();
 
-        this.yamlHandler = new YamlHandler(this, logger, file, defaultsStream);
+        this.yamlHandler = new YamlHandler(this, logger, source, defaultsStream);
         this.config = yamlHandler.loadConfig();
         save(true); // Force save since there won't be any changes from load, but we want to write any new comments to file
     }
@@ -123,8 +170,8 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     }
 
     @Override
-    protected File getFile() {
-        return file;
+    public @NotNull ConfigSource getSource() {
+        return source;
     }
 
     @Override
@@ -132,15 +179,12 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         return config;
     }
 
-    private void ensureFile() {
-        // Ensure the file exists
+    private void ensureExistsIfWritable() {
         try {
-            if (!file.exists() && !file.getParentFile().mkdirs() && !file.createNewFile()) {
-                throw new Exception("Failed to create file: " + file.getAbsolutePath());
-            }
-        }catch (Exception e) {
+            source.ensureExistsIfWritable();
+        } catch (Exception e) {
             e.printStackTrace();
-            logger.severe("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
+            logger.severe("[KamiCommon] Failed to ensure config source exists: " + source.id());
         }
     }
 

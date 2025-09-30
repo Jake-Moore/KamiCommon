@@ -1,16 +1,17 @@
 package com.kamikazejam.kamicommon.yaml.spigot;
 
 import com.kamikazejam.kamicommon.yaml.AbstractYamlConfiguration;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.nodes.MappingNode;
-
-import java.io.File;
 
 @SuppressWarnings({"unused"})
 public class YamlConfiguration extends MemorySection implements AbstractYamlConfiguration {
-    private final File configFile;
-    public YamlConfiguration(MappingNode node, File configFile) {
+    private final @NotNull ConfigSource source;
+
+    public YamlConfiguration(@NotNull MappingNode node, @NotNull ConfigSource source) {
         super(node, "", null);
-        this.configFile = configFile;
+        this.source = source;
     }
 
     /**
@@ -19,7 +20,7 @@ public class YamlConfiguration extends MemorySection implements AbstractYamlConf
      */
     @Override
     public boolean save() {
-        return super.save(configFile);
+        return super.save(source);
     }
 
     /**
@@ -29,6 +30,6 @@ public class YamlConfiguration extends MemorySection implements AbstractYamlConf
      */
     @Override
     public boolean save(boolean force) {
-        return super.save(configFile, force);
+        return super.save(source, force);
     }
 }
