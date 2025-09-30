@@ -14,10 +14,12 @@ import com.kamikazejam.kamicommon.text.MiniMessageBuilder;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import lombok.Getter;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -182,8 +184,9 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
         this.subsystemConfig = config;
     }
 
+    @OverrideOnly
     @NotNull
-    protected abstract C createConfig();
+    public abstract C createConfig();
 
     @Override
     public @NotNull KamiConfigExt getKamiConfig() {
@@ -503,11 +506,23 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
      * Placeholder for your own implementation in order to support supplemental configuration files.<br>
      * This method should return an InputStream to the supplemental config resource.<br><br>
      * By default, this method throws an {@link UnsupportedOperationException}.
-     * @param fileName The YAML file name of the resource to load. Includes ONLY the name, not the path.
+     * @param file The yaml file of the resource to load.
      * @throws UnsupportedOperationException Always, unless overridden with new behavior
      */
     @UnknownNullability
-    public InputStream getSupplementalConfigResource(@NotNull String fileName) throws UnsupportedOperationException {
+    public InputStream getSupplementalConfigResource(@NotNull File file) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Placeholder for your own implementation in order to support supplemental configuration files.<br>
+     * This method should return an InputStream to the supplemental config resource.<br><br>
+     * By default, this method throws an {@link UnsupportedOperationException}.
+     * @param source The config source of the resource to load.
+     * @throws UnsupportedOperationException Always, unless overridden with new behavior
+     */
+    @UnknownNullability
+    public InputStream getSupplementalConfigResource(@NotNull ConfigSource source) throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 }

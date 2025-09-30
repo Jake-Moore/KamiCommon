@@ -1,17 +1,17 @@
 package com.kamikazejam.kamicommon.yaml.base;
 
 import com.kamikazejam.kamicommon.yaml.AbstractMemorySection;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import com.kamikazejam.kamicommon.yaml.standalone.YamlUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.MappingNode;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -467,30 +467,51 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
         return getNode().getValue().isEmpty();
     }
 
-
     /**
-     * Saves the config to the file
-     * @return true IFF the config was saved successfully (can be skipped if the config is not changed)
+     * Saves the config to the backing source.<br>
+     * <br>
+     * - If the source is not writable, this is a NO-OP and returns false.<br>
+     * - If no changes are detected, returns false.<br>
+     * - If writable and changes should be persisted, serialize and write.
+     * @param source The destination/source abstraction
+     * @return true IFF the config was saved successfully (may be skipped if not changed)
      */
-    public boolean save(File f) {
-        return save(f, false);
+    public boolean save(@NotNull ConfigSource source) {
+        return save(source, false);
     }
 
     /**
-     * Saves the config to the file
-     * @param force If the config should be saved even if no changes were made
-     * @return true IFF the config was saved successfully (can be skipped if the config is not changed and force is false)
+     * Saves the config to the backing source.<br>
+     * <br>
+     * - If the source is not writable, this is a NO-OP and returns false.<br>
+     * - If force is false and no changes are detected, returns false.<br>
+     * - If writable and changes should be persisted, serialize and write.
+     * @param source The destination/source abstraction
+     * @param force  If the config should be saved even if no changes were made
+     * @return true IFF the config was saved successfully (may be skipped if not changed and force is false)
      */
-    public boolean save(File f, boolean force) {
+    public boolean save(@NotNull ConfigSource source, boolean force) {
+        // Read-only sources do nothing
+        if (!source.isWritable()) return false;
+
+        // Skip if unchanged and not forcing
         if (!force && !isChanged()) { return false; }
 
         try {
-            // Dump the Node (should keep comments)
-            Writer writer = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8);
-            YamlUtil.getYaml().serialize(this.getNode(), writer);
-            setChanged(false);
-            return true;
+            // Serialize the root node to bytes via a buffer
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)
+            ) {
+                // Dump the Node (preserves comments)
+                YamlUtil.getYaml().serialize(this.getNode(), writer);
+                writer.flush();
 
+                boolean persisted = source.write(outputStream.toByteArray(), StandardCharsets.UTF_8);
+                if (persisted) {
+                    setChanged(false);
+                }
+                return persisted;
+            }
         } catch(IOException e) {
             e.printStackTrace();
         }

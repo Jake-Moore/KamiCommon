@@ -1,12 +1,11 @@
 package com.kamikazejam.kamicommon.configuration.standalone;
 
 import com.kamikazejam.kamicommon.yaml.AbstractYamlConfiguration;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.ApiStatus.Internal;
-
-import java.io.File;
-
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that represents a configuration file <br>
@@ -24,7 +23,7 @@ public abstract class AbstractConfig<T extends AbstractYamlConfiguration> {
     /**
      * @return The file associated with this config
      */
-    protected abstract File getFile();
+    protected abstract @NotNull ConfigSource getSource();
 
     /**
      * @return The YamlConfiguration associated with this config

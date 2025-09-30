@@ -2,6 +2,8 @@ package com.kamikazejam.kamicommon.configuration.standalone;
 
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.log.LoggerService;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
+import com.kamikazejam.kamicommon.yaml.source.FileConfigSource;
 import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSectionStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSequenceStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.MemorySectionStandalone;
@@ -28,9 +30,10 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings("unused")
 public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone> implements ConfigurationSectionStandalone {
-    private final @NotNull File file;
-    private final YamlHandlerStandalone yamlHandler;
-    private YamlConfigurationStandalone config;
+    private final @NotNull LoggerService logger;
+    private final @NotNull ConfigSource source;
+    private final @NotNull YamlHandlerStandalone yamlHandler;
+    private @NotNull YamlConfigurationStandalone config;
 
     /**
      * Creates a new config instance with the given logger and destination file.<br><br>
@@ -39,7 +42,7 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
      * - See {@link StandaloneConfig#getDefaultIS(LoggerService, File)}
      */
     public StandaloneConfig(@NotNull LoggerService logger, @NotNull File file) {
-        this(logger, file, () -> getDefaultIS(logger, file));
+        this(logger, new FileConfigSource(file), () -> getDefaultIS(logger, file));
     }
 
     /**
@@ -51,11 +54,16 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
      * @param defaultsStream The optional supplier to load defaults from.
      */
     public StandaloneConfig(@NotNull LoggerService logger, @NotNull File file, @Nullable Supplier<InputStream> defaultsStream) {
-        this.file = file;
+        this(logger, new FileConfigSource(file), defaultsStream);
+    }
 
-        ensureFile();
+    public StandaloneConfig(@NotNull LoggerService logger, @NotNull ConfigSource source, @Nullable Supplier<InputStream> defaultsStream) {
+        this.logger = logger;
+        this.source = source;
 
-        this.yamlHandler = new YamlHandlerStandalone(this, logger, file, defaultsStream);
+        ensureExistsIfWritable();
+
+        this.yamlHandler = new YamlHandlerStandalone(this, logger, source, defaultsStream);
         this.config = yamlHandler.loadConfig();
         save();
     }
@@ -74,19 +82,16 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
     protected YamlConfigurationStandalone getYamlConfiguration() { return config; }
 
     @Override
-    protected @NotNull File getFile() {
-        return file;
+    public @NotNull ConfigSource getSource() {
+        return source;
     }
 
-    private void ensureFile() {
-        // Ensure the file exists
+    private void ensureExistsIfWritable() {
         try {
-            if (!file.exists() && !file.getParentFile().mkdirs() && !file.createNewFile()) {
-                throw new Exception("Failed to create file: " + file.getAbsolutePath());
-            }
-        }catch (Exception e) {
+            source.ensureExistsIfWritable();
+        } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
+            logger.severe("[KamiCommon] Failed to ensure config source exists: " + source.id());
         }
     }
 

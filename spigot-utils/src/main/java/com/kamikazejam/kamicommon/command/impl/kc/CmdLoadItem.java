@@ -39,6 +39,7 @@ public class CmdLoadItem extends KamiCommand {
         String fileName = readArg();
         File file = new File(SpigotUtilsSource.get().getDataFolder(), fileName);
 
+        // Use defaultsStream=null since there's probably not a default config for this file
         KamiConfig config = new KamiConfigExt(SpigotUtilsSource.get(), file, null);
         ItemStack stack = config.getItemStack(configKey);
         if (stack == null) {
