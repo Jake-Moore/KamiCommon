@@ -7,6 +7,7 @@ import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfig;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.log.LegacyColorsLogger;
 import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
@@ -17,6 +18,7 @@ import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
 import com.kamikazejam.kamicommon.yaml.spigot.YamlConfiguration;
 import com.kamikazejam.kamicommon.yaml.spigot.YamlHandler;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -79,7 +81,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
      * @param source The source to load and save the config from.
      */
     public KamiConfig(@NotNull JavaPlugin plugin, @NotNull ConfigSource source) {
-        this(parseLogger(plugin), source, () -> plugin.getResource(source.getResourceStreamPath()));
+        this(parseLogger(plugin), source, parseSupplier(plugin, source));
     }
 
     /**
@@ -344,5 +346,16 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
         } else {
             return new LegacyColorsLogger(plugin);
         }
+    }
+
+    @Nullable
+    private static Supplier<InputStream> parseSupplier(@NotNull Plugin plugin, @NotNull ConfigSource source) {
+        @Nullable String resourcePath = source.getResourceStreamPath();
+        if (resourcePath == null) return null;
+        return () -> {
+            InputStream is = plugin.getResource(resourcePath);
+            Preconditions.checkNotNull(is, "Resource stream is null: '" + resourcePath + "'");
+            return is;
+        };
     }
 }

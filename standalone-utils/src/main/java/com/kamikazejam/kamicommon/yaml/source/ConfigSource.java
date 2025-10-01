@@ -47,7 +47,7 @@ public interface ConfigSource {
      *
      * @return true if writable; false if read-only
      */
-    default boolean isWritable() {return false;}
+    default boolean isWritable() { return false; }
 
     /**
      * Ensures the writable source has any required backing structures (e.g., parent directories/files).<br>
@@ -56,7 +56,7 @@ public interface ConfigSource {
      * @return true if the source exists or was created successfully; false otherwise
      * @throws IOException if creation fails due to I/O errors
      */
-    default boolean ensureExistsIfWritable() throws IOException {return true;}
+    default boolean ensureExistsIfWritable() throws IOException { return true; }
 
     /**
      * Writes serialized data to this source using the provided charset.<br>
@@ -81,14 +81,14 @@ public interface ConfigSource {
      * @return File when applicable; null for non-file-backed sources
      */
     @Nullable
-    default File asFileIfPresent() {return null;}
+    default File asFileIfPresent() { return null; }
 
     /**
      * Returns the path to a resource stream for default configuration data, if available.<br>
      * This is typically used to load default settings bundled with the application/plugin.<br>
      * <br>
-     * If no resource stream is available, returns null.
+     * If no resource stream is associated, may return null.
      */
-    @NotNull
+    @Nullable
     String getResourceStreamPath();
 }
