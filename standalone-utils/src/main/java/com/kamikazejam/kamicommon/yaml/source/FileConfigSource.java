@@ -12,6 +12,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Optional;
 
+/**
+ * A {@link ConfigSource} implementation that reads from and writes to a file on the filesystem.<br>
+ * <br>
+ * Supports both read and write (save) operations.
+ */
 public class FileConfigSource implements ConfigSource {
     private final File file;
 
@@ -19,7 +24,10 @@ public class FileConfigSource implements ConfigSource {
         this.file = file;
     }
 
-    @Override public @NotNull String id() {return file.getAbsolutePath();}
+    @Override
+    public @NotNull String id() {
+        return file.getAbsolutePath();
+    }
 
     @Override
     public @NotNull Optional<InputStream> openStream() throws IOException {
@@ -27,7 +35,10 @@ public class FileConfigSource implements ConfigSource {
         return Optional.of(new BufferedInputStream(new FileInputStream(file)));
     }
 
-    @Override public boolean isWritable() {return true;}
+    @Override
+    public boolean isWritable() {
+        return true;
+    }
 
     @Override
     public boolean ensureExistsIfWritable() throws IOException {
@@ -49,7 +60,9 @@ public class FileConfigSource implements ConfigSource {
     }
 
     @Override
-    public @Nullable File asFileIfPresent() {return file;}
+    public @Nullable File asFileIfPresent() {
+        return file;
+    }
 
     @Override
     public @NotNull String getResourceStreamPath() {
