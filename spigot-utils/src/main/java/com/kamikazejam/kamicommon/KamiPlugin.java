@@ -22,6 +22,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,15 +136,21 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         );
     }
 
-    public @NotNull KamiConfigExt getKamiConfig() {
+    @NotNull
+    public final KamiConfigExt getKamiConfig() {
         if (config == null) {
-            // Using the Ext config with defaults enabled. It looks for a 'config.yml' resource file.
-            this.config = new KamiConfigExt(this, new File(getDataFolder(), "config.yml"));
+            this.config = createKamiConfig();
         }
         return config;
     }
     public void reloadKamiConfig() {
         getKamiConfig().reload();
+    }
+
+    @OverrideOnly
+    public @NotNull KamiConfigExt createKamiConfig() {
+        // Using the Ext config with defaults enabled. It looks for a 'config.yml' resource file.
+        return new KamiConfigExt(this, new File(getDataFolder(), "config.yml"));
     }
 
     @Override
@@ -506,22 +513,34 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         return true;
     }
 
-    public @NotNull KamiConfigExt getModulesConfig() {
+    @NotNull
+    public final KamiConfigExt getModulesConfig() {
         // Create on-demand, since creating the KamiConfig will create the file too
         if (modulesConfig == null) {
-            // Create the Modules Config (no defaults loading)
-            this.modulesConfig = new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"), null);
+            this.modulesConfig = createModulesConfig();
         }
         return modulesConfig;
     }
 
-    public @NotNull KamiConfigExt getFeaturesConfig() {
+    @OverrideOnly
+    public @NotNull KamiConfigExt createModulesConfig() {
+        // Create the Modules Config (no defaults loading)
+        return new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"), null);
+    }
+
+    @NotNull
+    public final KamiConfigExt getFeaturesConfig() {
         // Create on-demand, since creating the KamiConfig will create the file too
         if (featuresConfig == null) {
-            // Create the Modules Config (no defaults loading)
-            this.featuresConfig = new KamiConfigExt(this, new File(getDataFolder(), "features.yml"), null);
+            this.featuresConfig = createFeaturesConfig();
         }
         return featuresConfig;
+    }
+
+    @OverrideOnly
+    public @NotNull KamiConfigExt createFeaturesConfig() {
+        // Create the Features Config (no defaults loading)
+        return new KamiConfigExt(this, new File(getDataFolder(), "features.yml"), null);
     }
 
     // -------------------------------------------- //
