@@ -102,6 +102,12 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
         );
     }
 
+    /**
+     * The data folder for this module, located at:<br>
+     * /home/container/plugins/&lt;plugin&gt;/modules/&lt;module&gt;/<br>
+     * <br>
+     * If the folder does not exist, it will be created automatically.
+     */
     @NotNull
     public File getModuleDataFolder() {
         File dataFolder = getPlugin().getDataFolder();
@@ -113,5 +119,18 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
             }
         }
         return moduleFolder;
+    }
+
+    /**
+     * The absolute path to the data folder for this module, i.e.:<br>
+     * /home/container/plugins/&lt;plugin&gt;/modules/&lt;module&gt;/<br>
+     * <br>
+     * This is just the File's absolute path, it does not create the folder if it does not exist.
+     */
+    @NotNull
+    public String getModuleDataPath() {
+        File dataFolder = getPlugin().getDataFolder();
+        File moduleFolder = new File(dataFolder + File.separator + MODULES_FOLDER + File.separator + getName());
+        return moduleFolder.getAbsolutePath();
     }
 }

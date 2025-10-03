@@ -82,6 +82,12 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
         );
     }
 
+    /**
+     * The data folder for this feature, located at:<br>
+     * /home/container/plugins/&lt;plugin&gt;/features/&lt;feature&gt;/<br>
+     * <br>
+     * If the folder does not exist, it will be created automatically.
+     */
     @NotNull
     public File getFeatureDataFolder() {
         File dataFolder = getPlugin().getDataFolder();
@@ -93,5 +99,18 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
             }
         }
         return featureFolder;
+    }
+
+    /**
+     * The absolute path to the data folder for this feature, i.e.:<br>
+     * /home/container/plugins/&lt;plugin&gt;/features/&lt;feature&gt;/<br>
+     * <br>
+     * This is just the File's absolute path, it does not create the folder if it does not exist.
+     */
+    @NotNull
+    public String getFeatureDataPath() {
+        File dataFolder = getPlugin().getDataFolder();
+        File featureFolder = new File(dataFolder + File.separator + FEATURES_FOLDER + File.separator + getName());
+        return featureFolder.getAbsolutePath();
     }
 }
