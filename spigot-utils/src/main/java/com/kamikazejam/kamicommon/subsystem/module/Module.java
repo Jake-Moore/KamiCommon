@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.subsystem.module;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
@@ -86,13 +87,19 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
     @Override
     public final @NotNull VersionedComponent getPrefix() {
         KamiConfigExt c = getPlugin().getModulesConfig();
-        String prefix = c.getString("modules." + getName() + ".modulePrefix", null);
-        if (prefix != null) { return ColoredStringParser.parse(prefix); }
+        String key = "modules." + getName() + ".modulePrefix";
+        String def = defaultPrefix().serializeMiniMessage();
 
-        VersionedComponent def = defaultPrefix();
-        c.setString("modules." + getName() + ".modulePrefix", def.serializeMiniMessage());
-        c.save();
-        return def;
+        // Warn if the module does not have a prefix entry in the config so the plugin author can go add a default in the resource file
+        if (!c.contains(key)) {
+            this.getLogger().warn(NmsAPI.getVersionedComponentSerializer().fromPlainText(
+                    "Module '" + getName() + "' missing string key '" + key + "' in the modules config. Using default: " + def
+            ));
+        }
+
+        return ColoredStringParser.parse(
+                c.getString(key, def)
+        );
     }
 
     @NotNull

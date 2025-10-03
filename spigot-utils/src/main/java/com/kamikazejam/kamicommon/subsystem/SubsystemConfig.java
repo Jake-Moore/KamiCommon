@@ -6,7 +6,6 @@ import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
@@ -29,9 +28,6 @@ public abstract class SubsystemConfig<S extends AbstractSubsystem<?, S>> extends
                 () -> SubsystemConfig.getIS(subsystem, resourcePath)
         );
         this.subsystem = subsystem;
-
-        // Add defaults to the config
-        addConfigDefaults();
     }
 
     /**
@@ -54,9 +50,6 @@ public abstract class SubsystemConfig<S extends AbstractSubsystem<?, S>> extends
                 () -> SubsystemConfig.getIS(subsystem, resourcePath)
         );
         this.subsystem = subsystem;
-
-        // Add defaults to the config
-        addConfigDefaults();
     }
 
     /**
@@ -68,9 +61,6 @@ public abstract class SubsystemConfig<S extends AbstractSubsystem<?, S>> extends
                 "Subsystem ('" + subsystem.getName() + "') resource stream is null: '" + resourcePath + "'"
         );
     }
-
-    @Internal
-    public abstract void addConfigDefaults();
 
     @NotNull
     public S getSubsystem() {
