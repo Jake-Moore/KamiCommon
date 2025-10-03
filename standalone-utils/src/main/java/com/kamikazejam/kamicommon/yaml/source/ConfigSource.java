@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 import java.util.Optional;
 
 /**
- * Represents a source of configuration data that can provide an InputStream for reading<br>
+ * Represents a source of configuration data that can provide an {@link InputStream} for reading<br>
  * and may optionally support writing/persistence.<br>
  * <br>
  * Typical implementations:<br>
@@ -18,10 +18,10 @@ import java.util.Optional;
  * - Provider/remote/in-memory source (read-only)<br>
  * <br>
  * Contract notes:<br>
- * - Each call to openStream() should return a fresh stream positioned at the start.<br>
- * - If isWritable() is false, write(...) must throw UnsupportedOperationException.<br>
- * - ensureExistsIfWritable() should create any required backing structures for writable sources.<br>
- * - asFileIfPresent() returns a File only for file-backed sources; otherwise null.
+ * - Each call to {@link #openStream()} should return a fresh stream positioned at the start.<br>
+ * - If {@link #isWritable()} is false, {@link #write(byte[], Charset)} must throw {@link UnsupportedOperationException}.<br>
+ * - {@link #ensureExistsIfWritable()} should create any required backing structures for writable sources.<br>
+ * - {@link #asFileIfPresent()} returns a {@link File} only for file-backed sources; otherwise null.
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface ConfigSource {
