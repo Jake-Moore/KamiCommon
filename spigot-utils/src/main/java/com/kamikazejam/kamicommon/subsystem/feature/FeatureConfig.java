@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.subsystem.feature;
 
-import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
@@ -30,17 +29,6 @@ public class FeatureConfig extends SubsystemConfig<Feature> {
     @NotNull
     public Feature getFeature() {
         return this.getSubsystem();
-    }
-
-    @Override
-    public final void addConfigDefaults() {
-        Feature feature = this.getFeature();
-        KamiConfigExt c = feature.getPlugin().getFeaturesConfig();
-        c.addDefault(getFeatureConfigKey() + ".featurePrefix", feature.defaultPrefix().serializeMiniMessage());
-        c.save();
-
-        this.save();
-        this.reload();
     }
 
     private String getFeatureConfigKey() {

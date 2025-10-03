@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.subsystem.feature;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
@@ -65,14 +66,20 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
 
     @Override
     public final @NotNull VersionedComponent getPrefix() {
-        KamiConfigExt c = getPlugin().getModulesConfig();
-        String prefix = c.getString("features." + getName() + ".featurePrefix", null);
-        if (prefix != null) { return ColoredStringParser.parse(prefix); }
+        KamiConfigExt c = getPlugin().getFeaturesConfig();
+        String key = "features." + getName() + ".featurePrefix";
+        String def = defaultPrefix().serializeMiniMessage();
 
-        VersionedComponent def = defaultPrefix();
-        c.setString("features." + getName() + ".featurePrefix", def.serializeMiniMessage());
-        c.save();
-        return def;
+        // Warn if the feature does not have a prefix entry in the config so the plugin author can go add a default in the resource file
+        if (!c.contains(key)) {
+            this.getLogger().warn(NmsAPI.getVersionedComponentSerializer().fromPlainText(
+                    "Feature '" + getName() + "' missing string key '" + key + "' in the features config. Using default: " + def
+            ));
+        }
+
+        return ColoredStringParser.parse(
+                c.getString(key, def)
+        );
     }
 
     @NotNull

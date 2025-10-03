@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.subsystem.module;
 
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
@@ -34,23 +35,19 @@ public class ModuleConfig extends SubsystemConfig<Module> {
     }
 
     @Internal
-    @Override
-    public final void addConfigDefaults() {
-        Module module = this.getModule();
-        KamiConfigExt c = module.getPlugin().getModulesConfig();
-        c.addDefault(getModulesConfigKey() + ".enabled", module.isEnabledByDefault());
-        c.addDefault(getModulesConfigKey() + ".modulePrefix", module.defaultPrefix().serializeMiniMessage());
-        c.save();
-
-        this.save();
-        this.reload();
-    }
-
-    @Internal
     public boolean isEnabledInConfig() {
         Module module = this.getModule();
         KamiConfigExt c = module.getPlugin().getModulesConfig();
-        return c.getBoolean(getModulesConfigKey() + ".enabled", module.isEnabledByDefault());
+        String key = getModulesConfigKey() + ".enabled";
+
+        // Warn if the module does not have an entry in the config so the plugin author can go add a default in the resource file
+        if (!c.contains(key)) {
+            module.getLogger().warn(NmsAPI.getVersionedComponentSerializer().fromPlainText(
+                    "Module '" + module.getName() + "' missing boolean key '" + key + "' in the modules config. Using default: " + module.isEnabledByDefault()
+            ));
+        }
+
+        return c.getBoolean(key, module.isEnabledByDefault());
     }
 
     private String getModulesConfigKey() {
