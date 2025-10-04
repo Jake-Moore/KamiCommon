@@ -141,7 +141,7 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <div class="block">Builds a <a href="../text/MiniMessageBuilder.html" title="class in com.kamikazejam.kamicommon.text"><code>MiniMessageBuilder</code></a> using this Subsystems' config and the provided key <br>
  It will also automatically replace any {prefix} placeholders in the message with this subsystem's prefix</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract <a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#createConfig()" class="member-name-link">createConfig</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract @NotNull <a href="https://docs.jake-moore.dev/KamiCommonNMS/latest/com/kamikazejam/kamicommon/nms/text/VersionedComponent.html" title="class or interface in com.kamikazejam.kamicommon.nms.text" class="external-link">VersionedComponent</a></code></div>
@@ -181,137 +181,144 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPrefix()" class="member-name-link">getPrefix</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@UnknownNullability <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSupplementalConfigResource(java.lang.String)" class="member-name-link">getSupplementalConfigResource</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fileName)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSupplementalConfigResource(com.kamikazejam.kamicommon.yaml.source.ConfigSource)" class="member-name-link">getSupplementalConfigResource</a><wbr>(@NotNull <a href="../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Placeholder for your own implementation in order to support supplemental configuration files.<br>
  This method should return an InputStream to the supplemental config resource.<br><br>
  By default, this method throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link"><code>UnsupportedOperationException</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleDisable()" class="member-name-link">handleDisable</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@UnknownNullability <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSupplementalConfigResource(java.io.File)" class="member-name-link">getSupplementalConfigResource</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Placeholder for your own implementation in order to support supplemental configuration files.<br>
+ This method should return an InputStream to the supplemental config resource.<br><br>
+ By default, this method throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link"><code>UnsupportedOperationException</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleEnable()" class="member-name-link">handleEnable</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleDisable()" class="member-name-link">handleDisable</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#initializeConfig(C)" class="member-name-link">initializeConfig</a><wbr>(<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a>&nbsp;config)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleEnable()" class="member-name-link">handleEnable</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#onDisable()" class="member-name-link">onDisable</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#initializeConfig(C)" class="member-name-link">initializeConfig</a><wbr>(<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a>&nbsp;config)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#onDisable()" class="member-name-link">onDisable</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">This method is called when a subsystem is shutting down (server shut down most likely, but it could be manually called) <br>
  You should handle your disable logic here, not including any unregistration of commands/listeners/tasks/disableables.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onDisableLater()" class="member-name-link">onDisableLater</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#onEnable()" class="member-name-link">onEnable</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onDisableLater()" class="member-name-link">onDisableLater</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#onEnable()" class="member-name-link">onEnable</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">This method is called at <a href="AbstractSubsystem.html" title="class in com.kamikazejam.kamicommon.subsystem"><code>AbstractSubsystem</code></a> initialization.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerCommands(com.kamikazejam.kamicommon.command.KamiCommand...)" class="member-name-link">registerCommands</a><wbr>(<a href="../command/KamiCommand.html" title="class in com.kamikazejam.kamicommon.command">KamiCommand</a>...&nbsp;commands)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerCommands(com.kamikazejam.kamicommon.command.KamiCommand...)" class="member-name-link">registerCommands</a><wbr>(<a href="../command/KamiCommand.html" title="class in com.kamikazejam.kamicommon.command">KamiCommand</a>...&nbsp;commands)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers the provided commands with this subsystem.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)" class="member-name-link">registerConfigObserver</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a>&nbsp;observer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)" class="member-name-link">registerConfigObserver</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a>&nbsp;observer)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers an observer to this config (if not already registered) <br>
  Refer to the <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe"><code>ConfigObserver</code></a> docs for information on its lifecycle.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerDisableables(com.kamikazejam.kamicommon.util.interfaces.Disableable...)" class="member-name-link">registerDisableables</a><wbr>(<a href="../util/interfaces/Disableable.html" title="interface in com.kamikazejam.kamicommon.util.interfaces">Disableable</a>...&nbsp;disableables)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerDisableables(com.kamikazejam.kamicommon.util.interfaces.Disableable...)" class="member-name-link">registerDisableables</a><wbr>(<a href="../util/interfaces/Disableable.html" title="interface in com.kamikazejam.kamicommon.util.interfaces">Disableable</a>...&nbsp;disableables)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers one or more disableable objects for this subsystem.<br>
  The disableables will be automatically disabled when the subsystem is disabled.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerListeners(org.bukkit.event.Listener...)" class="member-name-link">registerListeners</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/event/Listener.html" title="class or interface in org.bukkit.event" class="external-link">Listener</a>...&nbsp;listeners)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerListeners(org.bukkit.event.Listener...)" class="member-name-link">registerListeners</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/event/Listener.html" title="class or interface in org.bukkit.event" class="external-link">Listener</a>...&nbsp;listeners)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers one or more listeners for this subsystem.<br>
  The listeners will be automatically unregistered when the subsystem is disabled.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)" class="member-name-link">registerReloadHook</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a>&nbsp;config)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)" class="member-name-link">registerReloadHook</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a>&nbsp;config)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds a hook to call this observable's <a href="#reloadObservableConfig()"><code>reloadObservableConfig()</code></a> method whenever this subsystem's config is reloaded.<br>
  <br>
  This means that when this subsystem gets reloaded, this config will also be reloaded.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerTasks(org.bukkit.scheduler.BukkitTask...)" class="member-name-link">registerTasks</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/scheduler/BukkitTask.html" title="class or interface in org.bukkit.scheduler" class="external-link">BukkitTask</a>...&nbsp;tasks)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerTasks(org.bukkit.scheduler.BukkitTask...)" class="member-name-link">registerTasks</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/scheduler/BukkitTask.html" title="class or interface in org.bukkit.scheduler" class="external-link">BukkitTask</a>...&nbsp;tasks)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers one or more tasks for this subsystem.<br>
  The tasks will be automatically cancelled when the subsystem is disabled.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadConfig()" class="member-name-link">reloadConfig</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadConfig()" class="member-name-link">reloadConfig</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Reload the subsystem config from its yaml file on disk.<br>
 
  Will also call any <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe"><code>ObservableConfig</code></a> hooks registered via <a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)"><code>registerReloadHook(ObservableConfig)</code></a></div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadObservableConfig()" class="member-name-link">reloadObservableConfig</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadObservableConfig()" class="member-name-link">reloadObservableConfig</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Reloads the backing config for this observable, notifying all registered observers of the change.<br>
  <br>
  Equivalent to calling <a href="#reloadConfig()"><code>reloadConfig()</code></a> on this subsystem.<br></div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#saveConfig()" class="member-name-link">saveConfig</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterCommands()" class="member-name-link">unregisterCommands</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#saveConfig()" class="member-name-link">saveConfig</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterCommands()" class="member-name-link">unregisterCommands</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters ALL commands that this subsystem has registered.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterCommands(com.kamikazejam.kamicommon.command.KamiCommand...)" class="member-name-link">unregisterCommands</a><wbr>(<a href="../command/KamiCommand.html" title="class in com.kamikazejam.kamicommon.command">KamiCommand</a>...&nbsp;commands)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterCommands(com.kamikazejam.kamicommon.command.KamiCommand...)" class="member-name-link">unregisterCommands</a><wbr>(<a href="../command/KamiCommand.html" title="class in com.kamikazejam.kamicommon.command">KamiCommand</a>...&nbsp;commands)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters the specified commands, if this subsystem has registered them prior.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)" class="member-name-link">unregisterConfigObserver</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a>&nbsp;observer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)" class="member-name-link">unregisterConfigObserver</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a>&nbsp;observer)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters an observer from this config</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterConfigObservers()" class="member-name-link">unregisterConfigObservers</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterConfigObservers()" class="member-name-link">unregisterConfigObservers</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters ALL observers from this config.<br>
  Intended for shutdown logic, but can be used at any time.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterDisableables()" class="member-name-link">unregisterDisableables</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterDisableables()" class="member-name-link">unregisterDisableables</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters ALL disableable objects from this subsystem.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterDisableables(com.kamikazejam.kamicommon.util.interfaces.Disableable...)" class="member-name-link">unregisterDisableables</a><wbr>(<a href="../util/interfaces/Disableable.html" title="interface in com.kamikazejam.kamicommon.util.interfaces">Disableable</a>...&nbsp;disableables)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterDisableables(com.kamikazejam.kamicommon.util.interfaces.Disableable...)" class="member-name-link">unregisterDisableables</a><wbr>(<a href="../util/interfaces/Disableable.html" title="interface in com.kamikazejam.kamicommon.util.interfaces">Disableable</a>...&nbsp;disableables)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters one or more disableable objects from this subsystem.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterListeners()" class="member-name-link">unregisterListeners</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterListeners()" class="member-name-link">unregisterListeners</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters ALL listeners from this subsystem.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterListeners(org.bukkit.event.Listener...)" class="member-name-link">unregisterListeners</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/event/Listener.html" title="class or interface in org.bukkit.event" class="external-link">Listener</a>...&nbsp;listeners)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterListeners(org.bukkit.event.Listener...)" class="member-name-link">unregisterListeners</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/event/Listener.html" title="class or interface in org.bukkit.event" class="external-link">Listener</a>...&nbsp;listeners)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters one or more listeners from this subsystem.<br></div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterTasks()" class="member-name-link">unregisterTasks</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterTasks()" class="member-name-link">unregisterTasks</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters ALL tasks from this subsystem.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterTasks(org.bukkit.scheduler.BukkitTask...)" class="member-name-link">unregisterTasks</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/scheduler/BukkitTask.html" title="class or interface in org.bukkit.scheduler" class="external-link">BukkitTask</a>...&nbsp;tasks)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterTasks(org.bukkit.scheduler.BukkitTask...)" class="member-name-link">unregisterTasks</a><wbr>(<a href="https://jd.papermc.io/paper/org/bukkit/scheduler/BukkitTask.html" title="class or interface in org.bukkit.scheduler" class="external-link">BukkitTask</a>...&nbsp;tasks)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters one or more tasks from this subsystem.</div>
 </div>
 </div>
@@ -493,8 +500,9 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <li>
 <section class="detail" id="createConfig()">
 <h3>createConfig</h3>
-<div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">protected abstract</span>&nbsp;<span class="return-type"><a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a></span>&nbsp;<span class="element-name">createConfig</span>()</div>
+<div class="member-signature"><span class="annotations">@OverrideOnly
+@NotNull
+</span><span class="modifiers">public abstract</span>&nbsp;<span class="return-type"><a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a></span>&nbsp;<span class="element-name">createConfig</span>()</div>
 </section>
 </li>
 <li>
@@ -808,17 +816,34 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 </section>
 </li>
 <li>
-<section class="detail" id="getSupplementalConfigResource(java.lang.String)">
+<section class="detail" id="getSupplementalConfigResource(java.io.File)">
 <h3>getSupplementalConfigResource</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@UnknownNullability <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a></span>&nbsp;<span class="element-name">getSupplementalConfigResource</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fileName)</span>
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</span>
                                                               throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></span></div>
 <div class="block">Placeholder for your own implementation in order to support supplemental configuration files.<br>
  This method should return an InputStream to the supplemental config resource.<br><br>
  By default, this method throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link"><code>UnsupportedOperationException</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>fileName</code> - The YAML file name of the resource to load. Includes ONLY the name, not the path.</dd>
+<dd><code>file</code> - The yaml file of the resource to load.</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></code> - Always, unless overridden with new behavior</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSupplementalConfigResource(com.kamikazejam.kamicommon.yaml.source.ConfigSource)">
+<h3>getSupplementalConfigResource</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@UnknownNullability <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a></span>&nbsp;<span class="element-name">getSupplementalConfigResource</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</span>
+                                                              throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></span></div>
+<div class="block">Placeholder for your own implementation in order to support supplemental configuration files.<br>
+ This method should return an InputStream to the supplemental config resource.<br><br>
+ By default, this method throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link"><code>UnsupportedOperationException</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>source</code> - The config source of the resource to load.</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></code> - Always, unless overridden with new behavior</dd>
 </dl>

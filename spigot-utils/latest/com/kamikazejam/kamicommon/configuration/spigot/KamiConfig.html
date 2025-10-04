@@ -120,15 +120,31 @@ implements <a href="../../yaml/spigot/ConfigurationSection.html" title="interfac
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.kamikazejam.kamicommon.subsystem.AbstractSubsystem,com.kamikazejam.kamicommon.yaml.source.ConfigSource)" class="member-name-link">KamiConfig</a><wbr>(@NotNull <a href="../../subsystem/AbstractSubsystem.html" title="class in com.kamikazejam.kamicommon.subsystem">AbstractSubsystem</a>&lt;?,<wbr>?&gt;&nbsp;subsystem,
+ @NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Creates a new config instance with the given subsystem and config source.<br><br>
+ This constructor enables defaults using the following resource file method:<br>
+ - Fetches the resource file using the provided source, from <a href="../../subsystem/AbstractSubsystem.html#getSupplementalConfigResource(com.kamikazejam.kamicommon.yaml.source.ConfigSource)"><code>AbstractSubsystem.getSupplementalConfigResource(ConfigSource)</code></a></div>
+</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.kamikazejam.kamicommon.subsystem.AbstractSubsystem,com.kamikazejam.kamicommon.yaml.source.ConfigSource,java.util.function.Supplier)" class="member-name-link">KamiConfig</a><wbr>(@NotNull <a href="../../subsystem/AbstractSubsystem.html" title="class in com.kamikazejam.kamicommon.subsystem">AbstractSubsystem</a>&lt;?,<wbr>?&gt;&nbsp;subsystem,
+ @NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Creates a new config instance with the given subsystem and config source.<br><br>
+ This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+ - Providing a non-null supplier will enable defaults using the provided InputStream
+ - Providing a null supplier will disable defaults</div>
+</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.kamikazejam.kamicommon.subsystem.AbstractSubsystem,java.io.File)" class="member-name-link">KamiConfig</a><wbr>(@NotNull <a href="../../subsystem/AbstractSubsystem.html" title="class in com.kamikazejam.kamicommon.subsystem">AbstractSubsystem</a>&lt;?,<wbr>?&gt;&nbsp;subsystem,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</code></div>
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates a new config instance with the given subsystem and destination file.<br><br>
  This constructor enables defaults using the following resource file method:<br>
- - Fetches the resource file using the provided file name, from <a href="../../subsystem/AbstractSubsystem.html#getSupplementalConfigResource(java.lang.String)"><code>AbstractSubsystem.getSupplementalConfigResource(String)</code></a></div>
+ - Fetches the resource file using the provided file name, from <a href="../../subsystem/AbstractSubsystem.html#getSupplementalConfigResource(java.io.File)"><code>AbstractSubsystem.getSupplementalConfigResource(File)</code></a></div>
 </div>
 <div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.kamikazejam.kamicommon.subsystem.AbstractSubsystem,java.io.File,java.util.function.Supplier)" class="member-name-link">KamiConfig</a><wbr>(@NotNull <a href="../../subsystem/AbstractSubsystem.html" title="class in com.kamikazejam.kamicommon.subsystem">AbstractSubsystem</a>&lt;?,<wbr>?&gt;&nbsp;subsystem,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</code></div>
 <div class="col-last odd-row-color">
 <div class="block">Creates a new config instance with the given subsystem and destination file.<br><br>
@@ -136,15 +152,31 @@ implements <a href="../../yaml/spigot/ConfigurationSection.html" title="interfac
  - Providing a non-null supplier will enable defaults using the provided InputStream
  - Providing a null supplier will disable defaults</div>
 </div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.plugin.java.JavaPlugin,com.kamikazejam.kamicommon.yaml.source.ConfigSource)" class="member-name-link">KamiConfig</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/plugin/java/JavaPlugin.html" title="class or interface in org.bukkit.plugin.java" class="external-link">JavaPlugin</a>&nbsp;plugin,
+ @NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Creates a new config instance with the given plugin and config source.<br><br>
+ This constructor enables defaults using the following resource file method:<br>
+ - Fetches the resource file.</div>
+</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(org.bukkit.plugin.java.JavaPlugin,com.kamikazejam.kamicommon.yaml.source.ConfigSource,java.util.function.Supplier)" class="member-name-link">KamiConfig</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/plugin/java/JavaPlugin.html" title="class or interface in org.bukkit.plugin.java" class="external-link">JavaPlugin</a>&nbsp;plugin,
+ @NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Creates a new config instance with the given plugin and config source.<br><br>
+ This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+ - Providing a non-null supplier will enable defaults using the provided InputStream
+ - Providing a null supplier will disable defaults</div>
+</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.plugin.java.JavaPlugin,java.io.File)" class="member-name-link">KamiConfig</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/plugin/java/JavaPlugin.html" title="class or interface in org.bukkit.plugin.java" class="external-link">JavaPlugin</a>&nbsp;plugin,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</code></div>
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates a new config instance with the given plugin and destination file.<br><br>
  This constructor enables defaults using the following resource file method:<br>
  - Assumes a resource file with the same name as the provided file, exists in the current jar.</div>
 </div>
 <div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(org.bukkit.plugin.java.JavaPlugin,java.io.File,java.util.function.Supplier)" class="member-name-link">KamiConfig</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/org/bukkit/plugin/java/JavaPlugin.html" title="class or interface in org.bukkit.plugin.java" class="external-link">JavaPlugin</a>&nbsp;plugin,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</code></div>
 <div class="col-last odd-row-color">
 <div class="block">Creates a new config instance with the given plugin and destination file.<br><br>
@@ -224,63 +256,63 @@ implements <a href="../../yaml/spigot/ConfigurationSection.html" title="interfac
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDouble(java.lang.String,double)" class="member-name-link">getDouble</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  double&nbsp;def)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFile()" class="member-name-link">getFile</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFloat(java.lang.String)" class="member-name-link">getFloat</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFloat(java.lang.String)" class="member-name-link">getFloat</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFloat(java.lang.String,float)" class="member-name-link">getFloat</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFloat(java.lang.String,float)" class="member-name-link">getFloat</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  float&nbsp;def)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getInt(java.lang.String)" class="member-name-link">getInt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getInt(java.lang.String,int)" class="member-name-link">getInt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
- int&nbsp;def)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getInt(java.lang.String)" class="member-name-link">getInt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getIntegerList(java.lang.String)" class="member-name-link">getIntegerList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getInt(java.lang.String,int)" class="member-name-link">getInt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+ int&nbsp;def)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getIntegerList(java.lang.String,java.util.List)" class="member-name-link">getIntegerList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;def)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getIntegerList(java.lang.String)" class="member-name-link">getIntegerList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemStack(java.lang.String)" class="member-name-link">getItemStack</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getIntegerList(java.lang.String,java.util.List)" class="member-name-link">getIntegerList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;def)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemStack(java.lang.String,org.bukkit.inventory.ItemStack)" class="member-name-link">getItemStack</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
- <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;def)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemStack(java.lang.String)" class="member-name-link">getItemStack</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getKeys(boolean)" class="member-name-link">getKeys</a><wbr>(boolean&nbsp;deep)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemStack(java.lang.String,org.bukkit.inventory.ItemStack)" class="member-name-link">getItemStack</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+ <a href="https://jd.papermc.io/paper/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;def)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getKeys(boolean)" class="member-name-link">getKeys</a><wbr>(boolean&nbsp;deep)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the keys of the config
  If Deep is enabled, it will dig and find all valid keys that resolve to a value</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;?&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getList(java.lang.String)" class="member-name-link">getList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;?&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getList(java.lang.String,java.util.List)" class="member-name-link">getList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;?&gt;&nbsp;def)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getList(java.lang.String)" class="member-name-link">getList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLong(java.lang.String)" class="member-name-link">getLong</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;?&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getList(java.lang.String,java.util.List)" class="member-name-link">getList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;?&gt;&nbsp;def)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLong(java.lang.String,long)" class="member-name-link">getLong</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
- long&nbsp;def)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLong(java.lang.String)" class="member-name-link">getLong</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>short</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getShort(java.lang.String)" class="member-name-link">getShort</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLong(java.lang.String,long)" class="member-name-link">getLong</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+ long&nbsp;def)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>short</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getShort(java.lang.String,short)" class="member-name-link">getShort</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getShort(java.lang.String)" class="member-name-link">getShort</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>short</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getShort(java.lang.String,short)" class="member-name-link">getShort</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  short&nbsp;def)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSource()" class="member-name-link">getSource</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getString(java.lang.String)" class="member-name-link">getString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
@@ -487,7 +519,8 @@ implements <a href="../../yaml/spigot/ConfigurationSection.html" title="interfac
 <h3>KamiConfig</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">KamiConfig</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/plugin/java/JavaPlugin.html" title="class or interface in org.bukkit.plugin.java" class="external-link">JavaPlugin</a>&nbsp;plugin,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</span></div>
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</span></div>
 <div class="block">Creates a new config instance with the given plugin and destination file.<br><br>
  This constructor enables defaults using the following resource file method:<br>
  - Assumes a resource file with the same name as the provided file, exists in the current jar.</div>
@@ -498,7 +531,8 @@ implements <a href="../../yaml/spigot/ConfigurationSection.html" title="interfac
 <h3>KamiConfig</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">KamiConfig</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/plugin/java/JavaPlugin.html" title="class or interface in org.bukkit.plugin.java" class="external-link">JavaPlugin</a>&nbsp;plugin,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file,
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file,
  @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</span></div>
 <div class="block">Creates a new config instance with the given plugin and destination file.<br><br>
@@ -512,14 +546,51 @@ implements <a href="../../yaml/spigot/ConfigurationSection.html" title="interfac
 </section>
 </li>
 <li>
+<section class="detail" id="&lt;init&gt;(org.bukkit.plugin.java.JavaPlugin,com.kamikazejam.kamicommon.yaml.source.ConfigSource)">
+<h3>KamiConfig</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">KamiConfig</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/plugin/java/JavaPlugin.html" title="class or interface in org.bukkit.plugin.java" class="external-link">JavaPlugin</a>&nbsp;plugin,
+ @NotNull
+ @NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</span></div>
+<div class="block">Creates a new config instance with the given plugin and config source.<br><br>
+ This constructor enables defaults using the following resource file method:<br>
+ - Fetches the resource file. Its path is determined by <a href="../../yaml/source/ConfigSource.html#getResourceStreamPath()"><code>ConfigSource.getResourceStreamPath()</code></a></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>source</code> - The source to load and save the config from.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(org.bukkit.plugin.java.JavaPlugin,com.kamikazejam.kamicommon.yaml.source.ConfigSource,java.util.function.Supplier)">
+<h3>KamiConfig</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">KamiConfig</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://jd.papermc.io/paper/org/bukkit/plugin/java/JavaPlugin.html" title="class or interface in org.bukkit.plugin.java" class="external-link">JavaPlugin</a>&nbsp;plugin,
+ @NotNull
+ @NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source,
+ @Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</span></div>
+<div class="block">Creates a new config instance with the given plugin and config source.<br><br>
+ This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+ - Providing a non-null supplier will enable defaults using the provided InputStream
+ - Providing a null supplier will disable defaults</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>source</code> - The source to load and save the config from.</dd>
+<dd><code>defaultsStream</code> - The optional supplier to load defaults from.</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="&lt;init&gt;(com.kamikazejam.kamicommon.subsystem.AbstractSubsystem,java.io.File)">
 <h3>KamiConfig</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">KamiConfig</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="../../subsystem/AbstractSubsystem.html" title="class in com.kamikazejam.kamicommon.subsystem">AbstractSubsystem</a>&lt;?,<wbr>?&gt;&nbsp;subsystem,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</span></div>
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</span></div>
 <div class="block">Creates a new config instance with the given subsystem and destination file.<br><br>
  This constructor enables defaults using the following resource file method:<br>
- - Fetches the resource file using the provided file name, from <a href="../../subsystem/AbstractSubsystem.html#getSupplementalConfigResource(java.lang.String)"><code>AbstractSubsystem.getSupplementalConfigResource(String)</code></a></div>
+ - Fetches the resource file using the provided file name, from <a href="../../subsystem/AbstractSubsystem.html#getSupplementalConfigResource(java.io.File)"><code>AbstractSubsystem.getSupplementalConfigResource(File)</code></a></div>
 </section>
 </li>
 <li>
@@ -527,13 +598,50 @@ implements <a href="../../yaml/spigot/ConfigurationSection.html" title="interfac
 <h3>KamiConfig</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">KamiConfig</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="../../subsystem/AbstractSubsystem.html" title="class in com.kamikazejam.kamicommon.subsystem">AbstractSubsystem</a>&lt;?,<wbr>?&gt;&nbsp;subsystem,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file,
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file,
  @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</span></div>
 <div class="block">Creates a new config instance with the given subsystem and destination file.<br><br>
  This constructor uses defaults if and only if the provided supplier is NOT null:<br>
  - Providing a non-null supplier will enable defaults using the provided InputStream
  - Providing a null supplier will disable defaults</div>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(com.kamikazejam.kamicommon.subsystem.AbstractSubsystem,com.kamikazejam.kamicommon.yaml.source.ConfigSource)">
+<h3>KamiConfig</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">KamiConfig</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../../subsystem/AbstractSubsystem.html" title="class in com.kamikazejam.kamicommon.subsystem">AbstractSubsystem</a>&lt;?,<wbr>?&gt;&nbsp;subsystem,
+ @NotNull
+ @NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</span></div>
+<div class="block">Creates a new config instance with the given subsystem and config source.<br><br>
+ This constructor enables defaults using the following resource file method:<br>
+ - Fetches the resource file using the provided source, from <a href="../../subsystem/AbstractSubsystem.html#getSupplementalConfigResource(com.kamikazejam.kamicommon.yaml.source.ConfigSource)"><code>AbstractSubsystem.getSupplementalConfigResource(ConfigSource)</code></a></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>source</code> - The source to load and save the config from.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(com.kamikazejam.kamicommon.subsystem.AbstractSubsystem,com.kamikazejam.kamicommon.yaml.source.ConfigSource,java.util.function.Supplier)">
+<h3>KamiConfig</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">KamiConfig</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../../subsystem/AbstractSubsystem.html" title="class in com.kamikazejam.kamicommon.subsystem">AbstractSubsystem</a>&lt;?,<wbr>?&gt;&nbsp;subsystem,
+ @NotNull
+ @NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source,
+ @Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</span></div>
+<div class="block">Creates a new config instance with the given subsystem and config source.<br><br>
+ This constructor uses defaults if and only if the provided supplier is NOT null:<br>
+ - Providing a non-null supplier will enable defaults using the provided InputStream
+ - Providing a null supplier will disable defaults</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>source</code> - The source to load and save the config from.</dd>
+<dd><code>defaultsStream</code> - The optional supplier to load defaults from.</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -557,12 +665,13 @@ implements <a href="../../yaml/spigot/ConfigurationSection.html" title="interfac
 </section>
 </li>
 <li>
-<section class="detail" id="getFile()">
-<h3>getFile</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a></span>&nbsp;<span class="element-name">getFile</span>()</div>
+<section class="detail" id="getSource()">
+<h3>getSource</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="../../yaml/source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a></span>&nbsp;<span class="element-name">getSource</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../standalone/AbstractConfig.html#getFile()">getFile</a></code>&nbsp;in class&nbsp;<code><a href="../standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;<a href="../../yaml/spigot/YamlConfiguration.html" title="class in com.kamikazejam.kamicommon.yaml.spigot">YamlConfiguration</a>&gt;</code></dd>
+<dd><code><a href="../standalone/AbstractConfig.html#getSource()">getSource</a></code>&nbsp;in class&nbsp;<code><a href="../standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;<a href="../../yaml/spigot/YamlConfiguration.html" title="class in com.kamikazejam.kamicommon.yaml.spigot">YamlConfiguration</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>The file associated with this config</dd>
 </dl>

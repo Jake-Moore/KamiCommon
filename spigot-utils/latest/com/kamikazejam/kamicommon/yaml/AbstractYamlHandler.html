@@ -38,7 +38,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li><a href="#nested-class-summary">Nested</a></li>
+<li>Nested</li>
 <li><a href="#field-summary">Field</a></li>
 <li><a href="#constructor-summary">Constr</a></li>
 <li><a href="#method-summary">Method</a></li>
@@ -58,7 +58,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -99,21 +99,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<li>
-<section class="nested-class-summary" id="nested-class-summary">
-<h2>Nested Class Summary</h2>
-<div class="caption"><span>Nested Classes</span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Class</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="AbstractYamlHandler.NodePair.html" class="type-name-link" title="class in com.kamikazejam.kamicommon.yaml">AbstractYamlHandler.NodePair</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
-</section>
-</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -123,21 +108,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>protected final <a href="../configuration/standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a><wbr>&lt;?&gt;</code></div>
+<div class="col-first even-row-color"><code>final @NotNull <a href="../configuration/standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a><wbr>&lt;?&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#abstractConfig" class="member-name-link">abstractConfig</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected <a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></code></div>
+<div class="col-first odd-row-color"><code><a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#config" class="member-name-link">config</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a></code></div>
-<div class="col-second even-row-color"><code><a href="#configFile" class="member-name-link">configFile</a></code></div>
+<div class="col-first even-row-color"><code>final @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#defaultsStream" class="member-name-link">defaultsStream</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected final @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#defaultsStream" class="member-name-link">defaultsStream</a></code></div>
+<div class="col-first odd-row-color"><code>final @NotNull <a href="source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#source" class="member-name-link">source</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#fileName" class="member-name-link">fileName</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -149,8 +131,8 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig,java.io.File,java.util.function.Supplier)" class="member-name-link">AbstractYamlHandler</a><wbr>(<a href="../configuration/standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;?&gt;&nbsp;abstractConfig,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;configFile,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig,com.kamikazejam.kamicommon.yaml.source.ConfigSource,java.util.function.Supplier)" class="member-name-link">AbstractYamlHandler</a><wbr>(@NotNull <a href="../configuration/standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;?&gt;&nbsp;abstractConfig,
+ @NotNull <a href="source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
@@ -167,27 +149,27 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#copyCommentsFromDefault(com.kamikazejam.kamicommon.yaml.AbstractYamlConfiguration,java.util.List,boolean)" class="member-name-link">copyCommentsFromDefault</a><wbr>(<a href="AbstractYamlConfiguration.html" title="interface in com.kamikazejam.kamicommon.yaml">AbstractYamlConfiguration</a>&nbsp;config,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AbstractYamlHandler.NodePair.html" title="class in com.kamikazejam.kamicommon.yaml">AbstractYamlHandler.NodePair</a>&gt;&nbsp;keyNodes,
- boolean&nbsp;defOverwrites)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull org.yaml.snakeyaml.nodes.MappingNode</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createNewMappingNode()" class="member-name-link">createNewMappingNode</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.yaml.snakeyaml.nodes.MappingNode</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createNewMappingNode()" class="member-name-link">createNewMappingNode</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#error(java.lang.String)" class="member-name-link">error</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadConfig()" class="member-name-link">loadConfig</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#newConfig(org.yaml.snakeyaml.nodes.MappingNode,java.io.File)" class="member-name-link">newConfig</a><wbr>(org.yaml.snakeyaml.nodes.MappingNode&nbsp;node,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;configFile)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="base/MemorySectionMethods.html" title="class in com.kamikazejam.kamicommon.yaml.base">MemorySectionMethods</a><wbr>&lt;?&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#newMemorySection(org.yaml.snakeyaml.nodes.MappingNode)" class="member-name-link">newMemorySection</a><wbr>(org.yaml.snakeyaml.nodes.MappingNode&nbsp;node)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#error(java.lang.String)" class="member-name-link">error</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadConfig()" class="member-name-link">loadConfig</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#newConfig(org.yaml.snakeyaml.nodes.MappingNode,com.kamikazejam.kamicommon.yaml.source.ConfigSource)" class="member-name-link">newConfig</a><wbr>(@NotNull org.yaml.snakeyaml.nodes.MappingNode&nbsp;node,
+ @NotNull <a href="source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract @NotNull <a href="base/MemorySectionMethods.html" title="class in com.kamikazejam.kamicommon.yaml.base">MemorySectionMethods</a><wbr>&lt;?&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#newMemorySection(org.yaml.snakeyaml.nodes.MappingNode)" class="member-name-link">newMemorySection</a><wbr>(@NotNull org.yaml.snakeyaml.nodes.MappingNode&nbsp;node)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#save()" class="member-name-link">save</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Saves the config to the file</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#warn(java.lang.String)" class="member-name-link">warn</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
@@ -211,32 +193,29 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="abstractConfig">
 <h3>abstractConfig</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="../configuration/standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;?&gt;</span>&nbsp;<span class="element-name">abstractConfig</span></div>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public final</span>&nbsp;<span class="return-type">@NotNull <a href="../configuration/standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;?&gt;</span>&nbsp;<span class="element-name">abstractConfig</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="configFile">
-<h3>configFile</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a></span>&nbsp;<span class="element-name">configFile</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="fileName">
-<h3>fileName</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">fileName</span></div>
+<section class="detail" id="source">
+<h3>source</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public final</span>&nbsp;<span class="return-type">@NotNull <a href="source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a></span>&nbsp;<span class="element-name">source</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="defaultsStream">
 <h3>defaultsStream</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">protected final</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;</span>&nbsp;<span class="element-name">defaultsStream</span></div>
+</span><span class="modifiers">public final</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;</span>&nbsp;<span class="element-name">defaultsStream</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="config">
 <h3>config</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a> extends <a href="AbstractYamlConfiguration.html" title="interface in com.kamikazejam.kamicommon.yaml">AbstractYamlConfiguration</a></span>&nbsp;<span class="element-name">config</span></div>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a> extends <a href="AbstractYamlConfiguration.html" title="interface in com.kamikazejam.kamicommon.yaml">AbstractYamlConfiguration</a></span>&nbsp;<span class="element-name">config</span></div>
 </section>
 </li>
 </ul>
@@ -248,16 +227,18 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig,java.io.File,java.util.function.Supplier)">
+<section class="detail" id="&lt;init&gt;(com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig,com.kamikazejam.kamicommon.yaml.source.ConfigSource,java.util.function.Supplier)">
 <h3>AbstractYamlHandler</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">AbstractYamlHandler</span><wbr><span class="parameters">(<a href="../configuration/standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;?&gt;&nbsp;abstractConfig,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;configFile,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">AbstractYamlHandler</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../configuration/standalone/AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;?&gt;&nbsp;abstractConfig,
+ @NotNull
+ @NotNull <a href="source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source,
  @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html" title="class or interface in java.io" class="external-link">InputStream</a>&gt;&nbsp;defaultsStream)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>abstractConfig</code> - The parent config instance who holds this handler.</dd>
-<dd><code>configFile</code> - The file to read/write the configuration to/from.</dd>
+<dd><code>source</code> - The source of the configuration file (yaml content).</dd>
 <dd><code>defaultsStream</code> - An optional stream (of a YAML config) to read default values from, can be null.</dd>
 </dl>
 </section>
@@ -271,29 +252,21 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="newConfig(org.yaml.snakeyaml.nodes.MappingNode,java.io.File)">
+<section class="detail" id="newConfig(org.yaml.snakeyaml.nodes.MappingNode,com.kamikazejam.kamicommon.yaml.source.ConfigSource)">
 <h3>newConfig</h3>
-<div class="member-signature"><span class="modifiers">public abstract</span>&nbsp;<span class="return-type"><a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></span>&nbsp;<span class="element-name">newConfig</span><wbr><span class="parameters">(org.yaml.snakeyaml.nodes.MappingNode&nbsp;node,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;configFile)</span></div>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public abstract</span>&nbsp;<span class="return-type"><a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></span>&nbsp;<span class="element-name">newConfig</span><wbr><span class="parameters">(@NotNull
+ @NotNull org.yaml.snakeyaml.nodes.MappingNode&nbsp;node,
+ @NotNull
+ @NotNull <a href="source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="newMemorySection(org.yaml.snakeyaml.nodes.MappingNode)">
 <h3>newMemorySection</h3>
-<div class="member-signature"><span class="modifiers">public abstract</span>&nbsp;<span class="return-type"><a href="base/MemorySectionMethods.html" title="class in com.kamikazejam.kamicommon.yaml.base">MemorySectionMethods</a>&lt;?&gt;</span>&nbsp;<span class="element-name">newMemorySection</span><wbr><span class="parameters">(org.yaml.snakeyaml.nodes.MappingNode&nbsp;node)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="loadConfig()">
-<h3>loadConfig</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></span>&nbsp;<span class="element-name">loadConfig</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="createNewMappingNode()">
-<h3>createNewMappingNode</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">org.yaml.snakeyaml.nodes.MappingNode</span>&nbsp;<span class="element-name">createNewMappingNode</span>()</div>
+</span><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">@NotNull <a href="base/MemorySectionMethods.html" title="class in com.kamikazejam.kamicommon.yaml.base">MemorySectionMethods</a>&lt;?&gt;</span>&nbsp;<span class="element-name">newMemorySection</span><wbr><span class="parameters">(@NotNull
+ @NotNull org.yaml.snakeyaml.nodes.MappingNode&nbsp;node)</span></div>
 </section>
 </li>
 <li>
@@ -309,16 +282,29 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="copyCommentsFromDefault(com.kamikazejam.kamicommon.yaml.AbstractYamlConfiguration,java.util.List,boolean)">
-<h3>copyCommentsFromDefault</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">copyCommentsFromDefault</span><wbr><span class="parameters">(<a href="AbstractYamlConfiguration.html" title="interface in com.kamikazejam.kamicommon.yaml">AbstractYamlConfiguration</a>&nbsp;config,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AbstractYamlHandler.NodePair.html" title="class in com.kamikazejam.kamicommon.yaml">AbstractYamlHandler.NodePair</a>&gt;&nbsp;keyNodes,
- boolean&nbsp;defOverwrites)</span></div>
+<section class="detail" id="loadConfig()">
+<h3>loadConfig</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AbstractYamlHandler.html" title="type parameter in AbstractYamlHandler">T</a></span>&nbsp;<span class="element-name">loadConfig</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="save()">
+<h3>save</h3>
+<div class="member-signature"><span class="annotations">@Internal
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">save</span>()</div>
+<div class="block">Saves the config to the file</div>
 <dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>config</code> - The config to copy comments to</dd>
-<dd><code>keyNodes</code> - NodePairs of the keys to copy comments from</dd>
+<dt>Returns:</dt>
+<dd>true IFF the config was saved successfully (can be skipped if the config is not changed)</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createNewMappingNode()">
+<h3>createNewMappingNode</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull org.yaml.snakeyaml.nodes.MappingNode</span>&nbsp;<span class="element-name">createNewMappingNode</span>()</div>
 </section>
 </li>
 </ul>

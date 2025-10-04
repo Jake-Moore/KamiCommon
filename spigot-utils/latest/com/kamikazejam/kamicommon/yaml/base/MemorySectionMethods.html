@@ -313,15 +313,23 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#save(java.io.File)" class="member-name-link">save</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;f)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#save(com.kamikazejam.kamicommon.yaml.source.ConfigSource)" class="member-name-link">save</a><wbr>(@NotNull <a href="../source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Saves the config to the file</div>
+<div class="block">Saves the config to the backing source.<br>
+ <br>
+ - If the source is not writable, this is a NO-OP and returns false.<br>
+ - If no changes are detected, returns false.<br>
+ - If writable and changes should be persisted, serialize and write.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#save(java.io.File,boolean)" class="member-name-link">save</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;f,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#save(com.kamikazejam.kamicommon.yaml.source.ConfigSource,boolean)" class="member-name-link">save</a><wbr>(@NotNull <a href="../source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source,
  boolean&nbsp;force)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Saves the config to the file</div>
+<div class="block">Saves the config to the backing source.<br>
+ <br>
+ - If the source is not writable, this is a NO-OP and returns false.<br>
+ - If force is false and no changes are detected, returns false.<br>
+ - If writable and changes should be persisted, serialize and write.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBoolean(java.lang.String,boolean)" class="member-name-link">setBoolean</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
@@ -810,27 +818,40 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="save(java.io.File)">
+<section class="detail" id="save(com.kamikazejam.kamicommon.yaml.source.ConfigSource)">
 <h3>save</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">save</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;f)</span></div>
-<div class="block">Saves the config to the file</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">save</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source)</span></div>
+<div class="block">Saves the config to the backing source.<br>
+ <br>
+ - If the source is not writable, this is a NO-OP and returns false.<br>
+ - If no changes are detected, returns false.<br>
+ - If writable and changes should be persisted, serialize and write.</div>
 <dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>source</code> - The destination/source abstraction</dd>
 <dt>Returns:</dt>
-<dd>true IFF the config was saved successfully (can be skipped if the config is not changed)</dd>
+<dd>true IFF the config was saved successfully (may be skipped if not changed)</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="save(java.io.File,boolean)">
+<section class="detail" id="save(com.kamikazejam.kamicommon.yaml.source.ConfigSource,boolean)">
 <h3>save</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">save</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;f,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">save</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../source/ConfigSource.html" title="interface in com.kamikazejam.kamicommon.yaml.source">ConfigSource</a>&nbsp;source,
  boolean&nbsp;force)</span></div>
-<div class="block">Saves the config to the file</div>
+<div class="block">Saves the config to the backing source.<br>
+ <br>
+ - If the source is not writable, this is a NO-OP and returns false.<br>
+ - If force is false and no changes are detected, returns false.<br>
+ - If writable and changes should be persisted, serialize and write.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
+<dd><code>source</code> - The destination/source abstraction</dd>
 <dd><code>force</code> - If the config should be saved even if no changes were made</dd>
 <dt>Returns:</dt>
-<dd>true IFF the config was saved successfully (can be skipped if the config is not changed and force is false)</dd>
+<dd>true IFF the config was saved successfully (may be skipped if not changed and force is false)</dd>
 </dl>
 </section>
 </li>
