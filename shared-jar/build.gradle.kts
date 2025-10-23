@@ -13,14 +13,14 @@ dependencies {
     api("com.mysql:mysql-connector-j:9.4.0") { exclude("com.google.protobuf", "protobuf-java") }
 
     // RabbitMQ amqp-client (732 KB)
-    api("com.rabbitmq:amqp-client:5.26.0")
+    api("com.rabbitmq:amqp-client:5.27.0")
 
     // SLF4J (39 KB) (needed for RabbitMQ)
     api("org.slf4j:slf4j-api:$slf4jVersion")
     api("org.slf4j:slf4j-simple:$slf4jVersion")
 
     // Lettuce Core (Redis) (6,246 KB)
-    api("io.lettuce:lettuce-core:6.8.1.RELEASE")
+    api("io.lettuce:lettuce-core:7.0.0.RELEASE")
 }
 
 // Configure javadoc-publish-convention
