@@ -1,5 +1,7 @@
 package com.kamikazejam.kamicommon.configuration.standalone;
 
+import com.kamikazejam.kamicommon.configuration.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.log.LoggerService;
 import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
@@ -16,6 +18,7 @@ import org.jetbrains.annotations.UnknownNullability;
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -29,11 +32,12 @@ import java.util.function.Supplier;
  * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link StandaloneConfig#save()} and {@link StandaloneConfig#reload()} <br>
  */
 @SuppressWarnings("unused")
-public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone> implements ConfigurationSectionStandalone {
+public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone> implements ConfigurationSectionStandalone, ObservableConfig<StandaloneConfig> {
     private final @NotNull LoggerService logger;
     private final @NotNull ConfigSource source;
     private final @NotNull YamlHandlerStandalone yamlHandler;
     private @NotNull YamlConfigurationStandalone config;
+    private final @NotNull Set<ConfigObserver<StandaloneConfig>> observers = new HashSet<>();
 
     /**
      * Creates a new config instance with the given logger and destination file.<br><br>
@@ -73,6 +77,7 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
         try {
             config = yamlHandler.loadConfig();
             save();
+            observers.forEach(observer -> observer.onConfigLoaded(this));
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,9 +100,35 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
         }
     }
 
+    @Override
+    public boolean registerConfigObserver(@NotNull ConfigObserver<StandaloneConfig> observer) {
+        if (observers.add(observer)) {
+            // Call the observer immediately, since the config has already been loaded
+            observer.onConfigLoaded(this);
+            return true;
+        }
+        return false;
+    }
 
+    @Override
+    public void unregisterConfigObserver(@NotNull ConfigObserver<StandaloneConfig> observer) {
+        observers.remove(observer);
+    }
 
+    @Override
+    public void unregisterConfigObservers() {
+        observers.clear();
+    }
 
+    /**
+     * Reload the backing config for this observable, notifying all registered observers of the change.<br>
+     * <br>
+     * Equivalent to calling {@link #reload()}
+     */
+    @Override
+    public void reloadObservableConfig() {
+        reload();
+    }
 
 
 

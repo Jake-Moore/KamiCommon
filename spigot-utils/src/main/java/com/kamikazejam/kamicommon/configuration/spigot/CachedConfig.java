@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.configuration.spigot;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.observe.ConfigObserver;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ import java.util.Optional;
  */
 @Getter @Setter
 @SuppressWarnings("unused")
-public abstract class CachedConfig<T extends KamiConfig> implements ConfigObserver {
+public abstract class CachedConfig<T extends KamiConfig> implements ConfigObserver<KamiConfig> {
     /**
      * Whether the server should shut down if loading the config fails.
      * Defaults to {@code true}.
