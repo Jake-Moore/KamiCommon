@@ -5,7 +5,7 @@ plugins { // needed for the allprojects section to work
     id("java")
     id("java-library")
     id("maven-publish")
-    id("com.gradleup.shadow") version "8.3.5" apply false
+    id("com.gradleup.shadow") version "8.3.9" apply false
 }
 
 ext {
@@ -54,14 +54,14 @@ allprojects {
 
     dependencies {
         // Lombok
-        compileOnly("org.projectlombok:lombok:1.18.36")
-        annotationProcessor("org.projectlombok:lombok:1.18.36")
-        testImplementation("org.projectlombok:lombok:1.18.36")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
+        compileOnly("org.projectlombok:lombok:1.18.42")
+        annotationProcessor("org.projectlombok:lombok:1.18.42")
+        testImplementation("org.projectlombok:lombok:1.18.42")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
 
         // IntelliJ annotations
-        compileOnly("org.jetbrains:annotations:26.0.1")
-        testImplementation("org.jetbrains:annotations:26.0.1")
+        compileOnly("org.jetbrains:annotations:26.0.2-1")
+        testImplementation("org.jetbrains:annotations:26.0.2-1")
     }
 
     // We want UTF-8 for everything

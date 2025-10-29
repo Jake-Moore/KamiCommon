@@ -4,12 +4,12 @@ plugins {
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api("com.kamikazejam.kamicommon:spigot-nms:1.0.10")
+    api("com.kamikazejam.kamicommon:spigot-nms:1.2.16")
     api(project(":standalone-utils"))
     api(project(":shared-utils"))
 
-    api("com.google.code.gson:gson:2.11.0")
-    api("org.apache.commons:commons-text:1.13.0") // primarily for LevenshteinDistance
+    api("com.google.code.gson:gson:2.13.2")
+    api("org.apache.commons:commons-text:1.14.0") // primarily for LevenshteinDistance
 
     compileOnly(project.property("lowestSpigotDep") as String)
 
@@ -19,7 +19,7 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
-    compileOnly("io.lumine:Mythic-Dist:5.7.2")
+    compileOnly("io.lumine:Mythic-Dist:5.10.1")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.19")
     // Combat Integrations
     compileOnly("net.minelink:CombatTagPlus:1.3.1")

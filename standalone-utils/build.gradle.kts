@@ -2,7 +2,7 @@ plugins {
     // Unique plugins for this module
 }
 
-var snakeYaml = "org.yaml:snakeyaml:2.3"
+var snakeYaml = "org.yaml:snakeyaml:2.5"
 var json = "org.json:json:20250107"
 dependencies {
     api(project(":shared-utils"))
