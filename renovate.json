@@ -6,6 +6,16 @@
   "baseBranchPatterns": ["/^release\\/.*/"],
   "packageRules": [
     {
+      "description": "Auto-merge GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "groupSlug": "github-actions",
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "squash",
+      "minimumReleaseAge": "0 days"
+    },
+    {
       "description": "Group all non-major updates together",
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
