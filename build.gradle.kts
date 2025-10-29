@@ -19,7 +19,7 @@ plugins { // needed for the allprojects section to work
 }
 
 // Testing server APIs (the earliest supported version, and the latest PaperMC version)
-val oldestServerAPI = "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED-KC"
+val oldestServerAPI = "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED"
 val newestServerAPI = "io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT"
 ext {
     // Use ENV variable to switch between oldest and newest API for testing
@@ -80,8 +80,8 @@ allprojects {
         testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
 
         // IntelliJ annotations
-        compileOnly("org.jetbrains:annotations:26.0.2")
-        testImplementation("org.jetbrains:annotations:26.0.2")
+        compileOnly("org.jetbrains:annotations:26.0.2-1")
+        testImplementation("org.jetbrains:annotations:26.0.2-1")
     }
 
     // We want UTF-8 for everything
