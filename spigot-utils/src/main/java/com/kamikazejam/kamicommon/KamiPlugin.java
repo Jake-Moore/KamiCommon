@@ -3,9 +3,10 @@ package com.kamikazejam.kamicommon;
 import com.google.gson.JsonObject;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
+import com.kamikazejam.kamicommon.configuration.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.observe.ObservableConfig;
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.log.ComponentLogger;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "DuplicatedCode"})
-public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, CoreMethods, ObservableConfig {
+public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, CoreMethods, ObservableConfig<KamiConfig> {
     // -------------------------------------------- //
     // FIELDS
     // -------------------------------------------- //
@@ -208,7 +209,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     /**
      * Called after both onDisableInner and listeners, tasks, and disableables are unregistered<br>
      * Also called after modules, features, and commands are unregistered<br>
-     * You can use this method to cleanup databases or anything else that should come after module/features shutdowns
+     * You can use this method to clean up databases or anything else that should come after module/features shutdowns
      */
     public void onDisablePost() {}
 
@@ -552,7 +553,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
      * @return If the observer was successfully registered from this call (false if already registered)
      */
     @Override
-    public boolean registerConfigObserver(@NotNull ConfigObserver observer) {
+    public boolean registerConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         return this.getKamiConfig().registerConfigObserver(observer);
     }
 
@@ -560,7 +561,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
      * Unregisters an observer from this plugin's default KamiConfig
      */
     @Override
-    public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
+    public void unregisterConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         this.getKamiConfig().unregisterConfigObserver(observer);
     }
 

@@ -46,7 +46,8 @@ gradle.projectsEvaluated {
             it.extensions.getByType<SourceSetContainer>()["main"].compileClasspath
         })
 
-        destinationDir = file("${layout.buildDirectory.get().asFile.absolutePath}/docs/aggregateJavadoc")
+        val aggregateJavadocDir = file("${layout.buildDirectory.get().asFile.absolutePath}/docs/aggregateJavadoc")
+        setDestinationDir(aggregateJavadocDir)
 
         (options as StandardJavadocDocletOptions).apply {
             encoding = "UTF-8"

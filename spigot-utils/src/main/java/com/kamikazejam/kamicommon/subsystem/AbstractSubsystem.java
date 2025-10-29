@@ -4,9 +4,10 @@ import com.kamikazejam.kamicommon.CoreMethods;
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
+import com.kamikazejam.kamicommon.configuration.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.log.ComponentLogger;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> implements CoreMethods, ObservableConfig {
+public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> implements CoreMethods, ObservableConfig<KamiConfig> {
     @Getter private boolean successfullyEnabled = false;
     @Getter private boolean enabled = false;
     @Getter private ComponentLogger logger;
@@ -43,7 +44,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     private final List<Disableable> disableableList = new ArrayList<>();
 
     // Hooks
-    private final List<ObservableConfig> configHooks = new ArrayList<>();
+    private final List<ObservableConfig<KamiConfig>> configHooks = new ArrayList<>();
 
     /**
      * @return The KamiPlugin that this subsystem is registered to
@@ -157,7 +158,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
         C config = Preconditions.checkNotNull(subsystemConfig, "SubsystemConfig is null! Cannot reload config!");
         config.reload(); // Automatically saves
         // Call hook reloads
-        for (ObservableConfig hook : configHooks) {
+        for (ObservableConfig<KamiConfig> hook : configHooks) {
             hook.reloadObservableConfig();
         }
     }
@@ -198,7 +199,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
      * <br>
      * This means that when this subsystem gets reloaded, this config will also be reloaded.
      */
-    public final void registerReloadHook(@NotNull ObservableConfig config) {
+    public final void registerReloadHook(@NotNull ObservableConfig<KamiConfig> config) {
         Preconditions.checkNotNull(config, "Cannot register a null config hook!");
         // caller's responsibility to not register the same hook multiple times
         configHooks.add(config);
@@ -475,12 +476,12 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     // ObservableConfig
     // -------------------------------------------- //
     @Override
-    public boolean registerConfigObserver(@NotNull ConfigObserver observer) {
+    public boolean registerConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         return getConfig().registerConfigObserver(observer);
     }
 
     @Override
-    public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
+    public void unregisterConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         getConfig().unregisterConfigObserver(observer);
     }
 

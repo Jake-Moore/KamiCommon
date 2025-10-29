@@ -1,8 +1,8 @@
 package com.kamikazejam.kamicommon.configuration.spigot;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
+import com.kamikazejam.kamicommon.configuration.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.AbstractConfig;
 import com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfig;
 import com.kamikazejam.kamicommon.item.ItemBuilder;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-
 /**
  * A class that represents a configuration file (Meant for implementations WITH a JavaPlugin object available) <br>
  * If you DO NOT have a JavaPlugin object, it is recommended to use {@link StandaloneConfig} instead <br>
@@ -41,12 +40,12 @@ import java.util.function.Supplier;
  * Then you can use this object just like a YamlConfiguration, it has all the same methods plus a few others like {@link KamiConfig#reload()} <br>
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class KamiConfig extends AbstractConfig<YamlConfiguration> implements ConfigurationSection, ObservableConfig {
+public class KamiConfig extends AbstractConfig<YamlConfiguration> implements ConfigurationSection, ObservableConfig<KamiConfig> {
     private final @NotNull LoggerService logger;
     private final @NotNull ConfigSource source;
     private final @NotNull YamlHandler yamlHandler;
     private @NotNull YamlConfiguration config;
-    private final @NotNull Set<ConfigObserver> observers = new HashSet<>();
+    private final @NotNull Set<ConfigObserver<KamiConfig>> observers = new HashSet<>();
 
     // -------------------------------------------------- //
     //               JavaPlugin Constructors              //
@@ -191,7 +190,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     }
 
     @Override
-    public boolean registerConfigObserver(@NotNull ConfigObserver observer) {
+    public boolean registerConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         if (observers.add(observer)) {
             // Call the observer immediately, since the config has already been loaded
             observer.onConfigLoaded(this);
@@ -201,7 +200,7 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
     }
 
     @Override
-    public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
+    public void unregisterConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         observers.remove(observer);
     }
 
