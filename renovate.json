@@ -16,10 +16,11 @@
       "minimumReleaseAge": "0 days"
     },
     {
-      "description": "Group all non-major updates together",
+      "description": "Group all non-major updates together and auto-merge",
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
+      "automerge": true,
       "bumpVersions": [
         {
           "filePatterns": ["^build\\.gradle\\.kts$"],
