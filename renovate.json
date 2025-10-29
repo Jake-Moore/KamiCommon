@@ -1,0 +1,46 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "baseBranchPatterns": ["/^release\\/.*/"],
+  "packageRules": [
+    {
+      "description": "Auto-merge GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "groupSlug": "github-actions",
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "squash",
+      "minimumReleaseAge": "0 days"
+    },
+    {
+      "description": "Group all non-major updates together",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "bumpVersions": [
+        {
+          "filePatterns": ["^build\\.gradle\\.kts$"],
+          "matchStrings": ["^[\\s]*var\\s+VERSION\\s*=\\s*\"(\\d+\\.\\d+\\.\\d+)\"[\\s]*(?://.*)?$"],
+          "bumpType": "patch"
+        },
+        {
+          "filePatterns": ["^build\\.gradle\\.kts$"],
+          "matchStrings": ["^[\\s]*var\\s+VERSION\\s*=\\s*\"(\\d+\\.\\d+\\.\\d+-(alpha|beta|rc)\\.\\d+)\"[\\s]*(?://.*)?$"],
+          "bumpType": "prerelease"
+        }
+      ]
+    },
+    {
+      "description": "Require approval for major updates",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    }
+  ],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "timezone": "America/Los_Angeles",
+  "schedule": ["* 0-6 * * *"]
+}
