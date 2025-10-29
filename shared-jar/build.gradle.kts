@@ -10,10 +10,10 @@ dependencies {
 
     // MySQL via HikariCP (2,725 KB)
     api("com.zaxxer:HikariCP:7.0.2")
-    api("com.mysql:mysql-connector-j:9.4.0") { exclude("com.google.protobuf", "protobuf-java") }
+    api("com.mysql:mysql-connector-j:9.5.0") { exclude("com.google.protobuf", "protobuf-java") }
 
     // RabbitMQ amqp-client (732 KB)
-    api("com.rabbitmq:amqp-client:5.26.0")
+    api("com.rabbitmq:amqp-client:5.27.0")
 
     // SLF4J (39 KB) (needed for RabbitMQ)
     api("org.slf4j:slf4j-api:$slf4jVersion")
