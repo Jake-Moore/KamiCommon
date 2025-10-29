@@ -3,7 +3,7 @@
   "extends": [
     "config:recommended"
   ],
-  "baseBranchPatterns": ["/^release\\/.*/"],
+  "baseBranchPatterns": ["release/v5"],
   "packageRules": [
     {
       "description": "Auto-merge GitHub Actions updates",
