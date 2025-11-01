@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.kamikazejam.kamicommon.configuration"},{"l":"com.kamikazejam.kamicommon.util"},{"l":"com.kamikazejam.kamicommon.util.collections"},{"l":"com.kamikazejam.kamicommon.util.data"},{"l":"com.kamikazejam.kamicommon.util.log"}];updateSearchResults();
