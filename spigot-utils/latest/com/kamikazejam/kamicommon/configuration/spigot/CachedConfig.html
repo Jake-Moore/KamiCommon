@@ -95,12 +95,12 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a></code></dd>
+<dd><code><a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;</code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">CachedConfig&lt;T extends <a href="KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a></span></div>
+implements <a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;</span></div>
 <div class="block">Abstract base class for configuration caches that automatically reload when the underlying config changes.
  <p>
  This class implements the observer pattern to listen for config changes and provides a framework for
@@ -176,7 +176,7 @@ implements <a href="observe/ConfigObserver.html" title="interface in com.kamikaz
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#register()" class="member-name-link">register</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers this cached config as an observer of its backing config.<br>
- Shortcut for calling <a href="KamiConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)"><code>KamiConfig.registerConfigObserver(ConfigObserver)</code></a> on the backing config.<br>
+ Shortcut for calling <a href="KamiConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)"><code>KamiConfig.registerConfigObserver(ConfigObserver)</code></a> on the backing config.<br>
  i.e.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
@@ -241,7 +241,7 @@ implements <a href="observe/ConfigObserver.html" title="interface in com.kamikaz
 <h3>register</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span>()</div>
 <div class="block">Registers this cached config as an observer of its backing config.<br>
- Shortcut for calling <a href="KamiConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)"><code>KamiConfig.registerConfigObserver(ConfigObserver)</code></a> on the backing config.<br>
+ Shortcut for calling <a href="KamiConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)"><code>KamiConfig.registerConfigObserver(ConfigObserver)</code></a> on the backing config.<br>
  i.e. <code>this.config.registerConfigObserver(this); </code></div>
 </section>
 </li>
@@ -252,7 +252,7 @@ implements <a href="observe/ConfigObserver.html" title="interface in com.kamikaz
 <div class="block">Manual reload method. Call this to have <a href="#onConfigLoaded(com.kamikazejam.kamicommon.configuration.spigot.KamiConfig)"><code>onConfigLoaded(KamiConfig)</code></a> called again and your cache reloaded.<br>
  This method DOES NOT reload the underlying config, it simply calls <a href="#onConfigLoaded(com.kamikazejam.kamicommon.configuration.spigot.KamiConfig)"><code>onConfigLoaded(KamiConfig)</code></a>, triggering your caching logic.
  <p>
- This <a href="CachedConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot"><code>CachedConfig</code></a> class as a member of <a href="observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe"><code>ConfigObserver</code></a> is automatically registered to receive all config reloads.<br>
+ This <a href="CachedConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot"><code>CachedConfig</code></a> class as a member of <a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe"><code>ConfigObserver</code></a> is automatically registered to receive all config reloads.<br>
  As such, calling this method is optional and not required. Calls to <a href="KamiConfig.html#reload()"><code>KamiConfig.reload()</code></a> will automatically trigger <a href="#onConfigLoaded(com.kamikazejam.kamicommon.configuration.spigot.KamiConfig)"><code>onConfigLoaded(KamiConfig)</code></a> to be called.</div>
 </section>
 </li>
@@ -262,11 +262,11 @@ implements <a href="observe/ConfigObserver.html" title="interface in com.kamikaz
 <div class="member-signature"><span class="annotations">@Internal
 </span><span class="modifiers">public final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onConfigLoaded</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&nbsp;config)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="observe/ConfigObserver.html#onConfigLoaded(com.kamikazejam.kamicommon.configuration.spigot.KamiConfig)">ConfigObserver</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../observe/ConfigObserver.html#onConfigLoaded(T)">ConfigObserver</a></code></span></div>
 <div class="block">Called each time the backing config is loaded or reloaded.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="observe/ConfigObserver.html#onConfigLoaded(com.kamikazejam.kamicommon.configuration.spigot.KamiConfig)">onConfigLoaded</a></code>&nbsp;in interface&nbsp;<code><a href="observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a></code></dd>
+<dd><code><a href="../observe/ConfigObserver.html#onConfigLoaded(T)">onConfigLoaded</a></code>&nbsp;in interface&nbsp;<code><a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="CachedConfig.html" title="type parameter in CachedConfig">T</a> extends <a href="KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>config</code> - The updated config object for consumption by this method.</dd>
 </dl>

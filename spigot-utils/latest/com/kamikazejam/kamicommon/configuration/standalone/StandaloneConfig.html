@@ -93,7 +93,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../../yaml/base/ConfigurationMethods.html" title="interface in com.kamikazejam.kamicommon.yaml.base">ConfigurationMethods</a>&lt;<a href="../../yaml/standalone/ConfigurationSectionStandalone.html" title="interface in com.kamikazejam.kamicommon.yaml.standalone">ConfigurationSectionStandalone</a>&gt;</code>, <code><a href="../../yaml/standalone/ConfigurationSectionStandalone.html" title="interface in com.kamikazejam.kamicommon.yaml.standalone">ConfigurationSectionStandalone</a></code></dd>
+<dd><code><a href="../observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;</code>, <code><a href="../../yaml/base/ConfigurationMethods.html" title="interface in com.kamikazejam.kamicommon.yaml.base">ConfigurationMethods</a>&lt;<a href="../../yaml/standalone/ConfigurationSectionStandalone.html" title="interface in com.kamikazejam.kamicommon.yaml.standalone">ConfigurationSectionStandalone</a>&gt;</code>, <code><a href="../../yaml/standalone/ConfigurationSectionStandalone.html" title="interface in com.kamikazejam.kamicommon.yaml.standalone">ConfigurationSectionStandalone</a></code></dd>
 </dl>
 <dl class="notes">
 <dt>Direct Known Subclasses:</dt>
@@ -102,7 +102,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">StandaloneConfig</span>
 <span class="extends-implements">extends <a href="AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;<a href="../../yaml/standalone/YamlConfigurationStandalone.html" title="class in com.kamikazejam.kamicommon.yaml.standalone">YamlConfigurationStandalone</a>&gt;
-implements <a href="../../yaml/standalone/ConfigurationSectionStandalone.html" title="interface in com.kamikazejam.kamicommon.yaml.standalone">ConfigurationSectionStandalone</a></span></div>
+implements <a href="../../yaml/standalone/ConfigurationSectionStandalone.html" title="interface in com.kamikazejam.kamicommon.yaml.standalone">ConfigurationSectionStandalone</a>, <a href="../observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;</span></div>
 <div class="block">A class that represents a configuration file (Meant for implementations WITHOUT a JavaPlugin object available) <br>
  If you have a JavaPlugin object, it is recommended to use @KamiConfig instead <br>
  This is an extension of a YamlConfiguration, so all get, set, and put methods are available. <br>
@@ -364,10 +364,23 @@ implements <a href="../../yaml/standalone/ConfigurationSectionStandalone.html" t
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#putString(java.lang.String,java.lang.String)" class="member-name-link">putString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reload()" class="member-name-link">reload</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)" class="member-name-link">registerConfigObserver</a><wbr>(@NotNull <a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;&nbsp;observer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Registers an observer to this config (if not already registered) <br>
+ Refer to the <a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe"><code>ConfigObserver</code></a> docs for information on its lifecycle.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reload()" class="member-name-link">reload</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Reloads the config from the file</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadObservableConfig()" class="member-name-link">reloadObservableConfig</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Reload the backing config for this observable, notifying all registered observers of the change.<br>
+ <br>
+ Equivalent to calling <a href="#reload()"><code>reload()</code></a></div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#set(java.lang.String,java.lang.Object)" class="member-name-link">set</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
@@ -409,6 +422,17 @@ implements <a href="../../yaml/standalone/ConfigurationSectionStandalone.html" t
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setString(java.lang.String,java.lang.String)" class="member-name-link">setString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)" class="member-name-link">unregisterConfigObserver</a><wbr>(@NotNull <a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;&nbsp;observer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Unregisters an observer from this config</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterConfigObservers()" class="member-name-link">unregisterConfigObservers</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Unregisters ALL observers from this config.<br>
+ Intended for shutdown logic, but can be used at any time.</div>
+</div>
 </div>
 </div>
 </div>
@@ -517,6 +541,61 @@ implements <a href="../../yaml/standalone/ConfigurationSectionStandalone.html" t
 <dd><code><a href="AbstractConfig.html#getSource()">getSource</a></code>&nbsp;in class&nbsp;<code><a href="AbstractConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">AbstractConfig</a>&lt;<a href="../../yaml/standalone/YamlConfigurationStandalone.html" title="class in com.kamikazejam.kamicommon.yaml.standalone">YamlConfigurationStandalone</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>The file associated with this config</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">
+<h3>registerConfigObserver</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">registerConfigObserver</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;&nbsp;observer)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../observe/ObservableConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">ObservableConfig</a></code></span></div>
+<div class="block">Registers an observer to this config (if not already registered) <br>
+ Refer to the <a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe"><code>ConfigObserver</code></a> docs for information on its lifecycle.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="../observe/ObservableConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">registerConfigObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd>If the observer was successfully registered from this call (false if already registered)</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">
+<h3>unregisterConfigObserver</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">unregisterConfigObserver</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;&nbsp;observer)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../observe/ObservableConfig.html#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">ObservableConfig</a></code></span></div>
+<div class="block">Unregisters an observer from this config</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="../observe/ObservableConfig.html#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">unregisterConfigObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="unregisterConfigObservers()">
+<h3>unregisterConfigObservers</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">unregisterConfigObservers</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../observe/ObservableConfig.html#unregisterConfigObservers()">ObservableConfig</a></code></span></div>
+<div class="block">Unregisters ALL observers from this config.<br>
+ Intended for shutdown logic, but can be used at any time.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="../observe/ObservableConfig.html#unregisterConfigObservers()">unregisterConfigObservers</a></code>&nbsp;in interface&nbsp;<code><a href="../observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="reloadObservableConfig()">
+<h3>reloadObservableConfig</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadObservableConfig</span>()</div>
+<div class="block">Reload the backing config for this observable, notifying all registered observers of the change.<br>
+ <br>
+ Equivalent to calling <a href="#reload()"><code>reload()</code></a></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="../observe/ObservableConfig.html#reloadObservableConfig()">reloadObservableConfig</a></code>&nbsp;in interface&nbsp;<code><a href="../observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone">StandaloneConfig</a>&gt;</code></dd>
 </dl>
 </section>
 </li>

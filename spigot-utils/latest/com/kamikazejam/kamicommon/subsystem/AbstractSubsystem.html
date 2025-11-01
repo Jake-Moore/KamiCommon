@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a></code>, <code><a href="../CoreMethods.html" title="interface in com.kamikazejam.kamicommon">CoreMethods</a></code></dd>
+<dd><code><a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="../configuration/spigot/KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;</code>, <code><a href="../CoreMethods.html" title="interface in com.kamikazejam.kamicommon">CoreMethods</a></code></dd>
 </dl>
 <dl class="notes">
 <dt>Direct Known Subclasses:</dt>
@@ -100,7 +100,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">AbstractSubsystem&lt;C extends <a href="SubsystemConfig.html" title="class in com.kamikazejam.kamicommon.subsystem">SubsystemConfig</a>&lt;S&gt;,<wbr>S extends AbstractSubsystem&lt;C,<wbr>S&gt;&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kamicommon">CoreMethods</a>, <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a></span></div>
+implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kamicommon">CoreMethods</a>, <a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="../configuration/spigot/KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;</span></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -223,10 +223,10 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <div class="block">Registers the provided commands with this subsystem.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)" class="member-name-link">registerConfigObserver</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a>&nbsp;observer)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)" class="member-name-link">registerConfigObserver</a><wbr>(@NotNull <a href="../configuration/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="../configuration/spigot/KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;&nbsp;observer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers an observer to this config (if not already registered) <br>
- Refer to the <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe"><code>ConfigObserver</code></a> docs for information on its lifecycle.</div>
+ Refer to the <a href="../configuration/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe"><code>ConfigObserver</code></a> docs for information on its lifecycle.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerDisableables(com.kamikazejam.kamicommon.util.interfaces.Disableable...)" class="member-name-link">registerDisableables</a><wbr>(<a href="../util/interfaces/Disableable.html" title="interface in com.kamikazejam.kamicommon.util.interfaces">Disableable</a>...&nbsp;disableables)</code></div>
@@ -241,7 +241,7 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
  The listeners will be automatically unregistered when the subsystem is disabled.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)" class="member-name-link">registerReloadHook</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a>&nbsp;config)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.observe.ObservableConfig)" class="member-name-link">registerReloadHook</a><wbr>(@NotNull <a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="../configuration/spigot/KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;&nbsp;config)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds a hook to call this observable's <a href="#reloadObservableConfig()"><code>reloadObservableConfig()</code></a> method whenever this subsystem's config is reloaded.<br>
  <br>
@@ -258,7 +258,7 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Reload the subsystem config from its yaml file on disk.<br>
 
- Will also call any <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe"><code>ObservableConfig</code></a> hooks registered via <a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)"><code>registerReloadHook(ObservableConfig)</code></a></div>
+ Will also call any <a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe"><code>ObservableConfig</code></a> hooks registered via <a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.observe.ObservableConfig)"><code>registerReloadHook(ObservableConfig)</code></a></div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadObservableConfig()" class="member-name-link">reloadObservableConfig</a>()</code></div>
@@ -281,7 +281,7 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <div class="block">Unregisters the specified commands, if this subsystem has registered them prior.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)" class="member-name-link">unregisterConfigObserver</a><wbr>(@NotNull <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a>&nbsp;observer)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)" class="member-name-link">unregisterConfigObserver</a><wbr>(@NotNull <a href="../configuration/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="../configuration/spigot/KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;&nbsp;observer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Unregisters an observer from this config</div>
 </div>
@@ -458,7 +458,7 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadConfig</span>()</div>
 <div class="block">Reload the subsystem config from its yaml file on disk.<br>
 
- Will also call any <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe"><code>ObservableConfig</code></a> hooks registered via <a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)"><code>registerReloadHook(ObservableConfig)</code></a></div>
+ Will also call any <a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe"><code>ObservableConfig</code></a> hooks registered via <a href="#registerReloadHook(com.kamikazejam.kamicommon.configuration.observe.ObservableConfig)"><code>registerReloadHook(ObservableConfig)</code></a></div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../CoreMethods.html#reloadConfig()">reloadConfig</a></code>&nbsp;in interface&nbsp;<code><a href="../CoreMethods.html" title="interface in com.kamikazejam.kamicommon">CoreMethods</a></code></dd>
@@ -517,10 +517,10 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 </section>
 </li>
 <li>
-<section class="detail" id="registerReloadHook(com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig)">
+<section class="detail" id="registerReloadHook(com.kamikazejam.kamicommon.configuration.observe.ObservableConfig)">
 <h3>registerReloadHook</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">registerReloadHook</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a>&nbsp;config)</span></div>
+ @NotNull <a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="../configuration/spigot/KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;&nbsp;config)</span></div>
 <div class="block">Adds a hook to call this observable's <a href="#reloadObservableConfig()"><code>reloadObservableConfig()</code></a> method whenever this subsystem's config is reloaded.<br>
  <br>
  This means that when this subsystem gets reloaded, this config will also be reloaded.</div>
@@ -761,31 +761,31 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 </section>
 </li>
 <li>
-<section class="detail" id="registerConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)">
+<section class="detail" id="registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">
 <h3>registerConfigObserver</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">registerConfigObserver</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a>&nbsp;observer)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../configuration/spigot/observe/ObservableConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)">ObservableConfig</a></code></span></div>
+ @NotNull <a href="../configuration/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="../configuration/spigot/KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;&nbsp;observer)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../configuration/observe/ObservableConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">ObservableConfig</a></code></span></div>
 <div class="block">Registers an observer to this config (if not already registered) <br>
- Refer to the <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe"><code>ConfigObserver</code></a> docs for information on its lifecycle.</div>
+ Refer to the <a href="../configuration/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe"><code>ConfigObserver</code></a> docs for information on its lifecycle.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../configuration/spigot/observe/ObservableConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)">registerConfigObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a></code></dd>
+<dd><code><a href="../configuration/observe/ObservableConfig.html#registerConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">registerConfigObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a> extends <a href="SubsystemConfig.html" title="class in com.kamikazejam.kamicommon.subsystem">SubsystemConfig</a>&lt;<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">S</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>If the observer was successfully registered from this call (false if already registered)</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)">
+<section class="detail" id="unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">
 <h3>unregisterConfigObserver</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">unregisterConfigObserver</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="../configuration/spigot/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ConfigObserver</a>&nbsp;observer)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../configuration/spigot/observe/ObservableConfig.html#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)">ObservableConfig</a></code></span></div>
+ @NotNull <a href="../configuration/observe/ConfigObserver.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ConfigObserver</a>&lt;<a href="../configuration/spigot/KamiConfig.html" title="class in com.kamikazejam.kamicommon.configuration.spigot">KamiConfig</a>&gt;&nbsp;observer)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../configuration/observe/ObservableConfig.html#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">ObservableConfig</a></code></span></div>
 <div class="block">Unregisters an observer from this config</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../configuration/spigot/observe/ObservableConfig.html#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver)">unregisterConfigObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a></code></dd>
+<dd><code><a href="../configuration/observe/ObservableConfig.html#unregisterConfigObserver(com.kamikazejam.kamicommon.configuration.observe.ConfigObserver)">unregisterConfigObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a> extends <a href="SubsystemConfig.html" title="class in com.kamikazejam.kamicommon.subsystem">SubsystemConfig</a>&lt;<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">S</a>&gt;&gt;</code></dd>
 </dl>
 </section>
 </li>
@@ -793,12 +793,12 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
 <section class="detail" id="unregisterConfigObservers()">
 <h3>unregisterConfigObservers</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">unregisterConfigObservers</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../configuration/spigot/observe/ObservableConfig.html#unregisterConfigObservers()">ObservableConfig</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../configuration/observe/ObservableConfig.html#unregisterConfigObservers()">ObservableConfig</a></code></span></div>
 <div class="block">Unregisters ALL observers from this config.<br>
  Intended for shutdown logic, but can be used at any time.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../configuration/spigot/observe/ObservableConfig.html#unregisterConfigObservers()">unregisterConfigObservers</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a></code></dd>
+<dd><code><a href="../configuration/observe/ObservableConfig.html#unregisterConfigObservers()">unregisterConfigObservers</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a> extends <a href="SubsystemConfig.html" title="class in com.kamikazejam.kamicommon.subsystem">SubsystemConfig</a>&lt;<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">S</a>&gt;&gt;</code></dd>
 </dl>
 </section>
 </li>
@@ -811,7 +811,7 @@ implements <a href="../CoreMethods.html" title="interface in com.kamikazejam.kam
  Equivalent to calling <a href="#reloadConfig()"><code>reloadConfig()</code></a> on this subsystem.<br></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../configuration/spigot/observe/ObservableConfig.html#reloadObservableConfig()">reloadObservableConfig</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/spigot/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.spigot.observe">ObservableConfig</a></code></dd>
+<dd><code><a href="../configuration/observe/ObservableConfig.html#reloadObservableConfig()">reloadObservableConfig</a></code>&nbsp;in interface&nbsp;<code><a href="../configuration/observe/ObservableConfig.html" title="interface in com.kamikazejam.kamicommon.configuration.observe">ObservableConfig</a>&lt;<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">C</a> extends <a href="SubsystemConfig.html" title="class in com.kamikazejam.kamicommon.subsystem">SubsystemConfig</a>&lt;<a href="AbstractSubsystem.html" title="type parameter in AbstractSubsystem">S</a>&gt;&gt;</code></dd>
 </dl>
 </section>
 </li>
