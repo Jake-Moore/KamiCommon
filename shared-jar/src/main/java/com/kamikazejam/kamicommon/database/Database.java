@@ -14,12 +14,16 @@ public abstract class Database implements DatabaseListener {
     private final HikariDataSource datasource;
     private final String database;
 
+    private static final String RELOCATED_DRIVER =
+            "com.kamikazejam.kamicommon.mysql.cj.jdbc.MysqlDataSource";
+    private static final String FALLBACK_DRIVER =
+            "com.mysql.cj.jdbc.MysqlDataSource";
+
     public Database(String address, int port, String database, String user, String pass) {
         this.database = database;
 
         HikariConfig hikari = new HikariConfig();
-        // Use this method so that maven minimize-jar keeps these classes
-        hikari.setDataSourceClassName("com.kamikazejam.kamicommon.mysql.cj.jdbc.MysqlDataSource");
+        hikari.setDataSourceClassName(detectDataSourceClassName());
 
         hikari.addDataSourceProperty("serverName", address);
         hikari.addDataSourceProperty("port", port);
@@ -37,12 +41,33 @@ public abstract class Database implements DatabaseListener {
         properties.put("useUnicode", true);
         properties.put("characterEncoding", "utf8");
 
-        String propertiesString = properties.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining(";"));
+        String propertiesString = properties.entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining(";"));
+
+        hikari.addDataSourceProperty("properties", propertiesString);
 
         this.datasource = new HikariDataSource(hikari);
         this.onConnected();
+    }
 
-        hikari.addDataSourceProperty("properties", propertiesString);
+    private static String detectDataSourceClassName() {
+        // Try the relocated driver first
+        if (isClassAvailable(RELOCATED_DRIVER)) {
+            return RELOCATED_DRIVER;
+        }
+        // Fall back to the standard driver
+        return FALLBACK_DRIVER;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static boolean isClassAvailable(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     public Connection getConnection() {
