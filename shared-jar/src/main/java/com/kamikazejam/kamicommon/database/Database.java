@@ -32,11 +32,6 @@ public abstract class Database implements DatabaseListener {
         hikari.addDataSourceProperty("prepStmtCacheSize", "256");
         hikari.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
-        hikari.addDataSourceProperty("useSSL", false);
-        hikari.addDataSourceProperty("verifyServerCertificate", false);
-        hikari.addDataSourceProperty("useUnicode", true);
-        hikari.addDataSourceProperty("characterEncoding", "utf8");
-
         this.datasource = new HikariDataSource(hikari);
         this.onConnected();
     }
