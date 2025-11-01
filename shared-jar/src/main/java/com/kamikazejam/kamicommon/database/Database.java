@@ -5,9 +5,6 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public abstract class Database implements DatabaseListener {
@@ -35,17 +32,10 @@ public abstract class Database implements DatabaseListener {
         hikari.addDataSourceProperty("prepStmtCacheSize", "256");
         hikari.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("useSSL", false);
-        properties.put("verifyServerCertificate", false);
-        properties.put("useUnicode", true);
-        properties.put("characterEncoding", "utf8");
-
-        String propertiesString = properties.entrySet().stream()
-                .map(e -> e.getKey() + "=" + e.getValue())
-                .collect(Collectors.joining(";"));
-
-        hikari.addDataSourceProperty("properties", propertiesString);
+        hikari.addDataSourceProperty("useSSL", false);
+        hikari.addDataSourceProperty("verifyServerCertificate", false);
+        hikari.addDataSourceProperty("useUnicode", true);
+        hikari.addDataSourceProperty("characterEncoding", "utf8");
 
         this.datasource = new HikariDataSource(hikari);
         this.onConnected();
