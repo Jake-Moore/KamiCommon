@@ -18,7 +18,7 @@ dependencies {
     compileOnly(project.property("serverAPI") as String)
 
     // Spigot Libs (soft-depend)
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("me.clip:placeholderapi:2.11.7")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.19")
     // Combat Integrations
     compileOnly("net.minelink:CombatTagPlus:1.3.1")
