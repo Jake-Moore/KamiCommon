@@ -33,7 +33,7 @@ import java.util.ArrayList;
 public class SpigotUtilsSource {
     private static KamiPlugin pluginSource = null;
     private static boolean enabled = false;
-    private static final KamiCommonCommand kcCommand = new KamiCommonCommand();
+    private static @Nullable KamiCommonCommand kcCommand;
     private static final MenuManager menuManager = new MenuManager();
     private static @Nullable BukkitTask menuTask = null;
 
@@ -65,6 +65,7 @@ public class SpigotUtilsSource {
         // SetUp NMS Event Adapters
         plugin.registerListeners(PreSpawnSpawnerAdapter.getSpawnerAdapter());
         // Register Core Command
+        kcCommand = new KamiCommonCommand(plugin);
         kcCommand.registerCommand(plugin); // Register the KamiCommon command
 
         // Register Menus
@@ -102,7 +103,10 @@ public class SpigotUtilsSource {
         if (!enabled) { return false; }
 
         // Unregister KamiCommon Command
-        kcCommand.unregisterCommand();
+        if (kcCommand != null) {
+            kcCommand.unregisterCommand();
+            kcCommand = null;
+        }
 
         // Save IdUtil
         IdUtilLocal.saveCachefileDatas();

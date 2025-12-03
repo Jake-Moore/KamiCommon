@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.command.impl.kc;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.actions.Action;
 import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
@@ -28,10 +29,12 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,16 +45,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
-public class CmdNmsTest extends KamiCommand {
+public class CmdNmsTest extends KamiCommand implements Listener {
     private final List<Test> tests;
 
-    public CmdNmsTest() {
+    public CmdNmsTest(@NotNull KamiPlugin plugin) {
         addAliases("nmstest");
 
         addRequirements(RequirementHasPerm.get("kamicommon.command.nmstest"));
         addRequirements(RequirementIsPlayer.get());
 
         tests = createTests(NmsAPI.getVersionedComponentSerializer());
+
+        // Register as a Listener for debugging or event monitoring during tests
+        plugin.registerListeners(this);
     }
 
     @NotNull
@@ -272,6 +278,13 @@ public class CmdNmsTest extends KamiCommand {
             }
 
             // Return Player to Origin
+            //   Clear momentum and fall tracking before teleport
+            player.setVelocity(new Vector(0, 0, 0)); // zero velocity
+            player.setFallDistance(0f); // reset tracked fall distance
+            //   very short no-damage window to cover edge cases
+            int oldNoDamageTicks = player.getNoDamageTicks();
+            player.setNoDamageTicks(20); // 1 second immunity
+            //   Teleport back using bukkit API in case NMS teleporter has issues
             player.teleport(origin);
         });
     }
