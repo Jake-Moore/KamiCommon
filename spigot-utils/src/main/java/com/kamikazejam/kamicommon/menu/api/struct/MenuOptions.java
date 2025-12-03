@@ -53,6 +53,24 @@ public abstract class MenuOptions<M extends Menu<M>> {
      */
     private boolean resetVisualsOnOpen = true;
 
+    /**
+     * If drag events affecting menu slots should be automatically cancelled.<br>
+     * Default: true (drags into menu are blocked).<br>
+     * <br>
+     * Note: Drag events occur when a player drags items across multiple slots
+     * (left-drag distributes evenly, right-drag places one per slot).
+     */
+    private boolean cancelDragEvent = true;
+
+    /**
+     * If drag events affecting only player inventory slots should be cancelled.<br>
+     * Default: false (player can drag in their own inventory).<br>
+     * <br>
+     * Note: This only applies to drags that do NOT affect any menu slots.
+     * If a drag affects any menu slots, {@link #cancelDragEvent} takes precedence.
+     */
+    private boolean cancelPlayerDragEvent = true;
+
     @NotNull
     public abstract MenuOptions<M> copy();
 
@@ -64,5 +82,7 @@ public abstract class MenuOptions<M extends Menu<M>> {
         options.excludedFillSlots.clear();
         options.excludedFillSlots.addAll(this.excludedFillSlots);
         options.resetVisualsOnOpen = this.resetVisualsOnOpen;
+        options.cancelDragEvent = this.cancelDragEvent;
+        options.cancelPlayerDragEvent = this.cancelPlayerDragEvent;
     }
 }

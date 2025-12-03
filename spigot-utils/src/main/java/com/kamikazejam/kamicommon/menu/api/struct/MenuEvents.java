@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.menu.api.struct;
 
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.callbacks.MenuCloseCallback;
+import com.kamikazejam.kamicommon.menu.api.callbacks.MenuDragCallback;
 import com.kamikazejam.kamicommon.menu.api.callbacks.MenuOpenCallback;
 import com.kamikazejam.kamicommon.menu.api.callbacks.MenuPostCloseCallback;
 import com.kamikazejam.kamicommon.menu.api.clicks.PlayerSlotClick;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +41,10 @@ public class MenuEvents<M extends Menu<M>> {
     private final Map<String, PlayerSlotClick<M>> playerInvClicks;                            // List<Click>              (processed before per-slot clicks)
     private final Map<Integer, Map<String, PlayerSlotClick<M>>> playerSlotClicks;             // Map<Slot, List<Click>>   (processed after global clicks)
     private final Map<String, Predicate<InventoryClickEvent>> playerInvClickPredicates;
+    // Drag Events - predicates and callbacks for InventoryDragEvent
+    private final @NotNull Map<String, Predicate<InventoryDragEvent>> dragPredicates;           // Predicates for drags affecting menu slots
+    private final @NotNull Map<String, Predicate<InventoryDragEvent>> playerInvDragPredicates;  // Predicates for drags affecting only player inventory
+    private final @NotNull Map<String, MenuDragCallback> dragCallbacks;                         // Callbacks when drags affect menu slots
     // Ability to ignore upcoming events
     private final @NotNull AtomicBoolean ignoreNextInventoryCloseEvent;
 
@@ -50,6 +56,9 @@ public class MenuEvents<M extends Menu<M>> {
         this.playerInvClicks = new HashMap<>();
         this.playerSlotClicks = new ConcurrentHashMap<>();
         this.playerInvClickPredicates = new HashMap<>();
+        this.dragPredicates = new HashMap<>();
+        this.playerInvDragPredicates = new HashMap<>();
+        this.dragCallbacks = new HashMap<>();
         this.ignoreNextInventoryCloseEvent = new AtomicBoolean(false);
     }
 
@@ -62,6 +71,9 @@ public class MenuEvents<M extends Menu<M>> {
         this.playerInvClicks = new HashMap<>(copy.playerInvClicks);
         this.playerSlotClicks = new ConcurrentHashMap<>(copy.playerSlotClicks);
         this.playerInvClickPredicates = new HashMap<>(copy.playerInvClickPredicates);
+        this.dragPredicates = new HashMap<>(copy.dragPredicates);
+        this.playerInvDragPredicates = new HashMap<>(copy.playerInvDragPredicates);
+        this.dragCallbacks = new HashMap<>(copy.dragCallbacks);
         this.ignoreNextInventoryCloseEvent = new AtomicBoolean(copy.ignoreNextInventoryCloseEvent.get());
     }
 
@@ -295,6 +307,102 @@ public class MenuEvents<M extends Menu<M>> {
      */
     public boolean removePlayerClickPredicate(@NotNull String id) {
         return this.playerInvClickPredicates.remove(id) != null;
+    }
+
+    // -------------------------------------------------- //
+    // -------------- Drag Event Methods ---------------- //
+    // -------------------------------------------------- //
+
+    /**
+     * Add a predicate on {@link InventoryDragEvent} that must pass for drag operations on menu slots to proceed.<br>
+     * This applies to the {@link com.kamikazejam.kamicommon.menu.Menu}'s inventory only.<br>
+     * For adding a predicate for player inventory drags, use {@link #addPlayerDragPredicate(Predicate)}
+     * @return this {@link MenuEvents} object for chaining
+     */
+    @NotNull
+    public MenuEvents<M> addDragPredicate(@NotNull Predicate<InventoryDragEvent> predicate) {
+        this.dragPredicates.put(UUID.randomUUID().toString(), predicate);
+        return this;
+    }
+
+    /**
+     * Add a predicate on {@link InventoryDragEvent} that must pass for drag operations on menu slots to proceed.<br>
+     * This applies to the {@link com.kamikazejam.kamicommon.menu.Menu}'s inventory only.<br>
+     * For adding a predicate for player inventory drags, use {@link #addPlayerDragPredicate(String, Predicate)}
+     * @param id The ID to associate with this predicate for later removal
+     * @return this {@link MenuEvents} object for chaining
+     */
+    @NotNull
+    public MenuEvents<M> addDragPredicate(@NotNull String id, @NotNull Predicate<InventoryDragEvent> predicate) {
+        this.dragPredicates.put(id, predicate);
+        return this;
+    }
+
+    /**
+     * Remove a drag predicate by ID
+     */
+    public boolean removeDragPredicate(@NotNull String id) {
+        return this.dragPredicates.remove(id) != null;
+    }
+
+    /**
+     * Add a predicate on {@link InventoryDragEvent} that must pass for drag operations in the player's inventory.<br>
+     * This only applies when the drag does NOT affect any menu slots.<br>
+     * For adding a predicate for menu inventory drags, use {@link #addDragPredicate(Predicate)}
+     * @return this {@link MenuEvents} object for chaining
+     */
+    @NotNull
+    public MenuEvents<M> addPlayerDragPredicate(@NotNull Predicate<InventoryDragEvent> predicate) {
+        this.playerInvDragPredicates.put(UUID.randomUUID().toString(), predicate);
+        return this;
+    }
+
+    /**
+     * Add a predicate on {@link InventoryDragEvent} that must pass for drag operations in the player's inventory.<br>
+     * This only applies when the drag does NOT affect any menu slots.<br>
+     * For adding a predicate for menu inventory drags, use {@link #addDragPredicate(String, Predicate)}
+     * @param id The ID to associate with this predicate for later removal
+     * @return this {@link MenuEvents} object for chaining
+     */
+    @NotNull
+    public MenuEvents<M> addPlayerDragPredicate(@NotNull String id, @NotNull Predicate<InventoryDragEvent> predicate) {
+        this.playerInvDragPredicates.put(id, predicate);
+        return this;
+    }
+
+    /**
+     * Remove a player inventory drag predicate by ID
+     */
+    public boolean removePlayerDragPredicate(@NotNull String id) {
+        return this.playerInvDragPredicates.remove(id) != null;
+    }
+
+    /**
+     * Add a callback that runs when a drag event affects menu slots (and is not cancelled).<br>
+     * @return this {@link MenuEvents} object for chaining
+     */
+    @NotNull
+    public MenuEvents<M> addDragCallback(@NotNull MenuDragCallback callback) {
+        this.dragCallbacks.put(UUID.randomUUID().toString(), callback);
+        return this;
+    }
+
+    /**
+     * Add a callback that runs when a drag event affects menu slots (and is not cancelled).<br>
+     * @param id The ID to associate with this callback for later removal
+     * @return this {@link MenuEvents} object for chaining
+     */
+    @NotNull
+    public MenuEvents<M> addDragCallback(@NotNull String id, @NotNull MenuDragCallback callback) {
+        this.dragCallbacks.put(id, callback);
+        return this;
+    }
+
+    /**
+     * Remove a drag callback by ID
+     */
+    public boolean removeDragCallback(@NotNull String id) {
+        return this.dragCallbacks.remove(id) != null;
     }
 
     @NotNull

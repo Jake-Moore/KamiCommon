@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.menu;
 
 import com.google.common.collect.Sets;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
+import com.kamikazejam.kamicommon.menu.api.callbacks.MenuDragCallback;
 import com.kamikazejam.kamicommon.menu.api.clicks.data.MenuClickData;
 import com.kamikazejam.kamicommon.menu.api.clicks.data.PlayerClickData;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.MenuClickTransform;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -78,6 +80,79 @@ public final class MenuManager implements Listener, Runnable {
 
         // Process normal menu clicks
         processClick(e, player, menu);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @EventHandler
+    public void onDragMenu(InventoryDragEvent e) {
+        if (!(e.getWhoClicked() instanceof Player player)) {
+            return;
+        }
+
+        // Check if any of the dragged slots are in a Menu inventory
+        Inventory topInventory = e.getView().getTopInventory();
+        if (!(topInventory.getHolder() instanceof Menu menu)) {
+            return;
+        }
+
+        // Check if any slots in the drag affect the menu (top inventory)
+        Set<Integer> rawSlots = e.getRawSlots();
+        int topSize = topInventory.getSize();
+        boolean affectsMenu = rawSlots.stream().anyMatch(slot -> slot < topSize);
+
+        if (!affectsMenu) {
+            // Drag only affects player inventory - handle separately
+            handlePlayerInventoryDrag(e, menu);
+            return;
+        }
+
+        // Drag affects the menu inventory
+        handleMenuDrag(e, menu, player);
+    }
+
+    /**
+     * Handle drag events that affect the menu inventory (top inventory).
+     */
+    private <M extends Menu<M>> void handleMenuDrag(InventoryDragEvent e, M menu, Player player) {
+        // Default behavior: cancel drags that affect menu slots
+        if (menu.getOptions().isCancelDragEvent()) {
+            e.setCancelled(true);
+        }
+
+        // Test drag predicates
+        MenuEvents<M> menuEvents = menu.getEvents();
+        for (Predicate<InventoryDragEvent> predicate : menuEvents.getDragPredicates().values()) {
+            if (!predicate.test(e)) {
+                e.setCancelled(true);
+                return;
+            }
+        }
+
+        // Call drag callbacks if not cancelled
+        if (!e.isCancelled()) {
+            for (MenuDragCallback callback : menuEvents.getDragCallbacks().values()) {
+                callback.onDrag(player, e);
+            }
+        }
+    }
+
+    /**
+     * Handle drag events that only affect the player inventory (bottom inventory).
+     */
+    private <M extends Menu<M>> void handlePlayerInventoryDrag(InventoryDragEvent e, M menu) {
+        // If player drag events should be cancelled
+        if (menu.getOptions().isCancelPlayerDragEvent()) {
+            e.setCancelled(true);
+        }
+
+        // Test player inventory drag predicates
+        MenuEvents<M> menuEvents = menu.getEvents();
+        for (Predicate<InventoryDragEvent> predicate : menuEvents.getPlayerInvDragPredicates().values()) {
+            if (!predicate.test(e)) {
+                e.setCancelled(true);
+                return;
+            }
+        }
     }
 
     private static void processOneClick(InventoryClickEvent e, Player player, OneClickMenu oneClickMenu) {
