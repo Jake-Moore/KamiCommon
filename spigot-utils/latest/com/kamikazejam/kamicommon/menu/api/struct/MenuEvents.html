@@ -149,6 +149,32 @@ loadScripts(document, 'script');</script>
 <div class="block">Add a callback that runs when the inventory is closed, with access to <a href="https://jd.papermc.io/paper/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> and <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryCloseEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryCloseEvent</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a><wbr>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addDragCallback(com.kamikazejam.kamicommon.menu.api.callbacks.MenuDragCallback)" class="member-name-link">addDragCallback</a><wbr>(@NotNull <a href="../callbacks/MenuDragCallback.html" title="interface in com.kamikazejam.kamicommon.menu.api.callbacks">MenuDragCallback</a>&nbsp;callback)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Add a callback that runs when a drag event affects menu slots (and is not cancelled).<br></div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a><wbr>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addDragCallback(java.lang.String,com.kamikazejam.kamicommon.menu.api.callbacks.MenuDragCallback)" class="member-name-link">addDragCallback</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ @NotNull <a href="../callbacks/MenuDragCallback.html" title="interface in com.kamikazejam.kamicommon.menu.api.callbacks">MenuDragCallback</a>&nbsp;callback)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Add a callback that runs when a drag event affects menu slots (and is not cancelled).<br></div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a><wbr>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addDragPredicate(java.lang.String,java.util.function.Predicate)" class="member-name-link">addDragPredicate</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link">InventoryDragEvent</a>&gt;&nbsp;predicate)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Add a predicate on <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryDragEvent</code></a> that must pass for drag operations on menu slots to proceed.<br>
+ This applies to the <a href="../../Menu.html" title="interface in com.kamikazejam.kamicommon.menu"><code>Menu</code></a>'s inventory only.<br>
+ For adding a predicate for player inventory drags, use <a href="#addPlayerDragPredicate(java.lang.String,java.util.function.Predicate)"><code>addPlayerDragPredicate(String, Predicate)</code></a></div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a><wbr>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addDragPredicate(java.util.function.Predicate)" class="member-name-link">addDragPredicate</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link">InventoryDragEvent</a>&gt;&nbsp;predicate)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Add a predicate on <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryDragEvent</code></a> that must pass for drag operations on menu slots to proceed.<br>
+ This applies to the <a href="../../Menu.html" title="interface in com.kamikazejam.kamicommon.menu"><code>Menu</code></a>'s inventory only.<br>
+ For adding a predicate for player inventory drags, use <a href="#addPlayerDragPredicate(java.util.function.Predicate)"><code>addPlayerDragPredicate(Predicate)</code></a></div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a><wbr>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addOpenCallback(com.kamikazejam.kamicommon.menu.api.callbacks.MenuOpenCallback)" class="member-name-link">addOpenCallback</a><wbr>(@Nullable <a href="../callbacks/MenuOpenCallback.html" title="interface in com.kamikazejam.kamicommon.menu.api.callbacks">MenuOpenCallback</a>&nbsp;menuOpen)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Add a callback that runs when the inventory is opened.</div>
@@ -173,6 +199,21 @@ loadScripts(document, 'script');</script>
 <div class="block">Add a predicate on <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryClickEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryClickEvent</code></a> that must pass for the click handlers on that slot to be executed.<br>
  This applies to the <a href="https://jd.papermc.io/paper/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a>'s inventory only, not the menu's inventory.<br>
  For adding a predicate for the Menu inventory clicks, use <a href="#addClickPredicate(java.util.function.Predicate)"><code>addClickPredicate(Predicate)</code></a></div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a><wbr>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addPlayerDragPredicate(java.lang.String,java.util.function.Predicate)" class="member-name-link">addPlayerDragPredicate</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link">InventoryDragEvent</a>&gt;&nbsp;predicate)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Add a predicate on <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryDragEvent</code></a> that must pass for drag operations in the player's inventory.<br>
+ This only applies when the drag does NOT affect any menu slots.<br>
+ For adding a predicate for menu inventory drags, use <a href="#addDragPredicate(java.lang.String,java.util.function.Predicate)"><code>addDragPredicate(String, Predicate)</code></a></div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a><wbr>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addPlayerDragPredicate(java.util.function.Predicate)" class="member-name-link">addPlayerDragPredicate</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link">InventoryDragEvent</a>&gt;&nbsp;predicate)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Add a predicate on <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryDragEvent</code></a> that must pass for drag operations in the player's inventory.<br>
+ This only applies when the drag does NOT affect any menu slots.<br>
+ For adding a predicate for menu inventory drags, use <a href="#addDragPredicate(java.util.function.Predicate)"><code>addDragPredicate(Predicate)</code></a></div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a><wbr>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addPlayerInvClick(com.kamikazejam.kamicommon.menu.api.clicks.PlayerSlotClick)" class="member-name-link">addPlayerInvClick</a><wbr>(@NotNull <a href="../clicks/PlayerSlotClick.html" title="interface in com.kamikazejam.kamicommon.menu.api.clicks">PlayerSlotClick</a>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;&nbsp;click)</code></div>
@@ -232,6 +273,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Remove a close callback by ID</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeDragCallback(java.lang.String)" class="member-name-link">removeDragCallback</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Remove a drag callback by ID</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeDragPredicate(java.lang.String)" class="member-name-link">removeDragPredicate</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Remove a drag predicate by ID</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeOpenCallback(java.lang.String)" class="member-name-link">removeOpenCallback</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Remove an open callback by ID</div>
@@ -242,18 +293,23 @@ loadScripts(document, 'script');</script>
 <div class="block">Remove a player inventory click predicate by ID</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removePlayerInvClick(java.lang.String)" class="member-name-link">removePlayerInvClick</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removePlayerDragPredicate(java.lang.String)" class="member-name-link">removePlayerDragPredicate</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Remove a player inventory click by ID</div>
+<div class="block">Remove a player inventory drag predicate by ID</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removePlayerSlotClick(java.lang.String)" class="member-name-link">removePlayerSlotClick</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removePlayerInvClick(java.lang.String)" class="member-name-link">removePlayerInvClick</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Remove a player inventory click by ID</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removePostCloseCallback(java.lang.String)" class="member-name-link">removePostCloseCallback</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removePlayerSlotClick(java.lang.String)" class="member-name-link">removePlayerSlotClick</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Remove a player inventory click by ID</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removePostCloseCallback(java.lang.String)" class="member-name-link">removePostCloseCallback</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Remove a post-close callback by ID</div>
 </div>
 </div>
@@ -589,6 +645,128 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">removePlayerClickPredicate</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
 <div class="block">Remove a player inventory click predicate by ID</div>
+</section>
+</li>
+<li>
+<section class="detail" id="addDragPredicate(java.util.function.Predicate)">
+<h3>addDragPredicate</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</span>&nbsp;<span class="element-name">addDragPredicate</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link">InventoryDragEvent</a>&gt;&nbsp;predicate)</span></div>
+<div class="block">Add a predicate on <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryDragEvent</code></a> that must pass for drag operations on menu slots to proceed.<br>
+ This applies to the <a href="../../Menu.html" title="interface in com.kamikazejam.kamicommon.menu"><code>Menu</code></a>'s inventory only.<br>
+ For adding a predicate for player inventory drags, use <a href="#addPlayerDragPredicate(java.util.function.Predicate)"><code>addPlayerDragPredicate(Predicate)</code></a></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>this <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct"><code>MenuEvents</code></a> object for chaining</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addDragPredicate(java.lang.String,java.util.function.Predicate)">
+<h3>addDragPredicate</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</span>&nbsp;<span class="element-name">addDragPredicate</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link">InventoryDragEvent</a>&gt;&nbsp;predicate)</span></div>
+<div class="block">Add a predicate on <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryDragEvent</code></a> that must pass for drag operations on menu slots to proceed.<br>
+ This applies to the <a href="../../Menu.html" title="interface in com.kamikazejam.kamicommon.menu"><code>Menu</code></a>'s inventory only.<br>
+ For adding a predicate for player inventory drags, use <a href="#addPlayerDragPredicate(java.lang.String,java.util.function.Predicate)"><code>addPlayerDragPredicate(String, Predicate)</code></a></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - The ID to associate with this predicate for later removal</dd>
+<dt>Returns:</dt>
+<dd>this <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct"><code>MenuEvents</code></a> object for chaining</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="removeDragPredicate(java.lang.String)">
+<h3>removeDragPredicate</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">removeDragPredicate</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Remove a drag predicate by ID</div>
+</section>
+</li>
+<li>
+<section class="detail" id="addPlayerDragPredicate(java.util.function.Predicate)">
+<h3>addPlayerDragPredicate</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</span>&nbsp;<span class="element-name">addPlayerDragPredicate</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link">InventoryDragEvent</a>&gt;&nbsp;predicate)</span></div>
+<div class="block">Add a predicate on <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryDragEvent</code></a> that must pass for drag operations in the player's inventory.<br>
+ This only applies when the drag does NOT affect any menu slots.<br>
+ For adding a predicate for menu inventory drags, use <a href="#addDragPredicate(java.util.function.Predicate)"><code>addDragPredicate(Predicate)</code></a></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>this <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct"><code>MenuEvents</code></a> object for chaining</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addPlayerDragPredicate(java.lang.String,java.util.function.Predicate)">
+<h3>addPlayerDragPredicate</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</span>&nbsp;<span class="element-name">addPlayerDragPredicate</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link">InventoryDragEvent</a>&gt;&nbsp;predicate)</span></div>
+<div class="block">Add a predicate on <a href="https://jd.papermc.io/paper/org/bukkit/event/inventory/InventoryDragEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryDragEvent</code></a> that must pass for drag operations in the player's inventory.<br>
+ This only applies when the drag does NOT affect any menu slots.<br>
+ For adding a predicate for menu inventory drags, use <a href="#addDragPredicate(java.lang.String,java.util.function.Predicate)"><code>addDragPredicate(String, Predicate)</code></a></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - The ID to associate with this predicate for later removal</dd>
+<dt>Returns:</dt>
+<dd>this <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct"><code>MenuEvents</code></a> object for chaining</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="removePlayerDragPredicate(java.lang.String)">
+<h3>removePlayerDragPredicate</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">removePlayerDragPredicate</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Remove a player inventory drag predicate by ID</div>
+</section>
+</li>
+<li>
+<section class="detail" id="addDragCallback(com.kamikazejam.kamicommon.menu.api.callbacks.MenuDragCallback)">
+<h3>addDragCallback</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</span>&nbsp;<span class="element-name">addDragCallback</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="../callbacks/MenuDragCallback.html" title="interface in com.kamikazejam.kamicommon.menu.api.callbacks">MenuDragCallback</a>&nbsp;callback)</span></div>
+<div class="block">Add a callback that runs when a drag event affects menu slots (and is not cancelled).<br></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>this <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct"><code>MenuEvents</code></a> object for chaining</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addDragCallback(java.lang.String,com.kamikazejam.kamicommon.menu.api.callbacks.MenuDragCallback)">
+<h3>addDragCallback</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct">MenuEvents</a>&lt;<a href="MenuEvents.html" title="type parameter in MenuEvents">M</a>&gt;</span>&nbsp;<span class="element-name">addDragCallback</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
+ @NotNull
+ @NotNull <a href="../callbacks/MenuDragCallback.html" title="interface in com.kamikazejam.kamicommon.menu.api.callbacks">MenuDragCallback</a>&nbsp;callback)</span></div>
+<div class="block">Add a callback that runs when a drag event affects menu slots (and is not cancelled).<br></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - The ID to associate with this callback for later removal</dd>
+<dt>Returns:</dt>
+<dd>this <a href="MenuEvents.html" title="class in com.kamikazejam.kamicommon.menu.api.struct"><code>MenuEvents</code></a> object for chaining</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="removeDragCallback(java.lang.String)">
+<h3>removeDragCallback</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">removeDragCallback</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Remove a drag callback by ID</div>
 </section>
 </li>
 <li>
