@@ -50,8 +50,12 @@ public class CmdNmsTest extends KamiCommand {
 
     @Override
     public void perform(@NotNull CommandContext context) {
-        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        // Fetch Pre-Test Player Info
         Player player = (Player) context.getSender();
+        Location origin = player.getLocation();
+
+        // Send NMS Version Info
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
         serializer.fromMiniMessage(
                 "<gray>NMS Version: <white>" + NmsVersion.getMCVersion() + " <gray>(<white>" + NmsVersion.getFormattedNmsInteger() + "<gray>)"
         ).sendTo(player);
@@ -59,6 +63,7 @@ public class CmdNmsTest extends KamiCommand {
                 "  <gray>WineSpigot?: <white>" + NmsVersion.isWineSpigot()
         ).sendTo(player);
 
+        // Run Tests
         int successes = 0;
         for (Test test : tests) {
             if (runTest(test, player, serializer)) { successes++; }
@@ -74,6 +79,9 @@ public class CmdNmsTest extends KamiCommand {
                     "<red>TEST SUITE FAILED! (" + successes + "/" + tests.size() + ") <bold>See Console."
             ).sendTo(player);
         }
+
+        // Return Player to Origin (using Bukkit API in case the nms teleport test is failing)
+        player.teleport(origin);
     }
 
     private static @NotNull List<Test> createTests(@NotNull VersionedComponentSerializer serializer) {
