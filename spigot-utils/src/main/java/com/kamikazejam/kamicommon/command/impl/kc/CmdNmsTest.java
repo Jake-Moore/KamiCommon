@@ -132,12 +132,58 @@ public class CmdNmsTest extends KamiCommand {
                     NmsAPI.getMessageManager().processAndSend(player, message, clickCmd, clickSug, clickUrl, hoverText, hoverItem, combined);
                 },
 
-                // Teleport Provider Test
+                // Teleport Provider Test (Same World)
                 (player) -> {
                     serializer.fromMiniMessage(
-                            "<gray>Testing TeleportProvider..."
+                            "<gray>Testing TeleportProvider (same world)..."
                     ).sendTo(player);
-                    NmsAPI.getTeleporter().teleportWithoutEvent(player, player.getLocation().clone().add(0, 0.5, 0));
+
+                    // Test teleporting 1 block up
+                    Location upward = player.getLocation().clone().add(0, 1.0, 0);
+                    NmsAPI.getTeleporter().teleportWithoutEvent(player, upward);
+
+                    // Validate position (within 0.5 blocks)
+                    Location after = player.getLocation();
+                    double distance = after.distanceSquared(upward);
+                    if (distance > 0.25) {
+                        throw new IllegalStateException("Player not teleported to correct location! Distance squared: " + distance);
+                    }
+                    serializer.fromMiniMessage(
+                            "    <gray>Success"
+                    ).sendTo(player);
+                },
+
+                // Teleport Provider Test (Same World)
+                (player) -> {
+                    serializer.fromMiniMessage(
+                            "<gray>Testing TeleportProvider (different world)..."
+                    ).sendTo(player);
+
+                    // Find a different world
+                    World targetWorld = null;
+                    for (World world : Bukkit.getWorlds()) {
+                        if (!world.getName().equals(player.getWorld().getName())) {
+                            targetWorld = world;
+                            break;
+                        }
+                    }
+                    if (targetWorld == null) {
+                        serializer.fromMiniMessage(
+                                "    <yellow>Skipping: No other world found on server."
+                        ).sendTo(player);
+                        return;
+                    }
+
+                    // Teleport to different world
+                    Location targetLocation = new Location(targetWorld, 0, 150, 0);
+                    NmsAPI.getTeleporter().teleportWithoutEvent(player, targetLocation);
+
+                    // Validate position (within 0.5 blocks)
+                    Location after = player.getLocation();
+                    double distance = after.distanceSquared(targetLocation);
+                    if (distance > 0.25 || !after.getWorld().getName().equals(targetWorld.getName())) {
+                        throw new IllegalStateException("Player not teleported to correct location in different world! Distance squared: " + distance);
+                    }
                     serializer.fromMiniMessage(
                             "    <gray>Success"
                     ).sendTo(player);
@@ -203,7 +249,7 @@ public class CmdNmsTest extends KamiCommand {
         try {
             test.run(player);
             return true;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             serializer.fromMiniMessage(
                 "    <red>FAILURE (see console)"
