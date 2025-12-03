@@ -17,6 +17,7 @@ import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.util.VersionedComponentUtil;
 import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -29,16 +30,21 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
 public class CmdNmsTest extends KamiCommand {
     private final List<Test> tests;
+
     public CmdNmsTest() {
         addAliases("nmstest");
 
@@ -47,6 +53,192 @@ public class CmdNmsTest extends KamiCommand {
 
         tests = createTests(NmsAPI.getVersionedComponentSerializer());
     }
+
+    @NotNull
+    private static TestResult runTest(Test test, Player player, VersionedComponentSerializer serializer) {
+        try {
+            int tickDelay = test.run(player);
+            return new TestResult(true, tickDelay);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            serializer.fromMiniMessage(
+                    "    <red>FAILURE (see console): <white>" + e.getMessage()
+            ).sendTo(player);
+            return new TestResult(false, 0);
+        }
+    }
+
+    // ------------------------------------------------------------------------------------------------
+    // Logic: Asynchronous/Delayed Execution
+    // ------------------------------------------------------------------------------------------------
+
+    private static @NotNull List<Test> createTests(@NotNull VersionedComponentSerializer serializer) {
+        return List.of(
+                // Chat Color Provider Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing ChatColorProvider...").sendTo(player);
+                    ChatColorProvider ccProvider = NmsAPI.getChatColorProvider();
+                    @Nullable Color jColor = ccProvider.get().getColor(ChatColor.AQUA);
+                    if (jColor == null) {
+                        serializer.fromMiniMessage("    <red>Failure: ChatColor.AQUA maps to null!").sendTo(player);
+                        throw new IllegalStateException("Color null");
+                    } else {
+                        serializer.fromMiniMessage("    <gray>Success: ChatColor.AQUA mapped to RGB(" + jColor.getRed() + "," + jColor.getGreen() + "," + jColor.getBlue() + ")").sendTo(player);
+                    }
+                    return 0; // No delay needed
+                },
+
+                // Block Util Provider Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing BlockUtilProvider...").sendTo(player);
+                    BlockUtilProvider buProvider = NmsAPI.getBlockUtilProvider();
+                    Block block = Bukkit.getWorlds().getFirst().getBlockAt(0, 0, 0);
+                    Material oldType = block.getType();
+                    buProvider.get().setBlockSuperFast(block, XMaterial.IRON_BLOCK, PlaceType.BUKKIT);
+                    buProvider.get().setBlockSuperFast(block, XMaterial.DIAMOND_BLOCK, PlaceType.NO_PHYSICS);
+                    buProvider.get().setBlockSuperFast(block, XMaterial.EMERALD_BLOCK, PlaceType.NMS);
+                    block.setType(oldType);
+                    serializer.fromMiniMessage("    <gray>Success").sendTo(player);
+                    return 2; // Slight delay for visual update
+                },
+
+                // MessageManager Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing MessageManager...").sendTo(player);
+                    ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
+                    ItemMeta meta = item.getItemMeta();
+                    if (meta != null) {
+                        VersionedComponentUtil.setDisplayName(meta, serializer.fromMiniMessage("<red><bold>Test Item"));
+                        item.setItemMeta(meta);
+                    }
+                    Action clickCmd = new Action("<1>", "&aClickCmd").setClickRunCommand("/help");
+                    Action clickSug = new Action("<2>", "&bClickSug").setClickSuggestCommand("help");
+                    Action clickUrl = new Action("<3>", "&cClickUrl").setClickOpenURL("https://google.com");
+                    Action hoverText = new Action("<4>", "&dHoverText").setHoverText(LegacyColors.t("&bThis is hover text"));
+                    Action hoverItem = new Action("<5>", "&eHoverItem").setHoverItem(item);
+                    Action combined = new Action("<6>", "&fCombined").setClickSuggestCommand("help").setHoverText(LegacyColors.t("&bThis is hover text"));
+                    String message = "Test: <1> <2> <3> <4> <5> <6>";
+                    NmsAPI.getMessageManager().processAndSend(player, message, clickCmd, clickSug, clickUrl, hoverText, hoverItem, combined);
+                    return 10; // Delay so user can see chat
+                },
+
+                // Teleport Provider Test (Same World)
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing TeleportProvider (same world)...").sendTo(player);
+
+                    // Test teleporting 1 block up
+                    Location upward = player.getLocation().clone().add(0, 1.0, 0);
+                    NmsAPI.getTeleporter().teleportWithoutEvent(player, upward);
+
+                    // Validate position (within 0.5 blocks)
+                    Location after = player.getLocation();
+                    double distance = after.distanceSquared(upward);
+                    if (distance > 0.25) {
+                        throw new IllegalStateException("Player not teleported to correct location! Distance squared: " + distance);
+                    }
+                    serializer.fromMiniMessage("    <gray>Success (waiting 1 second before next test)").sendTo(player);
+                    return 1; // 1-Second delay to let chunks load/user to see they moved (same world doesn't take long)
+                },
+
+                // Teleport Provider Test (Different World)
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing TeleportProvider (different world)...").sendTo(player);
+
+                    // Find a different world
+                    @Nullable World targetWorld = getTargetWorld(player);
+                    if (targetWorld == null) {
+                        serializer.fromMiniMessage("    <yellow>Skipping: No other world found on server.").sendTo(player);
+                        return 0;
+                    }
+                    serializer.fromMiniMessage("    <gray>Identified target world: <white>" + targetWorld.getName()).sendTo(player);
+
+                    // Teleport to different world
+                    Location targetLocation = new Location(targetWorld, 0, 150, 0);
+                    NmsAPI.getTeleporter().teleportWithoutEvent(player, targetLocation);
+
+                    // Validate position
+                    Location after = player.getLocation();
+                    // Basic world check + approximate distance (ignoring high precision due to load times)
+                    if (!after.getWorld().getName().equals(targetWorld.getName())) {
+                        throw new IllegalStateException("Player world not updated. Expected: " + targetWorld.getName() + " Got: " + after.getWorld().getName());
+                    }
+
+                    serializer.fromMiniMessage("    <gray>Success (waiting 3 seconds before next test)").sendTo(player);
+                    return 60; // 3-Second delay to process download/rendering
+                },
+
+                // Main Hand Provider
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing MainHandProvider...").sendTo(player);
+                    ItemStack stack = NmsAPI.getItemInMainHand(player);
+                    serializer.fromMiniMessage("    <gray>Success: " + (stack == null ? "AIR" : stack.getType().name())).sendTo(player);
+                    return 0;
+                },
+
+                // Enchant ID Provider
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing EnchantIDProvider...").sendTo(player);
+                    Enchantment enchant = Preconditions.checkNotNull(XEnchantment.SHARPNESS.get(), "Enchantment not found");
+                    serializer.fromMiniMessage("    <gray>Success: " + NmsAPI.getNamespaced(enchant)).sendTo(player);
+                    return 0;
+                },
+
+                // Entity Methods Test
+                (player) -> {
+                    final DecimalFormat df2 = new DecimalFormat("#.###");
+                    serializer.fromMiniMessage("<gray>Testing EntityMethods...").sendTo(player);
+                    AbstractEntityMethods methods = NmsAPI.getEntityMethods();
+                    World world = Bukkit.getWorlds().getFirst();
+                    Location location = new Location(world, 0, 245, 0);
+                    for (EntityType type : EntityType.values()) {
+                        if (!type.isSpawnable() || !type.isAlive()) {
+                            continue;
+                        }
+
+                        // Just test one entity to avoid spam/lag in test suite
+                        if (type == EntityType.ZOMBIE) {
+                            serializer.fromMiniMessage("    <gray>" + type.name() + ":").sendTo(player);
+                            Entity entity = world.spawnEntity(location, type);
+                            final double height = methods.getEntityHeight(entity);
+                            final double width = methods.getEntityWidth(entity);
+                            serializer.fromMiniMessage("      <gray>H: " + df2.format(height) + " W: " + df2.format(width)).sendTo(player);
+                            entity.remove();
+                            break;
+                        }
+                    }
+                    serializer.fromMiniMessage("    <gray>Success").sendTo(player);
+                    return 0;
+                }
+        );
+    }
+
+    private static @Nullable World getTargetWorld(Player player) {
+        World myWorld = player.getWorld();
+
+        // 1. Find an ideal world (normal environment)
+        @Nullable World idealWorld = null;
+        for (World world : Bukkit.getWorlds()) {
+            if (world.getName().equals(myWorld.getName())) continue;
+            if (world.getEnvironment() == World.Environment.NORMAL) {
+                idealWorld = world;
+                break;
+            }
+        }
+        if (idealWorld != null) return idealWorld;
+
+        // 2. Fallback: Find any different world
+        @Nullable World fallbackWorld = null;
+        for (World world : Bukkit.getWorlds()) {
+            if (world.getName().equals(myWorld.getName())) continue;
+            fallbackWorld = world;
+            break;
+        }
+        return fallbackWorld;
+    }
+
+    // ------------------------------------------------------------------------------------------------
+    // Test Definitions
+    // ------------------------------------------------------------------------------------------------
 
     @Override
     public void perform(@NotNull CommandContext context) {
@@ -64,205 +256,71 @@ public class CmdNmsTest extends KamiCommand {
         ).sendTo(player);
 
         // Run Tests
-        int successes = 0;
-        for (Test test : tests) {
-            if (runTest(test, player, serializer)) { successes++; }
-        }
+        AtomicInteger successes = new AtomicInteger(0);
 
-        // Send Results
-        if (successes >= tests.size()) {
-            serializer.fromMiniMessage(
-                    "<green>ALL TESTS PASSED! (" + successes + "/" + tests.size() + ")"
-            ).sendTo(player);
-        }else {
-            serializer.fromMiniMessage(
-                    "<red>TEST SUITE FAILED! (" + successes + "/" + tests.size() + ") <bold>See Console."
-            ).sendTo(player);
-        }
+        // Start the recursive test chain
+        runTestsRecursive(0, player, serializer, successes, (v) -> {
+            // Send Results
+            if (successes.get() >= tests.size()) {
+                serializer.fromMiniMessage(
+                        "<green>ALL TESTS PASSED! (" + successes + "/" + tests.size() + ")"
+                ).sendTo(player);
+            } else {
+                serializer.fromMiniMessage(
+                        "<red>TEST SUITE FAILED! (" + successes + "/" + tests.size() + ") <bold>See Console."
+                ).sendTo(player);
+            }
 
-        // Return Player to Origin (using Bukkit API in case the nms teleport test is failing)
-        player.teleport(origin);
+            // Return Player to Origin
+            player.teleport(origin);
+        });
     }
 
-    private static @NotNull List<Test> createTests(@NotNull VersionedComponentSerializer serializer) {
-        return List.of(
-                // Chat Color Provider Test
-                (player) -> {
-                    serializer.fromMiniMessage(
-                            "<gray>Testing ChatColorProvider..."
-                    ).sendTo(player);
-                    ChatColorProvider ccProvider = NmsAPI.getChatColorProvider();
-                    @Nullable Color jColor = ccProvider.get().getColor(ChatColor.AQUA);
-                    if (jColor == null) {
-                        serializer.fromMiniMessage(
-                                "    <red>Failure: ChatColor.AQUA maps to null!"
-                        ).sendTo(player);
-                    } else {
-                        serializer.fromMiniMessage(
-                                "    <gray>Success: ChatColor.AQUA mapped to RGB(" + jColor.getRed() + "," + jColor.getGreen() + "," + jColor.getBlue() + ")"
-                        ).sendTo(player);
-                    }
-                },
+    private void runTestsRecursive(
+            int index,
+            Player player,
+            VersionedComponentSerializer serializer,
+            AtomicInteger successes,
+            Consumer<Void> onComplete
+    ) {
+        // Base Case: All tests finished
+        if (index >= tests.size()) {
+            onComplete.accept(null);
+            return;
+        }
 
-                // Block Util Provider Test
-                (player) -> {
-                    serializer.fromMiniMessage(
-                            "<gray>Testing BlockUtilProvider..."
-                    ).sendTo(player);
-                    BlockUtilProvider buProvider = NmsAPI.getBlockUtilProvider();
-                    Block block = Bukkit.getWorlds().getFirst().getBlockAt(0, 0, 0);
-                    Material oldType = block.getType();
-                    buProvider.get().setBlockSuperFast(block, XMaterial.IRON_BLOCK, PlaceType.BUKKIT);
-                    buProvider.get().setBlockSuperFast(block, XMaterial.DIAMOND_BLOCK, PlaceType.NO_PHYSICS);
-                    buProvider.get().setBlockSuperFast(block, XMaterial.EMERALD_BLOCK, PlaceType.NMS);
-                    block.setType(oldType);
-                    serializer.fromMiniMessage(
-                            "    <gray>Success"
-                    ).sendTo(player);
-                },
+        // Run the current test
+        Test test = tests.get(index);
+        TestResult result = runTest(test, player, serializer);
 
-                // MessageManager Test
-                (player) -> {
-                    serializer.fromMiniMessage(
-                            "<gray>Testing MessageManager..."
-                    ).sendTo(player);
-                    ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
-                    ItemMeta meta = item.getItemMeta();
-                    VersionedComponentUtil.setDisplayName(meta, serializer.fromMiniMessage("<red><bold>Test Item"));
-                    item.setItemMeta(meta);
-                    Action clickCmd = new Action("<1>", "&aClickCmd").setClickRunCommand("/help");
-                    Action clickSug = new Action("<2>", "&bClickSug").setClickSuggestCommand("help");
-                    Action clickUrl = new Action("<3>", "&cClickUrl").setClickOpenURL("https://google.com");
-                    Action hoverText = new Action("<4>", "&dHoverText").setHoverText(LegacyColors.t("&bThis is hover text"));
-                    Action hoverItem = new Action("<5>", "&eHoverItem").setHoverItem(item);
-                    Action combined = new Action("<6>", "&fCombined").setClickSuggestCommand("help").setHoverText(LegacyColors.t("&bThis is hover text"));
-                    String message = "Test: <1> <2> <3> <4> <5> <6>";
-                    NmsAPI.getMessageManager().processAndSend(player, message, clickCmd, clickSug, clickUrl, hoverText, hoverItem, combined);
-                },
+        if (result.success) {
+            successes.incrementAndGet();
+        }
 
-                // Teleport Provider Test (Same World)
-                (player) -> {
-                    serializer.fromMiniMessage(
-                            "<gray>Testing TeleportProvider (same world)..."
-                    ).sendTo(player);
+        // Recursive Step: Schedule next test
+        Runnable nextStep = () -> runTestsRecursive(index + 1, player, serializer, successes, onComplete);
 
-                    // Test teleporting 1 block up
-                    Location upward = player.getLocation().clone().add(0, 1.0, 0);
-                    NmsAPI.getTeleporter().teleportWithoutEvent(player, upward);
-
-                    // Validate position (within 0.5 blocks)
-                    Location after = player.getLocation();
-                    double distance = after.distanceSquared(upward);
-                    if (distance > 0.25) {
-                        throw new IllegalStateException("Player not teleported to correct location! Distance squared: " + distance);
-                    }
-                    serializer.fromMiniMessage(
-                            "    <gray>Success"
-                    ).sendTo(player);
-                },
-
-                // Teleport Provider Test (Same World)
-                (player) -> {
-                    serializer.fromMiniMessage(
-                            "<gray>Testing TeleportProvider (different world)..."
-                    ).sendTo(player);
-
-                    // Find a different world
-                    World targetWorld = null;
-                    for (World world : Bukkit.getWorlds()) {
-                        if (!world.getName().equals(player.getWorld().getName())) {
-                            targetWorld = world;
-                            break;
-                        }
-                    }
-                    if (targetWorld == null) {
-                        serializer.fromMiniMessage(
-                                "    <yellow>Skipping: No other world found on server."
-                        ).sendTo(player);
-                        return;
-                    }
-
-                    // Teleport to different world
-                    Location targetLocation = new Location(targetWorld, 0, 150, 0);
-                    NmsAPI.getTeleporter().teleportWithoutEvent(player, targetLocation);
-
-                    // Validate position (within 0.5 blocks)
-                    Location after = player.getLocation();
-                    double distance = after.distanceSquared(targetLocation);
-                    if (distance > 0.25 || !after.getWorld().getName().equals(targetWorld.getName())) {
-                        throw new IllegalStateException("Player not teleported to correct location in different world! Distance squared: " + distance);
-                    }
-                    serializer.fromMiniMessage(
-                            "    <gray>Success"
-                    ).sendTo(player);
-                },
-
-                // Main Hand Provider
-                (player) -> {
-                    serializer.fromMiniMessage(
-                            "<gray>Testing MainHandProvider..."
-                    ).sendTo(player);
-                    ItemStack stack = NmsAPI.getItemInMainHand(player);
-                    serializer.fromMiniMessage(
-                            "    <gray>Success: " + (stack == null ? "AIR" : stack.getType().name())
-                    ).sendTo(player);
-                },
-
-                // Enchant ID Provider
-                (player) -> {
-                    serializer.fromMiniMessage(
-                            "<gray>Testing EnchantIDProvider..."
-                    ).sendTo(player);
-                    Enchantment enchant = Preconditions.checkNotNull(XEnchantment.SHARPNESS.get(), "Enchantment not found");
-                    serializer.fromMiniMessage(
-                            "    <gray>Success: " + NmsAPI.getNamespaced(enchant)
-                    ).sendTo(player);
-                },
-
-                // Entity Methods Test
-                (player) -> {
-                    final DecimalFormat df2 = new DecimalFormat("#.###");
-                    serializer.fromMiniMessage(
-                            "<gray>Testing EntityMethods..."
-                    ).sendTo(player);
-                    AbstractEntityMethods methods = NmsAPI.getEntityMethods();
-                    World world = Bukkit.getWorlds().getFirst();
-                    Location location = new Location(world, 0, 245, 0);
-                    for (EntityType type : EntityType.values()) {
-                        if (!type.isSpawnable() || !type.isAlive()) { continue; }
-
-                        serializer.fromMiniMessage(
-                                "    <gray>" + type.name() + ":"
-                        ).sendTo(player);
-                        Entity entity = world.spawnEntity(location, type);
-                        final double height = methods.getEntityHeight(entity);
-                        final double width = methods.getEntityWidth(entity);
-                        serializer.fromMiniMessage(
-                                "      <gray>H: " + df2.format(height) +" W: " + df2.format(width)
-                        ).sendTo(player);
-                        entity.remove();
-                    }
-                    serializer.fromMiniMessage(
-                            "    <gray>Success (see console)"
-                    ).sendTo(player);
-                }
-        );
+        if (result.delayTicks > 0) {
+            // Find the plugin instance to schedule the task
+            Plugin plugin = JavaPlugin.getProvidingPlugin(CmdNmsTest.class);
+            Bukkit.getScheduler().runTaskLater(plugin, nextStep, result.delayTicks);
+        } else {
+            // Run immediately (recursion, but safe for small lists like this)
+            nextStep.run();
+        }
     }
 
     // Test Interface
     public interface Test {
-        void run(Player player);
+        /**
+         * @return the number of ticks to delay after the test completes (before the next test starts)
+         */
+        int run(Player player);
     }
-    private static boolean runTest(Test test, Player player, VersionedComponentSerializer serializer) {
-        try {
-            test.run(player);
-            return true;
-        } catch (Throwable e) {
-            e.printStackTrace();
-            serializer.fromMiniMessage(
-                "    <red>FAILURE (see console)"
-            ).sendTo(player);
-            return false;
-        }
+
+    @AllArgsConstructor
+    public static class TestResult {
+        public final boolean success;
+        public final int delayTicks;
     }
 }
