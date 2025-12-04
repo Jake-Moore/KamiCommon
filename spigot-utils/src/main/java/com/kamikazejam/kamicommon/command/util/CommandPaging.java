@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.command.util;
 
 import com.kamikazejam.kamicommon.command.CommandContext;
+import com.kamikazejam.kamicommon.command.DefaultValue;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.Parameter;
 import com.kamikazejam.kamicommon.configuration.Configurable;
@@ -262,10 +263,16 @@ public class CommandPaging {
             for (int i = arguments.size(); i < pageParamIndex; i++) {
                 try {
                     // Ensure we fetch a valid param, which has its default value set
-                    Parameter<?> param = command.getParameter(i);
-                    if (param == null || !param.isDefaultValueSet()) { return null; }
-                    // Add the default value (which we know was set)
-                    arguments.add(String.valueOf(command.getParameter(i).getDefaultValue()));
+                    // (without a default value, we can't supplement it and thus cannot build enough args to set the page)
+                    @Nullable Parameter<?> param = command.getParameter(i);
+                    @Nullable DefaultValue<?> defaultValue = (param != null) ? param.getDefaultValue() : null;
+                    if (param == null || defaultValue == null) { return null; }
+                    // Get the real value of the default (this can also be null)
+                    @Nullable Object value = defaultValue.getValue();
+                    // Convert this value to a string (null becomes "null")
+                    @NotNull String stringValue = (value != null) ? String.valueOf(value) : "null";
+                    // Add this as the next argument
+                    arguments.add(stringValue);
                 }catch (IndexOutOfBoundsException ignored) {
                     return null;
                 }
