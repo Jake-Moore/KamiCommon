@@ -177,6 +177,12 @@ implements <a href="Type.html" title="interface in com.kamikazejam.kamicommon.co
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareForSpaces(java.util.List,java.lang.String)" class="member-name-link">prepareForSpaces</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;suggestions,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;arg)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shouldShowAllTabCompletions()" class="member-name-link">shouldShowAllTabCompletions</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Should this type show all tab completions provided by <a href="Type.html#getTabList(org.bukkit.command.CommandSender,java.lang.String)"><code>Type.getTabList(CommandSender, String)</code></a>
+ even if they don't start with what the user has already typed in?</div>
+</div>
 </div>
 </div>
 </div>
@@ -268,6 +274,19 @@ implements <a href="Type.html" title="interface in com.kamikazejam.kamicommon.co
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getIds</span><wbr><span class="parameters">(@Nullable
  <a href="TypeAbstract.html" title="type parameter in TypeAbstract">T</a>&nbsp;value)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="shouldShowAllTabCompletions()">
+<h3>shouldShowAllTabCompletions</h3>
+<div class="member-signature"><span class="annotations">@OverrideOnly
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">shouldShowAllTabCompletions</span>()</div>
+<div class="block">Should this type show all tab completions provided by <a href="Type.html#getTabList(org.bukkit.command.CommandSender,java.lang.String)"><code>Type.getTabList(CommandSender, String)</code></a>
+ even if they don't start with what the user has already typed in?</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true to show all tab completions, false to filter them based on starting characters.</dd>
+</dl>
 </section>
 </li>
 <li>
