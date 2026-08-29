@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * Stand-ins for {@link String} methods added after Java 8.
  * <p>
  * KamiCommon's always-loaded modules target Java 8 so that 1.8.x servers can load them, which rules
- * out {@code String.repeat(int)} (Java 11) and {@code Jdk8.strip(String)} (Java 11). These are the same
+ * out {@code String.repeat(int)} and {@code String.strip()}, both Java 11. These are the same
  * operations, spelled for Java 8.
  * </p>
  * <p>
@@ -21,7 +21,7 @@ public final class Jdk8 {
     private Jdk8() {}
 
     /**
-     * {@code Jdk8.repeat(String, int)}, which is Java 11.
+     * Stand-in for {@code String.repeat(int)}, which is Java 11.
      *
      * @param value the string to repeat
      * @param count how many times, must not be negative
@@ -36,7 +36,7 @@ public final class Jdk8 {
     }
 
     /**
-     * {@code Jdk8.strip(String)}, which is Java 11.
+     * Stand-in for {@code String.strip()}, which is Java 11.
      * <p>
      * Deliberately not {@code trim()}: trim cuts everything at or below {@code U+0020}, which drops
      * control characters it should not and keeps Unicode spaces it should. This uses
