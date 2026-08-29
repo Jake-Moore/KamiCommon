@@ -23,10 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Set up JDK 21
+      - name: Set up JDKs 17, 21 and 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: |
+            17
+            21
+            25
           distribution: 'temurin'
           server-id: github
           settings-path: ${{ github.workspace }}
@@ -120,10 +123,13 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Set up JDK 21
+    - name: Set up JDKs 17, 21 and 25
       uses: actions/setup-java@v5
       with:
-        java-version: '21'
+        java-version: |
+          17
+          21
+          25
         distribution: 'temurin'
         server-id: github
         settings-path: ${{ github.workspace }}
@@ -247,10 +253,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Set up JDK 21
+      - name: Set up JDKs 17, 21 and 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: |
+            17
+            21
+            25
           distribution: 'temurin'
           server-id: github
           settings-path: ${{ github.workspace }}
@@ -330,10 +339,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - name: Set up JDK 21
+      - name: Set up JDKs 17, 21 and 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: |
+            17
+            21
+            25
           distribution: 'temurin'
 
       # Configure: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
