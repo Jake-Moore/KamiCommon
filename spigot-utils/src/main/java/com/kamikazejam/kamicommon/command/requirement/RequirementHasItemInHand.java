@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class RequirementHasItemInHand extends RequirementAbstract {
@@ -32,7 +33,8 @@ public class RequirementHasItemInHand extends RequirementAbstract {
 
 	private final @NotNull List<Material> materialWhitelist;
 	public RequirementHasItemInHand(@NotNull Material... materialWhitelist) {
-		this.materialWhitelist = Arrays.asList(materialWhitelist);
+		// Copied, for the reason spelled out in RedisMultiChannel: asList aliases the caller's array.
+        this.materialWhitelist = Collections.unmodifiableList(new ArrayList<>(Arrays.asList(materialWhitelist)));
 	}
 
 	// -------------------------------------------- //

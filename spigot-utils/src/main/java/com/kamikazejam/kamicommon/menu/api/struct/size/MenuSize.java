@@ -9,8 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents the size of a menu.<br>
  * Can either be a {@link MenuSizeRows}, or {@link MenuSizeType}.
- */
-/**
+ * <p>
  * <b>Do not implement this outside KamiCommon.</b> This was a {@code sealed} hierarchy until
  * spigot-utils dropped to Java 8 so that 1.8.x servers could load it; {@code sealed} is Java 17
  * and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the

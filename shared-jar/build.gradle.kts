@@ -3,9 +3,12 @@ plugins {
     // Unique plugins for this module
 }
 
-// Its own bytecode is Java 8. HikariCP declares 11 for itself, so a consumer
-// that actually pulls the database stack still gets a resolution error naming Hikari, which is
-// the right place for that constraint to live.
+// HikariCP publishes NO Gradle module metadata, verified across every cached version: there are
+    // no .module files under ~/.gradle/caches for com.zaxxer, and its Java 11 requirement appears
+    // only as an OSGi Require-Capability in the manifest, which Gradle does not read. So a Java 8
+    // consumer resolves it silently and there is NO resolution error to fall back on.
+    // Database.requireJava11() is the whole control, which is why verifySealedHierarchies-style
+    // enforcement matters here: nothing stops a second class reaching Hikari without the guard.
 // See buildSrc/src/main/kotlin/module-floor-convention.gradle.kts for what each setting does.
 extra["moduleFloor"] = 8
 apply(plugin = "module-floor-convention")

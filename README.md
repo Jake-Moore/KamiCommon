@@ -87,7 +87,8 @@ nmsproviders` prints which implementation your server selected for each capabili
 
 ### If you are contributing
 
-`api`, `shared-utils`, `standalone-utils`, `spigot-utils` and `spigot-jar` are compiled with
+`shared-utils`, `standalone-utils`, `shared-jar`, `spigot-utils`, `spigot-jar` and `standalone-jar`
+are compiled with
 `--release 8`. The compiler will tell you, but so that it is not a surprise: no records, no `var`, no
 sealed types, no switch expressions or pattern matching, no `List.of`, `Set.of` or `Stream.toList`.
 `Jdk8.repeat` and `Jdk8.strip` stand in for the `String` methods added in Java 11.
