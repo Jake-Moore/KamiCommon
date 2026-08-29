@@ -70,12 +70,12 @@ class NmsVersionParserTest {
     @DisplayName("Paper 26.x's own version string parses instead of throwing")
     void paperCalendarCoordinatesParse() {
         // What Bukkit.getBukkitVersion() reports on 26.x, after the caller's split("-")[0].
-        assertEquals(26002000, NmsVersionParser.getFormattedNmsInteger("26.2.build.115"));
-        assertEquals(26002000, NmsVersionParser.getFormattedNmsInteger("26.2.build.120"));
-        assertEquals(26001002, NmsVersionParser.getFormattedNmsInteger("26.1.2.build.7"));
+        assertEquals(260200, NmsVersionParser.getFormattedNmsInteger("26.2.build.115"));
+        assertEquals(260200, NmsVersionParser.getFormattedNmsInteger("26.2.build.120"));
+        assertEquals(260102, NmsVersionParser.getFormattedNmsInteger("26.1.2.build.7"));
         // And the clean form, which Server#getMinecraftVersion() reports.
-        assertEquals(26002000, NmsVersionParser.getFormattedNmsInteger("26.2"));
-        assertEquals(26001001, NmsVersionParser.getFormattedNmsInteger("26.1.1"));
+        assertEquals(260200, NmsVersionParser.getFormattedNmsInteger("26.2"));
+        assertEquals(260101, NmsVersionParser.getFormattedNmsInteger("26.1.1"));
     }
 
     @Test
