@@ -15,7 +15,7 @@ plugins { // needed for the allprojects section to work
     id("java")
     id("java-library")
     id("maven-publish")
-    id("com.gradleup.shadow") version "9.2.2" apply false
+    id("com.gradleup.shadow") version "9.6.1" apply false
 }
 
 // Testing server APIs (the earliest supported version, and the latest PaperMC version)
@@ -74,14 +74,14 @@ allprojects {
 
     dependencies {
         // Lombok
-        compileOnly("org.projectlombok:lombok:1.18.42")
-        annotationProcessor("org.projectlombok:lombok:1.18.42")
-        testImplementation("org.projectlombok:lombok:1.18.42")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
+        compileOnly("org.projectlombok:lombok:1.18.46")
+        annotationProcessor("org.projectlombok:lombok:1.18.46")
+        testImplementation("org.projectlombok:lombok:1.18.46")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.46")
 
         // IntelliJ annotations
-        compileOnly("org.jetbrains:annotations:26.0.2-1")
-        testImplementation("org.jetbrains:annotations:26.0.2-1")
+        compileOnly("org.jetbrains:annotations:26.1.0")
+        testImplementation("org.jetbrains:annotations:26.1.0")
     }
 
     // We want UTF-8 for everything
