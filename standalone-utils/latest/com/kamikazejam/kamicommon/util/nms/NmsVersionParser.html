@@ -107,8 +107,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFormattedNmsInteger(java.lang.String)" class="member-name-link">getFormattedNmsInteger</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mcVer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts the MC Version string into a 4-digit double
- For example 1.8.9 becomes 1089, 1.16 becomes 1160, 1.16.3 becomes 1163</div>
+<div class="block">Converts a Minecraft version string into an integer that sorts in release order.</div>
 </div>
 </div>
 </div>
@@ -145,13 +144,26 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getFormattedNmsInteger(java.lang.String)">
 <h3>getFormattedNmsInteger</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getFormattedNmsInteger</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;mcVer)</span></div>
-<div class="block">Converts the MC Version string into a 4-digit double
- For example 1.8.9 becomes 1089, 1.16 becomes 1160, 1.16.3 becomes 1163</div>
+<div class="block">Converts a Minecraft version string into an integer that sorts in release order.
+ <p>
+ Two eras, because Minecraft left <code>1.x</code> versioning behind after 1.21.11 and moved to
+ calendar versions (<code>26.1.1</code>, <code>26.1.2</code>, <code>26.2</code>, ...):
+ <ul>
+   <li><b>Legacy (<code>1.x</code>):</b> the original packing is reproduced exactly, digit for
+       digit, so every existing <code>f("1.x.y")</code> threshold keeps the value it has always
+       had. Note the packing is textual rather than arithmetic, which is why
+       <code>1.21.10</code> is <code>12110</code> and not <code>1220</code>.</li>
+   <li><b>Calendar (<code>&gt;= 2.x</code>):</b> <code>major*1_000_000 + minor*1_000 + patch</code>. Every
+       value lands far above every legacy value, so no offset is needed, and unlike the
+       4-digit packing it stays monotonic: the old scheme gave <code>f("26.2") == 2620</code>,
+       which sorts <i>below</i> both <code>f("1.21.11") == 12111</code> and
+       <code>f("26.1.2") == 26012</code>.</li>
+ </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>mcVer</code> - The MC version string (i.e. "1.20.4" or "1.8.8")</dd>
+<dd><code>mcVer</code> - The MC version string (i.e. "1.20.4", "1.8.8", "26.2", or "26.2.build.115")</dd>
 <dt>Returns:</dt>
-<dd>The nms version formatted as a double. 4 digits (major[1]minor[2]patch[1])</dd>
+<dd>The version as an order-preserving integer</dd>
 </dl>
 </section>
 </li>
