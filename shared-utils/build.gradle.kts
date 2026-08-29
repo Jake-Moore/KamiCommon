@@ -3,6 +3,12 @@ plugins {
     // Unique plugins for this module
 }
 
+// A 1.8.8 server loads this in full.
+// See buildSrc/src/main/kotlin/module-floor-convention.gradle.kts for what each setting does.
+extra["moduleFloor"] = 8
+apply(plugin = "module-floor-convention")
+
+
 dependencies {
     // Unique dependencies for this module
 }

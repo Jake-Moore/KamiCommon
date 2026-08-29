@@ -3,13 +3,21 @@ package com.kamikazejam.kamicommon.menu.api.struct.size;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents the size of a menu.<br>
  * Can either be a {@link MenuSizeRows}, or {@link MenuSizeType}.
+ * <p>
+ * <b>Do not implement this outside KamiCommon.</b> This was a {@code sealed} hierarchy until
+ * spigot-utils dropped to Java 8 so that 1.8.x servers could load it; {@code sealed} is Java 17
+ * and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the
+ * {@code verifySealedHierarchies} build task, which fails if an implementation appears that is
+ * not on the permitted list (MenuSizeRows, MenuSizeType). Nothing can enforce it in your code, hence this annotation.
  */
-public sealed interface MenuSize permits MenuSizeRows, MenuSizeType {
+@ApiStatus.NonExtendable
+public interface MenuSize {
     /**
      * Creates a new {@link Inventory} with the given {@link InventoryHolder} and title.<br>
      * Uses this {@link MenuSize} to determine the size of the inventory.

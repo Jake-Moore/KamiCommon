@@ -17,6 +17,7 @@ import com.kamikazejam.kamicommon.nms.util.VersionedComponentUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
@@ -245,20 +246,20 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
                     .map(s -> NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
                             SoftPlaceholderAPI.setPlaceholders(viewer, s.serializeMiniMessage())
                     ))
-                    .toList();
+                    .collect(Collectors.toList());
             // Minecraft made a change where all names and lore are automatically italicized unless explicitly set to false
             // We want to mirror backwards compatibility and more specifically always follow the mini message formatting
             // Thus, we need to set it to false so that our mini message is represented exactly as intended
             List<Component> components;
             if (Config.isRemoveAutomaticComponentItalics()) {
-                components = papiLore.stream().map(c -> c.asInternalComponent().decoration(TextDecoration.ITALIC, false)).toList();
+                components = papiLore.stream().map(c -> c.asInternalComponent().decoration(TextDecoration.ITALIC, false)).collect(Collectors.toList());
             } else {
-                components = papiLore.stream().map(VersionedComponent::asInternalComponent).toList();
+                components = papiLore.stream().map(VersionedComponent::asInternalComponent).collect(Collectors.toList());
             }
             // Set the name using the updated component
             VersionedComponentUtil.setLore(
                     meta,
-                    components.stream().map(c -> NmsAPI.getVersionedComponentSerializer().fromInternalComponent(c)).toList()
+                    components.stream().map(c -> NmsAPI.getVersionedComponentSerializer().fromInternalComponent(c)).collect(Collectors.toList())
             );
         }
 
@@ -275,8 +276,14 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
                     continue;
                 }
                 switch (entry.getValue()) {
-                    case ADD -> meta.addItemFlags(flag);
-                    case REMOVE -> meta.removeItemFlags(flag);
+                    case ADD:
+                        meta.addItemFlags(flag);
+                        break;
+                    case REMOVE:
+                        meta.removeItemFlags(flag);
+                        break;
+                    default:
+                        throw new IllegalStateException("unhandled flag patch: " + entry.getValue());
                 }
             }
         }
@@ -288,16 +295,21 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
                         entry.getKey().get(),
                         "XEnchantment '" + entry.getKey().name() + "' failed to correspond to a valid Bukkit enchantment!"
                 );
-                switch (entry.getValue()) {
-                    case PatchRemove<Integer> remove -> meta.removeEnchant(enchant);
-                    case PatchAdd<Integer> add -> {
-                        if (add.getValue() <= 0) {
-                            // <= 0 values are treated as removal of the enchantment
-                            meta.removeEnchant(enchant);
-                        } else {
-                            meta.addEnchant(enchant, add.getValue(), true); // true - ignores level restrictions
-                        }
+                Patch<Integer> patchValue = entry.getValue();
+                if (patchValue instanceof PatchRemove) {
+                    meta.removeEnchant(enchant);
+                } else if (patchValue instanceof PatchAdd) {
+                    PatchAdd<Integer> add = (PatchAdd<Integer>) patchValue;
+                    if (add.getValue() <= 0) {
+                        // <= 0 values are treated as removal of the enchantment
+                        meta.removeEnchant(enchant);
+                    } else {
+                        meta.addEnchant(enchant, add.getValue(), true); // true - ignores level restrictions
                     }
+                } else {
+                    throw new IllegalStateException("unhandled Patch implementation: "
+                + patchValue.getClass().getName() + ". Patch is a closed hierarchy enforced by\n"
+                + " the verifySealedHierarchies build task; add a branch here.");
                 }
             }
         }
@@ -315,7 +327,8 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         }
 
         // Skull Meta
-        if (skullOwner != null && meta instanceof SkullMeta skullMeta) {
+        if (skullOwner != null && meta instanceof SkullMeta) {
+            SkullMeta skullMeta = (SkullMeta) meta;
             skullMeta.setOwner(skullOwner);
         }
 
@@ -559,8 +572,12 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         @Nullable PatchOp op = itemFlags.get(flag);
         if (op != null) {
             switch (op) {
-                case ADD -> { return true; }
-                case REMOVE -> { return false; }
+                case ADD:
+                    return true;
+                case REMOVE:
+                    return false;
+                default:
+                    throw new IllegalStateException("unhandled PatchOp: " + op);
             }
         }
 
@@ -586,8 +603,14 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         // Apply patches
         for (Entry<XItemFlag, PatchOp> entry : itemFlags.entrySet()) {
             switch (entry.getValue()) {
-                case ADD -> result.add(entry.getKey());
-                case REMOVE -> result.remove(entry.getKey());
+                case ADD:
+                    result.add(entry.getKey());
+                    break;
+                case REMOVE:
+                    result.remove(entry.getKey());
+                    break;
+                default:
+                    throw new IllegalStateException("unhandled PatchOp: " + entry.getValue());
             }
         }
 
@@ -598,9 +621,15 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     public int getEnchantmentLevel(@NotNull XEnchantment enchant) {
         @Nullable Patch<Integer> patch = enchantments.get(enchant);
         if (patch != null) {
-            switch (patch) {
-                case PatchAdd<Integer> add -> { return Math.max(0, add.getValue()); }
-                case PatchRemove<Integer> remove -> { return 0; }
+            Patch<Integer> patchValue = patch;
+            if (patchValue instanceof PatchAdd) {
+                return Math.max(0, ((PatchAdd<Integer>) patchValue).getValue());
+            } else if (patchValue instanceof PatchRemove) {
+                return 0;
+            } else {
+                throw new IllegalStateException("unhandled Patch implementation: "
+            + patchValue.getClass().getName() + ". Patch is a closed hierarchy enforced by\n"
+            + " the verifySealedHierarchies build task; add a branch here.");
             }
         }
 
@@ -627,16 +656,21 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
         // Apply patches
         for (Entry<XEnchantment, Patch<Integer>> entry : enchantments.entrySet()) {
-            switch (entry.getValue()) {
-                case PatchAdd<Integer> add -> {
-                    if (add.getValue() > 0) {
-                        result.put(entry.getKey(), add.getValue());
-                    } else {
-                        // <= 0 values are treated as removal of the enchantment
-                        result.remove(entry.getKey());
-                    }
+            Patch<Integer> patchValue = entry.getValue();
+            if (patchValue instanceof PatchAdd) {
+                PatchAdd<Integer> add = (PatchAdd<Integer>) patchValue;
+                if (add.getValue() > 0) {
+                    result.put(entry.getKey(), add.getValue());
+                } else {
+                    // <= 0 values are treated as removal of the enchantment
+                    result.remove(entry.getKey());
                 }
-                case PatchRemove<Integer> remove -> result.remove(entry.getKey());
+            } else if (patchValue instanceof PatchRemove) {
+                result.remove(entry.getKey());
+            } else {
+                throw new IllegalStateException("unhandled Patch implementation: "
+            + patchValue.getClass().getName() + ". Patch is a closed hierarchy enforced by\n"
+            + " the verifySealedHierarchies build task; add a branch here.");
             }
         }
 
@@ -655,7 +689,8 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         }
         if (skullOwner != null) { return skullOwner; }
         @Nullable ItemMeta meta = prototype.getItemMeta();
-        if (!(meta instanceof SkullMeta skullMeta)) { return null; }
+        if (!(meta instanceof SkullMeta)) { return null; }
+        SkullMeta skullMeta = (SkullMeta) meta;
         return skullMeta.getOwner();
     }
 

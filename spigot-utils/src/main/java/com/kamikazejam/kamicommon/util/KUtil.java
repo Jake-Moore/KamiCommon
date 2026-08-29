@@ -152,7 +152,8 @@ public class KUtil {
         // Now return the playersObject.
         if (playersObject instanceof Collection<?>) {
             return (Collection<Player>) playersObject;
-        } else if (playersObject instanceof Player[] playersArray) {
+        } else if (playersObject instanceof Player[]) {
+            Player[] playersArray = (Player[]) playersObject;
             return Arrays.asList(playersArray);
         } else {
             throw new RuntimeException("Failed retrieving online players.");
@@ -185,14 +186,16 @@ public class KUtil {
         }
 
         // UUID
-        if (senderObject instanceof UUID uuid) {
+        if (senderObject instanceof UUID) {
+            UUID uuid = (UUID) senderObject;
             // Attempt finding player
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) return player;
         }
 
         // String
-        if (senderObject instanceof String string) {
+        if (senderObject instanceof String) {
+            String string = (String) senderObject;
             // Recurse as UUID
             UUID uuid = KUtil.asUuid(string);
             if (uuid != null) return getSender(uuid);
@@ -284,7 +287,8 @@ public class KUtil {
 
     @Contract("null -> false")
     public static boolean isNpc(Object object) {
-        if (!(object instanceof Metadatable metadatable)) return false;
+        if (!(object instanceof Metadatable)) return false;
+        Metadatable metadatable = (Metadatable) object;
         try {
             return metadatable.hasMetadata("NPC");
         } catch (UnsupportedOperationException e) {

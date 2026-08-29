@@ -1,8 +1,14 @@
 plugins {
     id("javadoc-publish-convention")
-    id("paper-toolchain-convention")
     // Unique plugins for this module
 }
+
+// A 1.8.8 server loads this in full. KamiPlugin lives here, so it is the module that decides
+// whether 1.8.x support is real. See buildSrc/src/main/kotlin/module-floor-convention.gradle.kts.
+// See buildSrc/src/main/kotlin/module-floor-convention.gradle.kts for what each setting does.
+extra["moduleFloor"] = 8
+apply(plugin = "module-floor-convention")
+
 
 repositories {
     maven(url = "https://repo.papermc.io/repository/maven-public/")
@@ -10,7 +16,7 @@ repositories {
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api("com.kamikazejam.kamicommon:spigot-nms:1.2.20")
+    api("com.kamikazejam.kamicommon:spigot-nms:1.2.22")
     api(project(":standalone-utils")) // Also includes shared-utils
 
     api("com.google.code.gson:gson:2.13.2")
@@ -45,3 +51,4 @@ tasks.register("printServerAPI") {
     }
 }
 tasks.compileJava.get().dependsOn(tasks.named("printServerAPI"))
+apply(from = "$rootDir/gradle/verify-sealed-hierarchies.gradle.kts")

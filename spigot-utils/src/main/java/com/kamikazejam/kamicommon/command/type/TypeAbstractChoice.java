@@ -131,7 +131,7 @@ public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements A
         List<T> matches = this.getMatches(options, arg, false);
 
         // Exact
-        if (matches.size() == 1) return matches.getFirst();
+        if (matches.size() == 1) return matches.get(0);
 
         // Exception
         KamiCommonException exception = new KamiCommonException();

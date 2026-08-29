@@ -41,7 +41,8 @@ public class YAMLParser {
     }
 
     private static void processYAMLNode(Node node, @Nullable List<String> keysWithValues, List<NodePair> allKeyNodes, String parentKey) {
-        if (node instanceof MappingNode mappingNode) {
+        if (node instanceof MappingNode) {
+            MappingNode mappingNode = (MappingNode) node;
 
             for (int i = 0; i < mappingNode.getValue().size(); i++) {
                 NodeTuple tuple = mappingNode.getValue().get(i);

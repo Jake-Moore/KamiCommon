@@ -112,7 +112,7 @@ public class KamiCommandHelp extends KamiCommand {
         children.sort(
                 Comparator.comparing(
                         // Extract the primary alias (or null if no aliases)
-                        (KamiCommand c) -> c.getAliases().isEmpty() ? null : c.getAliases().getFirst(),
+                        (KamiCommand c) -> c.getAliases().isEmpty() ? null : c.getAliases().get(0),
                         // This comparator handles the actual comparison:
                         // 1. nullsLast ensures null primary aliases are sorted after non-null ones.
                         // 2. String.CASE_INSENSITIVE_ORDER compares strings ignoring case.

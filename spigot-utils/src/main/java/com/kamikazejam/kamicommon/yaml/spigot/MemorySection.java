@@ -28,7 +28,8 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
     public @NotNull MemorySection getConfigurationSection(String key) {
         Object o = get(key);
         String newPath = (this.fullPath.isEmpty()) ? key : this.fullPath + "." + key;
-        if (o instanceof MappingNode m) {
+        if (o instanceof MappingNode) {
+            MappingNode m = (MappingNode) o;
             return new MemorySection(m, newPath, this);
         }
         return new MemorySection(AbstractYamlHandler.createNewMappingNode(), newPath, this);
@@ -39,7 +40,8 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         @Nullable Node node = getNode(key);
         String newPath = (this.fullPath.isEmpty()) ? key : this.fullPath + "." + key;
 
-        if (node instanceof SequenceNode sequenceNode) {
+        if (node instanceof SequenceNode) {
+            SequenceNode sequenceNode = (SequenceNode) node;
             return new ConfigurationSequenceSpigot(this, sequenceNode, newPath);
         }
 
@@ -52,12 +54,14 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
     @Override
     public void put(String key, Object value) {
         // ItemStacks
-        if (value instanceof ItemStack stack) {
+        if (value instanceof ItemStack) {
+            ItemStack stack = (ItemStack) value;
             setItemStack(key, stack); return;
         }
 
         // ItemBuilders
-        if (value instanceof ItemBuilder builder) {
+        if (value instanceof ItemBuilder) {
+            ItemBuilder builder = (ItemBuilder) value;
             setItemStack(key, builder.build()); return;
         }
 
@@ -69,7 +73,8 @@ public class MemorySection extends MemorySectionMethods<MemorySection> implement
         Object o = super.get(key);
 
         // Check ItemStack logic
-        if (o instanceof String s) {
+        if (o instanceof String) {
+            String s = (String) o;
             ItemStack stack = parseItemStackData(s);
             if (stack != null) { return stack; }
         }

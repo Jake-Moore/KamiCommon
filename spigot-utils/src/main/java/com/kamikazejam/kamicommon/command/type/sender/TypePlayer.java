@@ -35,7 +35,8 @@ public class TypePlayer extends TypeAbstract<Player> {
 		}
 
 		@Nullable PremiumVanishIntegration integration = SpigotUtilsSource.getVanishIntegration();
-		if (integration != null && sender instanceof Player viewer) {
+		if (integration != null && sender instanceof Player) {
+			Player viewer = (Player) sender;
             if (!integration.canSee(viewer, target)) {
                 String error = KamiCommand.Config.getErrorColorMini();
                 String param = KamiCommand.Config.getErrorParamColorMini();
@@ -51,7 +52,8 @@ public class TypePlayer extends TypeAbstract<Player> {
 		return commandSender.getServer().getOnlinePlayers().stream()
 				// Filter out vanished players that the sender cannot see
 				.filter(plr -> {
-					if (!(commandSender instanceof Player viewer)) return true;
+					if (!(commandSender instanceof Player)) return true;
+					Player viewer = (Player) commandSender;
                     return integration == null || integration.canSee(viewer, plr);
 				})
 				.map(Player::getName)

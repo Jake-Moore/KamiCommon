@@ -11,6 +11,7 @@ import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
+import com.kamikazejam.kamicommon.util.Jdk8;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -78,6 +79,6 @@ public class CmdSubsystems extends KamiCommand {
         int maxChars = String.valueOf(maxValue).length();
         String strValue = String.valueOf(value);
         // Pad with spaces in front to match the length of maxChars
-        return " ".repeat(Math.max(0, maxChars - strValue.length())) + strValue;
+        return Jdk8.repeat(" ", Math.max(0, maxChars - strValue.length())) + strValue;
     }
 }
