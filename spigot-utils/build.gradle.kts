@@ -1,5 +1,6 @@
 plugins {
     id("javadoc-publish-convention")
+    id("paper-toolchain-convention")
     // Unique plugins for this module
 }
 
@@ -9,7 +10,7 @@ repositories {
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api("com.kamikazejam.kamicommon:spigot-nms:1.2.19")
+    api("com.kamikazejam.kamicommon:spigot-nms:1.2.20")
     api(project(":standalone-utils")) // Also includes shared-utils
 
     api("com.google.code.gson:gson:2.13.2")
@@ -26,9 +27,6 @@ dependencies {
     compileOnly("nl.marido.deluxecombat:DeluxeCombat:1.40.5")
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
 
 // Configure javadoc-publish-convention
 configure<Javadoc_publish_convention_gradle.JavadocPublishExtension> {
