@@ -3,6 +3,7 @@ import java.time.format.DateTimeFormatter
 
 plugins {
     id("javadoc-publish-convention")
+    id("paper-toolchain-convention")
     // Unique plugins for this module
     id("com.gradleup.shadow")
 }
@@ -32,7 +33,6 @@ tasks {
         archiveClassifier.set("")
         archiveBaseName.set("KamiCommon")
 
-        // From particlenativeapi
         exclude("LICENSE*", "META-INF/LICENSE*")
         exclude("License*", "META-INF/License*")
 
@@ -42,7 +42,6 @@ tasks {
 
         // KamiCommonNMS
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
-        relocate("com.github.fierioziy.particlenativeapi", "com.kamikazejam.kamicommon.particleapi")
         relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbtapi")
         // shared-jar
         relocate("com.zaxxer.hikari", "com.kamikazejam.kamicommon.hikari")
@@ -98,9 +97,6 @@ tasks {
 //    tasks.getByName("publishShadowPublicationToMavenRepository").dependsOn(tasks.jar)
 //}
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
 
 // Configure javadoc-publish-convention
 configure<Javadoc_publish_convention_gradle.JavadocPublishExtension> {
