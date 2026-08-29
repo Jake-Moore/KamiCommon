@@ -32,6 +32,30 @@ configurations.named("compileClasspath").configure {
     }
 }
 
+// The shadow plugin derives org.gradle.jvm.version for its outgoing variant from the TOOLCHAIN, not
+// from targetCompatibility, and neither options.release nor the floor above feeds it. So a module
+// that emits Java 8 was publishing metadata that said 25, and NO Gradle consumer below 25 could
+// resolve it. That is not hypothetical for this project: spigot-jar has shipped that way since
+// alpha.37, which makes the "1.8.x servers can use this" claim untrue for every Gradle consumer.
+//
+// Only takes effect inside afterEvaluate, because the shadow plugin writes the attribute after us.
+// The fat jar legitimately contains higher bytecode (relocated HikariCP at 11, and the NMS version
+// modules up to 25), and that is fine: those are reached reflectively or behind a runtime guard, and
+// are never loaded by a server that cannot read them. The variant has to describe what a consumer
+// needs in order to LOAD the module, which is the floor.
+plugins.withId("com.gradleup.shadow") {
+    afterEvaluate {
+        configurations.named("shadowRuntimeElements").configure {
+            attributes {
+                attribute(
+                    org.gradle.api.attributes.java.TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE,
+                    floor
+                )
+            }
+        }
+    }
+}
+
 // The floor governs SHIPPED bytecode. Tests run on the build JVM and are never loaded by a
 // Minecraft server, so constraining them buys nothing and costs a lot. JUnit 6 requires Java 17,
 // so a floor applied to the test source set makes the parser suite unresolvable.
