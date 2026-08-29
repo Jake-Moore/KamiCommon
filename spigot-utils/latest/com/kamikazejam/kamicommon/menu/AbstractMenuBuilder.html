@@ -105,9 +105,14 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="modifiers">public abstract sealed class </span><span class="element-name type-name-label">AbstractMenuBuilder&lt;M extends <a href="Menu.html" title="interface in com.kamikazejam.kamicommon.menu">Menu</a>&lt;M&gt;, T extends AbstractMenuBuilder&lt;M,<wbr>T&gt;&gt;</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>
-<span class="permits">permits <a href="SimpleMenu.Builder.html" title="class in com.kamikazejam.kamicommon.menu">SimpleMenu.Builder</a>, <a href="PaginatedMenu.Builder.html" title="class in com.kamikazejam.kamicommon.menu">PaginatedMenu.Builder</a>, <a href="OneClickMenu.Builder.html" title="class in com.kamikazejam.kamicommon.menu">OneClickMenu.Builder</a></span></div>
+<div class="type-signature"><span class="annotations">@NonExtendable
+</span><span class="modifiers">public abstract class </span><span class="element-name type-name-label">AbstractMenuBuilder&lt;M extends <a href="Menu.html" title="interface in com.kamikazejam.kamicommon.menu">Menu</a>&lt;M&gt;, T extends AbstractMenuBuilder&lt;M,<wbr>T&gt;&gt;</span>
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block"><b>Do not implement this outside KamiCommon.</b> This was a <code>sealed</code> hierarchy until
+spigot-utils dropped to Java 8 so that 1.8.x servers could load it; <code>sealed</code> is Java 17
+and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the
+<code>verifySealedHierarchies</code> build task, which fails if an implementation appears that is
+not on the permitted list (SimpleMenu.Builder, PaginatedMenu.Builder, OneClickMenu.Builder). Nothing can enforce it in your code, hence this annotation.</div>
 </div>
 </section>
 <section class="summary">

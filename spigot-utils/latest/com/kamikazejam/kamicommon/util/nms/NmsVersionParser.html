@@ -161,11 +161,13 @@ calendar versions (<code>26.1.1</code>, <code>26.1.2</code>, <code>26.2</code>, 
       digit, so every existing <code>f("1.x.y")</code> threshold keeps the value it has always
       had. Note the packing is textual rather than arithmetic, which is why
       <code>1.21.10</code> is <code>12110</code> and not <code>1220</code>.</li>
-  <li><b>Calendar (<code>&gt;= 2.x</code>):</b> <code>major*1_000_000 + minor*1_000 + patch</code>. Every
-      value lands far above every legacy value, so no offset is needed, and unlike the
-      4-digit packing it stays monotonic: the old scheme gave <code>f("26.2") == 2620</code>,
-      which sorts <i>below</i> both <code>f("1.21.11") == 12111</code> and
-      <code>f("26.1.2") == 26012</code>.</li>
+  <li><b>Calendar (<code>&gt;= 2.x</code>):</b> <code>major*10_000 + minor*100 + patch</code>, two digits
+      each, so <code>26.2</code> reads as <code>26|02|00</code> and gives
+      <code>f("26.2") == 260200</code>, <code>f("26.1.2") == 260102</code>. Every value lands far
+      above every legacy value, since the legacy branch tops out at
+      <code>"1" + "99" + "99" == 19999</code>, so no offset is needed and the two eras cannot
+      overlap. It also stays monotonic, which the old 4-digit packing did not: that gave
+      <code>f("26.2") == 2620</code>, sorting <i>below</i> <code>f("1.21.11") == 12111</code>.</li>
 </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>

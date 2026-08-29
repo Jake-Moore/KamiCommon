@@ -78,10 +78,16 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="modifiers">public sealed interface </span><span class="element-name type-name-label">MenuSize</span>
-<span class="permits">permits <a href="MenuSizeRows.html" title="class in com.kamikazejam.kamicommon.menu.api.struct.size">MenuSizeRows</a>, <a href="MenuSizeType.html" title="class in com.kamikazejam.kamicommon.menu.api.struct.size">MenuSizeType</a></span></div>
+<div class="type-signature"><span class="annotations">@NonExtendable
+</span><span class="modifiers">public interface </span><span class="element-name type-name-label">MenuSize</span></div>
 <div class="block">Represents the size of a menu.<br>
-Can either be a <a href="MenuSizeRows.html" title="class in com.kamikazejam.kamicommon.menu.api.struct.size"><code>MenuSizeRows</code></a>, or <a href="MenuSizeType.html" title="class in com.kamikazejam.kamicommon.menu.api.struct.size"><code>MenuSizeType</code></a>.</div>
+Can either be a <a href="MenuSizeRows.html" title="class in com.kamikazejam.kamicommon.menu.api.struct.size"><code>MenuSizeRows</code></a>, or <a href="MenuSizeType.html" title="class in com.kamikazejam.kamicommon.menu.api.struct.size"><code>MenuSizeType</code></a>.
+<p>
+<b>Do not implement this outside KamiCommon.</b> This was a <code>sealed</code> hierarchy until
+spigot-utils dropped to Java 8 so that 1.8.x servers could load it; <code>sealed</code> is Java 17
+and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the
+<code>verifySealedHierarchies</code> build task, which fails if an implementation appears that is
+not on the permitted list (MenuSizeRows, MenuSizeType). Nothing can enforce it in your code, hence this annotation.</div>
 </div>
 </section>
 <section class="summary">

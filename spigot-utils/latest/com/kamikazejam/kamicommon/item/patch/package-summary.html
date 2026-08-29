@@ -86,7 +86,11 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="Patch.html" title="interface in com.kamikazejam.kamicommon.item.patch">Patch</a>&lt;T&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab1">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block"><b>Do not implement this outside KamiCommon.</b> This was a <code>sealed</code> hierarchy until
+spigot-utils dropped to Java 8 so that 1.8.x servers could load it; <code>sealed</code> is Java 17
+and has no Java 8 spelling.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PatchAdd.html" title="class in com.kamikazejam.kamicommon.item.patch">PatchAdd</a>&lt;T&gt;</div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
 <div class="col-first even-row-color class-summary class-summary-tab3"><a href="PatchOp.html" title="enum class in com.kamikazejam.kamicommon.item.patch">PatchOp</a></div>

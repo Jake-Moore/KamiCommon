@@ -111,10 +111,15 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="modifiers">public abstract sealed class </span><span class="element-name type-name-label">AbstractMenu&lt;M extends AbstractMenu&lt;M&gt;&gt;</span>
+<div class="type-signature"><span class="annotations">@NonExtendable
+</span><span class="modifiers">public abstract class </span><span class="element-name type-name-label">AbstractMenu&lt;M extends AbstractMenu&lt;M&gt;&gt;</span>
 <span class="extends-implements">extends <a href="api/MenuHolder.html" title="class in com.kamikazejam.kamicommon.menu.api">MenuHolder</a>
-implements <a href="Menu.html" title="interface in com.kamikazejam.kamicommon.menu">Menu</a>&lt;M&gt;, <a href="api/icons/interfaces/UpdatingMenu.html" title="interface in com.kamikazejam.kamicommon.menu.api.icons.interfaces">UpdatingMenu</a></span>
-<span class="permits">permits <a href="SimpleMenu.html" title="class in com.kamikazejam.kamicommon.menu">SimpleMenu</a>, <a href="PaginatedMenu.html" title="class in com.kamikazejam.kamicommon.menu">PaginatedMenu</a>, <a href="OneClickMenu.html" title="class in com.kamikazejam.kamicommon.menu">OneClickMenu</a></span></div>
+implements <a href="Menu.html" title="interface in com.kamikazejam.kamicommon.menu">Menu</a>&lt;M&gt;, <a href="api/icons/interfaces/UpdatingMenu.html" title="interface in com.kamikazejam.kamicommon.menu.api.icons.interfaces">UpdatingMenu</a></span></div>
+<div class="block"><b>Do not implement this outside KamiCommon.</b> This was a <code>sealed</code> hierarchy until
+spigot-utils dropped to Java 8 so that 1.8.x servers could load it; <code>sealed</code> is Java 17
+and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the
+<code>verifySealedHierarchies</code> build task, which fails if an implementation appears that is
+not on the permitted list (SimpleMenu, PaginatedMenu, OneClickMenu). Nothing can enforce it in your code, hence this annotation.</div>
 </div>
 </section>
 <section class="summary">

@@ -88,9 +88,17 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="AbstractMenu.html" title="class in com.kamikazejam.kamicommon.menu">AbstractMenu</a>&lt;M extends <a href="AbstractMenu.html" title="class in com.kamikazejam.kamicommon.menu">AbstractMenu</a>&lt;M&gt;&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block"><b>Do not implement this outside KamiCommon.</b> This was a <code>sealed</code> hierarchy until
+spigot-utils dropped to Java 8 so that 1.8.x servers could load it; <code>sealed</code> is Java 17
+and has no Java 8 spelling.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="AbstractMenuBuilder.html" title="class in com.kamikazejam.kamicommon.menu">AbstractMenuBuilder</a>&lt;M extends <a href="Menu.html" title="interface in com.kamikazejam.kamicommon.menu">Menu</a>&lt;M&gt;, T extends <a href="AbstractMenuBuilder.html" title="class in com.kamikazejam.kamicommon.menu">AbstractMenuBuilder</a>&lt;M,<wbr>T&gt;&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block"><b>Do not implement this outside KamiCommon.</b> This was a <code>sealed</code> hierarchy until
+spigot-utils dropped to Java 8 so that 1.8.x servers could load it; <code>sealed</code> is Java 17
+and has no Java 8 spelling.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="Menu.html" title="interface in com.kamikazejam.kamicommon.menu">Menu</a>&lt;M extends <a href="Menu.html" title="interface in com.kamikazejam.kamicommon.menu">Menu</a>&lt;M&gt;&gt;</div>
 <div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">Represents the abstraction of a menu into the core parts that <a href="MenuManager.html" title="class in com.kamikazejam.kamicommon.menu"><code>MenuManager</code></a> needs to interact with.<br>

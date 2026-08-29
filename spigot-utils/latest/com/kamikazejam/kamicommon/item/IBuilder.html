@@ -160,9 +160,14 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="modifiers">public sealed interface </span><span class="element-name type-name-label">IBuilder&lt;T extends IBuilder&lt;T&gt;&gt;</span><span class="extends-implements">
-extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Cloneable.html" title="class or interface in java.lang" class="external-link">Cloneable</a></span>
-<span class="permits">permits <a href="ItemBuilder.html" title="class in com.kamikazejam.kamicommon.item">ItemBuilder</a></span></div>
+<div class="type-signature"><span class="annotations">@NonExtendable
+</span><span class="modifiers">public interface </span><span class="element-name type-name-label">IBuilder&lt;T extends IBuilder&lt;T&gt;&gt;</span><span class="extends-implements">
+extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Cloneable.html" title="class or interface in java.lang" class="external-link">Cloneable</a></span></div>
+<div class="block"><b>Do not implement this outside KamiCommon.</b> This was a <code>sealed</code> hierarchy until
+spigot-utils dropped to Java 8 so that 1.8.x servers could load it; <code>sealed</code> is Java 17
+and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the
+<code>verifySealedHierarchies</code> build task, which fails if an implementation appears that is
+not on the permitted list (ItemBuilder). Nothing can enforce it in your code, hence this annotation.</div>
 </div>
 </section>
 <section class="summary">
@@ -919,7 +924,7 @@ Clear this patch by calling <a href="#resetDamage()"><code>resetDamage()</code><
 <section class="detail" id="setDurability(short)">
 <h3>setDurability</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="5.0.0-alpha.17")
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
 @NotNull
 </span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="#type-param-T" title="type parameter in IBuilder">T</a></span>&nbsp;<span class="element-name">setDurability</span><wbr><span class="parameters">(short&nbsp;dur)</span></div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -933,7 +938,7 @@ Clear this patch by calling <a href="#resetDamage()"><code>resetDamage()</code><
 <section class="detail" id="setDurability(int)">
 <h3>setDurability</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html#since()" title="class or interface in java.lang" class="external-link">since</a>="5.0.0-alpha.17")
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
 @NotNull
 </span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="#type-param-T" title="type parameter in IBuilder">T</a></span>&nbsp;<span class="element-name">setDurability</span><wbr><span class="parameters">(int&nbsp;dur)</span></div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
