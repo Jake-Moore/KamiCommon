@@ -90,7 +90,7 @@ jobs:
           LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
           MC_SERVER_NEWEST_API: "false"
 
-      - name: Build with Gradle (Latest Paper 1.21+)
+      - name: Build with Gradle (newest Paper API)
         if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot != 'true'
         run: gradle build
         env:
