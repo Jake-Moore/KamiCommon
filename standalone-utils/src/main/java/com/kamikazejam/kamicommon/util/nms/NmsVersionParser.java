@@ -29,11 +29,13 @@ public class NmsVersionParser {
      *       digit, so every existing {@code f("1.x.y")} threshold keeps the value it has always
      *       had. Note the packing is textual rather than arithmetic, which is why
      *       {@code 1.21.10} is {@code 12110} and not {@code 1220}.</li>
-     *   <li><b>Calendar ({@code >= 2.x}):</b> {@code major*1_000_000 + minor*1_000 + patch}. Every
-     *       value lands far above every legacy value, so no offset is needed, and unlike the
-     *       4-digit packing it stays monotonic: the old scheme gave {@code f("26.2") == 2620},
-     *       which sorts <i>below</i> both {@code f("1.21.11") == 12111} and
-     *       {@code f("26.1.2") == 26012}.</li>
+     *   <li><b>Calendar ({@code >= 2.x}):</b> {@code major*10_000 + minor*100 + patch}, two digits
+     *       each, so {@code 26.2} reads as {@code 26|02|00} and gives
+     *       {@code f("26.2") == 260200}, {@code f("26.1.2") == 260102}. Every value lands far
+     *       above every legacy value, since the legacy branch tops out at
+     *       {@code "1" + "99" + "99" == 19999}, so no offset is needed and the two eras cannot
+     *       overlap. It also stays monotonic, which the old 4-digit packing did not: that gave
+     *       {@code f("26.2") == 2620}, sorting <i>below</i> {@code f("1.21.11") == 12111}.</li>
      * </ul>
      *
      * @param mcVer The MC version string (i.e. "1.20.4", "1.8.8", "26.2", or "26.2.build.115")
