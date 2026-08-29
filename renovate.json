@@ -3,11 +3,15 @@
   "extends": [
     "config:recommended"
   ],
-  "baseBranchPatterns": ["release/v5"],
+  "baseBranchPatterns": [
+    "release/v5"
+  ],
   "packageRules": [
     {
       "description": "Auto-merge GitHub Actions updates",
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "github-actions",
       "groupSlug": "github-actions",
       "automerge": true,
@@ -17,31 +21,54 @@
     },
     {
       "description": "Group all non-major updates together and auto-merge",
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
       "automerge": true,
       "bumpVersions": [
         {
-          "filePatterns": ["^build\\.gradle\\.kts$"],
-          "matchStrings": ["^[\\s]*var\\s+VERSION\\s*=\\s*\"(\\d+\\.\\d+\\.\\d+)\"[\\s]*(?://.*)?$"],
+          "filePatterns": [
+            "^build\\.gradle\\.kts$"
+          ],
+          "matchStrings": [
+            "^[\\s]*var\\s+VERSION\\s*=\\s*\"(\\d+\\.\\d+\\.\\d+)\"[\\s]*(?://.*)?$"
+          ],
           "bumpType": "patch"
         },
         {
-          "filePatterns": ["^build\\.gradle\\.kts$"],
-          "matchStrings": ["^[\\s]*var\\s+VERSION\\s*=\\s*\"(\\d+\\.\\d+\\.\\d+-(alpha|beta|rc)\\.\\d+)\"[\\s]*(?://.*)?$"],
+          "filePatterns": [
+            "^build\\.gradle\\.kts$"
+          ],
+          "matchStrings": [
+            "^[\\s]*var\\s+VERSION\\s*=\\s*\"(\\d+\\.\\d+\\.\\d+-(alpha|beta|rc)\\.\\d+)\"[\\s]*(?://.*)?$"
+          ],
           "bumpType": "prerelease"
         }
       ]
     },
     {
       "description": "Require approval for major updates",
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "automerge": false
+    },
+    {
+      "description": "Keep gradle-wrapper on its own branch. Updating it makes Renovate run ./gradlew in its container, which fails here, and while it shared a branch with everything else that one failure blocked the entire non-major batch.",
+      "matchManagers": [
+        "gradle-wrapper"
+      ],
+      "groupName": "gradle-wrapper",
       "automerge": false
     }
   ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
   "timezone": "America/Los_Angeles",
-  "schedule": ["* 0-6 * * *"]
+  "schedule": [
+    "* 0-6 * * *"
+  ]
 }
