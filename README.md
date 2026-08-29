@@ -59,6 +59,42 @@ There are 6 common modules, 5 of which can be safely shaded
 - The last module, `spigot-jar`, compiles the spigot plugin and is only intended to be used as an api
   - When using this module, remember to modify the `plugin.yml` to include `KamiCommon` in the `depend:` list
 
+## Java version
+
+**KamiCommon runs on Java 8.** Every module compiles to class-file major 52, so it loads on any
+server from 1.8.x upward. That is not a claim about what is *bundled*, it is what the bytecode
+targets, and it is checked on every build rather than assumed.
+
+There is one exception.
+
+| what you use | Java it needs | why |
+|---|---|---|
+| everything else | **8** | matches the oldest server version this library supports |
+| `com.kamikazejam.kamicommon.database` | **11** | HikariCP, the connection pool, is Java 11 |
+
+Nothing else in the jar is above Java 8. HikariCP is the only bundled library that is, and `Database`
+is the only class that touches it, so the split is confined to that one package. Call it on an older
+JVM and you get an `IllegalStateException` saying so, rather than an `UnsupportedClassVersionError`
+naming a relocated class you cannot search for.
+
+### For the NMS side
+
+`spigot-nms` ships implementations for every supported Minecraft version, and each targets the JVM
+its own version required: Java 8 through 1.16.5, 16 for 1.17, 17 through 1.20.4, 21 from 1.20.5, and
+25 for 26.x. They are loaded by name at runtime, so a 1.8.8 server never loads the class built for
+26.x, and the jar carries all of them without any one raising the floor for the rest. `/kc
+nmsproviders` prints which implementation your server selected for each capability.
+
+### If you are contributing
+
+`api`, `shared-utils`, `standalone-utils`, `spigot-utils` and `spigot-jar` are compiled with
+`--release 8`. The compiler will tell you, but so that it is not a surprise: no records, no `var`, no
+sealed types, no switch expressions or pattern matching, no `List.of`, `Set.of` or `Stream.toList`.
+`Jdk8.repeat` and `Jdk8.strip` stand in for the `String` methods added in Java 11.
+
+That constraint is the price of the 1.8.x support in the line above. It is deliberate, and the build
+enforces it rather than relying on review.
+
 ## Using KamiCommon
 ### Repository Information
 Add the following Repository to your build file.
