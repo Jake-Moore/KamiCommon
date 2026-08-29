@@ -123,3 +123,6 @@ tasks.register("printServerAPI") {
     }
 }
 tasks.compileJava.get().dependsOn(tasks.named("printServerAPI"))
+
+apply(from = "$rootDir/gradle/verify-floor.gradle.kts")
+
