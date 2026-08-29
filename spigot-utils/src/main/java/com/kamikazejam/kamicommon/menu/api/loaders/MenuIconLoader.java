@@ -8,6 +8,7 @@ import com.kamikazejam.kamicommon.item.ItemBuilderLoader;
 import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.OfflinePlayer;
@@ -87,7 +88,7 @@ public class MenuIconLoader {
                     ItemBuilder builder = ItemBuilderLoader.loadPatches(stack, section);
                     if (player != null) {builder.setSkullOwner(player.getName());}
                     return builder;
-                }).toList();
+                }).collect(Collectors.toList());
     }
 
     @Configurable

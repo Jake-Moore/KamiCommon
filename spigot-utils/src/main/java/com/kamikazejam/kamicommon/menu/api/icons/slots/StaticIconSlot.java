@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.menu.api.icons.slots;
 
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
+import java.util.Collections;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +21,7 @@ public class StaticIconSlot implements IconSlot {
     }
 
     public StaticIconSlot(int slot) {
-        this.slots = Set.of(slot);
+        this.slots = Collections.singleton(slot);
     }
 
     public StaticIconSlot(int... slot) {

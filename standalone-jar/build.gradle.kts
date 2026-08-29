@@ -3,6 +3,12 @@ plugins {
     // Unique plugins for this module
 }
 
+// An aggregator with no bytecode of its own.
+// See buildSrc/src/main/kotlin/module-floor-convention.gradle.kts for what each setting does.
+extra["moduleFloor"] = 8
+apply(plugin = "module-floor-convention")
+
+
 dependencies {
     // Both shared-jar and standalone-utils inherit from shared-utils
     // We should exclude one of them to avoid duplicate classes

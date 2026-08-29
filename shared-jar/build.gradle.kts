@@ -3,6 +3,14 @@ plugins {
     // Unique plugins for this module
 }
 
+// Its own bytecode is Java 8. HikariCP declares 11 for itself, so a consumer
+// that actually pulls the database stack still gets a resolution error naming Hikari, which is
+// the right place for that constraint to live.
+// See buildSrc/src/main/kotlin/module-floor-convention.gradle.kts for what each setting does.
+extra["moduleFloor"] = 8
+apply(plugin = "module-floor-convention")
+
+
 // Dependency Version Configuration
 val slf4jVersion = "2.0.17"
 dependencies {

@@ -392,7 +392,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
     public KamiCommandHelp getHelpCommand() {
         if (!this.hasChildren()) this.addChild(new KamiCommandHelp(), 0);
         List<KamiCommand> children = this.getChildren();
-        return (KamiCommandHelp) children.getFirst();
+        return (KamiCommandHelp) children.get(0);
     }
 
     // -------------------------------------------- //
@@ -738,7 +738,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             // Child Execution
             if (this.isParent() && !args.isEmpty()) {
                 // Get matches
-                String token = args.getFirst();
+                String token = args.get(0);
 
                 // Fetch direct matches (not using levenshtein) only allowing lowercase startsWith matches.
                 // i.e. if you run "/command t", any subcommand starting with "t" will match.
@@ -748,7 +748,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
                 if (matches.size() == 1) {
                     KamiCommand child = matches.iterator().next();
                     List<String> childArgs = new ArrayList<>(args);
-                    childArgs.removeFirst();
+                    childArgs.remove(0);
                     // Invoke child command with the token (label) used, and the remaining args.
                     child.execute(sender, token, childArgs);
                 }
@@ -908,7 +908,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
         // Compose the subCommand aliases concatenated with commas.
         //   fall back to the first alias if no matches were found.
-        String subCommandAliases = matchingAliases.isEmpty() ? suggested.getAliases().getFirst() : Txt.implode(matchingAliases, ",");
+        String subCommandAliases = matchingAliases.isEmpty() ? suggested.getAliases().get(0) : Txt.implode(matchingAliases, ",");
         miniMessage.append(" ").append(Config.commandColorMini).append(subCommandAliases.trim());
 
         // Add 'suggested' parameters to the template string
@@ -948,7 +948,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
         // Pick one alias to use as the suggested subcommand.
         //   fall back to the first alias if no matches were found.
-        String subCommandAlias = matchingAliases.isEmpty() ? suggested.getAliases().getFirst() : matchingAliases.getFirst();
+        String subCommandAlias = matchingAliases.isEmpty() ? suggested.getAliases().get(0) : matchingAliases.get(0);
         commandBuilder.append(" ").append(subCommandAlias.trim());
 
         // If the suggestion has more subcommands or parameters, append a space for tab completions to begin.
@@ -1003,7 +1003,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
 
         // Pick one alias to use as the suggested subcommand.
         //   fall back to the first alias if no matches were found.
-        String subCommandAlias = child.getAliases().getFirst();
+        String subCommandAlias = child.getAliases().get(0);
         commandBuilder.append(" ").append(subCommandAlias.trim());
 
         // If the suggestion has more subcommands or parameters, append a space for tab completions to begin.
@@ -1115,7 +1115,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
             String base;
 
             if ((first && onlyFirstAlias) || onlyOneSubAlias) {
-                base = command.getAliases().getFirst();
+                base = command.getAliases().get(0);
             } else {
                 base = Txt.implode(command.getAliases(), ",");
             }
@@ -1173,7 +1173,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         // Then parent commands
         for (KamiCommand parent : this.getChain(false)) {
             // Append parent
-            ret.append(parent.getAliases().getFirst());
+            ret.append(parent.getAliases().get(0));
 
             // Append space
             ret.append(' ');
@@ -1182,7 +1182,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         // Then ourselves
         if (this.getAliases().isEmpty())
             throw new IllegalStateException(this.getClass().getSimpleName() + " has no aliases.");
-        ret.append(this.getAliases().getFirst());
+        ret.append(this.getAliases().get(0));
 
         // Then args
         for (String arg : args) {
@@ -1224,18 +1224,18 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         // If this isn't the last argument ...
         if (args.size() != 1) {
             // ... and there is a matching child ...
-            KamiCommand child = this.getChild(args.getFirst());
+            KamiCommand child = this.getChild(args.get(0));
             if (child == null) return Collections.emptyList();
 
             // ... get tab completions for that child.
-            args.removeFirst();
+            args.remove(0);
             return child.getTabCompletions(args, sender);
         }
 
         // ... else check the children.
         List<String> ret = new ArrayList<>();
         //noinspection ConstantConditions
-        String token = args.getLast().toLowerCase();
+        String token = args.get(args.size() - 1).toLowerCase();
         for (KamiCommand child : this.getChildren()) {
             if (!child.isRelevant(sender)) continue;
             ret.addAll(Txt.getStartsWithIgnoreCase(child.getAliases(), token));
@@ -1404,7 +1404,7 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         if (permissions.isEmpty()) {
             return null; // No permission set, command does not require any permission.
         }
-        String permission = permissions.getFirst(); // Use the first permission as the derived one.
+        String permission = permissions.get(0); // Use the first permission as the derived one.
         // Notify about the permission collision if applicable, recommending authors to set a dedicated permission.
         if (permissions.size() > 1) {
             String message1 = String.format(

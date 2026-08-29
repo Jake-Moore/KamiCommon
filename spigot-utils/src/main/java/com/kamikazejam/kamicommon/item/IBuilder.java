@@ -9,10 +9,12 @@ import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
+import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,8 +26,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+/**
+ * <b>Do not implement this outside KamiCommon.</b> This was a {@code sealed} hierarchy until
+ * spigot-utils dropped to Java 8 so that 1.8.x servers could load it; {@code sealed} is Java 17
+ * and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the
+ * {@code verifySealedHierarchies} build task, which fails if an implementation appears that is
+ * not on the permitted list (ItemBuilder). Nothing can enforce it in your code, hence this annotation.
+ */
 @SuppressWarnings({"unused", "UnusedReturnValue", "BooleanMethodIsAlwaysInverted"})
-public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permits ItemBuilder {
+@ApiStatus.NonExtendable
+public interface IBuilder<T extends IBuilder<T>> extends Cloneable {
 
     // ------------------------------------------------------------ //
     //                           PROTOTYPE                          //
@@ -97,7 +107,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * Alias of {@link #setDamage(int)}.
      * @deprecated As of 5.0.0-alpha.17, replaced by {@link #setDamage(int)}.
      */
-    @Deprecated(since = "5.0.0-alpha.17")
+    @Deprecated
     @NotNull
     default T setDurability(short dur) {
         return setDamage(dur);
@@ -107,7 +117,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
      * Alias of {@link #setDamage(int)}.
      * @deprecated As of 5.0.0-alpha.17, replaced by {@link #setDamage(int)}.
      */
-    @Deprecated(since = "5.0.0-alpha.17")
+    @Deprecated
     @NotNull
     default T setDurability(int dur) {
         return setDamage(dur);
@@ -647,7 +657,7 @@ public sealed interface IBuilder<T extends IBuilder<T>> extends Cloneable permit
         // Get the components and convert to legacy strings
         @Nullable List<VersionedComponent> lore = lore();
         if (lore == null) { return null; }
-        return lore.stream().map(VersionedComponent::serializeLegacySection).toList();
+        return lore.stream().map(VersionedComponent::serializeLegacySection).collect(Collectors.toList());
     }
 
     /**

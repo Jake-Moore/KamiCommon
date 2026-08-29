@@ -25,7 +25,8 @@ public class MemorySectionStandalone extends MemorySectionMethods<MemorySectionS
     public @NotNull MemorySectionStandalone getConfigurationSection(String key) {
         Object o = get(key);
         String newPath = (this.fullPath.isEmpty()) ? key : this.fullPath + "." + key;
-        if (o instanceof MappingNode m) {
+        if (o instanceof MappingNode) {
+            MappingNode m = (MappingNode) o;
             return new MemorySectionStandalone(m, newPath, this);
         }
         return new MemorySectionStandalone(AbstractYamlHandler.createNewMappingNode(), newPath, this);
@@ -36,7 +37,8 @@ public class MemorySectionStandalone extends MemorySectionMethods<MemorySectionS
         @Nullable Node node = getNode(key);
         String newPath = (this.fullPath.isEmpty()) ? key : this.fullPath + "." + key;
 
-        if (node instanceof SequenceNode sequenceNode) {
+        if (node instanceof SequenceNode) {
+            SequenceNode sequenceNode = (SequenceNode) node;
             return new ConfigurationSequenceStandalone(this, sequenceNode, newPath);
         }
 

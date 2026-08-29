@@ -1071,7 +1071,8 @@ public final class PS implements Serializable, Comparable<PS> {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof PS that)) return false;
+		if (!(object instanceof PS)) return false;
+		PS that = (PS) object;
 
         return KUtil.equals(
 				this.world, that.world,

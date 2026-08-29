@@ -70,7 +70,8 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
             ScalarNode scalarKeyNode = null;
             for (NodeTuple t : node.getValue()) {
                 Node keyNode = t.getKeyNode();
-                if (keyNode instanceof ScalarNode scalarNode) {
+                if (keyNode instanceof ScalarNode) {
+                    ScalarNode scalarNode = (ScalarNode) keyNode;
                     if (scalarNode.getValue().equals(part)) {
                         tuple = t;
                         scalarKeyNode = scalarNode;
@@ -108,7 +109,8 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
         NodeTuple tuple = null;
         for (NodeTuple t : node.getValue()) {
             Node keyNode = t.getKeyNode();
-            if (keyNode instanceof ScalarNode scalarNode) {
+            if (keyNode instanceof ScalarNode) {
+                ScalarNode scalarNode = (ScalarNode) keyNode;
                 if (scalarNode.getValue().equals(part)) {
                     tuple = t;
                     break;
@@ -202,15 +204,18 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
             return node;
         }
 
-        if (node instanceof ScalarNode scalar) {
+        if (node instanceof ScalarNode) {
+            ScalarNode scalar = (ScalarNode) node;
             return scalar.getValue();
         }
 
-        if (node instanceof SequenceNode sequence) {
+        if (node instanceof SequenceNode) {
+            SequenceNode sequence = (SequenceNode) node;
             List<String> valuesList = new ArrayList<>();
             for (Node child : sequence.getValue()) {
                 if (child == null) { continue; }
-                if (child instanceof ScalarNode scalar) {
+                if (child instanceof ScalarNode) {
+                    ScalarNode scalar = (ScalarNode) child;
                     valuesList.add(scalar.getValue());
                 } else {
                     throw new IllegalStateException(
@@ -240,7 +245,8 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
             String key2 = pair.getB();
 
             // If this is a mapping node, continue (it can't be a value)
-            if (valueNode instanceof MappingNode m) {
+            if (valueNode instanceof MappingNode) {
+                MappingNode m = (MappingNode) valueNode;
                 if (key2.equals(search)) { return m; } // If the key is the search, return the valueNode
 
                 Node n = getNodeInternal(m, search, key2);
@@ -248,9 +254,11 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
                 continue;
             }
 
-            if (valueNode instanceof ScalarNode s) {
+            if (valueNode instanceof ScalarNode) {
+                ScalarNode s = (ScalarNode) valueNode;
                 if (key2.equals(search)) { return s; }
-            }else if (valueNode instanceof SequenceNode s) {
+            }else if (valueNode instanceof SequenceNode) {
+                SequenceNode s = (SequenceNode) valueNode;
                 if (!key2.equals(search)) { continue; }
                 return s;
             } else {
@@ -358,7 +366,8 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
             String key2 = pair.getB();
 
             // If this is a mapping node, continue (it can't be a value)
-            if (valueNode instanceof MappingNode m) {
+            if (valueNode instanceof MappingNode) {
+                MappingNode m = (MappingNode) valueNode;
                 if (key2.equals(search)) { return tuple; } // If the key is the search, return the valueNode
 
                 NodeTuple o = getNodeTupleInternal(m, search, key2);
@@ -379,9 +388,11 @@ public abstract class AbstractMemorySection<T extends AbstractMemorySection<?>> 
     }
 
     private @Nullable Pair<Node, String> verifyNodeTuple(NodeTuple tuple, String search, String currentKey) {
-        if (!(tuple.getKeyNode() instanceof ScalarNode scalarNode)) {
-            throw new RuntimeException("getNodeInternal unknown node type: " + tuple.getKeyNode());
+        Node keyNode = tuple.getKeyNode();
+        if (!(keyNode instanceof ScalarNode)) {
+            throw new RuntimeException("getNodeInternal unknown node type: " + keyNode);
         }
+        ScalarNode scalarNode = (ScalarNode) keyNode;
         Node valueNode = tuple.getValueNode(); // Node that contains the next Node or the value object
 
         String key2 = concat(currentKey, scalarNode.getValue());
