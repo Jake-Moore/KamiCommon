@@ -58,7 +58,10 @@ public class NmsVersionParser {
             return Integer.parseInt(packed);
         }
 
-        // Calendar era (26.1.1, 26.1.2, 26.2, ...).
-        return (major * 1_000_000) + (minor * 1_000) + patch;
+        // CALENDAR ERA (26.1.1, 26.1.2, 26.2, ...). Two digits each, so 26.2 reads as 26|02|00.
+        //  The legacy branch above tops out at "1"+"99"+"99" = 19999, and any value here is at
+        //  least 260000, so the eras cannot overlap. Assumes minor and patch stay under 100,
+        //  which is the same assumption the legacy packing already makes.
+        return (major * 10_000) + (minor * 100) + patch;
     }
 }
