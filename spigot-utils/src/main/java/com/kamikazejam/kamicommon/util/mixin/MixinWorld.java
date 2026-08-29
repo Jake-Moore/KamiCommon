@@ -75,7 +75,7 @@ public class MixinWorld extends Mixin {
 
 	public String getWorldAliasOrId(String worldId) {
 		List<String> aliases = this.getWorldAliases(worldId);
-		if (!aliases.isEmpty()) return aliases.getFirst();
+		if (!aliases.isEmpty()) return aliases.get(0);
 		return worldId;
 	}
 

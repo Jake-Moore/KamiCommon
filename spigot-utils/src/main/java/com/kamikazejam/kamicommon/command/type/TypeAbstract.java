@@ -42,7 +42,8 @@ public abstract class TypeAbstract<T> implements Type<T> {
 	@Nullable
 	public String getName(@Nullable T value) {
 		if (value == null) return null;
-		if (value instanceof Named named) {
+		if (value instanceof Named) {
+		    Named named = (Named) value;
 			return named.getName();
 		}
 		return this.getId(value);
@@ -59,7 +60,8 @@ public abstract class TypeAbstract<T> implements Type<T> {
 	@Nullable
 	public String getId(@Nullable T value) {
 		if (value == null) return null;
-		if (value instanceof Identified identified) {
+		if (value instanceof Identified) {
+		    Identified identified = (Identified) value;
             return identified.getId();
 		} else if (value instanceof String || value instanceof Number || value instanceof Boolean) {
 			return value.toString();
@@ -164,7 +166,7 @@ public abstract class TypeAbstract<T> implements Type<T> {
 			// ...then we want the first one to have the prefix.
 			// That prefix is not removed automatically,
 			// due to how tab completion works.
-			final String current = ret.getFirst();
+			final String current = ret.get(0);
 			String result = prefix;
 			if (!current.isEmpty()) {
 				if (result.charAt(result.length() - 1) != ' ') result += ' ';
@@ -208,7 +210,7 @@ public abstract class TypeAbstract<T> implements Type<T> {
 			ret.append(compared.charAt(i));
 		}
 
-		if (ret.isEmpty()) return "";
+		if (ret.length() == 0) return "";
 
 		int lastSpace = ret.lastIndexOf(" ");
 		if (lastSpace == -1) return "";

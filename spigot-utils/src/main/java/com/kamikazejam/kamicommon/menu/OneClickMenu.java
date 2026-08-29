@@ -54,7 +54,8 @@ public final class OneClickMenu extends AbstractMenu<OneClickMenu> {
             return false;
         }
         Preconditions.checkNotNull(icon, "Icon must not be null.");
-        if (!(options instanceof OneClickMenuOptions menuOptions)) {return true;}
+        if (!(options instanceof OneClickMenuOptions)) {return true;}
+        OneClickMenuOptions menuOptions = (OneClickMenuOptions) options;
 
         // 1. Check if filler icon counts
         if (menuOptions.isExcludeFillerClickFromOneClick()) {

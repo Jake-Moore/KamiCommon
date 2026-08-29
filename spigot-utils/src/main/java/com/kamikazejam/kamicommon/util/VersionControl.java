@@ -184,7 +184,7 @@ public class VersionControl {
         // Preserve correctness in the original date object by removing the extra buffer time
         to.add(Calendar.MILLISECOND, future ? -50 : 50);
 
-        if (sb.isEmpty()) {
+        if (sb.length() == 0) {
             return "now";
         }
 

@@ -26,10 +26,11 @@ public class TimeUtil {
         // Using the Duration Java Class
         Duration duration = Duration.ofSeconds(seconds);
         
+        // toHoursPart()/toMinutesPart()/toSecondsPart() are Java 9. These are their definitions.
         long days = duration.toDays();
-        long hours = duration.toHoursPart();
-        long minutes = duration.toMinutesPart();
-        long secs = duration.toSecondsPart();
+        long hours = duration.toHours() % 24;
+        long minutes = duration.toMinutes() % 60;
+        long secs = duration.getSeconds() % 60;
         
         StringBuilder result = new StringBuilder();
         if (days > 0) {
@@ -73,10 +74,11 @@ public class TimeUtil {
         
         Duration duration = Duration.ofSeconds(seconds);
         
+        // toHoursPart()/toMinutesPart()/toSecondsPart() are Java 9. These are their definitions.
         long days = duration.toDays();
-        long hours = duration.toHoursPart();
-        long minutes = duration.toMinutesPart();
-        long secs = duration.toSecondsPart();
+        long hours = duration.toHours() % 24;
+        long minutes = duration.toMinutes() % 60;
+        long secs = duration.getSeconds() % 60;
         
         StringBuilder result = new StringBuilder();
         if (days > 0) {

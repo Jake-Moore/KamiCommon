@@ -135,7 +135,8 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
         if (val instanceof Boolean) {
             return (boolean) val;
         }
-        if (val instanceof String s) {
+        if (val instanceof String) {
+            String s = (String) val;
             if (s.equalsIgnoreCase("true")) {
                 return true;
             }

@@ -4,6 +4,8 @@ import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Txt;
+import java.util.Arrays;
+import java.util.Collections;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,7 +32,7 @@ public class RequirementHasItemInHand extends RequirementAbstract {
 
 	private final @NotNull List<Material> materialWhitelist;
 	public RequirementHasItemInHand(@NotNull Material... materialWhitelist) {
-		this.materialWhitelist = List.of(materialWhitelist);
+		this.materialWhitelist = Arrays.asList(materialWhitelist);
 	}
 
 	// -------------------------------------------- //
@@ -39,7 +41,8 @@ public class RequirementHasItemInHand extends RequirementAbstract {
 
 	@Override
 	public boolean apply(CommandSender sender, KamiCommand command) {
-		if (!(sender instanceof Player player)) return false;
+		if (!(sender instanceof Player)) return false;
+		Player player = (Player) sender;
 		ItemStack inHand = NmsAPI.getItemInMainHand(player);
 		if (this.materialWhitelist.isEmpty()) {
 			// If no whitelist is set, any item in hand is fine.
@@ -50,9 +53,10 @@ public class RequirementHasItemInHand extends RequirementAbstract {
 
 	@Override
 	public @NotNull VersionedComponent createErrorMessage(CommandSender sender, KamiCommand command) {
-		if (!(sender instanceof Player player)) {
+		if (!(sender instanceof Player)) {
 			return RequirementIsPlayer.get().createErrorMessage(sender, command);
 		}
+		Player player = (Player) sender;
 		ItemStack inHand = NmsAPI.getItemInMainHand(player);
 		if (inHand == null) {
             return NmsAPI.getVersionedComponentSerializer().fromMiniMessage(

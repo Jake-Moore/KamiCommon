@@ -48,7 +48,7 @@ public abstract class Database implements DatabaseListener {
      * Shuts down the database connection pool.
      */
     public void shutdown() {
-        var source = this.datasource;
+        HikariDataSource source = this.datasource;
         if (source != null && !source.isClosed()) {
             source.close();
         }
@@ -76,7 +76,7 @@ public abstract class Database implements DatabaseListener {
 
     @NotNull
     public Connection getConnection() {
-        var datasource = this.datasource;
+        HikariDataSource datasource = this.datasource;
         if (datasource == null) {
             throw new IllegalStateException("Database connection pool is not initialized.");
         }

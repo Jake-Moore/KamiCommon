@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.util;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.integrations.PlaceholderAPIIntegration;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.OfflinePlayer;
@@ -45,7 +46,7 @@ public class SoftPlaceholderAPI {
      */
     @NotNull
     public static List<String> setPlaceholders(@Nullable OfflinePlayer player, @NotNull List<String> strings) {
-        return strings.stream().map(s -> setPlaceholders(player, s)).toList();
+        return strings.stream().map(s -> setPlaceholders(player, s)).collect(Collectors.toList());
     }
 
     @Configurable

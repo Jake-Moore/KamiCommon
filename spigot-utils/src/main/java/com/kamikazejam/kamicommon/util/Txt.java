@@ -109,7 +109,7 @@ public class Txt {
 
         List<Object> ourObjects = new ArrayList<>(objects);
 
-        String lastItem = ourObjects.getLast().toString();
+        String lastItem = ourObjects.get(ourObjects.size() - 1).toString();
         String nextToLastItem = ourObjects.get(ourObjects.size() - 2).toString();
         if (format != null) {
             lastItem = String.format(format, lastItem);
@@ -117,7 +117,7 @@ public class Txt {
         }
         String merge = nextToLastItem + and + lastItem;
         ourObjects.set(ourObjects.size() - 2, merge);
-        ourObjects.removeLast();
+        ourObjects.remove(ourObjects.size() - 1);
 
         return implode(ourObjects, comma, format) + dot;
     }
@@ -126,7 +126,7 @@ public class Txt {
         List<String> ret = Arrays.asList(PATTERN_UPPERCASE_ZEROWIDTH.split(string));
         // In version before Java 8 zero width matches in the beginning created a leading empty string.
         // We manually look for it and removes it to be compatible with Java 6 and 7.
-        if (ret.getFirst().isEmpty()) ret = ret.subList(1, ret.size());
+        if (ret.get(0).isEmpty()) ret = ret.subList(1, ret.size());
         return ret;
     }
 
@@ -246,13 +246,13 @@ public class Txt {
             } else if (c == '\\') {
                 escaping = true;
             } else if (c == '"') {
-                if (citing || !token.isEmpty()) {
+                if (citing || token.length() != 0) {
                     ret.add(token.toString());
                     token = null;
                 }
                 citing = !citing;
             } else if (!citing && c == ' ') {
-                if (!token.isEmpty()) {
+                if (token.length() != 0) {
                     ret.add(token.toString());
                     token = null;
                 }
@@ -333,8 +333,8 @@ public class Txt {
         int rightPaddingSize = Math.max(0, TITLE_LINE_LENGTH - pageTitleLength - leftPaddingSize);
 
         // Create the title line with padding
-        String leftPaddingMini = Txt.Config.getTitlePaddingColorMini() + Txt.Config.getTitlePaddingChar().toString().repeat(leftPaddingSize);
-        String rightPaddingMini = Txt.Config.getTitlePaddingColorMini() + Txt.Config.getTitlePaddingChar().toString().repeat(rightPaddingSize);
+        String leftPaddingMini = Txt.Config.getTitlePaddingColorMini() + Jdk8.repeat(Txt.Config.getTitlePaddingChar().toString(), leftPaddingSize);
+        String rightPaddingMini = Txt.Config.getTitlePaddingColorMini() + Jdk8.repeat(Txt.Config.getTitlePaddingChar().toString(), rightPaddingSize);
 
         // Construct the final title line (adds padding to both sides)
         return serializer.fromMiniMessage(leftPaddingMini + pageTitleMini + rightPaddingMini);

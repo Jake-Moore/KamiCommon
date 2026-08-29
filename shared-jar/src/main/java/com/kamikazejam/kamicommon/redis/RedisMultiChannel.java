@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.redis;
 
 import com.kamikazejam.kamicommon.redis.callback.RedisChannelCallback;
+import java.util.Arrays;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,7 +13,7 @@ public class RedisMultiChannel {
     private final @NotNull List<String> channels;
     RedisMultiChannel(@NotNull RedisManager manager, @NotNull String... channels) {
         this.manager = manager;
-        this.channels = List.of(channels);
+        this.channels = Arrays.asList(channels);
     }
 
     /**

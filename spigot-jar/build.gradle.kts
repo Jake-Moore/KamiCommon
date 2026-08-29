@@ -3,10 +3,15 @@ import java.time.format.DateTimeFormatter
 
 plugins {
     id("javadoc-publish-convention")
-    id("paper-toolchain-convention")
     // Unique plugins for this module
     id("com.gradleup.shadow")
 }
+
+// The plugin jar a 1.8.8 server loads.
+// See buildSrc/src/main/kotlin/module-floor-convention.gradle.kts for what each setting does.
+extra["moduleFloor"] = 8
+apply(plugin = "module-floor-convention")
+
 
 repositories {
     maven(url = "https://repo.papermc.io/repository/maven-public/")
