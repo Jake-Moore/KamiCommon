@@ -12,6 +12,12 @@ import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
 import com.kamikazejam.kamicommon.nms.abstraction.block.PlaceType;
 import com.kamikazejam.kamicommon.nms.abstraction.entity.AbstractEntityMethods;
+import com.kamikazejam.kamicommon.nms.abstraction.item.AbstractItemEditor;
+import com.kamikazejam.kamicommon.nms.abstraction.item.NmsItemMethods;
+import com.kamikazejam.kamicommon.nms.abstraction.command.CommandMapModifier;
+import com.kamikazejam.kamicommon.nms.text.ComponentLoggerAdapter;
+import com.kamikazejam.kamicommon.nms.provider.event.PreSpawnSpawnerAdapter;
+import com.kamikazejam.kamicommon.nms.wrappers.packet.NMSPacketHandler;
 import com.kamikazejam.kamicommon.nms.provider.BlockUtilProvider;
 import com.kamikazejam.kamicommon.nms.provider.ChatColorProvider;
 import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
@@ -25,6 +31,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.Command;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -41,6 +48,8 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -213,6 +222,87 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                         }
                     }
                     serializer.fromMiniMessage("    <gray>Success").sendTo(player);
+                    return 0;
+                },
+
+                // ItemEditor Provider Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing ItemEditorProvider...").sendTo(player);
+                    AbstractItemEditor editor = NmsAPI.getItemEditor();
+                    ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
+                    if (!editor.isDamageable(sword)) {
+                        throw new IllegalStateException("DIAMOND_SWORD reported as not damageable");
+                    }
+                    sword = editor.setDamage(sword, 42);
+                    int damage = editor.getDamage(sword);
+                    if (damage != 42) {
+                        throw new IllegalStateException("setDamage(42) read back as " + damage);
+                    }
+                    ItemMeta meta = Preconditions.checkNotNull(sword.getItemMeta(), "ItemMeta was null");
+                    meta = editor.setUnbreakable(meta, true);
+                    if (!editor.isUnbreakable(meta)) {
+                        throw new IllegalStateException("setUnbreakable(true) read back as false");
+                    }
+                    serializer.fromMiniMessage("    <gray>Success: damage=" + damage + ", unbreakable=true").sendTo(player);
+                    return 0;
+                },
+
+                // NmsItem Provider Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing NmsItemProvider...").sendTo(player);
+                    NmsItemMethods items = NmsAPI.getNmsItemMethods();
+                    String name = items.getI18NItemName(new ItemStack(Material.DIAMOND_SWORD));
+                    if (name.isEmpty()) {
+                        throw new IllegalStateException("getI18NItemName returned an empty string");
+                    }
+                    serializer.fromMiniMessage("    <gray>Success: DIAMOND_SWORD -> " + name).sendTo(player);
+                    return 0;
+                },
+
+                // PacketHandler Provider Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing PacketHandlerProvider...").sendTo(player);
+                    NMSPacketHandler handler = NmsAPI.getPacketHandler();
+                    // Destroy a client-side entity id that does not exist. The packet still has to
+                    //  build and serialise correctly, which is what we are exercising here.
+                    handler.sendPacket(player, handler.createDestroyPacket(Integer.MAX_VALUE - 1));
+                    serializer.fromMiniMessage("    <gray>Success: destroy packet built and sent").sendTo(player);
+                    return 0;
+                },
+
+                // CommandMapModifier Provider Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing CommandMapModifierProvider...").sendTo(player);
+                    CommandMapModifier modifier = NmsAPI.getCommandMapModifier();
+                    Map<String, Command> known = modifier.getKnownCommands();
+                    if (known.isEmpty()) {
+                        throw new IllegalStateException("knownCommands map is empty");
+                    }
+                    // This command registered through the same map, so it must be in there.
+                    boolean self = known.containsKey("nmstest") || known.values().stream()
+                            .anyMatch(c -> c.getName().equals("nmstest") || c.getAliases().contains("nmstest"));
+                    serializer.fromMiniMessage("    <gray>Success: " + known.size() + " commands known, nmstest present=" + self).sendTo(player);
+                    return 0;
+                },
+
+                // ComponentLoggerAdapter Provider Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing ComponentLoggerAdapterProvider...").sendTo(player);
+                    ComponentLoggerAdapter logger = NmsAPI.getComponentLoggerAdapter();
+                    Plugin plugin = JavaPlugin.getProvidingPlugin(CmdNmsTest.class);
+                    logger.log(plugin, serializer.fromMiniMessage("<green>nmstest: ComponentLoggerAdapter reached the console"), Level.INFO);
+                    serializer.fromMiniMessage("    <gray>Success: logged to console (check server log)").sendTo(player);
+                    return 0;
+                },
+
+                // PreSpawnSpawnerAdapter Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing PreSpawnSpawnerAdapter...").sendTo(player);
+                    Listener adapter = PreSpawnSpawnerAdapter.getSpawnerAdapter();
+                    if (adapter == null) {
+                        throw new IllegalStateException("getSpawnerAdapter returned null");
+                    }
+                    serializer.fromMiniMessage("    <gray>Success: " + adapter.getClass().getSimpleName()).sendTo(player);
                     return 0;
                 }
         );
