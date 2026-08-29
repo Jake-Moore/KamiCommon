@@ -17,18 +17,35 @@ import java.util.zip.ZipFile
 
 val BASE_FLOOR = 8
 
-// Areas allowed above the base floor, and why each is safe. Anything NOT listed must meet the base
-// floor: an unrecognised package is "must be Java 8", never "unknown, skip". A table that skips what
-// it does not recognise cannot fail, and a new shaded dependency would exempt itself.
-val areaCeilings = mapOf(
-    // Relocated HikariCP. Java 11, reached only through Database, which calls requireJava11() before
-    // touching it so a Java 8 server gets a sentence instead of a class-loader Error.
-    "com/kamikazejam/kamicommon/hikari/" to 11,
-    // The NMS version modules from spigot-nms. Each targets the JVM its own Minecraft version
-    // required, up to 25 for 26.x, and :core resolves them by name so an old server never loads one
-    // it cannot read. This is spigot-nms's own contract, enforced by verifyFloors over there.
-    "com/kamikazejam/kamicommon/nms/" to 25,
-)
+// Every class allowed above the base floor, pinned by name in gradle/above-floor-inventory.txt.
+//
+// This replaced a two-entry prefix table. "com/kamikazejam/kamicommon/nms/" exempted 1401 classes so
+// that 160 could sit above the floor, and the other 1241 included the always-loaded dispatch layer,
+// nms/abstraction and nms/provider, which a 1.8.8 server loads unconditionally. A spigot-nms release
+// raising one of those above Java 8 passed the check and died on the server. Demonstrated, not
+// assumed: a Java 21 class dropped at nms/abstraction/ built green, and the byte-identical class at
+// util/ failed.
+//
+// A name rule cannot replace the prefix either. The version markers are irregular:
+// Teleporter1_21_9, Teleporter1_20_CB, WorldGuard7 and ModernVersionedComponent all belong above the
+// floor and match no pattern that _LATEST or _1_17_R1 do.
+val inventoryFile = rootProject.file("gradle/above-floor-inventory.txt")
+val aboveFloor: Map<String, Int> = inventoryFile.readLines()
+    .map { it.substringBefore('#').trim() }
+    .filter { it.isNotEmpty() }
+    .associate { line ->
+        val name = line.substringBefore('=').trim()
+        val version = line.substringAfter('=').trim().toIntOrNull()
+            ?: throw GradleException("bad line in ${inventoryFile.name}: $line")
+        name to version
+    }
+if (aboveFloor.size < 200) {
+    throw GradleException(
+        "${inventoryFile.name} parsed to only ${aboveFloor.size} entries. It should list every class " +
+                "above Java 8 in the jar, and a table that parsed to almost nothing would fail every " +
+                "one of them rather than checking anything."
+    )
+}
 
 fun majorFor(floor: Int) = floor + 44
 
@@ -42,7 +59,13 @@ fun majorOf(bytes: ByteArray): Int = DataInputStream(bytes.inputStream()).use {
 val verifyFloor = tasks.register("verifyFloor") {
     group = "verification"
     description = "Checks the published jar's bytecode and metadata against the declared Java floor."
-    dependsOn(tasks.named("shadowJar"), tasks.named("generateMetadataFileForShadowPublication"))
+    dependsOn(tasks.named("shadowJar"))
+    // The metadata task only exists when a publication does, and javadoc-publish-convention skips
+    // creating one for a VERSION outside the three publishable formats. That is the normal case for
+    // an ad-hoc local build, and depending on the task unconditionally turned a warn-and-continue
+    // into UnknownTaskException on `gradlew build`.
+    val metadataTask = tasks.matching { it.name == "generateMetadataFileForShadowPublication" }
+    dependsOn(metadataTask)
 
     val jarFile = tasks.named<Jar>("shadowJar").flatMap { it.archiveFile }
     val classifier = tasks.named<Jar>("shadowJar").flatMap { it.archiveClassifier }
@@ -61,7 +84,7 @@ val verifyFloor = tasks.register("verifyFloor") {
 
         var inspected = 0
         val violations = ArrayList<String>()
-        val areaSeen = HashMap<String, Int>()
+        val present = HashSet<String>()
 
         ZipFile(jarFile.get().asFile).use { zip ->
             zip.entries().asSequence()
@@ -72,12 +95,11 @@ val verifyFloor = tasks.register("verifyFloor") {
                 .forEach { entry ->
                     val major = majorOf(zip.getInputStream(entry).readBytes())
                     inspected++
-                    val area = areaCeilings.keys.firstOrNull { entry.name.startsWith(it) }
-                    val ceiling = if (area != null) areaCeilings.getValue(area) else BASE_FLOOR
-                    if (area != null) areaSeen[area] = (areaSeen[area] ?: 0) + 1
+                    val ceiling = aboveFloor[entry.name] ?: BASE_FLOOR
+                    if (aboveFloor.containsKey(entry.name)) present.add(entry.name)
                     if (major > majorFor(ceiling)) {
                         violations.add(
-                            "${entry.name} is major $major (Java ${major - 44}) but its ceiling is Java $ceiling"
+                            "${entry.name} is major $major (Java ${major - 44}) but is allowed only Java $ceiling"
                         )
                     }
                 }
@@ -87,28 +109,41 @@ val verifyFloor = tasks.register("verifyFloor") {
         if (inspected < 5000) {
             throw GradleException("verifyFloor only inspected $inspected classes, far below what this jar contains")
         }
-        // An area that stops matching silently drops its exemption AND stops being checked. Both
-        // are listed because both are known to be present today.
-        val emptyAreas = areaCeilings.keys - areaSeen.keys
-        if (emptyAreas.isNotEmpty()) {
+        // An entry for a class that is no longer in the jar is dead weight that could later
+        // exempt something unrelated with the same name, so it fails too. The inventory is only
+        // trustworthy if it stays exactly the set that needs it.
+        val stale = aboveFloor.keys - present
+        if (stale.isNotEmpty()) {
             throw GradleException(
-                "these areas are exempted above the base floor but matched no classes, so either they " +
-                        "were relocated somewhere else or the exemption is now dead:\n  " +
-                        emptyAreas.joinToString("\n  ")
+                "${inventoryFile.name} lists ${stale.size} class(es) that are not in the jar, so the " +
+                        "inventory no longer describes what ships:\n  " +
+                        stale.sorted().take(20).joinToString("\n  ") +
+                        "\nRegenerate it and read the diff."
             )
         }
         if (violations.isNotEmpty()) {
             throw GradleException(
                 "these classes exceed the Java floor their area is allowed, so a server at the floor " +
                         "cannot load them:\n  " + violations.take(20).joinToString("\n  ") +
-                        "\nEither lower the bytecode, or if this is a new shaded dependency, decide " +
-                        "deliberately whether it belongs behind a runtime guard like Database's."
+                        "\nIf this is a new shaded dependency, decide deliberately whether it belongs " +
+                        "behind a runtime guard like Database's. If it is a version-specific NMS class, " +
+                        "add it to ${inventoryFile.name}. If it is neither, it is a regression: an " +
+                        "always-loaded class cannot exceed Java 8."
             )
         }
 
         // B. Metadata. EVERY declaration, not the first.
         val module = moduleFile.get().asFile
-        if (!module.exists()) { throw GradleException("expected Gradle module metadata at $module") }
+        if (!module.exists()) {
+            // No publication was created, so there is no metadata to check and nothing will be
+            // published either. The bytecode assertions above still ran, which is the part that
+            // matters for a local build. `publish` cannot reach here: it needs the publication.
+            logger.lifecycle(
+                "verifyFloor: $inspected classes, ${aboveFloor.size} pinned above the floor and all " +
+                        "present. No publication for this VERSION, so the metadata check was skipped."
+            )
+            return@doLast
+        }
         val declared = Regex("\"org\\.gradle\\.jvm\\.version\"\\s*:\\s*(\\d+)")
             .findAll(module.readText()).map { it.groupValues[1].toInt() }.toList()
         if (declared.isEmpty()) { throw GradleException("no org.gradle.jvm.version found in $module") }
@@ -123,7 +158,8 @@ val verifyFloor = tasks.register("verifyFloor") {
         }
 
         logger.lifecycle(
-            "verifyFloor: $inspected classes, none above their area's ceiling, metadata declares " +
+            "verifyFloor: $inspected classes, ${aboveFloor.size} pinned above the floor and all present, " +
+                    "metadata declares " +
                     "$declaredFloor, shaded jar is the primary artifact"
         )
     }

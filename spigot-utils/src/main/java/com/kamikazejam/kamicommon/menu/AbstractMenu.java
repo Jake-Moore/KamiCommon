@@ -33,8 +33,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-@Getter
-@Accessors(chain = true)
 /**
  * <b>Do not implement this outside KamiCommon.</b> This was a {@code sealed} hierarchy until
  * spigot-utils dropped to Java 8 so that 1.8.x servers could load it; {@code sealed} is Java 17
@@ -42,6 +40,8 @@ import java.util.function.Predicate;
  * {@code verifySealedHierarchies} build task, which fails if an implementation appears that is
  * not on the permitted list (SimpleMenu, PaginatedMenu, OneClickMenu). Nothing can enforce it in your code, hence this annotation.
  */
+@Getter
+@Accessors(chain = true)
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 @ApiStatus.NonExtendable
 public abstract class AbstractMenu<M extends AbstractMenu<M>> extends MenuHolder implements Menu<M>, UpdatingMenu {
