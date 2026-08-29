@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api("com.kamikazejam.kamicommon:spigot-nms:1.2.19")
+    api("com.kamikazejam.kamicommon:spigot-nms:1.2.20")
     api(project(":standalone-utils")) // Also includes shared-utils
 
     api("com.google.code.gson:gson:2.13.2")
@@ -27,7 +27,27 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    // Under MC_SERVER_NEWEST_API=true, `serverAPI` is paper-api 26.2, whose class files are
+    //  major 69 and whose Gradle metadata declares org.gradle.jvm.version=25.
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+    // Declare Java 21 explicitly. options.release controls what javac EMITS but does not feed
+    //  org.gradle.jvm.version on the outgoing variants, which would otherwise default to the
+    //  toolchain and publish metadata claiming Java 25 over major-65 bytecode.
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+configurations.named("compileClasspath").configure {
+    // The resolver rejects that library for a Java 21 consumer BEFORE javac runs, so
+    //  options.release alone cannot reach it.
+    attributes {
+        attribute(org.gradle.api.attributes.java.TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
+    }
+}
+tasks.withType<JavaCompile>().configureEach {
+    // The output must stay Java 21. A jar mixing class-file versions does not work: the JVM loads
+    //  referenced classes during verification, so one major-69 class makes the providers that
+    //  merely NAME it unloadable on every pre-26 server.
+    options.release.set(21)
 }
 
 // Configure javadoc-publish-convention

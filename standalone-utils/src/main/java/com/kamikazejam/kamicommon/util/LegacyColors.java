@@ -203,7 +203,11 @@ public class LegacyColors {
                     String mcVer = getMCVersion();
                     supportsHexCodes = NmsVersionParser.getFormattedNmsInteger(mcVer) >= 1160;
 
-                } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
+                } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException
+                         | IllegalAccessException | IllegalArgumentException ignored) {
+                    // IllegalArgumentException matters: a version string this build cannot parse
+                    //  should mean "assume no hex support", not an exception thrown out of every
+                    //  colour translation on the server.
                     supportsHexCodes = false;
                 }
             }
