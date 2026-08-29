@@ -40,7 +40,8 @@ public class DestinationWorld extends DestinationAbstract {
     }
 
     public DestinationWorld(CommandSender sender) {
-        if (!(sender instanceof Player player)) return;
+        if (!(sender instanceof Player)) return;
+        Player player = (Player) sender;
         this.setWorld(player.getWorld());
     }
 

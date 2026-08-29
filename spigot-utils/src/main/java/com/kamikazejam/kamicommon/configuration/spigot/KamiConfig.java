@@ -340,7 +340,8 @@ public class KamiConfig extends AbstractConfig<YamlConfiguration> implements Con
 
     @NotNull
     private static LoggerService parseLogger(@NotNull JavaPlugin plugin) {
-        if (plugin instanceof KamiPlugin kp) {
+        if (plugin instanceof KamiPlugin) {
+            KamiPlugin kp = (KamiPlugin) plugin;
             return kp.getColorComponentLogger();
         } else {
             return new LegacyColorsLogger(plugin);

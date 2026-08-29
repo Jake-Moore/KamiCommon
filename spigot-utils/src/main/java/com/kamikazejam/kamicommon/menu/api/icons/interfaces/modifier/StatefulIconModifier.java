@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * A stateful modifier for an icon's {@link ItemBuilder} it wants to place in a menu.<br>
  * The {@link #modify} method also provides the existing item in the menu (if it exists) and the {@link Player} viewing the menu.
  */
-public non-sealed interface StatefulIconModifier extends MenuIconModifier {
+public interface StatefulIconModifier extends MenuIconModifier {
     /**
      * A simple modify method to edit the state of the builder for an Auto Updating icon.<br>
      * There is no return value because the builder is modified in place.

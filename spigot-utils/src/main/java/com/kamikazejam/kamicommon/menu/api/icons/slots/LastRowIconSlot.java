@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.menu.api.icons.slots;
 
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
+import java.util.Collections;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -15,7 +16,7 @@ public class LastRowIconSlot implements IconSlot {
     @Override
     public Set<Integer> get(@NotNull MenuSize size) {
         // Use MenuSize since we don't know the shape or form of the menu
-        return Set.of(size.getSlotInLastRow(slotInLastRow));
+        return Collections.singleton(size.getSlotInLastRow(slotInLastRow));
     }
 
     @Override

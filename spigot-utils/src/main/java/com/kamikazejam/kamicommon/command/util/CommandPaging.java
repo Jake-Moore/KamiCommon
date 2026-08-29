@@ -14,6 +14,7 @@ import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.event.HoverEvent
 import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.MiniMessage;
 import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import com.kamikazejam.kamicommon.util.Jdk8;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.Txt;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
@@ -74,8 +75,8 @@ public class CommandPaging {
         int rightPaddingSize = Math.max(0, TITLE_LINE_LENGTH - pageTitleLength - leftPaddingSize);
 
         // Create the title line with padding
-        String leftPaddingMini = Txt.Config.getTitlePaddingColorMini() + Txt.Config.getTitlePaddingChar().toString().repeat(leftPaddingSize);
-        String rightPaddingMini = Txt.Config.getTitlePaddingColorMini() + Txt.Config.getTitlePaddingChar().toString().repeat(rightPaddingSize);
+        String leftPaddingMini = Txt.Config.getTitlePaddingColorMini() + Jdk8.repeat(Txt.Config.getTitlePaddingChar().toString(), leftPaddingSize);
+        String rightPaddingMini = Txt.Config.getTitlePaddingColorMini() + Jdk8.repeat(Txt.Config.getTitlePaddingChar().toString(), rightPaddingSize);
 
         // Construct the final title line (adds padding to both sides)
         String miniMessageTitleMini = leftPaddingMini + rawTitleMini + rightPaddingMini;

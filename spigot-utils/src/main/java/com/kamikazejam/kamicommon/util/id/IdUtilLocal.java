@@ -470,22 +470,19 @@ public class IdUtilLocal implements Listener, Runnable {
 	@Contract("null -> null")
 	public static IdData getData(Object senderObject) {
 		// Null Return
-        switch (senderObject) {
-            case null -> {
-                return null;
-            }
-
-            // Already Done
-            case IdData idData -> {
-                return idData;
-            }
-
-            // Console Type
-            case ConsoleCommandSender consoleCommandSender -> {
-                return CONSOLE_DATA;
-            }
-            default -> {
-            }
+        // Was a pattern-matching switch. This module targets Java 8 so a 1.8.x server can load it,
+        // and patterns in switch are Java 21. The order below is the order the switch had, which
+        // matters: the switch tested null first and IdData before ConsoleCommandSender.
+        if (senderObject == null) {
+            return null;
+        }
+        // Already Done
+        if (senderObject instanceof IdData) {
+            return (IdData) senderObject;
+        }
+        // Console Type
+        if (senderObject instanceof ConsoleCommandSender) {
+            return CONSOLE_DATA;
         }
 
         // Console Id/Name
@@ -493,31 +490,24 @@ public class IdUtilLocal implements Listener, Runnable {
 
 		// Player
 		// CommandSender
-        switch (senderObject) {
-            case CommandSender commandSender -> {
-                String id = getIdFromSender(commandSender);
-                return getIdToData().get(id);
-            }
-
-            // OfflinePlayer (UUID recurse)
-            case OfflinePlayer offlinePlayer -> {
-                return getData(offlinePlayer.getUniqueId());
-            }
-
-            // UUID
-            case UUID uuid -> {
-                String id = getIdFromUuid(uuid);
-                return getIdToData().get(id);
-            }
-
-            // String
-            case String s -> {
-                IdData ret = getIdToData().get(senderObject);
-                if (ret != null) return ret;
-                return getNameToData().get(senderObject);
-            }
-            default -> {
-            }
+        if (senderObject instanceof CommandSender) {
+            String id = getIdFromSender((CommandSender) senderObject);
+            return getIdToData().get(id);
+        }
+        // OfflinePlayer (UUID recurse)
+        if (senderObject instanceof OfflinePlayer) {
+            return getData(((OfflinePlayer) senderObject).getUniqueId());
+        }
+        // UUID
+        if (senderObject instanceof UUID) {
+            String id = getIdFromUuid((UUID) senderObject);
+            return getIdToData().get(id);
+        }
+        // String
+        if (senderObject instanceof String) {
+            IdData ret = getIdToData().get(senderObject);
+            if (ret != null) return ret;
+            return getNameToData().get(senderObject);
         }
 
         // Return Null
@@ -554,41 +544,30 @@ public class IdUtilLocal implements Listener, Runnable {
 		// Handled at "Already Done"
 
 		// OfflinePlayer
-        switch (senderObject) {
-            case OfflinePlayer offlinePlayer -> {
-                return getSender(offlinePlayer.getUniqueId());
-            }
-
-            // UUID
-            case UUID uuid -> {
-                // Attempt finding player
-                Player player = Bukkit.getPlayer(uuid);
-                if (player != null) return player;
-
-                // Otherwise assume registered sender
-                return registryIdToSender.get(uuid.toString());
-
-                // Otherwise assume registered sender
-            }
-
-
-            // String
-            case String string -> {
-                // Recurse as UUID
-                UUID uuid = KUtil.asUuid(string);
-                if (uuid != null) return getSender(uuid);
-
-                // Registry
-                CommandSender sender = registryIdToSender.get(string);
-                if (sender != null) return sender;
-
-                // Bukkit API
-                return Bukkit.getPlayerExact(string);
-
-                // Bukkit API
-            }
-            default -> {
-            }
+        // Was a pattern-matching switch; patterns in switch are Java 21 and this module targets 8.
+        if (senderObject instanceof OfflinePlayer) {
+            return getSender(((OfflinePlayer) senderObject).getUniqueId());
+        }
+        // UUID
+        if (senderObject instanceof UUID) {
+            UUID uuid = (UUID) senderObject;
+            // Attempt finding player
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) return player;
+            // Otherwise assume registered sender
+            return registryIdToSender.get(uuid.toString());
+        }
+        // String
+        if (senderObject instanceof String) {
+            String string = (String) senderObject;
+            // Recurse as UUID
+            UUID uuid = KUtil.asUuid(string);
+            if (uuid != null) return getSender(uuid);
+            // Registry
+            CommandSender sender = registryIdToSender.get(string);
+            if (sender != null) return sender;
+            // Bukkit API
+            return Bukkit.getPlayerExact(string);
         }
 
         // Return Null
@@ -598,58 +577,55 @@ public class IdUtilLocal implements Listener, Runnable {
 	@Contract("null -> null")
 	public static UUID getUUID(Object senderObject) {
 		// Null Return
-        switch (senderObject) {
-            case null -> {
+        // Was a pattern-matching switch; patterns in switch are Java 21 and this module
+        // targets 8. Branch order is preserved, which matters. These test null and the
+        // already-correct type before the broader ones.
+        if (senderObject == null) {
                 return null;
-            }
-
+        }
             // Already Done
-            case UUID uuid -> {
+        if (senderObject instanceof UUID) {
+            UUID uuid = (UUID) senderObject;
                 return uuid;
-            }
-
+        }
             // Console Type
-            case ConsoleCommandSender consoleCommandSender -> {
+        if (senderObject instanceof ConsoleCommandSender) {
                 return null;
-            }
-            default -> {
-            }
         }
 
         // Console Id/Name
 		if (CONSOLE_ID.equals(senderObject)) return null;
 
 		// Player
-        switch (senderObject) {
-            case Player player -> {
+        // Was a pattern-matching switch; patterns in switch are Java 21 and this module
+        // targets 8. Branch order is preserved, which matters. These test null and the
+        // already-correct type before the broader ones.
+        if (senderObject instanceof Player) {
+            Player player = (Player) senderObject;
                 return player.getUniqueId();
-            }
-
+        }
             // CommandSender
-            case CommandSender sender -> {
+        if (senderObject instanceof CommandSender) {
+            CommandSender sender = (CommandSender) senderObject;
                 String id = sender.getName();
                 return KUtil.asUuid(id);
-            }
-
+        }
             // OfflinePlayer
-            case OfflinePlayer offlinePlayer -> {
+        if (senderObject instanceof OfflinePlayer) {
+            OfflinePlayer offlinePlayer = (OfflinePlayer) senderObject;
                 return offlinePlayer.getUniqueId();
-            }
-
+        }
             // UUID
             // Handled at "Already Done"
-
             // String
-            case String string -> {
+        if (senderObject instanceof String) {
+            String string = (String) senderObject;
                 // Is UUID
                 UUID uuid = KUtil.asUuid(string);
                 if (uuid != null) return uuid;
 
                 // Is Name
                 // Handled at "Data"
-            }
-            default -> {
-            }
         }
 
         // Data

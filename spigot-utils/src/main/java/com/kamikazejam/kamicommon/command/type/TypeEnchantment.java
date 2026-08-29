@@ -95,7 +95,7 @@ public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 		if (enchantment == null) return null;
 		String rawName = enchantmentToKey(enchantment);
 		List<String> rawNames = ID_TO_RAWNAMES.get(enchantmentToKey(enchantment));
-		if (rawNames != null) rawName = rawNames.getFirst();
+		if (rawNames != null) rawName = rawNames.get(0);
 		return Txt.getNicedEnumString(rawName);
 	}
 

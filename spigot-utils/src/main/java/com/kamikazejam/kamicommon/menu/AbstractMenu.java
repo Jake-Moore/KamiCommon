@@ -33,10 +33,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * <b>Do not implement this outside KamiCommon.</b> This was a {@code sealed} hierarchy until
+ * spigot-utils dropped to Java 8 so that 1.8.x servers could load it; {@code sealed} is Java 17
+ * and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the
+ * {@code verifySealedHierarchies} build task, which fails if an implementation appears that is
+ * not on the permitted list (SimpleMenu, PaginatedMenu, OneClickMenu). Nothing can enforce it in your code, hence this annotation.
+ */
 @Getter
 @Accessors(chain = true)
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public sealed abstract class AbstractMenu<M extends AbstractMenu<M>> extends MenuHolder implements Menu<M>, UpdatingMenu permits SimpleMenu, PaginatedMenu, OneClickMenu {
+@ApiStatus.NonExtendable
+public abstract class AbstractMenu<M extends AbstractMenu<M>> extends MenuHolder implements Menu<M>, UpdatingMenu {
     protected final Player player;
     // priority icon is used to keep track of the order icons were registered, which is necessary when resizing
     // The data type PriorityMenuIcon<M> also keeps track of the slot data

@@ -1,10 +1,13 @@
 package com.kamikazejam.kamicommon.redis;
 
 import com.kamikazejam.kamicommon.redis.callback.RedisChannelCallback;
+import java.util.Arrays;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Collections;
+import java.util.ArrayList;
 
 @Getter @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class RedisMultiChannel {
@@ -12,7 +15,11 @@ public class RedisMultiChannel {
     private final @NotNull List<String> channels;
     RedisMultiChannel(@NotNull RedisManager manager, @NotNull String... channels) {
         this.manager = manager;
-        this.channels = List.of(channels);
+        // Copied and frozen, NOT Arrays.asList(channels). asList wraps the caller's array, and
+        // @Getter publishes the result: a caller that reuses its array, or calls set() on the
+        // getter, would silently change which channels publish() accepts while the actual Redis
+        // subscription stays as it was. List.of did copy; this keeps that.
+        this.channels = Collections.unmodifiableList(new ArrayList<>(Arrays.asList(channels)));
     }
 
     /**

@@ -24,6 +24,7 @@ import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.util.VersionedComponentUtil;
 import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -50,12 +51,17 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
 public class CmdNmsTest extends KamiCommand implements Listener {
     private final List<Test> tests;
+    /** Mirrors every test message into the server log; see {@link TranscribingSerializer}. */
+    private final TranscribingSerializer serializer;
 
     public CmdNmsTest(@NotNull KamiPlugin plugin) {
         addAliases("nmstest");
@@ -63,19 +69,22 @@ public class CmdNmsTest extends KamiCommand implements Listener {
         addRequirements(RequirementHasPerm.get("kamicommon.command.nmstest"));
         addRequirements(RequirementIsPlayer.get());
 
-        tests = createTests(NmsAPI.getVersionedComponentSerializer());
+        serializer = new TranscribingSerializer(plugin.getLogger());
+        tests = createTests(serializer);
 
         // Register as a Listener for debugging or event monitoring during tests
         plugin.registerListeners(this);
     }
 
     @NotNull
-    private static TestResult runTest(Test test, Player player, VersionedComponentSerializer serializer) {
+    private static TestResult runTest(Test test, Player player, TranscribingSerializer serializer) {
         try {
             int tickDelay = test.run(player);
+            serializer.logger.info("[nmstest] PASS " + serializer.currentTest());
             return new TestResult(true, tickDelay);
         } catch (Throwable e) {
-            e.printStackTrace();
+            serializer.logger.log(Level.SEVERE, "[nmstest] FAIL " + serializer.currentTest()
+                    + ": " + e.getClass().getSimpleName() + ": " + e.getMessage(), e);
             serializer.fromMiniMessage(
                     "    <red>FAILURE (see console): <white>" + e.getMessage()
             ).sendTo(player);
@@ -88,7 +97,7 @@ public class CmdNmsTest extends KamiCommand implements Listener {
     // ------------------------------------------------------------------------------------------------
 
     private static @NotNull List<Test> createTests(@NotNull VersionedComponentSerializer serializer) {
-        return List.of(
+        return Arrays.asList(
                 // Chat Color Provider Test
                 (player) -> {
                     serializer.fromMiniMessage("<gray>Testing ChatColorProvider...").sendTo(player);
@@ -107,7 +116,7 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                 (player) -> {
                     serializer.fromMiniMessage("<gray>Testing BlockUtilProvider...").sendTo(player);
                     BlockUtilProvider buProvider = NmsAPI.getBlockUtilProvider();
-                    Block block = Bukkit.getWorlds().getFirst().getBlockAt(0, 0, 0);
+                    Block block = Bukkit.getWorlds().get(0).getBlockAt(0, 0, 0);
                     Material oldType = block.getType();
                     buProvider.get().setBlockSuperFast(block, XMaterial.IRON_BLOCK, PlaceType.BUKKIT);
                     buProvider.get().setBlockSuperFast(block, XMaterial.DIAMOND_BLOCK, PlaceType.NO_PHYSICS);
@@ -203,7 +212,7 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                     final DecimalFormat df2 = new DecimalFormat("#.###");
                     serializer.fromMiniMessage("<gray>Testing EntityMethods...").sendTo(player);
                     AbstractEntityMethods methods = NmsAPI.getEntityMethods();
-                    World world = Bukkit.getWorlds().getFirst();
+                    World world = Bukkit.getWorlds().get(0);
                     Location location = new Location(world, 0, 245, 0);
                     for (EntityType type : EntityType.values()) {
                         if (!type.isSpawnable() || !type.isAlive()) {
@@ -343,7 +352,6 @@ public class CmdNmsTest extends KamiCommand implements Listener {
         Location origin = player.getLocation();
 
         // Send NMS Version Info
-        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
         serializer.fromMiniMessage(
                 "<gray>NMS Version: <white>" + NmsVersion.getMCVersion() + " <gray>(<white>" + NmsVersion.getFormattedNmsInteger() + "<gray>)"
         ).sendTo(player);
@@ -356,6 +364,11 @@ public class CmdNmsTest extends KamiCommand implements Listener {
 
         // Start the recursive test chain
         runTestsRecursive(0, player, serializer, successes, (v) -> {
+            // A single line an operator can grep for, whichever way it went.
+            serializer.logger.info("[nmstest] RESULT: " + (successes.get() >= tests.size() ? "PASSED" : "FAILED")
+                    + " " + successes.get() + "/" + tests.size()
+                    + " on " + NmsVersion.getMCVersion() + " (" + NmsVersion.getFormattedNmsInteger() + ")");
+
             // Send Results
             if (successes.get() >= tests.size()) {
                 serializer.fromMiniMessage(
@@ -382,7 +395,7 @@ public class CmdNmsTest extends KamiCommand implements Listener {
     private void runTestsRecursive(
             int index,
             Player player,
-            VersionedComponentSerializer serializer,
+            TranscribingSerializer serializer,
             AtomicInteger successes,
             Consumer<Void> onComplete
     ) {
@@ -410,6 +423,54 @@ public class CmdNmsTest extends KamiCommand implements Listener {
         } else {
             // Run immediately (recursion, but safe for small lists like this)
             nextStep.run();
+        }
+    }
+
+    /**
+     * Wraps the real serializer so that everything a test tells the player is also written to the
+     * server log, and so each test names itself.
+     * <p>
+     * The results of {@code /kc nmstest} used to exist only in the running player's chat. Whoever
+     * operates the server, who for the version test matrix is not the person holding the mouse,
+     * could see that the command ran and nothing else, and one check ({@code ComponentLoggerAdapter})
+     * asks the reader to go and look at the console it was not printing to.
+     * </p>
+     * <p>
+     * The test name is taken from the {@code "Testing X..."} line every test already sends, rather
+     * than from a list kept alongside {@link #createTests}. A parallel list is one reordering away
+     * from labelling the wrong failure, and nothing would catch it.
+     * </p>
+     * <p>
+     * Single-threaded by construction: {@code /kc nmstest} runs one test at a time on the main
+     * thread, chained by delay, so {@link #currentTest} cannot interleave.
+     * </p>
+     */
+    private static class TranscribingSerializer extends VersionedComponentSerializer {
+        private static final Pattern TESTING = Pattern.compile("^Testing (.+?)\\.\\.\\.$");
+        private static final Pattern TAGS = Pattern.compile("<[^>]+>");
+
+        private final @NotNull Logger logger;
+        private @Nullable String currentTest = null;
+
+        private TranscribingSerializer(@NotNull Logger logger) {
+            this.logger = logger;
+        }
+
+        @Override
+        public @NotNull com.kamikazejam.kamicommon.nms.text.VersionedComponent fromMiniMessage(@NotNull String miniMessage) {
+            String plain = TAGS.matcher(miniMessage).replaceAll("").trim();
+            Matcher matcher = TESTING.matcher(plain);
+            if (matcher.matches()) {
+                currentTest = matcher.group(1);
+            }
+            if (!plain.isEmpty()) {
+                logger.info("[nmstest] " + plain);
+            }
+            return super.fromMiniMessage(miniMessage);
+        }
+
+        private @NotNull String currentTest() {
+            return currentTest == null ? "<unnamed>" : currentTest;
         }
     }
 

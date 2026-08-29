@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.util;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -56,6 +57,6 @@ public class ColoredStringParser {
      * This is useful for parsing lore lists from configuration files or other sources.
      */
     public static @NotNull List<VersionedComponent> parse(@NotNull List<String> input) {
-        return input.stream().map(ColoredStringParser::parse).toList();
+        return input.stream().map(ColoredStringParser::parse).collect(Collectors.toList());
     }
 }

@@ -16,13 +16,22 @@ import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.LegacyColors;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
+/**
+ * <b>Do not implement this outside KamiCommon.</b> This was a {@code sealed} hierarchy until
+ * spigot-utils dropped to Java 8 so that 1.8.x servers could load it; {@code sealed} is Java 17
+ * and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the
+ * {@code verifySealedHierarchies} build task, which fails if an implementation appears that is
+ * not on the permitted list (SimpleMenu.Builder, PaginatedMenu.Builder, OneClickMenu.Builder). Nothing can enforce it in your code, hence this annotation.
+ */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public sealed abstract class AbstractMenuBuilder<M extends Menu<M>, T extends AbstractMenuBuilder<M, T>> permits SimpleMenu.Builder, PaginatedMenu.Builder, OneClickMenu.Builder {
+@ApiStatus.NonExtendable
+public abstract class AbstractMenuBuilder<M extends Menu<M>, T extends AbstractMenuBuilder<M, T>> {
     // Menu Details
     protected @NotNull MenuSize size;
     protected final @NotNull MenuTitleCalculator titleCalculator = new MenuTitleCalculator();
