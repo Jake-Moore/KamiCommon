@@ -264,3 +264,10 @@ com/kamikazejam/kamicommon/nms/wrappers/world/NMSWorld_LATEST.class=25
 # floor, which is the same reason the entries above them are listed.
 com/kamikazejam/kamicommon/nms/text/VersionedComponent_1_21_4$1.class=21
 com/kamikazejam/kamicommon/nms/text/VersionedComponent_LATEST$1.class=25
+
+# Added with spigot-nms 1.2.29, which moved 1.18.2-1.21.3 onto native Adventure. This tier is Java 17
+# because that is what 1.18.2 requires, and it is resolved by name like every entry above it, so no
+# server below 1.18.2 ever loads it. The $1 is javac's synthetic switch-map holder for the switch over
+# ClickAction and TextDecoration, and inherits its outer class's version.
+com/kamikazejam/kamicommon/nms/text/VersionedComponent_1_18_R2.class=17
+com/kamikazejam/kamicommon/nms/text/VersionedComponent_1_18_R2$1.class=17
