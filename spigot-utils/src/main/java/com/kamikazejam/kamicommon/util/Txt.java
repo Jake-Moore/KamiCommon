@@ -356,8 +356,7 @@ public class Txt {
     public static VersionedComponent titleizedPageTitle(
             @NotNull String title,
             int pageNum,
-            int pageCount,
-            @NotNull List<String> args
+            int pageCount
     ) {
         String pageTitleMini = String.format(Config.getPageTitleFormatMini(), title, pageNum, pageCount);
         return Txt.titleize(pageTitleMini);
@@ -382,7 +381,7 @@ public class Txt {
         private static @NotNull String titleFormatMini = "<gold>.[ <dark_green>" + placeholderTitle + "<gold> ].";
 
         /**
-         * See {@link Txt#titleizedPageTitle(String, int, int, List)} for information.
+         * See {@link Txt#titleizedPageTitle(String, int, int)} for information.
          */
         @Getter @Setter
         private static @NotNull String pageTitleFormatMini = "%s <gold>%d/%d";

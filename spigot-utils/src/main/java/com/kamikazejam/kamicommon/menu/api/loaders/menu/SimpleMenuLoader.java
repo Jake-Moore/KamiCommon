@@ -32,6 +32,23 @@ public class SimpleMenuLoader {
      * @return A new {@link SimpleMenu.Builder} instance with data (title, size, icons, etc.) loaded from the config.
      */
     public static @NotNull SimpleMenu.Builder loadMenu(@NotNull ConfigurationSection section) {
+        // Validate the icons block FIRST, before anything is constructed.
+        //
+        // getConfigurationSection is @NotNull and hands back an EMPTY section for a key that is not
+        // there, so the fetch below never threw: a menu with no 'icons:' block, or with the block
+        // misspelled or mis-indented, loaded as a menu with zero icons and opened as an empty
+        // inventory, with nothing pointing at the config. Fail here instead, naming the section and
+        // the key. Checking before the builder exists also means this is reachable without a
+        // running server, which is what makes it testable.
+        if (!section.isConfigurationSection("icons")) {
+            String path = section.getCurrentPath();
+            String where = (path == null || path.isEmpty()) ? "(config root)" : path;
+            throw new IllegalArgumentException(
+                    "Menu section '" + where + "' has no 'icons' block. Expected a mapping at '"
+                            + where + ".icons' holding one subsection per icon."
+            );
+        }
+
         // Load title from 'title' or 'name', defaulting to " "
         String title = section.getString("title", section.getString("name", " "));
         SimpleMenu.Builder builder = (SimpleMenu.Builder) setTitle(new SimpleMenu.Builder(MenuSizeLoader.load(section)), title);
