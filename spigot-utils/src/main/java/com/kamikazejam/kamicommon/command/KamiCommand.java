@@ -8,13 +8,9 @@ import com.kamikazejam.kamicommon.command.type.Type;
 import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.ClickAction;
+import com.kamikazejam.kamicommon.nms.text.TextPlaceholder;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.Component;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.event.ClickEvent;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.MiniMessage;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.Txt;
@@ -789,18 +785,19 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
                     }
 
                     // Message: "Use /<command> to see all commands."
-                    // Constructs an internal adventure component, then uses the VersionedComponent API to send it.
-                    //  In this way, we maintain compatibility with all Minecraft versions, using spigot-nms for sending
+                    // Built entirely through the VersionedComponent API, so this never names Adventure.
+                    //  On 1.21.4+ that means the server's OWN Adventure parses the MiniMessage; below
+                    //  that, the shaded copy does. Naming the shaded copy here would pin it onto every
+                    //  server, including the modern ones that do not need it.
 
                     // Resolve the <replacement> tag to the current command chain component
-                    TagResolver.Single resolver = Placeholder.component(
+                    VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+                    TextPlaceholder resolver = TextPlaceholder.component(
                             Config.tagReplacement,
-                            MiniMessage.miniMessage().deserialize(this.getCurrentTemplateChainMini()).clickEvent(
-                                    ClickEvent.suggestCommand(this.getCurrentCommandLine())
-                            )
+                            serializer.fromMiniMessage(this.getCurrentTemplateChainMini())
+                                    .click(ClickAction.SUGGEST_COMMAND, this.getCurrentCommandLine())
                     );
-                    Component component = MiniMessage.miniMessage().deserialize(Config.getCommandChildHelpMini(), resolver);
-                    NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component).sendTo(sender);
+                    serializer.fromMiniMessage(Config.getCommandChildHelpMini(), resolver).sendTo(sender);
                 }
 
                 // NOTE: This return statement will jump to the 'finally' block.
@@ -919,11 +916,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         // Content of the MiniMessage Component
         String messageContent = miniMessage.toString().trim(); // remove trailing spaces
 
-        // Use the internal component, then wrap into a VersionedComponent
-        Component component = MiniMessage.miniMessage().deserialize(messageContent).clickEvent(
-                ClickEvent.suggestCommand(getSuggestionCommandLine(suggested, token))
-        );
-        return NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component);
+        return NmsAPI.getVersionedComponentSerializer().fromMiniMessage(messageContent)
+                .click(ClickAction.SUGGEST_COMMAND, getSuggestionCommandLine(suggested, token));
     }
 
     /**
@@ -985,11 +979,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         // Content of the MiniMessage Component
         String messageContent = miniMessage.toString().trim(); // remove trailing spaces
 
-        // Construct an internal component, then wrap into a VersionedComponent
-        Component component = MiniMessage.miniMessage().deserialize(messageContent).clickEvent(
-                ClickEvent.suggestCommand(getHelpCommandLine(child))
-        );
-        return NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component);
+        return NmsAPI.getVersionedComponentSerializer().fromMiniMessage(messageContent)
+                .click(ClickAction.SUGGEST_COMMAND, getHelpCommandLine(child));
     }
 
     /**
@@ -1098,8 +1089,8 @@ public class KamiCommand implements Active, PluginIdentifiableCommand {
         }
 
         // Return Ret
-        Component component = MiniMessage.miniMessage().deserialize(miniMessage.toString());
-        return LegacyComponentSerializer.legacySection().serialize(component);
+        return NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage.toString())
+                .serializeLegacySection();
     }
 
     @NotNull

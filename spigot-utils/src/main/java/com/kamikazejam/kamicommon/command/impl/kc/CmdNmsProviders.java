@@ -4,6 +4,10 @@ import com.kamikazejam.kamicommon.command.CommandContext;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.requirement.RequirementHasPerm;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.TextPlaceholder;
+import com.kamikazejam.kamicommon.nms.text.TextDecoration;
+import com.kamikazejam.kamicommon.nms.text.ClickAction;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -105,6 +109,31 @@ public class CmdNmsProviders extends KamiCommand {
             }
         }
 
+        // The capabilities added for the Adventure isolation work. Kept separate from the provider
+        // table above because these ASSERT on rendered output rather than merely constructing, and a
+        // provider that resolves is not the same claim as a component that renders correctly.
+        // Every one of these ran on no server at all until this existed: nmsproviders only ever
+        // called fromPlainText and fromMiniMessage, both of which predate the new API.
+        failures.addAll(checkTextCapabilities(logger));
+
+        // WorldGuard is the only dispatch not driven by the Minecraft version: WorldGuardHook picks
+        // worlds6 or worlds7 from the PLUGIN's version. No Minecraft version reaches those modules,
+        // so without this they are only ever checked statically.
+        try {
+            Object wg = com.kamikazejam.kamicommon.nms.library.worldguard.WorldGuardHook.get();
+            if (wg == null) {
+                logger.info("[nmsproviders] worldGuard -> not installed, worlds6/worlds7 unexercised");
+            } else {
+                logger.info("[nmsproviders] worldGuard -> " + wg.getClass().getName());
+            }
+        } catch (Throwable t) {
+            Throwable root = t;
+            while (root.getCause() != null) { root = root.getCause(); }
+            logger.log(Level.SEVERE, "[nmsproviders] worldGuard -> FAILED "
+                    + root.getClass().getSimpleName() + ": " + root.getMessage(), t);
+            failures.add("worldGuard (" + root.getClass().getSimpleName() + ")");
+        }
+
         int total = providers().size();
         String result = "[nmsproviders] RESULT: " + (failures.isEmpty() ? "RESOLVED" : "FAILED")
                 + " " + ok + "/" + (total - notApplicable) + " on " + NmsVersion.getMCVersion()
@@ -117,6 +146,80 @@ public class CmdNmsProviders extends KamiCommand {
                         + (total - notApplicable)
                         + " resolved. See console for the implementation each one selected."
         ).sendTo(context.getSender());
+    }
+
+    /**
+     * Exercises every capability the VersionedComponent API gained, asserting on rendered output.
+     * <p>
+     * Each case states what it expects and why. A check that only proves "no exception" would pass on
+     * an implementation that silently dropped the click, the hover or the placeholder, which is
+     * exactly the failure mode these methods have.
+     * </p>
+     *
+     * @return the names of the checks that failed, empty if all passed
+     */
+    private static @NotNull List<String> checkTextCapabilities(@NotNull Logger logger) {
+        VersionedComponentSerializer ser = NmsAPI.getVersionedComponentSerializer();
+        List<String> failed = new ArrayList<String>();
+
+        // A parsed placeholder must be parsed, and a literal one must NOT be. Both directions matter:
+        // a resolver that parses everything is a MiniMessage injection, and one that parses nothing
+        // silently renders raw tags to players.
+        check(logger, failed, "placeholder.literal",
+                ser.fromMiniMessage("<who>", TextPlaceholder.literal("who", "<red>Bob")).serializePlainText(),
+                "<red>Bob");
+        check(logger, failed, "placeholder.miniMessage",
+                ser.fromMiniMessage("<who>", TextPlaceholder.miniMessage("who", "<red>Bob")).serializePlainText(),
+                "Bob");
+        check(logger, failed, "placeholder.component",
+                ser.fromMiniMessage("<who>!", TextPlaceholder.component("who", ser.fromPlainText("Bob"))).serializePlainText(),
+                "Bob!");
+        check(logger, failed, "placeholder.multiple",
+                ser.fromMiniMessage("<a>-<b>", TextPlaceholder.literal("a", "x"), TextPlaceholder.literal("b", "y")).serializePlainText(),
+                "x-y");
+
+        // Click, hover and decoration must survive a MiniMessage round trip. Serializing back is the
+        // only way to see whether the implementation actually attached them.
+        check(logger, failed, "click.runCommand",
+                contains(ser.fromPlainText("go").click(ClickAction.RUN_COMMAND, "/spawn").serializeMiniMessage(), "/spawn"),
+                "true");
+        check(logger, failed, "click.suggestCommand",
+                contains(ser.fromPlainText("go").click(ClickAction.SUGGEST_COMMAND, "/tp ").serializeMiniMessage(), "/tp"),
+                "true");
+        check(logger, failed, "click.openUrl",
+                contains(ser.fromPlainText("go").click(ClickAction.OPEN_URL, "https://luxiouslabs.net").serializeMiniMessage(), "luxiouslabs.net"),
+                "true");
+        check(logger, failed, "hover.text",
+                contains(ser.fromPlainText("go").hover(ser.fromPlainText("tooltip")).serializeMiniMessage(), "tooltip"),
+                "true");
+        check(logger, failed, "decorate.italicOff",
+                contains(ser.fromPlainText("name").decorate(TextDecoration.ITALIC, false).serializeMiniMessage(), "italic"),
+                "true");
+
+        // The plain text must be untouched by decoration, or item names would come out mangled.
+        check(logger, failed, "decorate.keepsText",
+                ser.fromPlainText("name").decorate(TextDecoration.ITALIC, false).serializePlainText(),
+                "name");
+        // Chaining is the shape KamiCommand and CommandPaging actually use.
+        check(logger, failed, "chain.clickThenHover",
+                ser.fromPlainText("go").click(ClickAction.RUN_COMMAND, "/spawn").hover(ser.fromPlainText("tip")).serializePlainText(),
+                "go");
+        return failed;
+    }
+
+    private static @NotNull String contains(@NotNull String haystack, @NotNull String needle) {
+        return String.valueOf(haystack.contains(needle));
+    }
+
+    private static void check(@NotNull Logger logger, @NotNull List<String> failed,
+                              @NotNull String name, @NotNull String actual, @NotNull String expected) {
+        if (expected.equals(actual)) {
+            logger.info("[nmsproviders] text." + name + " -> ok");
+        } else {
+            logger.severe("[nmsproviders] text." + name + " -> FAILED, expected <" + expected
+                    + "> but got <" + actual + ">");
+            failed.add("text." + name);
+        }
     }
 
     /** A provider lookup. Kept as an interface rather than a lambda: this module targets Java 8. */
