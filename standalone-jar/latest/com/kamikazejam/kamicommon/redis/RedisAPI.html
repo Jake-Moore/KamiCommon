@@ -120,9 +120,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shutdown()" class="member-name-link">shutdown</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Stops the internal Redis Connection
-This API remains usable, but other methods may incur additional
-  delays if the connection needs to be re-established</div>
+<div class="block">Releases this caller's claim on the underlying Redis connection.</div>
 </div>
 </div>
 </div>
@@ -146,9 +144,15 @@ This API remains usable, but other methods may incur additional
 <h3>shutdown</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">shutdown</span>()</div>
-<div class="block">Stops the internal Redis Connection
-This API remains usable, but other methods may incur additional
-  delays if the connection needs to be re-established</div>
+<div class="block">Releases this caller's claim on the underlying Redis connection.
+
+<p>Instances are shared: every caller passing an equal <a href="util/RedisConf.html" title="class in com.kamikazejam.kamicommon.redis.util"><code>RedisConf</code></a>
+receives the same object. The connection is closed once the last holder has called this, so a
+plugin shutting down no longer takes the connection away from anything else in the same JVM.
+
+<p>Once the connection really is closed, this instance is spent. Call
+<a href="RedisConnector.html#getAPI(com.kamikazejam.kamicommon.redis.util.RedisConf)"><code>RedisConnector.getAPI(com.kamikazejam.kamicommon.redis.util.RedisConf)</code></a> again for a
+fresh one rather than reusing this reference.</div>
 </div>
 </section>
 </li>

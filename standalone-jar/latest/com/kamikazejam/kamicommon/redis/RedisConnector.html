@@ -81,9 +81,10 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">RedisConnector</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The source for all RabbitMQ interactions.
+<div class="block">The source for all Redis interactions.
 Use <a href="#getAPI(com.kamikazejam.kamicommon.redis.util.RedisConf)"><code>getAPI(RedisConf)</code></a> to fetch a <a href="RedisAPI.html" title="class in com.kamikazejam.kamicommon.redis"><code>RedisAPI</code></a> instance.
-All instances are cached by URL for connection/channel reuse.</div>
+All instances are cached by connection config, so callers describing the same server share one
+client rather than each opening their own.</div>
 </div>
 </section>
 <section class="summary">
@@ -183,7 +184,8 @@ All instances are cached by URL for connection/channel reuse.</div>
 <div class="block">Get a <a href="RedisAPI.html" title="class in com.kamikazejam.kamicommon.redis"><code>RedisAPI</code></a> instance for the given connection config.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>logger</code> - a <a href="../util/log/LoggerService.html" title="class in com.kamikazejam.kamicommon.util.log"><code>LoggerService</code></a> to use for logging</dd>
+<dd><code>logger</code> - a <a href="../util/log/LoggerService.html" title="class in com.kamikazejam.kamicommon.util.log"><code>LoggerService</code></a> to use for logging. Only used if this call is the one
+              that creates the client; a cached client keeps the logger it was built with.</dd>
 <dt>Returns:</dt>
 <dd>A new (or cached) <a href="RedisAPI.html" title="class in com.kamikazejam.kamicommon.redis"><code>RedisAPI</code></a></dd>
 </dl>
