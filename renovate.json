@@ -63,6 +63,16 @@
       ],
       "groupName": "gradle-wrapper",
       "automerge": false
+    },
+    {
+      "description": "Anything that RUNS the build gets its own branch and a human. Anything the build merely compiles against can batch and auto-merge. Every stuck batch here has been the same shape: a build-system component bundled with libraries, where one incompatible member blocks all the rest. gradle-wrapper did it by erroring inside Renovate's container, which killed this repo's grouped batch for nine months while individual majors kept working, so nothing looked wrong. com.gradleup.shadow 9.6.1 then did it by needing a newer Gradle than the wrapper provides, failing with AdhocComponentWithVariants.addVariantsFromConfiguration. That is why #248 is red. The wrapper was fixed as a special case rather than as a class, so shadow arrived unguarded. Measured on the sibling repo: Gradle 9.7.1 with shadow 9.6.1 builds clean, so #249 is the unblocker for #248. Expect a shadow PR to sit red until the wrapper moves. That is the signal, not a fault, and it no longer holds a dozen unrelated library updates hostage.",
+      "matchPackageNames": [
+        "com.gradleup.shadow",
+        "org.gradle.toolchains.foojay-resolver-convention"
+      ],
+      "groupName": "build system",
+      "groupSlug": "build-system",
+      "automerge": false
     }
   ],
   "prConcurrentLimit": 0,
