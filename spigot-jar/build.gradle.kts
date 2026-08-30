@@ -38,6 +38,11 @@ tasks {
         archiveClassifier.set("")
         archiveBaseName.set("KamiCommon")
 
+        // Rewrites META-INF/services file names AND their contents through the relocators. Without
+        // it every service file kept pointing at the pre-relocation class names, so ServiceLoader
+        // found nothing and said nothing about it.
+        mergeServiceFiles()
+
         exclude("LICENSE*", "META-INF/LICENSE*")
         exclude("License*", "META-INF/License*")
 
@@ -57,7 +62,11 @@ tasks {
         relocate("io.netty", "com.kamikazejam.kamicommon.netty")
         relocate("reactor", "com.kamikazejam.kamicommon.reactor")
         relocate("org.reactivestreams", "com.kamikazejam.kamicommon.reactivestreams")
-        relocate("io.lettuce.core", "com.kamikazejam.kamicommon.lettuce.core")
+        // Relocate the io.lettuce ROOT, not io.lettuce.core. Lettuce 7 added io.lettuce.authx, which
+        // the narrower rule did not match, and two classes shipped at their real names.
+        relocate("io.lettuce", "com.kamikazejam.kamicommon.lettuce")
+        // redis-authx-core, pulled in by lettuce 7. Same leak, different root.
+        relocate("redis.clients", "com.kamikazejam.kamicommon.redisclients")
         // standalone-utils
         relocate("org.yaml.snakeyaml", "com.kamikazejam.kamicommon.snakeyaml")
         relocate("org.json", "com.kamikazejam.kamicommon.json")
@@ -133,4 +142,5 @@ tasks.register("printServerAPI") {
 tasks.compileJava.get().dependsOn(tasks.named("printServerAPI"))
 
 apply(from = "$rootDir/gradle/verify-floor.gradle.kts")
+apply(from = "$rootDir/gradle/verify-shading.gradle.kts")
 
