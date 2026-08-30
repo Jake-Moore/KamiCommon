@@ -166,7 +166,6 @@ com/kamikazejam/kamicommon/nms/teleport/Teleporter_LATEST.class=25
 com/kamikazejam/kamicommon/nms/text/ComponentLoggerAdapter_1_18_R2.class=17
 com/kamikazejam/kamicommon/nms/text/ComponentLoggerAdapter_LATEST.class=25
 com/kamikazejam/kamicommon/nms/text/ModernVersionedComponent.class=17
-com/kamikazejam/kamicommon/nms/text/VersionedComponent_1_17_R1.class=16
 com/kamikazejam/kamicommon/nms/text/VersionedComponent_1_21_4.class=21
 com/kamikazejam/kamicommon/nms/text/VersionedComponent_LATEST.class=25
 com/kamikazejam/kamicommon/nms/wrappers/chunk/ChunkProvider_1_17_R1.class=16
@@ -251,14 +250,17 @@ com/kamikazejam/kamicommon/nms/wrappers/world/NMSWorld_1_21_11.class=21
 com/kamikazejam/kamicommon/nms/wrappers/world/NMSWorld_1_21_4.class=21
 com/kamikazejam/kamicommon/nms/wrappers/world/NMSWorld_LATEST.class=25
 
+# spigot-nms 1.2.27 moved the relocated Adventure and everything that names it into a NESTED jar,
+# internal-libs/adventure.jar, loaded by a child classloader. Four entries left this list because
+# those classes are no longer loose in the jar. Their floors are still enforced, but by
+# verifyAdventureIsolation reading inside the nested jar, since a scanner that walks loose entries
+# cannot see them at all.
+#
 # Added with spigot-nms 1.2.26. The ShadedComponentBridgeImpl classes exist so that loading a
 # module's NmsBundleImpl does not resolve the shaded Adventure; they sit at their module's floor
 # like the adapter beside them. The $1 classes are javac's synthetic switch-map holders for the
 # switch over ClickAction and TextDecoration in each VersionedComponent, so they inherit their
 # outer class's version. Both are resolved by name and never touched by a server below their
 # floor, which is the same reason the entries above them are listed.
-com/kamikazejam/kamicommon/nms/bundle/v1_17_R1/ShadedComponentBridgeImpl.class=16
-com/kamikazejam/kamicommon/nms/bundle/v1_21_4/ShadedComponentBridgeImpl.class=21
-com/kamikazejam/kamicommon/nms/text/VersionedComponent_1_17_R1$1.class=16
 com/kamikazejam/kamicommon/nms/text/VersionedComponent_1_21_4$1.class=21
 com/kamikazejam/kamicommon/nms/text/VersionedComponent_LATEST$1.class=25
