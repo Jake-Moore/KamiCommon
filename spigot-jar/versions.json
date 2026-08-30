@@ -1,5 +1,6 @@
 {
   "versions": [
+    "5.0.0-alpha.52",
     "5.0.0-alpha.51",
     "5.0.0-alpha.50",
     "5.0.0-alpha.49",
@@ -37,5 +38,5 @@
     "5.0.0-alpha.16",
     "5.0.0-alpha.15"
   ],
-  "latest": "5.0.0-alpha.51"
+  "latest": "5.0.0-alpha.52"
 }

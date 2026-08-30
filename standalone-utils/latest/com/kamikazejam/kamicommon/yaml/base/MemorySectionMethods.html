@@ -291,7 +291,10 @@ If Deep is enabled, it will dig and find all valid keys that resolve to a value<
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBoolean(java.lang.String)" class="member-name-link">isBoolean</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Whether the value at this key is one <a href="#getBoolean(java.lang.String,boolean)"><code>getBoolean(String, boolean)</code></a> would parse, rather
+than fall back to its default for.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isByte(java.lang.String)" class="member-name-link">isByte</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -684,6 +687,16 @@ If Deep is enabled, it will dig and find all valid keys that resolve to a value<
 <h3>isBoolean</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isBoolean</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</span></div>
+<div class="block">Whether the value at this key is one <a href="#getBoolean(java.lang.String,boolean)"><code>getBoolean(String, boolean)</code></a> would parse, rather
+than fall back to its default for.
+
+<p>This was <code>get(key) instanceof Boolean</code>, which could never be true for a value read
+from a yaml file, because scalars come back as strings. Every caller gating on it was dead:
+<code>unbreakable:</code> and <code>hide-attributes:</code> on an item, and <code>hide-attributes:</code>
+on a menu icon, were all parsed and then discarded.
+
+<p>Uses <code>get(key)</code>, not <code>get(key, def)</code>: a missing key must answer false, and the
+defaulting overload would hand back the default and make every missing key look set.</div>
 </div>
 </section>
 </li>
