@@ -76,6 +76,13 @@
       "groupName": "build system",
       "groupSlug": "build-system",
       "automerge": false
+    },
+    {
+      "description": "gradle/actions stays on the 5.x line, for two independent reasons, both established on KamiCommonNMS 2026-08-30. TECHNICAL: v6.3.0 broke that build at paperweightUserdevSetup, with paperweight's own task class (class-file major 65) running on a Java 17 runtime. Established by controlled elimination: two PRs off the same base, both taking actions/checkout v7, actions/setup-java v6 and actions/cache v6, differing ONLY in setup-gradle v5.0.2 versus v6.3.0. The v5 one was green and the v6 one was red. The mechanism is still unknown. KamiCommon has no paperweight modules, so it may well be unaffected, but the same action runs the same build here and there is no reason to find out the hard way on the repo that auto-merges dependencies. LICENSING, and this one applies regardless: v6 extracts caching into gradle-actions-caching, a proprietary component not covered by the MIT licence, and its release notes state that upgrading constitutes acceptance of separate Terms of Use. These workflows enable caching.",
+      "matchPackageNames": [
+        "gradle/actions"
+      ],
+      "allowedVersions": "<6.0.0"
     }
   ],
   "prConcurrentLimit": 0,
