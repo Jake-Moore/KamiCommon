@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * An {@link Enchantment} matched against its common name as well as its Spigot key, so that both
+ * {@code "Fire Protection"} and {@code "PROTECTION_FIRE"} resolve to the same enchantment.
+ */
 @SuppressWarnings("unused")
 public class TypeEnchantment extends TypeAbstractChoice<Enchantment> {
 	// -------------------------------------------- //

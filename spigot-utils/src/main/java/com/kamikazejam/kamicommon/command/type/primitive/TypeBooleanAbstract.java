@@ -8,6 +8,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Set;
 
+/**
+ * The base for the boolean types. All of them accept the same six words, {@code yes}, {@code true},
+ * {@code on}, {@code no}, {@code false} and {@code off}, and differ only in the pair a value is displayed
+ * as in help and tab completion: {@link TypeBooleanYes}, {@link TypeBooleanTrue} and {@link TypeBooleanOn}.
+ */
 public abstract class TypeBooleanAbstract extends TypeAbstractChoice<Boolean> {
 	// -------------------------------------------- //
 	// CONSTANTS

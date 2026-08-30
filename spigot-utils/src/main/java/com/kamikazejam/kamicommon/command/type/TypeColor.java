@@ -13,6 +13,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+/**
+ * A {@link Color} parsed either from three space-separated components in the range 0 to 255, or from a
+ * six-digit hex string that may be prefixed with {@code #}. Tab completion offers the {@link DyeColor}
+ * names, which are suggestions for the eye only and are not themselves accepted as input.
+ */
 @SuppressWarnings("unused")
 public class TypeColor extends TypeAbstract<Color> {
 	// -------------------------------------------- //

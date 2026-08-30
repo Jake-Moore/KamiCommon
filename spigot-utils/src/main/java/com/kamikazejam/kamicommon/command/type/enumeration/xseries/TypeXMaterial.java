@@ -3,6 +3,11 @@ package com.kamikazejam.kamicommon.command.type.enumeration.xseries;
 import com.cryptomorin.xseries.XMaterial;
 import com.kamikazejam.kamicommon.command.type.enumeration.TypeEnumChoice;
 
+/**
+ * An {@link XMaterial} matched by constant name, giving one identifier that resolves across server versions.
+ * {@link #get(XMaterial...)} builds a variant that rejects the given constants, in place of the shared
+ * instance.
+ */
 @SuppressWarnings("unused")
 public class TypeXMaterial extends TypeEnumChoice<XMaterial> {
 

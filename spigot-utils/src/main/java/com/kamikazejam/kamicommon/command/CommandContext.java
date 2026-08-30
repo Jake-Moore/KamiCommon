@@ -9,6 +9,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * The state of a single command invocation, handed to {@link KamiCommand#perform(CommandContext)}. It carries
+ * the sender, the alias actually typed, the raw arguments, and the read cursor that
+ * {@link KamiCommand#readArg()} advances. The framework builds one per execution and clears it once
+ * execution ends, so it is valid only inside {@code perform} and must not be retained or read from another
+ * thread.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#commandcontext">CommandContext (wiki)</a>
+ */
 @Getter @Setter
 public class CommandContext {
     // The raw string arguments passed upon execution. An empty list if there are none.

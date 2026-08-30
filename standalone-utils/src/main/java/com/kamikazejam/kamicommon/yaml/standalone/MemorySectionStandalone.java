@@ -11,6 +11,15 @@ import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
+/**
+ * A nested section of a {@link com.kamikazejam.kamicommon.configuration.standalone.StandaloneConfig
+ * StandaloneConfig}, exposing the same read and write surface as the config itself over one branch of the
+ * document. {@link #getConfigurationSection(String)} never returns {@code null}: a key that is missing, or
+ * that holds something other than a mapping, yields a section backed by a fresh detached node, so reads
+ * fall through to their defaults but writes to that section never reach the parent document.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-Config-System">Configuration System (wiki)</a>
+ */
 @Getter
 @SuppressWarnings("unused")
 public class MemorySectionStandalone extends MemorySectionMethods<MemorySectionStandalone> implements ConfigurationSectionStandalone {

@@ -7,6 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * The raw argument passed through unchanged, as {@link TypeString} does, but named "confirmation text" so
+ * that a usage template reads as a prompt to retype something.
+ */
 public class TypeStringConfirmation extends TypeAbstract<String> {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT

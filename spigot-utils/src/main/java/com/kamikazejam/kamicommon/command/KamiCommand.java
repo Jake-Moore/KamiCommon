@@ -39,6 +39,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * One command in a tree of commands, with typed parameters, requirements and generated help. Subclass it and
+ * declare aliases, parameters, requirements and children in the constructor, then override
+ * {@link #perform(CommandContext)}; {@link #execute(CommandSender, String, List)} is final and drives that
+ * call. Only a root command may be registered with {@link #registerCommand(KamiPlugin)}, because activating
+ * a child throws {@link IllegalStateException}, and a command registered after server start needs a
+ * following {@link KamiCommonCommandRegistration#updateRegistrations()} before the server will route to it.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand">KamiCommand (wiki)</a>
+ */
 @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "UnusedReturnValue", "unused"})
 public class KamiCommand implements Active, PluginIdentifiableCommand {
     private static final Set<KamiCommand> allInstances = new KamiSet<>();

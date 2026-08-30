@@ -24,6 +24,12 @@ import java.util.regex.Pattern;
 
 import static com.kamikazejam.kamicommon.util.Txt.Config.TITLE_LINE_LENGTH;
 
+/**
+ * Static text helpers used throughout the command framework: joining collections, splitting camel case,
+ * prefix filtering for tab completion, turning enum constants into display names, and building the centred
+ * "titleized" lines that head command output. The width, padding character and colours of a titleized line
+ * come from {@link Txt.Config}, which a plugin may change at startup to restyle every such line.
+ */
 @SuppressWarnings({"UnnecessaryUnicodeEscape", "unused"})
 public class Txt {
 

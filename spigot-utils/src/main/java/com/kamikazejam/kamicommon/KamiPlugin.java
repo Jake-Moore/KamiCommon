@@ -33,6 +33,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+/**
+ * The {@link JavaPlugin} base for a KamiCommon plugin, adding lifecycle logging, registration helpers that
+ * unregister themselves on disable, an automatically loaded {@code config.yml}, and the module and feature
+ * managers. {@link #onEnable()} and {@link #onDisable()} are final because they wrap your code with that
+ * setup, so your own logic belongs in {@link #onEnableInner()} and {@link #onDisableInner()}. A plugin that
+ * registers any {@link Module} or {@link Feature} must also override {@link #getModuleYmlPath()} or
+ * {@link #getFeatureYmlPath()}, which return {@code null} by default and fail subsystem registration.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiPlugin">KamiPlugin (wiki)</a>
+ */
 @SuppressWarnings({"unused", "UnusedReturnValue", "DuplicatedCode"})
 public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, CoreMethods, ObservableConfig<KamiConfig> {
     // -------------------------------------------- //
