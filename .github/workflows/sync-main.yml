@@ -4,14 +4,15 @@ name: Sync release/v5 to main
 # and in practice they drift because nobody remembers to merge. This keeps main current with no
 # PR to review and no step before cutting a release.
 #
-# Fast-forward ONLY. If main has drifted so that a fast-forward is impossible, this fails loudly
-# rather than creating a merge commit nobody asked for: main having its own commits means something
-# unexpected happened, and quietly merging would hide it. The two times that has occurred were both
-# single-file cherry-picks of renovate.json, made to work around Renovate reading its config from
-# the default branch.
+# A real MERGE, not a fast-forward. main absorbs release/v5, which means main permanently carries
+# merge commits that release/v5 does not have, so it is always "ahead" and a fast-forward is
+# structurally impossible after the first merge. An earlier version of this used --ff-only and
+# failed on its first run for exactly that reason.
+#
+# It fails only on a genuine conflict, which is the case that actually needs a human.
 #
 # No bypass is needed. main carries only the Integrity ruleset, which forbids force-pushes and
-# deletion, and a fast-forward is neither.
+# deletion, and a merge commit is neither.
 
 on:
   push:
@@ -33,28 +34,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fast-forward main to release/v5
+      - name: Merge release/v5 into main
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           behind=$(git rev-list --count origin/main..origin/release/v5)
-          ahead=$(git rev-list --count origin/release/v5..origin/main)
-          echo "main is $behind commit(s) behind and $ahead commit(s) ahead of release/v5"
-
+          echo "main is $behind commit(s) behind release/v5"
           if [ "$behind" = "0" ]; then
-            echo "::notice::main is already up to date"
+            echo "::notice::main already contains every commit from release/v5"
             exit 0
           fi
 
-          if [ "$ahead" != "0" ]; then
-            echo "::error::main has $ahead commit(s) that release/v5 does not, so it cannot be fast-forwarded."
-            echo "Merge release/v5 into main by hand once, then this stays automatic again."
-            git log --oneline origin/release/v5..origin/main
+          git checkout main
+          if ! git merge --no-edit origin/release/v5 -m "Merge release/v5 into main"; then
+            git merge --abort || true
+            echo "::error::release/v5 does not merge cleanly into main. Resolve it by hand once and this stays automatic."
             exit 1
           fi
-
-          git checkout main
-          git merge --ff-only origin/release/v5
           git push origin main
-          echo "::notice::main fast-forwarded $behind commit(s) to $(git rev-parse --short HEAD)"
+          echo "::notice::main now contains release/v5, at $(git rev-parse --short HEAD)"
