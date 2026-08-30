@@ -7,13 +7,9 @@ import com.kamikazejam.kamicommon.command.Parameter;
 import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.ClickAction;
+import com.kamikazejam.kamicommon.nms.text.TextPlaceholder;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.Component;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.event.ClickEvent;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.event.HoverEvent;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.MiniMessage;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import com.kamikazejam.kamicommon.util.Jdk8;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.Txt;
@@ -186,48 +182,49 @@ public class CommandPaging {
         );
         List<String> args = context.getArgs();
 
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+
         // Add flip backwards command
         @Nullable String backwardCmd = getFlipPageCommand(command, pageNum - 1, args);
-        @NotNull TagResolver.Single forwardTag;
+        @NotNull TextPlaceholder forwardTag;
         if (pageNum > 1 && backwardCmd != null) {
-            Component hoverText = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(Config.getBackIconHoverMini()).asInternalComponent();
+            VersionedComponent hoverText = serializer.fromMiniMessage(Config.getBackIconHoverMini());
             String replacement = Config.getActiveIconColorMini() + Config.getBackIcon();
-            forwardTag = Placeholder.component(
+            forwardTag = TextPlaceholder.component(
                     Config.getTagPrevPage(),
-                    MiniMessage.miniMessage().deserialize(replacement)
-                            .clickEvent(ClickEvent.runCommand(backwardCmd))
-                            .hoverEvent(HoverEvent.showText(hoverText))
+                    serializer.fromMiniMessage(replacement)
+                            .click(ClickAction.RUN_COMMAND, backwardCmd)
+                            .hover(hoverText)
             );
         } else {
             String replacement = Config.getInactiveIconColorMini() + Config.getBackIcon();
-            forwardTag = Placeholder.component(
+            forwardTag = TextPlaceholder.component(
                     Config.getTagPrevPage(),
-                    MiniMessage.miniMessage().deserialize(replacement)
+                    serializer.fromMiniMessage(replacement)
             );
         }
 
         // Add flip forwards command
         @Nullable String forwardCmd = getFlipPageCommand(command, pageNum + 1, args);
-        @NotNull TagResolver.Single backTag;
+        @NotNull TextPlaceholder backTag;
         if (pageCount > pageNum && forwardCmd != null) {
-            Component hoverText = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(Config.getForwardIconHoverMini()).asInternalComponent();
+            VersionedComponent hoverText = serializer.fromMiniMessage(Config.getForwardIconHoverMini());
             String replacement = Config.getActiveIconColorMini() + Config.getForwardIcon();
-            backTag = Placeholder.component(
+            backTag = TextPlaceholder.component(
                     Config.getTagNextPage(),
-                    MiniMessage.miniMessage().deserialize(replacement)
-                            .clickEvent(ClickEvent.runCommand(forwardCmd))
-                            .hoverEvent(HoverEvent.showText(hoverText))
+                    serializer.fromMiniMessage(replacement)
+                            .click(ClickAction.RUN_COMMAND, forwardCmd)
+                            .hover(hoverText)
             );
         } else {
             String replacement = Config.getInactiveIconColorMini() + Config.getForwardIcon();
-            backTag = Placeholder.component(
+            backTag = TextPlaceholder.component(
                     Config.getTagNextPage(),
-                    MiniMessage.miniMessage().deserialize(replacement)
+                    serializer.fromMiniMessage(replacement)
             );
         }
 
-        Component component = MiniMessage.miniMessage().deserialize(miniMessageTitle, TagResolver.resolver(forwardTag, backTag));
-        return NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component);
+        return serializer.fromMiniMessage(miniMessageTitle, forwardTag, backTag);
     }
 
     @NotNull
