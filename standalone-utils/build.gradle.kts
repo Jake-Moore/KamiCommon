@@ -13,7 +13,7 @@ repositories {
     mavenCentral()
 }
 
-var snakeYaml = "org.yaml:snakeyaml:2.5"
+var snakeYaml = "org.yaml:snakeyaml:2.6"
 var json = "org.json:json:20250517"
 dependencies {
     api(project(":shared-utils"))
