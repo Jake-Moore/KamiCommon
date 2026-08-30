@@ -93,6 +93,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">TypeEnumChoice&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;T&gt;&gt;</span>
 <span class="extends-implements">extends <a href="../TypeAbstract.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstract</a>&lt;T&gt;</span></div>
+<div class="block">The base for types backed by a Java enum, matching an argument against the constant names
+case-insensitively and offering those names as completions. A subclass may pass constants to exclude to
+the constructor, and an excluded constant is then rejected exactly as an unknown one is.</div>
 </div>
 </section>
 <section class="summary">

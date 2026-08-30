@@ -95,6 +95,18 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">MemorySectionStandalone</span>
 <span class="extends-implements">extends <a href="../base/MemorySectionMethods.html" title="class in com.kamikazejam.kamicommon.yaml.base">MemorySectionMethods</a>&lt;<a href="MemorySectionStandalone.html" title="class in com.kamikazejam.kamicommon.yaml.standalone">MemorySectionStandalone</a>&gt;
 implements <a href="ConfigurationSectionStandalone.html" title="interface in com.kamikazejam.kamicommon.yaml.standalone">ConfigurationSectionStandalone</a></span></div>
+<div class="block">A nested section of a <a href="../../configuration/standalone/StandaloneConfig.html" title="class in com.kamikazejam.kamicommon.configuration.standalone"><code>StandaloneConfig</code></a>, exposing the same read and write surface as the config itself over one branch of the
+document. <a href="#getConfigurationSection(java.lang.String)"><code>getConfigurationSection(String)</code></a> never returns <code>null</code>: a key that is missing, or
+that holds something other than a mapping, yields a section backed by a fresh detached node, so reads
+fall through to their defaults but writes to that section never reach the parent document.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-Config-System">Configuration System (wiki)</a></li>
+</ul>
+</dd>
+</dl>
 </div>
 </section>
 <section class="summary">

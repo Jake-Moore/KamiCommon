@@ -101,6 +101,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">TypeAbstractNumber&lt;T extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&gt;</span>
 <span class="extends-implements">extends <a href="../TypeAbstractSimple.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstractSimple</a>&lt;T&gt;</span></div>
+<div class="block">The base for the numeric types, each parsing through its own wrapper's <code>parse</code> method so that a
+non-numeric or out-of-range argument fails with the standard "is not a number" message. Tab completion
+offers a single <code>"1"</code> rather than enumerating values.</div>
 </div>
 </section>
 <section class="summary">

@@ -94,6 +94,17 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">FeatureConfig</span>
 <span class="extends-implements">extends <a href="../SubsystemConfig.html" title="class in com.kamikazejam.kamicommon.subsystem">SubsystemConfig</a>&lt;<a href="Feature.html" title="class in com.kamikazejam.kamicommon.subsystem.feature">Feature</a>&gt;</span></div>
+<div class="block">The configuration of one <a href="Feature.html" title="class in com.kamikazejam.kamicommon.subsystem.feature"><code>Feature</code></a>, defaulted from that feature's resource in the plugin jar and
+written under the plugin's data folder. It is created lazily by <a href="Feature.html#createConfig()"><code>Feature.createConfig()</code></a>, so a
+feature reaches its own with <a href="../AbstractSubsystem.html#getConfig()"><code>AbstractSubsystem.getConfig()</code></a> rather than constructing this directly.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-Subsystems#config-layout">Subsystem config layout (wiki)</a></li>
+</ul>
+</dd>
+</dl>
 </div>
 </section>
 <section class="summary">

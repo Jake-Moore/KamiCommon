@@ -94,6 +94,10 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">TriState</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="TriState.html" title="enum class in com.kamikazejam.kamicommon.util.data">TriState</a>&gt;</span></div>
+<div class="block">A boolean that can also be absent, for a setting that is explicitly true, explicitly false, or simply not
+configured. <a href="#byBoolean(java.lang.Boolean)"><code>byBoolean(Boolean)</code></a> maps <code>null</code> to <a href="#NOT_SET"><code>NOT_SET</code></a>, while <a href="#toBoolean()"><code>toBoolean()</code></a>
+collapses <a href="#NOT_SET"><code>NOT_SET</code></a> back to <code>false</code>, so compare against the constant directly wherever
+"unset" and "false" must behave differently.</div>
 </div>
 </section>
 <section class="summary">

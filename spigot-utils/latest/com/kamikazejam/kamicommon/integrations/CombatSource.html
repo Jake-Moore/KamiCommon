@@ -81,6 +81,10 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">CombatSource</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Resolves whichever supported combat-tag plugin is installed to a single <a href="combat/CombatIntegration.html" title="interface in com.kamikazejam.kamicommon.integrations.combat"><code>CombatIntegration</code></a>, trying
+CombatTagPlus, then DeluxeCombat, then PvPManager. <a href="#get()"><code>get()</code></a> returns <code>null</code> when none of them
+is present, and the lookup runs once and is then cached either way, so calling it before the server has
+enabled its plugins caches the absence for the rest of the run.</div>
 </div>
 </section>
 <section class="summary">

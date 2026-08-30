@@ -85,6 +85,11 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">TimeUtil</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Static helpers for rendering a duration and for resolving a wall-clock time to a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Date.html" title="class or interface in java.util" class="external-link"><code>Date</code></a>. The duration
+formatters omit leading units while they are zero, so a value under a minute renders as seconds alone,
+and <a href="TimeUtil.TimeFormat.html" title="enum class in com.kamikazejam.kamicommon.util"><code>TimeUtil.TimeFormat</code></a> chooses between the compact and spelled-out forms.
+<a href="#getDateBy24HourTime(java.lang.String,java.util.TimeZone)"><code>getDateBy24HourTime(String, TimeZone)</code></a> always returns the next future occurrence of that time in
+the given zone, never one already past.</div>
 </div>
 </section>
 <section class="summary">

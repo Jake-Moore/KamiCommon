@@ -81,6 +81,19 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">RedisAPI</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">The handle for one Redis connection, exposing pub/sub channels alongside Lettuce's synchronous and
+asynchronous command interfaces. Obtain one from
+<a href="RedisConnector.html#getAPI(com.kamikazejam.kamicommon.redis.util.RedisConf)"><code>RedisConnector.getAPI(com.kamikazejam.kamicommon.redis.util.RedisConf)</code></a>; the constructor is not
+public, and every caller passing an equal <a href="util/RedisConf.html" title="class in com.kamikazejam.kamicommon.redis.util"><code>RedisConf</code></a> receives the same shared instance. <a href="#shutdown()"><code>shutdown()</code></a> releases this caller's claim rather
+than closing the connection, and once the last holder has released it this instance is spent.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-Redis">Redis (wiki)</a></li>
+</ul>
+</dd>
+</dl>
 </div>
 </section>
 <section class="summary">

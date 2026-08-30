@@ -84,6 +84,20 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Parameter&lt;T&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">One declared argument of a <a href="KamiCommand.html" title="class in com.kamikazejam.kamicommon.command"><code>KamiCommand</code></a>, pairing a <a href="type/Type.html" title="interface in com.kamikazejam.kamicommon.command.type"><code>Type</code></a> with a display name and an optional
+default value. Build one with <a href="#of(com.kamikazejam.kamicommon.command.type.Type)"><code>of(Type)</code></a> and the fluent builder; a parameter is required exactly
+when no default was supplied, and a default of <code>null</code> is legal and different from having none.
+<a href="KamiCommand.html#addParameter(com.kamikazejam.kamicommon.command.Parameter)"><code>KamiCommand.addParameter(Parameter)</code></a> enforces ordering, throwing <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a>
+for a required parameter declared after an optional one and <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link"><code>IllegalStateException</code></a> for anything
+declared after a concatenating one.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#parameters">Parameters (wiki)</a></li>
+</ul>
+</dd>
+</dl>
 </div>
 </section>
 <section class="summary">

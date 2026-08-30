@@ -100,39 +100,78 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="AllAble.html" title="interface in com.kamikazejam.kamicommon.command.type">AllAble</a>&lt;T&gt;</div>
 <div class="col-last even-row-color class-summary class-summary-tab1">&nbsp;</div>
 <div class="col-first odd-row-color class-summary class-summary-tab1"><a href="Type.html" title="interface in com.kamikazejam.kamicommon.command.type">Type</a>&lt;T&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">Converts one command argument into a <code>T</code> and supplies the tab completions offered for it.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="TypeAbstract.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstract</a>&lt;T&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">The base for every <a href="Type.html" title="interface in com.kamikazejam.kamicommon.command.type"><code>Type</code></a>, supplying a display name derived from the class name, identity and
+equality helpers, and prefix filtering of tab completions.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TypeAbstractChoice.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstractChoice</a>&lt;T&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">A <a href="Type.html" title="interface in com.kamikazejam.kamicommon.command.type"><code>Type</code></a> base for values drawn from a known set, adding exact, case-insensitive and Levenshtein
+matching over that set along with the "no match" and "ambiguous" errors configured on <a href="TypeAbstractChoice.Config.html" title="class in com.kamikazejam.kamicommon.command.type"><code>TypeAbstractChoice.Config</code></a>.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="TypeAbstractChoice.Config.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstractChoice.Config</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Message and Color configuration for TypeAbstractChoice chat responses.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TypeAbstractException.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstractException</a>&lt;T&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">A <a href="Type.html" title="interface in com.kamikazejam.kamicommon.command.type"><code>Type</code></a> base for parsing that signals failure by throwing.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="TypeAbstractSimple.html" title="class in com.kamikazejam.kamicommon.command.type">TypeAbstractSimple</a>&lt;T&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A <a href="TypeAbstractException.html" title="class in com.kamikazejam.kamicommon.command.type"><code>TypeAbstractException</code></a> that replaces the thrown exception's message with a uniform one reading
+<code>"x" is not a &lt;type name&gt;</code>.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TypeColor.html" title="class in com.kamikazejam.kamicommon.command.type">TypeColor</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">A <a href="https://jd.papermc.io/paper/org/bukkit/Color.html" title="class or interface in org.bukkit" class="external-link"><code>Color</code></a> parsed either from three space-separated components in the range 0 to 255, or from a
+six-digit hex string that may be prefixed with <code>#</code>.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="TypeDate.html" title="class in com.kamikazejam.kamicommon.command.type">TypeDate</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Date.html" title="class or interface in java.util" class="external-link"><code>Date</code></a> parsed strictly as <code>yyyy-MM-dd</code>, carrying no time of day and offering no tab
+completions.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TypeEnchantment.html" title="class in com.kamikazejam.kamicommon.command.type">TypeEnchantment</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">An <a href="https://jd.papermc.io/paper/org/bukkit/enchantments/Enchantment.html" title="class or interface in org.bukkit.enchantments" class="external-link"><code>Enchantment</code></a> matched against its common name as well as its Spigot key, so that both
+<code>"Fire Protection"</code> and <code>"PROTECTION_FIRE"</code> resolve to the same enchantment.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="TypeNamespacedKey.html" title="class in com.kamikazejam.kamicommon.command.type">TypeNamespacedKey</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A namespaced key as a lowercased <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a> rather than a Bukkit <code>NamespacedKey</code>, defaulting to
+the <code>minecraft</code> namespace when the argument contains no colon.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TypePermission.html" title="class in com.kamikazejam.kamicommon.command.type">TypePermission</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">A <a href="https://jd.papermc.io/paper/org/bukkit/permissions/Permission.html" title="class or interface in org.bukkit.permissions" class="external-link"><code>Permission</code></a> matched against those currently registered with the
+<a href="https://jd.papermc.io/paper/org/bukkit/plugin/PluginManager.html" title="class or interface in org.bukkit.plugin" class="external-link"><code>PluginManager</code></a>, so a node that no plugin has declared never resolves.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="TypePotionEffectType.html" title="class in com.kamikazejam.kamicommon.command.type">TypePotionEffectType</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TypeRange.html" title="class in com.kamikazejam.kamicommon.command.type">TypeRange</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">An <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link"><code>Integer</code></a> constrained to a range, built per range with <a href="TypeRange.html#get(int,int)"><code>TypeRange.get(int, int)</code></a> rather than shared.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="TypeTimeZone.html" title="class in com.kamikazejam.kamicommon.command.type">TypeTimeZone</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A time zone identifier as a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a> rather than a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/TimeZone.html" title="class or interface in java.util" class="external-link"><code>TimeZone</code></a>, matched against
+<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/TimeZone.html#getAvailableIDs()" title="class or interface in java.util" class="external-link"><code>TimeZone.getAvailableIDs()</code></a>.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TypeUUID.html" title="class in com.kamikazejam.kamicommon.command.type">TypeUUID</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">A <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link"><code>UUID</code></a> parsed from its standard string form, or a freshly generated random one when the argument
+is <code>"random"</code>.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="TypeWorld.html" title="class in com.kamikazejam.kamicommon.command.type">TypeWorld</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A <a href="https://jd.papermc.io/paper/org/bukkit/World.html" title="class or interface in org.bukkit" class="external-link"><code>World</code></a> matched by name against the worlds currently loaded on the server, so a world that is not
+loaded never resolves.</div>
+</div>
 </div>
 </div>
 </div>

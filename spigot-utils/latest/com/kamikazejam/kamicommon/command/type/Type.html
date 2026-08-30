@@ -87,6 +87,18 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Type&lt;T&gt;</span><span class="extends-implements">
 extends <a href="../../util/interfaces/Named.html" title="interface in com.kamikazejam.kamicommon.util.interfaces">Named</a></span></div>
+<div class="block">Converts one command argument into a <code>T</code> and supplies the tab completions offered for it. A
+<a href="../Parameter.html" title="class in com.kamikazejam.kamicommon.command"><code>Parameter</code></a> holds one, and the built-in
+implementations are singletons reached through a static <code>get()</code>. Implement this by extending
+<a href="TypeAbstract.html" title="class in com.kamikazejam.kamicommon.command.type"><code>TypeAbstract</code></a> rather than directly, which supplies naming, matching and completion filtering.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#types">Types (wiki)</a></li>
+</ul>
+</dd>
+</dl>
 </div>
 </section>
 <section class="summary">

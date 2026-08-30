@@ -106,6 +106,20 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">TypeAbstract&lt;T&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="Type.html" title="interface in com.kamikazejam.kamicommon.command.type">Type</a>&lt;T&gt;</span></div>
+<div class="block">The base for every <a href="Type.html" title="interface in com.kamikazejam.kamicommon.command.type"><code>Type</code></a>, supplying a display name derived from the class name, identity and
+equality helpers, and prefix filtering of tab completions. Implement <a href="Type.html#read(java.lang.String,org.bukkit.command.CommandSender)"><code>Type.read(String, CommandSender)</code></a>
+to parse the argument and <a href="Type.html#getTabList(org.bukkit.command.CommandSender,java.lang.String)"><code>Type.getTabList(CommandSender, String)</code></a> to offer completions, rejecting bad
+input by throwing <a href="../../util/exception/KamiCommonException.html" title="class in com.kamikazejam.kamicommon.util.exception"><code>KamiCommonException</code></a> with a message
+for the sender rather than by returning <code>null</code>. Completions are filtered against the partial
+argument unless <a href="#shouldShowAllTabCompletions()"><code>shouldShowAllTabCompletions()</code></a> is overridden to return <code>true</code>.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#writing-your-own">Writing your own Type (wiki)</a></li>
+</ul>
+</dd>
+</dl>
 </div>
 </section>
 <section class="summary">
