@@ -3,6 +3,7 @@ package com.kamikazejam.kamicommon.item;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.SpigotUtilsSource;
 import com.kamikazejam.kamicommon.configuration.loader.ItemTypeLoader;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.util.ColoredStringParser;
@@ -63,6 +64,15 @@ public class ItemBuilderLoader {
         boolean glow = section.getBoolean("glow", false) || section.getBoolean("addGlow", false);
         @Nullable String skullOwner = section.getString("skull-owner", null);
         @Nullable Boolean hideAttributes = (section.isSet("hide-attributes") && section.isBoolean("hide-attributes")) ? section.getBoolean("hide-attributes") : null;
+
+        // NBT config support was removed in v5 with no deprecation and no warning, so an 'nbt'
+        // block left in an existing config parses fine and is then dropped. The item still builds,
+        // just with data missing, which is the hardest kind of upgrade problem to find. Warn rather
+        // than throw: the config is still valid, it just no longer means what it used to.
+        if (section.isSet("nbt")) {
+            SpigotUtilsSource.warning("NBT config support was removed in v5, so the 'nbt' block at "
+                    + section.getCurrentPath() + ".nbt will be ignored. Apply NBT after build() using the bundled NBT-API.");
+        }
 
         // Apply non-null properties as patches to ItemBuilder
         if (amount != null) { builder.setAmount(amount); }
