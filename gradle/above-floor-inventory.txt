@@ -250,3 +250,15 @@ com/kamikazejam/kamicommon/nms/wrappers/world/NMSWorld_1_20_R3.class=17
 com/kamikazejam/kamicommon/nms/wrappers/world/NMSWorld_1_21_11.class=21
 com/kamikazejam/kamicommon/nms/wrappers/world/NMSWorld_1_21_4.class=21
 com/kamikazejam/kamicommon/nms/wrappers/world/NMSWorld_LATEST.class=25
+
+# Added with spigot-nms 1.2.26. The ShadedComponentBridgeImpl classes exist so that loading a
+# module's NmsBundleImpl does not resolve the shaded Adventure; they sit at their module's floor
+# like the adapter beside them. The $1 classes are javac's synthetic switch-map holders for the
+# switch over ClickAction and TextDecoration in each VersionedComponent, so they inherit their
+# outer class's version. Both are resolved by name and never touched by a server below their
+# floor, which is the same reason the entries above them are listed.
+com/kamikazejam/kamicommon/nms/bundle/v1_17_R1/ShadedComponentBridgeImpl.class=16
+com/kamikazejam/kamicommon/nms/bundle/v1_21_4/ShadedComponentBridgeImpl.class=21
+com/kamikazejam/kamicommon/nms/text/VersionedComponent_1_17_R1$1.class=16
+com/kamikazejam/kamicommon/nms/text/VersionedComponent_1_21_4$1.class=21
+com/kamikazejam/kamicommon/nms/text/VersionedComponent_LATEST$1.class=25
