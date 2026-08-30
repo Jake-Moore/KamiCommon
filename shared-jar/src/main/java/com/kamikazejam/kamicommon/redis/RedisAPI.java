@@ -20,11 +20,22 @@ public class RedisAPI {
     // --------------------------------------------- GENERAL METHODS -------------------------------------------------- //
     // ---------------------------------------------------------------------------------------------------------------- //
     /**
-     * Stops the internal Redis Connection
-     * This API remains usable, but other methods may incur additional
-     *   delays if the connection needs to be re-established
+     * Releases this caller's claim on the underlying Redis connection.
+     *
+     * <p>Instances are shared: every caller passing an equal {@link com.kamikazejam.kamicommon.redis.util.RedisConf}
+     * receives the same object. The connection is closed once the last holder has called this, so a
+     * plugin shutting down no longer takes the connection away from anything else in the same JVM.
+     *
+     * <p>Once the connection really is closed, this instance is spent. Call
+     * {@link RedisConnector#getAPI(com.kamikazejam.kamicommon.redis.util.RedisConf)} again for a
+     * fresh one rather than reusing this reference.
      */
     public void shutdown() {
+        RedisConnector.release(manager.getConf());
+    }
+
+    /** The real teardown, reached only through {@link RedisConnector#release}. */
+    void shutdownInternal() {
         manager.shutdown();
     }
 

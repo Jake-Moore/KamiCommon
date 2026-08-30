@@ -32,6 +32,21 @@ dependencies {
 
     // Lettuce Core (Redis) (6,246 KB)
     api("io.lettuce:lettuce-core:7.7.0.RELEASE")
+
+    // Testing Dependencies
+    testImplementation("io.lettuce:lettuce-core:7.7.0.RELEASE")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+// The root build disables tests for every project. This module opts back in, matching
+//  standalone-utils, because RedisConf now parses a connection URL. A parser that mistakes the
+//  userInfo field silently authenticates as the wrong identity or drops TLS, and neither shows up
+//  as an error at the call site.
+tasks.named<Test>("test") {
+    enabled = true
+    useJUnitPlatform()
+    testLogging { events("passed", "failed") }
 }
 
 // Configure javadoc-publish-convention
