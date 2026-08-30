@@ -41,7 +41,7 @@ jobs:
       alreadyPublished: ${{ steps.published_check.outputs.already }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Label escape hatch. This workflow triggers on push, where there is no PR context, so the
       # merge commit is mapped back to its pull request and that PR's labels are read.
@@ -62,7 +62,7 @@ jobs:
           fi
 
       - name: Set up JDKs 17, 21 and 25
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: |
             17
@@ -186,10 +186,10 @@ jobs:
       packages: write # Access to Publish a Package
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Set up JDKs 17, 21 and 25
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         java-version: |
           17
@@ -319,10 +319,10 @@ jobs:
       packages: write # Access to Publish a Package
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up JDKs 17, 21 and 25
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: |
             17
@@ -409,9 +409,9 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up JDKs 17, 21 and 25
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: |
             17
@@ -435,7 +435,7 @@ jobs:
         run: gradle aggregateJavadoc
 
       - name: Checkout gh-pages
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           path: gh-pages
