@@ -541,7 +541,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     @OverrideOnly
     public @NotNull KamiConfigExt createFeaturesConfig() {
         // Create the Features Config (expects defaults in a 'features.yml' resource file)
-        return new KamiConfigExt(this, new File(getDataFolder(), "features.yml"), null);
+        return new KamiConfigExt(this, new File(getDataFolder(), "features.yml"));
     }
 
     // -------------------------------------------- //
