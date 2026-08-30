@@ -30,8 +30,4 @@ public class FeatureConfig extends SubsystemConfig<Feature> {
     public Feature getFeature() {
         return this.getSubsystem();
     }
-
-    private String getFeatureConfigKey() {
-        return "features." + this.getFeature().getName().replace(" ", "_");
-    }
 }

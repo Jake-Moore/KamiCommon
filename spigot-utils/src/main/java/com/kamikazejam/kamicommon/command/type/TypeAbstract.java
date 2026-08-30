@@ -113,6 +113,11 @@ public abstract class TypeAbstract<T> implements Type<T> {
 		// Get the raw tab list.
 		Collection<String> raw = this.getTabList(sender, arg);
 
+		// Handle null case. This has to come before EITHER branch uses raw: the
+		// shouldShowAllTabCompletions() branch below does new ArrayList<>(raw), which throws
+		// NullPointerException on a null list, and it used to run first.
+		if (raw == null || raw.isEmpty()) return Collections.emptyList();
+
         // Determine if we should show all completions or filter them.
         if (this.shouldShowAllTabCompletions()) {
             List<String> ret = new ArrayList<>(raw);
@@ -120,9 +125,6 @@ public abstract class TypeAbstract<T> implements Type<T> {
             ret = prepareForSpaces(ret, arg);
             return ret;
         }
-
-		// Handle null case.
-		if (raw == null || raw.isEmpty()) return Collections.emptyList();
 
 		// Only keep the suggestions that starts with what the user already typed in.
 		// This is the first basic step of tab completion.
