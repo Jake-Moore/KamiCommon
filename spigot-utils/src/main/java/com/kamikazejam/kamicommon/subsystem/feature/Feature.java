@@ -2,14 +2,15 @@ package com.kamikazejam.kamicommon.subsystem.feature;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
-import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.module.Module;
 import com.kamikazejam.kamicommon.util.ColoredStringParser;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -46,7 +47,18 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
      * You can override this method, or edit {@link KamiPlugin#getFeatureYmlPath()} to change the path resolution.
      */
     public @NotNull String getConfigResourcePath() {
-        @NotNull String ymlPath = this.getPlugin().getFeatureYmlPath();
+        @Nullable String rawYmlPath = this.getPlugin().getFeatureYmlPath();
+        // KamiPlugin#getFeatureYmlPath() returns null by default, and this method is @NotNull, so
+        // dereferencing it produced a bare NullPointerException that FeatureManager#registerFeature
+        // then reported only as "Can not register the feature". v4 failed here with a Preconditions
+        // message; this restores one that names the method the plugin has to override.
+        @NotNull String ymlPath = Preconditions.checkNotNull(
+                rawYmlPath,
+                "Feature '" + this.getName() + "' cannot resolve its config resource: "
+                        + this.getPlugin().getName() + " does not override KamiPlugin#getFeatureYmlPath(), "
+                        + "which returns null by default. Override it to return the jar subpackage "
+                        + "holding your feature yml resources, or override Feature#getConfigResourcePath()."
+        );
         if (ymlPath.endsWith("/")) {
             return ymlPath + this.getName() + "Feature.yml";
         } else {
@@ -71,10 +83,13 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
         String def = defaultPrefix().serializeMiniMessage();
 
         // Warn if the feature does not have a prefix entry in the config so the plugin author can go add a default in the resource file
+        // Through the plugin logger, NOT getLogger(): the subsystem logger is assigned in
+        // AbstractSubsystem#handleEnable and is null anywhere this runs before enable. Same shape,
+        // and same reasoning, as Module#getPrefix().
         if (!c.contains(key)) {
-            this.getLogger().warn(NmsAPI.getVersionedComponentSerializer().fromPlainText(
+            getPlugin().getLogger().warning(
                     "Feature '" + getName() + "' missing string key '" + key + "' in the features config. Using default: " + def
-            ));
+            );
         }
 
         return ColoredStringParser.parse(

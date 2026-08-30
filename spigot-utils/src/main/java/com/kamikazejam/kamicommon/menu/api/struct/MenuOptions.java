@@ -64,7 +64,7 @@ public abstract class MenuOptions<M extends Menu<M>> {
 
     /**
      * If drag events affecting only player inventory slots should be cancelled.<br>
-     * Default: false (player can drag in their own inventory).<br>
+     * Default: true (drags inside the player's own inventory are blocked too).<br>
      * <br>
      * Note: This only applies to drags that do NOT affect any menu slots.
      * If a drag affects any menu slots, {@link #cancelDragEvent} takes precedence.

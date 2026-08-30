@@ -2,15 +2,16 @@ package com.kamikazejam.kamicommon.subsystem.module;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
-import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
 import com.kamikazejam.kamicommon.util.ColoredStringParser;
+import com.kamikazejam.kamicommon.util.Preconditions;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -52,7 +53,18 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
      * You can override this method, or edit {@link KamiPlugin#getModuleYmlPath()} to change the path resolution.
      */
     public @NotNull String getConfigResourcePath() {
-        @NotNull String ymlPath = this.getPlugin().getModuleYmlPath();
+        @Nullable String rawYmlPath = this.getPlugin().getModuleYmlPath();
+        // KamiPlugin#getModuleYmlPath() returns null by default, and this method is @NotNull, so
+        // dereferencing it produced a bare NullPointerException that ModuleManager#registerModule
+        // then reported only as "Can not register the module". v4 failed here with a Preconditions
+        // message; this restores one that names the method the plugin has to override.
+        @NotNull String ymlPath = Preconditions.checkNotNull(
+                rawYmlPath,
+                "Module '" + this.getName() + "' cannot resolve its config resource: "
+                        + this.getPlugin().getName() + " does not override KamiPlugin#getModuleYmlPath(), "
+                        + "which returns null by default. Override it to return the jar subpackage "
+                        + "holding your module yml resources, or override Module#getConfigResourcePath()."
+        );
         if (ymlPath.endsWith("/")) {
             return ymlPath + this.getName() + "Module.yml";
         } else {
@@ -72,29 +84,48 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
 
     @Internal
     public final boolean isEnabledInConfig() {
-        // Create a throw-away config so that we don't start any initialization logic
-        // if this module does not intend to be enabled
+        // Construct the config ONCE. Every construction loads the module's yml and force-saves
+        // it, so the second call here was a redundant round trip to disk for every module on every
+        // startup, and it discarded the instance the enabled check had just been read from.
         ModuleConfig config = createConfig();
         boolean enabled = config.isEnabledInConfig();
 
-        // If the module is enabled in the config, begin initialization
+        // Only adopt the config as this module's own if it is actually going to be enabled, so a
+        // disabled module starts no initialization logic.
         if (enabled) {
-            initializeConfig(createConfig());
+            initializeConfig(config);
         }
         return enabled;
+    }
+
+    /**
+     * The key this module's entries live under in the plugin's {@code modules.yml}.<br>
+     * <br>
+     * Spaces in the module name map to underscores. Both the {@code enabled} flag and the
+     * {@code modulePrefix} string are read through this one method so they cannot disagree: they
+     * used to derive the key separately, and for a module whose name contained a space they
+     * derived two differently-spelled keys off the same name.
+     */
+    @Internal
+    public final @NotNull String getModulesConfigKey() {
+        return "modules." + getName().replace(" ", "_");
     }
 
     @Override
     public final @NotNull VersionedComponent getPrefix() {
         KamiConfigExt c = getPlugin().getModulesConfig();
-        String key = "modules." + getName() + ".modulePrefix";
+        String key = getModulesConfigKey() + ".modulePrefix";
         String def = defaultPrefix().serializeMiniMessage();
 
         // Warn if the module does not have a prefix entry in the config so the plugin author can go add a default in the resource file
+        // Through the plugin logger, NOT getLogger(). The subsystem logger is assigned in
+        // AbstractSubsystem#handleEnable, so it is null anywhere this runs before enable. Nothing
+        // reaches getPrefix() that early today, but ModuleConfig#isEnabledInConfig had exactly this
+        // shape and did, and the resulting NPE surfaced as an unrelated registration failure.
         if (!c.contains(key)) {
-            this.getLogger().warn(NmsAPI.getVersionedComponentSerializer().fromPlainText(
+            getPlugin().getLogger().warning(
                     "Module '" + getName() + "' missing string key '" + key + "' in the modules config. Using default: " + def
-            ));
+            );
         }
 
         return ColoredStringParser.parse(

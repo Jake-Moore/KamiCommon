@@ -9,6 +9,7 @@ import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.log.ComponentLogger;
+import com.kamikazejam.kamicommon.nms.text.ShimLoader;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
 import com.kamikazejam.kamicommon.subsystem.feature.FeatureManager;
 import com.kamikazejam.kamicommon.subsystem.module.Module;
@@ -76,6 +77,11 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     }
 
     public void onLoadPre() {
+        // FIRST STATEMENT. See onEnablePre() for why this has to come before anything renders text.
+        // onLoad runs before onEnable, and onLoadInner() is consumer code that may render, so the
+        // earliest reachable statement in the lifecycle is here, not in onEnablePre().
+        ShimLoader.configure(getDataFolder());
+
         String[] version = this.getDescription().getVersion().split(" ");
         this.logPrefixMini = String.format(
                 "<dark_aqua>[<aqua>%s %s<dark_aqua>] <yellow>",
@@ -95,6 +101,21 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     }
 
     public boolean onEnablePre() {
+        // FIRST STATEMENT, and it has to stay first.
+        //
+        // ShimLoader.get() builds its child classloader ONCE and caches it, so whichever call
+        // reaches it first decides where the nested Adventure jar is extracted for the whole JVM.
+        // The default is java.io.tmpdir, which hosted servers routinely mount noexec or read-only.
+        //
+        // SpigotUtilsSource.onEnable(plugin) also calls configure(), but a consumer only reaches
+        // that from onEnableInner(), which runs AFTER onEnablePre(). onEnablePre() constructs a
+        // ComponentLogger and immediately calls NmsAPI.getVersionedComponentSerializer()
+        // .fromMiniMessage(...); on v1_11_R1, v1_15_R1, v1_16_R3 and v1_17_R1 that resolves through
+        // TextBundles.forModule -> ShimLoader.get(), so the loader was already built against tmpdir
+        // by the time the SpigotUtilsSource call ran, and that call was a silent no-op. That is
+        // every server from 1.8 to 1.18.1, which is the entire range the setting exists for.
+        ShimLoader.configure(getDataFolder());
+
         this.enableTime = System.currentTimeMillis();
         this.colorLogger = new LegacyColorsLogger(this);
         this.colorComponentLogger = new ComponentLogger(this);
@@ -214,16 +235,28 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     public void onDisablePost() {}
 
     /**
-     * Can override if module configs are stored in a subpackage of the jar
+     * The jar subpackage holding this plugin's module yml resources, e.g. {@code "modules"}.<br>
+     * <br>
+     * Returns {@code null} by default, which is not a usable value: a plugin that registers any
+     * {@link Module} MUST override this. {@link Module#getConfigResourcePath()} rejects null with a
+     * message naming this method rather than dereferencing it.
+     *
+     * @return the resource path prefix, or {@code null} if this plugin has no modules
      */
-    public String getModuleYmlPath() {
+    public @Nullable String getModuleYmlPath() {
         return null;
     }
 
     /**
-     * Can override if feature configs are stored in a subpackage of the jar
+     * The jar subpackage holding this plugin's feature yml resources, e.g. {@code "features"}.<br>
+     * <br>
+     * Returns {@code null} by default, which is not a usable value: a plugin that registers any
+     * {@link Feature} MUST override this. {@link Feature#getConfigResourcePath()} rejects null with
+     * a message naming this method rather than dereferencing it.
+     *
+     * @return the resource path prefix, or {@code null} if this plugin has no features
      */
-    public String getFeatureYmlPath() {
+    public @Nullable String getFeatureYmlPath() {
         return null;
     }
 

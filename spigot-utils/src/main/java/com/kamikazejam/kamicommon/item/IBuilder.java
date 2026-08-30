@@ -43,10 +43,14 @@ public interface IBuilder<T extends IBuilder<T>> extends Cloneable {
     /**
      * Get the prototype {@link ItemStack} this builder is based on.<br>
      * <br>
-     * The prototype is never modified, it is immutable, and accessed via this method.<br>
+     * The builder never modifies the prototype; {@link #build()} works on a clone of it. It is NOT
+     * a defensive copy though: this hands back the builder's own instance, so an {@link ItemStack}
+     * is mutable and anything done to the returned object changes every item this builder produces
+     * from that point on. Treat it as read-only, and call {@code getPrototype().clone()} if you
+     * need something you can modify.<br>
      * Use {@link #build()} to get the final version of the item with all patches applied.
      *
-     * @return The prototype {@link ItemStack} this builder is based on.
+     * @return The prototype {@link ItemStack} this builder is based on. Not a copy.
      */
     @NotNull ItemStack getPrototype();
 
@@ -542,6 +546,10 @@ public interface IBuilder<T extends IBuilder<T>> extends Cloneable {
     /**
      * PATCH FUNCTION - Toggle the glow effect patch on or off.<br>
      * <br>
+     * NOTE: {@code setGlow(false)} CLEARS the patch, it does not force "no glow". An item whose
+     * prototype already carries enchantments still glints afterwards, and {@link #hasGlow()} still
+     * reports true for it. There is no patch value meaning "suppress the prototype's glint".
+     *
      * @param glow If true, the glow effect patch will be added, if false it will be removed.
      * @return This builder, for chaining
      */
@@ -710,7 +718,9 @@ public interface IBuilder<T extends IBuilder<T>> extends Cloneable {
     /**
      * Get if the item has an added glow effect.<br>
      * <br>
-     * If the patch glow is null (not set), the prototype's glow value will be returned.
+     * If the patch glow is null (not set), the prototype's glow value will be returned, meaning
+     * whether the prototype already carries at least one enchantment and therefore already glints.
+     * Clear the patch with {@link #removeGlow()}, or equivalently {@code setGlow(false)}.
      */
     boolean hasGlow();
 

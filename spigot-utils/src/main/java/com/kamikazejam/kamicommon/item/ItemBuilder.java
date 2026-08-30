@@ -138,12 +138,19 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     private @NotNull Map<XEnchantment, Patch<Integer>> enchantments = new HashMap<>();
 
     /**
-     * PATCH PROPERTY (false by default):<br>
+     * PATCH PROPERTY (null = inherits prototype value):<br>
      * <br>
      * If the item should have a glow effect (enchantment glint) added.<br>
-     * If enabled, then the item will have a glint added, even if it has no enchantments.
+     * If {@code true}, then the item will have a glint added, even if it has no enchantments.<br>
+     * If {@code null}, the prototype decides, which is what {@link IBuilder#removeGlow()} restores.<br>
+     * <br>
+     * This was a primitive {@code boolean}, which made it the only patch property with no "unset"
+     * state, so {@link #hasGlow()} could not do the prototype fall-through its javadoc promises and
+     * {@link IBuilder#removeGlow()} could not do the "use the prototype's value" its javadoc
+     * promises. Built items are unaffected either way: {@link #build()} only adds a fake
+     * enchantment when the patch is explicitly true.
      */
-    private boolean addGlow = false;
+    private @Nullable Boolean addGlow = null;
 
     /**
      * PATCH PROPERTY (null by default, set to override prototype):<br>
@@ -160,7 +167,8 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     // ------------------------------------------------------------ //
     /**
      * Construct a new ItemBuilder from a prototype {@link ItemStack}.<br>
-     * (The prototype is never modified, it is immutable, and accessed via {@link #getPrototype()})<br>
+     * (This builder never modifies the prototype. It does not copy it either, so the instance you
+     * pass in is the instance {@link #getPrototype()} hands back; treat it as read-only.)<br>
      * <br>
      * Call ItemBuilder methods to set and update item 'patches', and then use {@link #build()} to construct the final item.<br>
      * <br>
@@ -302,7 +310,8 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         }
 
         // Glow (only if no enchants are present, therefore need to add a fake one)
-        if (addGlow && meta.getEnchants().isEmpty()) {
+        // Explicitly true only. An unset patch leaves the prototype's own glint alone.
+        if (Boolean.TRUE.equals(addGlow) && meta.getEnchants().isEmpty()) {
             ItemFlag flag = Preconditions.checkNotNull(
                     XItemFlag.HIDE_ENCHANTS.get(),
                     "XItemFlag.HIDE_ENCHANTS could not be resolved to a valid ItemFlag!"
@@ -503,7 +512,9 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
     @Override
     public @NotNull ItemBuilder removeGlow() {
-        this.addGlow = false;
+        // Clears the patch rather than forcing "no glow", which is what removeGlow's javadoc has
+        // always said and what setGlow(false) delegates to.
+        this.addGlow = null;
         return this;
     }
 
@@ -675,7 +686,12 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
     @Override
     public boolean hasGlow() {
-        return addGlow;
+        if (addGlow != null) { return addGlow; }
+        // No patch set, so report the prototype, the same fall-through getSkullOwner and
+        // getEnchantmentLevel already do. A vanilla ItemStack glints exactly when it carries at
+        // least one enchantment, which is also why build() only adds a fake one when there are none.
+        @Nullable ItemMeta meta = prototype.getItemMeta();
+        return meta != null && !meta.getEnchants().isEmpty();
     }
 
     @Override

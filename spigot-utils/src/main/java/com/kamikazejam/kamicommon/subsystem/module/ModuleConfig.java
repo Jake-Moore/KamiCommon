@@ -37,7 +37,7 @@ public class ModuleConfig extends SubsystemConfig<Module> {
     public boolean isEnabledInConfig() {
         Module module = this.getModule();
         KamiConfigExt c = module.getPlugin().getModulesConfig();
-        String key = getModulesConfigKey() + ".enabled";
+        String key = module.getModulesConfigKey() + ".enabled";
 
         // Warn if the module does not have an entry in the config so the plugin author can go add a default in the resource file
         if (!c.contains(key)) {
@@ -52,9 +52,5 @@ public class ModuleConfig extends SubsystemConfig<Module> {
         }
 
         return c.getBoolean(key, module.isEnabledByDefault());
-    }
-
-    private String getModulesConfigKey() {
-        return "modules." + this.getModule().getName().replace(" ", "_");
     }
 }
