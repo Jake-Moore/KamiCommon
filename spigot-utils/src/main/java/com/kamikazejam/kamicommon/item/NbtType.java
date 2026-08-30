@@ -10,6 +10,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * @deprecated NBT config parsing was removed in v5. {@link ItemBuilderLoader} no longer reads an
+ * {@code nbt} block and nothing writes NBT from config, so the config-reading half of this enum has
+ * no caller. It remains only for {@code CmdItemDump}, which uses {@link #matchNBTAPI} to name the
+ * type of NBT already present on an item.
+ */
+@Deprecated
 @SuppressWarnings({"SpellCheckingInspection", "unchecked", "unused"})
 public enum NbtType {
     STRING(ConfigurationMethods::getString, (nbt, k, o) -> nbt.setString(k, (String) o), NBTType.NBTTagString,

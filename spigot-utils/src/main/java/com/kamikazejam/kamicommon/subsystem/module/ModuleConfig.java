@@ -1,7 +1,6 @@
 package com.kamikazejam.kamicommon.subsystem.module;
 
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
-import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
@@ -42,9 +41,14 @@ public class ModuleConfig extends SubsystemConfig<Module> {
 
         // Warn if the module does not have an entry in the config so the plugin author can go add a default in the resource file
         if (!c.contains(key)) {
-            module.getLogger().warn(NmsAPI.getVersionedComponentSerializer().fromPlainText(
+            // Through the plugin logger, NOT module.getLogger(). The subsystem logger is assigned in
+            // AbstractSubsystem#handleEnable, which ModuleManager#registerModule only reaches after
+            // this check, so module.getLogger() is null here. The warning meant to tell the author
+            // about a missing key instead threw an NPE that registerModule's catch(Throwable)
+            // reported as "Can not register the module".
+            module.getPlugin().getLogger().warning(
                     "Module '" + module.getName() + "' missing boolean key '" + key + "' in the modules config. Using default: " + module.isEnabledByDefault()
-            ));
+            );
         }
 
         return c.getBoolean(key, module.isEnabledByDefault());

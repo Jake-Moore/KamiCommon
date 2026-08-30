@@ -9,6 +9,7 @@ import com.kamikazejam.kamicommon.integrations.PremiumVanishIntegration;
 import com.kamikazejam.kamicommon.menu.MenuManager;
 import com.kamikazejam.kamicommon.nms.NmsVersion;
 import com.kamikazejam.kamicommon.nms.provider.event.PreSpawnSpawnerAdapter;
+import com.kamikazejam.kamicommon.nms.text.ShimLoader;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.engine.EngineScheduledTeleport;
 import com.kamikazejam.kamicommon.util.engine.EngineTeleportMixinCause;
@@ -56,6 +57,12 @@ public class SpigotUtilsSource {
         if (SpigotUtilsSource.pluginSource != null) { return false; }
         SpigotUtilsSource.pluginSource = plugin;
         enabled = true;
+
+        // FIRST - point the nested Adventure jar at the plugin's data folder, before anything can
+        // touch text. Without this it extracts to java.io.tmpdir, which hosted servers routinely
+        // mount noexec or read-only. ShimLoader caches its classloader on first use, so a later
+        // call would be silently ignored.
+        ShimLoader.configure(plugin.getDataFolder());
 
         // BLOCKING - Initialize the Material Flattening Util
         MaterialFlatteningUtil.initialize();

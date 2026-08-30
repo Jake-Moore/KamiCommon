@@ -321,6 +321,15 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
         // Apply meta
         stack.setItemMeta(meta);
+
+        // Damage
+        // Applied AFTER setItemMeta on purpose. From 1.13 the editor writes damage through the
+        // stack's own ItemMeta, so a setDamage call placed with the unbreakable block above would be
+        // discarded by the setItemMeta line - which is the same shape as the bug this fixes.
+        if (damage != null && willUseDamage()) {
+            stack = NmsAPI.getItemEditor().setDamage(stack, damage);
+        }
+
         return stack;
     }
 

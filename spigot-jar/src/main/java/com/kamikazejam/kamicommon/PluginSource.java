@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon;
 
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
+import com.kamikazejam.kamicommon.nms.text.ShimLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +23,12 @@ public class PluginSource {
         if (enabled) { return false; }
         pluginSource = plugin;
         enabled = true;
+
+        // FIRST - point the nested Adventure jar at the plugin's data folder, before anything can
+        // touch text. Without this it extracts to java.io.tmpdir, which hosted servers routinely
+        // mount noexec or read-only. ShimLoader caches its classloader on first use, so a later
+        // call would be silently ignored.
+        ShimLoader.configure(plugin.getDataFolder());
 
         // Initialize SpigotUtils with this plugin as well
         SpigotUtilsSource.onEnable(plugin);
