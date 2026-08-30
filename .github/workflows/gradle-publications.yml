@@ -2,8 +2,10 @@ name: Gradle Publish & Release
 
 on:
   push:
-    # Run on 'main' (for releases) and on 'release/v5' (for pre-releases)
-    branches: [ "main", "release/v5" ]
+    # release/v5 is the working line and does ALL releasing, prerelease and final.
+    # main is the continuous timeline and triggers nothing: it exists so each release
+    # line can be frozen when superseded without swapping the default branch.
+    branches: [ "release/v5" ]
     # A merge publishes immediately, and the publish OVERWRITES whatever already sits at that
     # coordinate. A change that cannot affect the artifact must not trigger one.
     #
@@ -69,7 +71,7 @@ jobs:
 
       # Configure: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5.0.0
+        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
         with:
           gradle-version: '9.0.0'
 
@@ -171,7 +173,7 @@ jobs:
   release:
     needs: setup
     # Run only for commits into main, with valid versions that match the release pattern
-    if: "github.ref == 'refs/heads/main' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_release == 'true' && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
+    if: "github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_release == 'true' && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
     runs-on: ubuntu-latest
     permissions:
       contents: write # Access to Publish a Release
@@ -192,7 +194,7 @@ jobs:
         settings-path: ${{ github.workspace }}
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5.0.0
+      uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
       with:
         gradle-version: '9.0.0'
 
@@ -262,7 +264,7 @@ jobs:
 
     # Update the README.md Badge with the new version
     - name: Create Version Badge
-      uses: schneegans/dynamic-badges-action@v1.7.0
+      uses: schneegans/dynamic-badges-action@v1.9.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
@@ -273,7 +275,7 @@ jobs:
 
     # Update the README.md API Compatibility Badge with the new version
     - name: Create API Compatibility Badge
-      uses: schneegans/dynamic-badges-action@v1.7.0
+      uses: schneegans/dynamic-badges-action@v1.9.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
@@ -322,7 +324,7 @@ jobs:
           settings-path: ${{ github.workspace }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5.0.0
+        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
         with:
           gradle-version: '9.0.0'
 
@@ -360,7 +362,7 @@ jobs:
 
       # Update the README.md Badge with the new version
       - name: Create Version Badge
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: schneegans/dynamic-badges-action@v1.9.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
@@ -371,7 +373,7 @@ jobs:
 
       # Update the README.md API Compatibility Badge with the new version
       - name: Create API Compatibility Badge
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: schneegans/dynamic-badges-action@v1.9.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: 5dfd7c9bb8b81ae5867c81e9a77ee821
@@ -388,7 +390,7 @@ jobs:
   docs:
     needs: setup
     # Run only for commits with valid versions that match the release OR prerelease pattern on their respective branches
-    if: "needs.setup.outputs.is_valid == 'true' && ((github.ref == 'refs/heads/main' && needs.setup.outputs.is_release == 'true') || (github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_prerelease == 'true')) && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
+    if: "needs.setup.outputs.is_valid == 'true' && github.ref == 'refs/heads/release/v5' && (needs.setup.outputs.is_release == 'true' || needs.setup.outputs.is_prerelease == 'true') && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
 
     runs-on: ubuntu-latest
     permissions:
@@ -407,7 +409,7 @@ jobs:
 
       # Configure: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5.0.0
+        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
         with:
           gradle-version: '9.0.0'
 

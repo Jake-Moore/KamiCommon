@@ -1,0 +1,56 @@
+name: Sync release/v5 to main
+
+# main is the continuous timeline; release/v5 is the working line. They are meant to stay in step,
+# and in practice they drift because nobody remembers to merge. This keeps main current with no
+# PR to review and no step before cutting a release.
+#
+# A real MERGE, not a fast-forward. main absorbs release/v5, which means main permanently carries
+# merge commits that release/v5 does not have, so it is always "ahead" and a fast-forward is
+# structurally impossible after the first merge. An earlier version of this used --ff-only and
+# failed on its first run for exactly that reason.
+#
+# It fails only on a genuine conflict, which is the case that actually needs a human.
+#
+# No bypass is needed. main carries only the Integrity ruleset, which forbids force-pushes and
+# deletion, and a merge commit is neither.
+
+on:
+  push:
+    branches: [ "release/v5" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-main
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Merge release/v5 into main
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          behind=$(git rev-list --count origin/main..origin/release/v5)
+          echo "main is $behind commit(s) behind release/v5"
+          if [ "$behind" = "0" ]; then
+            echo "::notice::main already contains every commit from release/v5"
+            exit 0
+          fi
+
+          git checkout main
+          if ! git merge --no-edit origin/release/v5 -m "Merge release/v5 into main"; then
+            git merge --abort || true
+            echo "::error::release/v5 does not merge cleanly into main. Resolve it by hand once and this stays automatic."
+            exit 1
+          fi
+          git push origin main
+          echo "::notice::main now contains release/v5, at $(git rev-parse --short HEAD)"
