@@ -5,6 +5,13 @@ import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The configuration of one {@link Feature}, defaulted from that feature's resource in the plugin jar and
+ * written under the plugin's data folder. It is created lazily by {@link Feature#createConfig()}, so a
+ * feature reaches its own with {@link Feature#getConfig()} rather than constructing this directly.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-Subsystems#config-layout">Subsystem config layout (wiki)</a>
+ */
 @SuppressWarnings("unused")
 public class FeatureConfig extends SubsystemConfig<Feature> {
 

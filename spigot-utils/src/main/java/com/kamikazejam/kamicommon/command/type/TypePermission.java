@@ -6,6 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+/**
+ * A {@link Permission} matched against those currently registered with the
+ * {@link org.bukkit.plugin.PluginManager}, so a node that no plugin has declared never resolves.
+ */
 public class TypePermission extends TypeAbstractChoice<Permission> {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT

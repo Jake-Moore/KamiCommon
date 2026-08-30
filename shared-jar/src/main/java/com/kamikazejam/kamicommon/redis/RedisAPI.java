@@ -6,6 +6,16 @@ import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.api.sync.RedisCommands;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The handle for one Redis connection, exposing pub/sub channels alongside Lettuce's synchronous and
+ * asynchronous command interfaces. Obtain one from
+ * {@link RedisConnector#getAPI(com.kamikazejam.kamicommon.redis.util.RedisConf)}; the constructor is not
+ * public, and every caller passing an equal {@link com.kamikazejam.kamicommon.redis.util.RedisConf
+ * RedisConf} receives the same shared instance. {@link #shutdown()} releases this caller's claim rather
+ * than closing the connection, and once the last holder has released it this instance is spent.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-Redis">Redis (wiki)</a>
+ */
 @SuppressWarnings("unused")
 public class RedisAPI {
     private final @NotNull RedisManager manager;

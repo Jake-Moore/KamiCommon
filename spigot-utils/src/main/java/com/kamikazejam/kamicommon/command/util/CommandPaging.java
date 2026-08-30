@@ -25,6 +25,15 @@ import java.util.List;
 
 import static com.kamikazejam.kamicommon.util.Txt.Config.TITLE_LINE_LENGTH;
 
+/**
+ * Splits already-rendered lines into pages with a titleized header and clickable page-flip arrows. Call it
+ * synchronously from inside a command's {@code perform}, because it reads the live {@link CommandContext}
+ * and throws {@link NullPointerException} when none is set. The arrows appear only when the command has a
+ * parameter named {@code "page"} and every parameter before it has a default value; page height defaults
+ * to 9 lines for a player and 50 for console.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#paging-long-output">Paging long output (wiki)</a>
+ */
 public class CommandPaging {
     public static final int PAGEHEIGHT_PLAYER = 9;
     public static final int PAGEHEIGHT_CONSOLE = 50;

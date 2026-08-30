@@ -11,6 +11,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The base for types backed by a Java enum, matching an argument against the constant names
+ * case-insensitively and offering those names as completions. A subclass may pass constants to exclude to
+ * the constructor, and an excluded constant is then rejected exactly as an unknown one is.
+ */
 public abstract class TypeEnumChoice<T extends Enum<T>> extends TypeAbstract<T> {
 
     // -------------------------------------------- //

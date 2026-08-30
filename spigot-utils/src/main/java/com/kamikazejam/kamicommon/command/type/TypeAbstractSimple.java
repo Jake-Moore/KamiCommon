@@ -7,6 +7,11 @@ import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A {@link TypeAbstractException} that replaces the thrown exception's message with a uniform one reading
+ * {@code "x" is not a <type name>}. Extend it for a value parsed by a method that throws on bad input,
+ * such as {@link Integer#parseInt(String)}, and implement only {@link #valueOf(String, CommandSender)}.
+ */
 public abstract class TypeAbstractSimple<T> extends TypeAbstractException<T> {
 	// -------------------------------------------- //
 	// CONSTRUCT

@@ -5,6 +5,10 @@ import com.kamikazejam.kamicommon.util.KUtil;
 import java.util.Collection;
 import java.util.TimeZone;
 
+/**
+ * A time zone identifier as a {@link String} rather than a {@link TimeZone}, matched against
+ * {@link TimeZone#getAvailableIDs()}.
+ */
 public class TypeTimeZone extends TypeAbstractChoice<String> {
 	// -------------------------------------------- //
 	// INSTANCE

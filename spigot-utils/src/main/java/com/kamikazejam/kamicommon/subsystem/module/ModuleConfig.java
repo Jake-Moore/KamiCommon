@@ -7,6 +7,13 @@ import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The configuration of one {@link Module}, defaulted from that module's resource in the plugin jar and
+ * written under the plugin's data folder. It is created lazily by {@link Module#createConfig()}, so a
+ * module reaches its own with {@link Module#getConfig()} rather than constructing this directly.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-Subsystems#config-layout">Subsystem config layout (wiki)</a>
+ */
 @SuppressWarnings("unused")
 public class ModuleConfig extends SubsystemConfig<Module> {
 

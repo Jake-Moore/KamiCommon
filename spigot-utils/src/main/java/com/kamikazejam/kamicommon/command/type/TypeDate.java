@@ -9,6 +9,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
+/**
+ * A {@link Date} parsed strictly as {@code yyyy-MM-dd}, carrying no time of day and offering no tab
+ * completions.
+ */
 public class TypeDate extends TypeAbstractSimple<Date> {
 	// -------------------------------------------- //
 	// CONSTANTS

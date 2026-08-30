@@ -8,6 +8,15 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A {@link Requirement} that passes when the sender holds a permission node, obtained with
+ * {@link #get(String)} and attached with {@link KamiCommand#addRequirements(Requirement...)}. The refusal
+ * message is the shared one from {@link KamiCommand.Config} rather than one owned by this class. On a root
+ * command with no explicit {@link KamiCommand#setBukkitCommandPermission(String)}, the Bukkit permission is
+ * derived from the first instance in the requirement list, so a command carrying several should set it.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#requirements">Requirements (wiki)</a>
+ */
 @Getter
 public class RequirementHasPerm extends RequirementAbstract {
 

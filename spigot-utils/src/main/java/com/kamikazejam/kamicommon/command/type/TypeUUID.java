@@ -8,6 +8,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
+/**
+ * A {@link UUID} parsed from its standard string form, or a freshly generated random one when the argument
+ * is {@code "random"}.
+ */
 public class TypeUUID extends TypeAbstractSimple<UUID> {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
