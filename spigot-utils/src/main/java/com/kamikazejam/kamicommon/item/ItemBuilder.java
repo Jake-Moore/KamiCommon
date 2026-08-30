@@ -11,8 +11,7 @@ import com.kamikazejam.kamicommon.item.patch.PatchRemove;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
 import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.Component;
-import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.format.TextDecoration;
+import com.kamikazejam.kamicommon.nms.text.TextDecoration;
 import com.kamikazejam.kamicommon.nms.util.VersionedComponentUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
@@ -228,17 +227,11 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
             // Minecraft made a change where all names and lore are automatically italicized unless explicitly set to false
             // We want to mirror backwards compatibility and more specifically always follow the mini message formatting
             // Thus, we need to set it to false so that our mini message is represented exactly as intended
-            Component component;
-            if (Config.isRemoveAutomaticComponentItalics()) {
-                component = papiName.asInternalComponent().decoration(TextDecoration.ITALIC, false);
-            } else {
-                component = papiName.asInternalComponent();
-            }
+            VersionedComponent component = Config.isRemoveAutomaticComponentItalics()
+                    ? papiName.decorate(TextDecoration.ITALIC, false)
+                    : papiName;
             // Set the name using the updated component
-            VersionedComponentUtil.setDisplayName(
-                    meta,
-                    NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component)
-            );
+            VersionedComponentUtil.setDisplayName(meta, component);
         }
         if (lore != null) {
             // Map to MiniMessage, perform placeholder API replacements, then serialize back to components
@@ -250,17 +243,11 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
             // Minecraft made a change where all names and lore are automatically italicized unless explicitly set to false
             // We want to mirror backwards compatibility and more specifically always follow the mini message formatting
             // Thus, we need to set it to false so that our mini message is represented exactly as intended
-            List<Component> components;
-            if (Config.isRemoveAutomaticComponentItalics()) {
-                components = papiLore.stream().map(c -> c.asInternalComponent().decoration(TextDecoration.ITALIC, false)).collect(Collectors.toList());
-            } else {
-                components = papiLore.stream().map(VersionedComponent::asInternalComponent).collect(Collectors.toList());
-            }
-            // Set the name using the updated component
-            VersionedComponentUtil.setLore(
-                    meta,
-                    components.stream().map(c -> NmsAPI.getVersionedComponentSerializer().fromInternalComponent(c)).collect(Collectors.toList())
-            );
+            List<VersionedComponent> components = Config.isRemoveAutomaticComponentItalics()
+                    ? papiLore.stream().map(c -> c.decorate(TextDecoration.ITALIC, false)).collect(Collectors.toList())
+                    : papiLore;
+            // Set the lore using the updated components
+            VersionedComponentUtil.setLore(meta, components);
         }
 
         // Unbreakable
