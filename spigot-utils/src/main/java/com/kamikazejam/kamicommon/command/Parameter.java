@@ -12,6 +12,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * One declared argument of a {@link KamiCommand}, pairing a {@link Type} with a display name and an optional
+ * default value. Build one with {@link #of(Type)} and the fluent builder; a parameter is required exactly
+ * when no default was supplied, and a default of {@code null} is legal and different from having none.
+ * {@link KamiCommand#addParameter(Parameter)} enforces ordering, throwing {@link IllegalArgumentException}
+ * for a required parameter declared after an optional one and {@link IllegalStateException} for anything
+ * declared after a concatenating one.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#parameters">Parameters (wiki)</a>
+ */
 @Getter
 public class Parameter<T> {
 

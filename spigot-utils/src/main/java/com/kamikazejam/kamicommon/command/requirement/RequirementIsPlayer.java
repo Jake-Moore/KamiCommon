@@ -7,6 +7,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A {@link Requirement} that passes only for a {@link Player} sender, so a command carrying it can never run
+ * from console. Reach the shared instance with {@link #get()} and attach it with
+ * {@link KamiCommand#addRequirements(Requirement...)}; the refusal message is the shared one from
+ * {@link KamiCommand.Config}.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#requirements">Requirements (wiki)</a>
+ */
 public class RequirementIsPlayer extends RequirementAbstract {
 
 	// -------------------------------------------- //

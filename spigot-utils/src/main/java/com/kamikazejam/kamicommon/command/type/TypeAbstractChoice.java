@@ -27,6 +27,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+/**
+ * A {@link Type} base for values drawn from a known set, adding exact, case-insensitive and Levenshtein
+ * matching over that set along with the "no match" and "ambiguous" errors configured on {@link Config}.
+ * Supply the candidates by calling {@link #setAll(Collection)} once, or by overriding {@code getAll()}
+ * when the set changes at runtime. Options and completions are cached from {@code setAll} only while
+ * {@link #canSee(Object, CommandSender)} is not overridden, since a per-sender visibility rule cannot share
+ * a single cache.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#types">Types (wiki)</a>
+ */
 @Getter
 @SuppressWarnings({"unused"})
 public abstract class TypeAbstractChoice<T> extends TypeAbstract<T> implements AllAble<T> {

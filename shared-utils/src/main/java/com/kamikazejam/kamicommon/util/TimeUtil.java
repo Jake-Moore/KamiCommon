@@ -7,6 +7,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * Static helpers for rendering a duration and for resolving a wall-clock time to a {@link Date}. The duration
+ * formatters omit leading units while they are zero, so a value under a minute renders as seconds alone,
+ * and {@link TimeFormat} chooses between the compact and spelled-out forms.
+ * {@link #getDateBy24HourTime(String, TimeZone)} always returns the next future occurrence of that time in
+ * the given zone, never one already past.
+ */
 @SuppressWarnings("unused")
 public class TimeUtil {
     public enum TimeFormat {

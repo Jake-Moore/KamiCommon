@@ -8,6 +8,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 // Not using NamespacedKey because it's deprecated in newer versions
+/**
+ * A namespaced key as a lowercased {@link String} rather than a Bukkit {@code NamespacedKey}, defaulting to
+ * the {@code minecraft} namespace when the argument contains no colon.
+ */
 public class TypeNamespacedKey extends TypeAbstract<String> {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT

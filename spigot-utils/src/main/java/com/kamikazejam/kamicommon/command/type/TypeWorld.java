@@ -6,6 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+/**
+ * A {@link World} matched by name against the worlds currently loaded on the server, so a world that is not
+ * loaded never resolves.
+ */
 public class TypeWorld extends TypeAbstractChoice<World> {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT

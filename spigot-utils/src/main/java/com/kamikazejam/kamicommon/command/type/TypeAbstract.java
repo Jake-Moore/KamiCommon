@@ -19,6 +19,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The base for every {@link Type}, supplying a display name derived from the class name, identity and
+ * equality helpers, and prefix filtering of tab completions. Implement {@link #read(String, CommandSender)}
+ * to parse the argument and {@link #getTabList(CommandSender, String)} to offer completions, rejecting bad
+ * input by throwing {@link com.kamikazejam.kamicommon.util.exception.KamiCommonException} with a message
+ * for the sender rather than by returning {@code null}. Completions are filtered against the partial
+ * argument unless {@link #shouldShowAllTabCompletions()} is overridden to return {@code true}.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#writing-your-own">Writing your own Type (wiki)</a>
+ */
 @SuppressWarnings({"unused"})
 public abstract class TypeAbstract<T> implements Type<T> {
 

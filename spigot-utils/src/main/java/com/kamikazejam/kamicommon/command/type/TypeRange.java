@@ -8,6 +8,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
+/**
+ * An {@link Integer} constrained to a range, built per range with {@link #get(int, int)} rather than shared.
+ * The lower bound is exclusive and the upper bound inclusive, so {@code get(0, 10)} accepts 1 through 10.
+ */
 @SuppressWarnings("unused")
 public class TypeRange extends TypeInteger {
 	// -------------------------------------------- //

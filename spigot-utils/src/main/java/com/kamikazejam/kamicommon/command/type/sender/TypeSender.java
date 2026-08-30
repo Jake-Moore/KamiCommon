@@ -10,7 +10,9 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * Represents a Player currently logged into this server, accessible through the Bukkit API.
+ * A {@link CommandSender}, resolved from the console's reserved id, or from a UUID or the exact name of an
+ * online player. An argument that matches nothing yields {@code null} rather than an error, so unlike the
+ * other sender types this one does not reject an unknown name on the sender's behalf.
  */
 public class TypeSender extends TypeAbstract<CommandSender> {
 

@@ -10,6 +10,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
+/**
+ * A checked exception whose payload is a message for the sender rather than a stack trace. Throw it from a
+ * {@link com.kamikazejam.kamicommon.command.type.Type Type} or from a command's {@code perform} method to
+ * stop execution and tell the sender why; the command framework catches it, sends the attached message if
+ * there is one, and prints nothing to the console. Construct it empty and attach the message with one of
+ * the {@code addMsg} methods, each of which returns {@code this} for chaining.
+ *
+ * @see <a href="https://github.com/Jake-Moore/KamiCommon/wiki/v5-KamiCommand#writing-your-own">Writing your own Type (wiki)</a>
+ */
 @Getter
 @SuppressWarnings({"unused"})
 public class KamiCommonException extends Exception {

@@ -2,6 +2,10 @@ package com.kamikazejam.kamicommon.command.type.enumeration;
 
 import org.bukkit.Material;
 
+/**
+ * A {@link Material} matched by constant name. {@link #get(Material...)} builds a variant that rejects the
+ * given constants, in place of the shared instance.
+ */
 @SuppressWarnings("unused")
 public class TypeMaterial extends TypeEnumChoice<Material> {
 

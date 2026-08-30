@@ -8,6 +8,13 @@ import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A {@link Type} base for parsing that signals failure by throwing. Implement
+ * {@link #valueOf(String, CommandSender)} and let it throw anything on bad input;
+ * {@link #read(String, CommandSender)} catches that and rethrows a {@link KamiCommonException} carrying
+ * {@link #extractErrorMessageMini(String, CommandSender, Exception)}, which defaults to the thrown
+ * exception's own message and is meant to be overridden for anything a player will read.
+ */
 public abstract class TypeAbstractException<T> extends TypeAbstract<T> {
     // -------------------------------------------- //
     // ABSTRACT

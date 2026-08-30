@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * The raw argument, passed through unchanged. Offers no tab completions.
+ */
 public class TypeString extends TypeAbstract<String> {
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
