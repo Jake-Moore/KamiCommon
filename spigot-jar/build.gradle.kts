@@ -115,6 +115,14 @@ configure<Javadoc_publish_convention_gradle.JavadocPublishExtension> {
     )
     moduleName = "spigot-jar"
     usesShadow = true
+    // spigot-jar shades KamiCommonNMS whole, so a consumer resolves no spigot-nms module and an IDE has
+    // nowhere to attach its javadoc. Fold the NMS sources into ours instead. The version is read from
+    // spigot-utils, which is where the dependency is declared.
+    shadedSources = listOf("com.kamikazejam.kamicommon:spigot-nms")
+    // KamiCommonNMS's :core declares WorldEdit compileOnly, which its published metadata does not carry.
+    // Keep this aligned with core/build.gradle.kts in KamiCommonNMS or aggregateJavadoc fails to resolve
+    // Clipboard in WorldEditHook.
+    shadedSourcesClasspath = listOf("com.sk89q.worldedit:bukkit:6.1.9")
 }
 
 tasks.register("printServerAPI") {
