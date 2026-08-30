@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.menu.api.loaders.menu;
 
 import com.kamikazejam.kamicommon.yaml.spigot.MemorySection;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -8,19 +9,25 @@ import org.yaml.snakeyaml.nodes.MappingNode;
 
 import java.io.StringReader;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Covers the {@code icons:} guard in {@link SimpleMenuLoader#loadMenu(com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection)}.
+ * Pins the fact that a menu section is allowed to have no {@code icons:} block.
  * <p>
  * {@code getConfigurationSection} is {@code @NotNull} and hands back an EMPTY section for a key
- * that is not present, so a menu whose {@code icons:} block was missing, misspelled or mis-indented
- * loaded as a menu with zero icons and opened as an empty inventory, with nothing naming the
- * config. The loader now refuses it and says where.
+ * that is not present, so a menu with no {@code icons:} block loads with no icons and keeps
+ * whatever {@code filler:} it declares. That is deliberate and it is the common shape: most
+ * menu-shaped configs in use have no {@code icons:} block at all. alpha.50 briefly rejected them;
+ * this file exists so that cannot come back, as neither a throw nor a warning.
  * <p>
- * No live server is needed. Everything up to and including the guard is config parsing.
+ * <b>How these assert without a server.</b> Bukkit is not on this module's test classpath, so
+ * {@code loadMenu} cannot run to completion: it dies inside {@code new SimpleMenu.Builder(...)}
+ * with a {@link LinkageError} for a missing Bukkit type. Reaching that point is the assertion.
+ * Every config-shaped rejection {@code loadMenu} can make happens strictly before it, so a
+ * {@link LinkageError} proves the section was accepted, and a config-shaped exception proves it
+ * was not. Nothing here depends on the error staying a {@link LinkageError}: if Bukkit is ever
+ * added to the test classpath these keep passing, because completing normally is also an accept.
  */
 class SimpleMenuLoaderTest {
 
@@ -29,54 +36,75 @@ class SimpleMenuLoaderTest {
         return new MemorySection(node, path, null);
     }
 
-    @Test
-    @DisplayName("a menu with no icons block fails, naming the section and the key")
-    void missingIconsBlockThrows() {
-        MemorySection s = section("menus.shop", "title: '&aShop'\nrows: 3\n");
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> SimpleMenuLoader.loadMenu(s));
-        assertTrue(e.getMessage().contains("menus.shop"), "message must name the section: " + e.getMessage());
-        assertTrue(e.getMessage().contains("icons"), "message must name the key: " + e.getMessage());
-    }
-
-    @Test
-    @DisplayName("an icons key with nothing under it is treated the same as a missing one")
-    void emptyIconsBlockThrows() {
-        MemorySection s = section("menus.shop", "title: '&aShop'\nrows: 3\nicons:\n");
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> SimpleMenuLoader.loadMenu(s));
-        assertTrue(e.getMessage().contains("menus.shop"), "message must name the section: " + e.getMessage());
-    }
-
-    @Test
-    @DisplayName("a menu at the config root still produces a readable message")
-    void rootSectionMessageIsReadable() {
-        MemorySection s = section("", "title: '&aShop'\nrows: 3\n");
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> SimpleMenuLoader.loadMenu(s));
-        assertTrue(e.getMessage().contains("(config root)"),
-                "an empty path must not render as '': " + e.getMessage());
-    }
-
-    @Test
-    @DisplayName("a menu WITH an icons block gets past the guard")
-    void presentIconsBlockPassesTheGuard() {
-        MemorySection s = section("menus.shop",
-                "title: '&aShop'\nrows: 3\nicons:\n  filler:\n    material: STONE\n    slot: 0\n");
-        // Icon loading itself needs a live server (XMaterial reads the running version), so this
-        // only asserts that the guard is not what stops it.
-        Throwable t = assertDoesNotThrow(() -> {
-            try {
-                SimpleMenuLoader.loadMenu(s);
-                return null;
-            } catch (Throwable caught) {
-                return caught;
-            }
-        });
-        if (t != null) {
-            assertTrue(!(t instanceof IllegalArgumentException)
-                            || !String.valueOf(t.getMessage()).contains("has no 'icons' block"),
-                    "the icons guard rejected a section that HAS an icons block: " + t);
+    /** Runs the loader and returns whatever it threw, or null if it completed. */
+    private static @Nullable Throwable load(MemorySection section) {
+        try {
+            SimpleMenuLoader.loadMenu(section);
+            return null;
+        } catch (Throwable t) {
+            return t;
         }
     }
+
+    /** Asserts the loader ACCEPTED this section, meaning it got as far as building the menu. */
+    private static void assertAccepted(MemorySection section, String what) {
+        Throwable t = load(section);
+        if (t == null || t instanceof LinkageError) { return; }
+        fail("loadMenu rejected " + what + ", which it must accept: "
+                + t.getClass().getName() + ": " + t.getMessage());
+    }
+
+    @Test
+    @DisplayName("a menu with no icons block loads")
+    void missingIconsBlockLoads() {
+        assertAccepted(section("menus.shop", "title: '&aShop'\nrows: 3\n"),
+                "a menu section with no icons block");
+    }
+
+    @Test
+    @DisplayName("an icons key with nothing under it loads")
+    void emptyIconsBlockLoads() {
+        assertAccepted(section("menus.shop", "title: '&aShop'\nrows: 3\nicons:\n"),
+                "a menu section with an empty icons block");
+    }
+
+    @Test
+    @DisplayName("a menu with no icons block at the config root loads")
+    void rootSectionWithNoIconsLoads() {
+        assertAccepted(section("", "title: '&aShop'\nrows: 3\n"),
+                "a menu section at the config root with no icons block");
+    }
+
+    @Test
+    @DisplayName("a filler-only menu loads, which is the common shape")
+    void fillerOnlyMenuLoads() {
+        assertAccepted(section("features.backpack.menu",
+                        "title: '&aBackpack'\nrows: 6\nfiller:\n  material: BLACK_STAINED_GLASS_PANE\n"),
+                "a menu section with a filler and no icons block");
+    }
+
+    @Test
+    @DisplayName("a menu WITH an icons block still loads")
+    void presentIconsBlockLoads() {
+        assertAccepted(section("menus.shop",
+                        "title: '&aShop'\nrows: 3\nicons:\n  sword:\n    material: STONE\n    slot: 0\n"),
+                "a menu section with an icons block");
+    }
+
+    @Test
+    @DisplayName("an unusable size is still the error it always was")
+    void unusableSizeStillFails() {
+        // The guard alpha.50 added ran before this one and would have masked it. Nothing to do
+        // with icons, and the point: the ONLY thing loadMenu rejects a section for is its size.
+        Throwable t = load(section("menus.shop", "title: '&aShop'\n"));
+        assertTrue(t instanceof IllegalStateException,
+                "expected IllegalStateException for a menu with no rows and no type, got " + t);
+        assertTrue(String.valueOf(t.getMessage()).contains("menus.shop"),
+                "the size error must still name the section: " + t.getMessage());
+    }
+
+    // An unparseable 'type:' cannot be covered here. MenuSizeLoader reaches InventoryType.valueOf,
+    // and InventoryType is a Bukkit enum, so off-server that raises a LinkageError instead of the
+    // IllegalStateException a real server raises. The no-rows-and-no-type case above exercises the
+    // same throw without needing Bukkit.
 }
