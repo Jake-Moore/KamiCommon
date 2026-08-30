@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api("com.kamikazejam.kamicommon:spigot-nms:1.2.31")
+    api("com.kamikazejam.kamicommon:spigot-nms:1.2.32")
     api(project(":standalone-utils")) // Also includes shared-utils
 
     api("com.google.code.gson:gson:2.14.0")

@@ -77,9 +77,18 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
     }
 
     @Override
+    protected @NotNull String getSubsystemConfigSection() {
+        // The 'features' section of the plugin's features.yml. Not FEATURES_FOLDER: that names the
+        // directory on disk, and the two only look alike.
+        return "features";
+    }
+
+    @Override
     public final @NotNull VersionedComponent getPrefix() {
         KamiConfigExt c = getPlugin().getFeaturesConfig();
-        String key = "features." + getName() + ".featurePrefix";
+        // Was "features." + getName() + ".featurePrefix", the raw name, while modules normalised
+        // spaces. Both now go through AbstractSubsystem#getSubsystemConfigKey.
+        String key = getSubsystemConfigKey() + ".featurePrefix";
         String def = defaultPrefix().serializeMiniMessage();
 
         // Warn if the feature does not have a prefix entry in the config so the plugin author can go add a default in the resource file
