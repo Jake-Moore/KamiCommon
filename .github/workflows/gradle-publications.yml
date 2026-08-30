@@ -2,8 +2,10 @@ name: Gradle Publish & Release
 
 on:
   push:
-    # Run on 'main' (for releases) and on 'release/v5' (for pre-releases)
-    branches: [ "main", "release/v5" ]
+    # release/v5 is the working line and does ALL releasing, prerelease and final.
+    # main is the continuous timeline and triggers nothing: it exists so each release
+    # line can be frozen when superseded without swapping the default branch.
+    branches: [ "release/v5" ]
     # A merge publishes immediately, and the publish OVERWRITES whatever already sits at that
     # coordinate. A change that cannot affect the artifact must not trigger one.
     #
@@ -171,7 +173,7 @@ jobs:
   release:
     needs: setup
     # Run only for commits into main, with valid versions that match the release pattern
-    if: "github.ref == 'refs/heads/main' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_release == 'true' && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
+    if: "github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_release == 'true' && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
     runs-on: ubuntu-latest
     permissions:
       contents: write # Access to Publish a Release
@@ -388,7 +390,7 @@ jobs:
   docs:
     needs: setup
     # Run only for commits with valid versions that match the release OR prerelease pattern on their respective branches
-    if: "needs.setup.outputs.is_valid == 'true' && ((github.ref == 'refs/heads/main' && needs.setup.outputs.is_release == 'true') || (github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_prerelease == 'true')) && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
+    if: "needs.setup.outputs.is_valid == 'true' && github.ref == 'refs/heads/release/v5' && (needs.setup.outputs.is_release == 'true' || needs.setup.outputs.is_prerelease == 'true') && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
 
     runs-on: ubuntu-latest
     permissions:

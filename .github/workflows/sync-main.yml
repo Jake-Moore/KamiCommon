@@ -1,0 +1,60 @@
+name: Sync release/v5 to main
+
+# main is the continuous timeline; release/v5 is the working line. They are meant to stay in step,
+# and in practice they drift because nobody remembers to merge. This keeps main current with no
+# PR to review and no step before cutting a release.
+#
+# Fast-forward ONLY. If main has drifted so that a fast-forward is impossible, this fails loudly
+# rather than creating a merge commit nobody asked for: main having its own commits means something
+# unexpected happened, and quietly merging would hide it. The two times that has occurred were both
+# single-file cherry-picks of renovate.json, made to work around Renovate reading its config from
+# the default branch.
+#
+# No bypass is needed. main carries only the Integrity ruleset, which forbids force-pushes and
+# deletion, and a fast-forward is neither.
+
+on:
+  push:
+    branches: [ "release/v5" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-main
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Fast-forward main to release/v5
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          behind=$(git rev-list --count origin/main..origin/release/v5)
+          ahead=$(git rev-list --count origin/release/v5..origin/main)
+          echo "main is $behind commit(s) behind and $ahead commit(s) ahead of release/v5"
+
+          if [ "$behind" = "0" ]; then
+            echo "::notice::main is already up to date"
+            exit 0
+          fi
+
+          if [ "$ahead" != "0" ]; then
+            echo "::error::main has $ahead commit(s) that release/v5 does not, so it cannot be fast-forwarded."
+            echo "Merge release/v5 into main by hand once, then this stays automatic again."
+            git log --oneline origin/release/v5..origin/main
+            exit 1
+          fi
+
+          git checkout main
+          git merge --ff-only origin/release/v5
+          git push origin main
+          echo "::notice::main fast-forwarded $behind commit(s) to $(git rev-parse --short HEAD)"
