@@ -2,9 +2,13 @@ package com.kamikazejam.kamicommon.subsystem.feature;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.module.Module;
+import com.kamikazejam.kamicommon.util.ColoredStringParser;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -23,7 +27,7 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
      * @return The default logging prefix for this subsystem (saved under the KamiPlugin featuresConfig featurePrefix)
      */
     @Override
-    public abstract @NotNull String defaultPrefix();
+    public abstract @NotNull VersionedComponent defaultPrefix();
 
     // -------------------------------------------- //
     // FEATURE CONFIG
@@ -50,8 +54,9 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
         }
     }
 
+    @OverrideOnly
     @Override
-    protected @NotNull FeatureConfig createConfig() {
+    public @NotNull FeatureConfig createConfig() {
         @NotNull String configResourcePath = this.getConfigResourcePath();
         // Double check we can obtain the resource stream (may throw)
         SubsystemConfig.getIS(this, configResourcePath);
@@ -60,17 +65,29 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
     }
 
     @Override
-    public final @NotNull String getPrefix() {
-        KamiConfigExt c = getPlugin().getModulesConfig();
-        String prefix = c.getString("features." + getName() + ".featurePrefix", null);
-        if (prefix != null) { return prefix; }
+    public final @NotNull VersionedComponent getPrefix() {
+        KamiConfigExt c = getPlugin().getFeaturesConfig();
+        String key = "features." + getName() + ".featurePrefix";
+        String def = defaultPrefix().serializeMiniMessage();
 
-        String def = defaultPrefix();
-        c.setString("features." + getName() + ".featurePrefix", def);
-        c.save();
-        return def;
+        // Warn if the feature does not have a prefix entry in the config so the plugin author can go add a default in the resource file
+        if (!c.contains(key)) {
+            this.getLogger().warn(NmsAPI.getVersionedComponentSerializer().fromPlainText(
+                    "Feature '" + getName() + "' missing string key '" + key + "' in the features config. Using default: " + def
+            ));
+        }
+
+        return ColoredStringParser.parse(
+                c.getString(key, def)
+        );
     }
 
+    /**
+     * The data folder for this feature, located at:<br>
+     * /home/container/plugins/&lt;plugin&gt;/features/&lt;feature&gt;/<br>
+     * <br>
+     * If the folder does not exist, it will be created automatically.
+     */
     @NotNull
     public File getFeatureDataFolder() {
         File dataFolder = getPlugin().getDataFolder();
@@ -82,5 +99,18 @@ public abstract class Feature extends AbstractSubsystem<FeatureConfig, Feature> 
             }
         }
         return featureFolder;
+    }
+
+    /**
+     * The absolute path to the data folder for this feature, i.e.:<br>
+     * /home/container/plugins/&lt;plugin&gt;/features/&lt;feature&gt;/<br>
+     * <br>
+     * This is just the File's absolute path, it does not create the folder if it does not exist.
+     */
+    @NotNull
+    public String getFeatureDataPath() {
+        File dataFolder = getPlugin().getDataFolder();
+        File featureFolder = new File(dataFolder + File.separator + FEATURES_FOLDER + File.separator + getName());
+        return featureFolder.getAbsolutePath();
     }
 }

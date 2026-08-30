@@ -10,6 +10,7 @@ import com.kamikazejam.kamicommon.menu.api.clicks.transform.MenuClickTransform;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.MenuIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StatefulIconModifier;
 import com.kamikazejam.kamicommon.menu.api.icons.interfaces.modifier.StaticIconModifier;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -144,9 +145,11 @@ public class MenuIcon<M extends Menu<M>> {
         if (next == null) { return null; }
 
         // Modify the builder
-        if (modifier instanceof StaticIconModifier builderModifier) {
+        if (modifier instanceof StaticIconModifier) {
+            StaticIconModifier builderModifier = (StaticIconModifier) modifier;
             next = builderModifier.modify(next);
-        } else if (modifier instanceof StatefulIconModifier updateModifier) {
+        } else if (modifier instanceof StatefulIconModifier) {
+            StatefulIconModifier updateModifier = (StatefulIconModifier) modifier;
             // Use the existing ItemStack (if available) so that stateful modifications can reference it
             //  while building the state of the new ItemBuilder (which is a copy of the initial configuration)
             next = updateModifier.modify(next, this.getLastItem(), player, tick);
@@ -207,7 +210,8 @@ public class MenuIcon<M extends Menu<M>> {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {return true;}
-        if (!(obj instanceof MenuIcon<?> menuIcon)) {return false;}
+        if (!(obj instanceof MenuIcon)) {return false;}
+        MenuIcon<?> menuIcon = (MenuIcon<?>) obj;
         return enabled == menuIcon.enabled
                 && itemBuilders.equals(menuIcon.itemBuilders)
                 && Objects.equals(transform, menuIcon.transform)
@@ -231,7 +235,7 @@ public class MenuIcon<M extends Menu<M>> {
     @Configurable
     public static class Config {
         @Getter @Setter
-        private static @NotNull ItemBuilder defaultFillerIconBuilder = new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName(" ");
+        private static @NotNull ItemBuilder defaultFillerIconBuilder = new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).displayName(NmsAPI.getVersionedComponentSerializer().fromPlainText(" "));
     }
 }
 

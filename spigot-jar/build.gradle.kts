@@ -7,6 +7,12 @@ plugins {
     id("com.gradleup.shadow")
 }
 
+// The plugin jar a 1.8.8 server loads.
+// See buildSrc/src/main/kotlin/module-floor-convention.gradle.kts for what each setting does.
+extra["moduleFloor"] = 8
+apply(plugin = "module-floor-convention")
+
+
 repositories {
     maven(url = "https://repo.papermc.io/repository/maven-public/")
 }
@@ -32,7 +38,6 @@ tasks {
         archiveClassifier.set("")
         archiveBaseName.set("KamiCommon")
 
-        // From particlenativeapi
         exclude("LICENSE*", "META-INF/LICENSE*")
         exclude("License*", "META-INF/License*")
 
@@ -42,7 +47,6 @@ tasks {
 
         // KamiCommonNMS
         relocate("com.cryptomorin.xseries", "com.kamikazejam.kamicommon.xseries")
-        relocate("com.github.fierioziy.particlenativeapi", "com.kamikazejam.kamicommon.particleapi")
         relocate("de.tr7zw.changeme.nbtapi", "com.kamikazejam.kamicommon.nbtapi")
         // shared-jar
         relocate("com.zaxxer.hikari", "com.kamikazejam.kamicommon.hikari")
@@ -98,9 +102,6 @@ tasks {
 //    tasks.getByName("publishShadowPublicationToMavenRepository").dependsOn(tasks.jar)
 //}
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
 
 // Configure javadoc-publish-convention
 configure<Javadoc_publish_convention_gradle.JavadocPublishExtension> {
@@ -122,3 +123,6 @@ tasks.register("printServerAPI") {
     }
 }
 tasks.compileJava.get().dependsOn(tasks.named("printServerAPI"))
+
+apply(from = "$rootDir/gradle/verify-floor.gradle.kts")
+

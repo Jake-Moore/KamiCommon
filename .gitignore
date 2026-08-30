@@ -1,5 +1,6 @@
 # User-specific stuff
-.idea/
+/.idea/*
+!/.idea/runConfigurations
 
 *.iml
 *.ipr
@@ -113,5 +114,5 @@ run/
 .gradle/caches
 **/.gradle
 **/build
-gradle
+
 

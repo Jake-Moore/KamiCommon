@@ -1,12 +1,15 @@
 package com.kamikazejam.kamicommon.menu.api.loaders.menu;
 
+import com.kamikazejam.kamicommon.menu.AbstractMenuBuilder;
+import com.kamikazejam.kamicommon.menu.Menu;
 import com.kamikazejam.kamicommon.menu.SimpleMenu;
 import com.kamikazejam.kamicommon.menu.api.icons.MenuIcon;
 import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.api.loaders.IconSlotLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuSizeLoader;
-import com.kamikazejam.kamicommon.util.StringUtil;
+import com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider;
+import com.kamikazejam.kamicommon.util.ColoredStringParser;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +34,7 @@ public class SimpleMenuLoader {
     public static @NotNull SimpleMenu.Builder loadMenu(@NotNull ConfigurationSection section) {
         // Load title from 'title' or 'name', defaulting to " "
         String title = section.getString("title", section.getString("name", " "));
-        SimpleMenu.Builder builder = new SimpleMenu.Builder(MenuSizeLoader.load(section)).title(StringUtil.t(title));
+        SimpleMenu.Builder builder = (SimpleMenu.Builder) setTitle(new SimpleMenu.Builder(MenuSizeLoader.load(section)), title);
 
         // Load Filler Icon
         if (section.isConfigurationSection("filler")) {
@@ -51,5 +54,15 @@ public class SimpleMenuLoader {
         }
 
         return builder;
+    }
+
+    /**
+     * See {@link ColoredStringParser#parse(String)} for parsing details.
+     */
+    public static <M extends Menu<M>, T extends AbstractMenuBuilder<M, T>> @NotNull AbstractMenuBuilder<M, T> setTitle(
+            @NotNull AbstractMenuBuilder<M, T> builder,
+            @NotNull String titleString
+    ) {
+        return builder.title((ComponentMenuTitleProvider) (player) -> ColoredStringParser.parse(titleString));
     }
 }

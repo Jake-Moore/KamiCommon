@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.subsystem;
 
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,7 +14,8 @@ import java.io.InputStream;
 public abstract class SubsystemConfig<S extends AbstractSubsystem<?, S>> extends KamiConfigExt {
     private final @NotNull S subsystem;
 
-    public SubsystemConfig(
+    // Constructor for subsystems storing configs in Files on the server filesystem
+    protected SubsystemConfig(
             @NotNull S subsystem,
             @NotNull String resourcePath
     ) {
@@ -26,19 +28,39 @@ public abstract class SubsystemConfig<S extends AbstractSubsystem<?, S>> extends
                 () -> SubsystemConfig.getIS(subsystem, resourcePath)
         );
         this.subsystem = subsystem;
-
-        // Add defaults to the config
-        addConfigDefaults();
     }
 
+    /**
+     * Constructor for subsystems using ConfigSource (e.g. from a database or other source)
+     * @param subsystem The parent subsystem
+     * @param source The config source where the yaml contents will be read from
+     * @param resourcePath The resource path to the default config file inside the plugin jar
+     */
+    protected SubsystemConfig(
+            @NotNull S subsystem,
+            @NotNull ConfigSource source,
+            @NotNull String resourcePath
+    ) {
+        super(
+                // Plugin
+                subsystem.getPlugin(),
+                // Config source
+                source,
+                // Supplier for config resource input stream
+                () -> SubsystemConfig.getIS(subsystem, resourcePath)
+        );
+        this.subsystem = subsystem;
+    }
+
+    /**
+     * Helper method to get a resource {@link InputStream} from a subsystem's plugin.
+     */
     public static @NotNull InputStream getIS(@NotNull AbstractSubsystem<?,?> subsystem, @NotNull String resourcePath) {
         return Preconditions.checkNotNull(
                 subsystem.getPlugin().getResource(resourcePath),
                 "Subsystem ('" + subsystem.getName() + "') resource stream is null: '" + resourcePath + "'"
         );
     }
-
-    public abstract void addConfigDefaults();
 
     @NotNull
     public S getSubsystem() {

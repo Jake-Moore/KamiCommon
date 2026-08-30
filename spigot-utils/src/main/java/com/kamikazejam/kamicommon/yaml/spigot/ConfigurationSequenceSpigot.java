@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.yaml.spigot;
 
 import com.kamikazejam.kamicommon.yaml.base.ConfigurationSequence;
+import java.util.Collections;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.MappingNode;
@@ -17,11 +18,12 @@ public class ConfigurationSequenceSpigot extends ConfigurationSequence<Configura
 
     @Override
     protected @NotNull List<ConfigurationSection> loadSections(@Nullable SequenceNode sequenceNode, String newPath) {
-        if (sequenceNode == null) return List.of();
+        if (sequenceNode == null) return Collections.emptyList();
         List<ConfigurationSection> sections = new ArrayList<>();
 
         for (Node node : sequenceNode.getValue()) {
-            if (node instanceof MappingNode mappingNode) {
+            if (node instanceof MappingNode) {
+                MappingNode mappingNode = (MappingNode) node;
                 sections.add(new MemorySection(mappingNode, newPath, this.parent));
             } else {
                 throw new IllegalStateException("Sequence contains non-mapping element at path: " + newPath);

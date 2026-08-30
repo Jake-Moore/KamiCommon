@@ -1,6 +1,5 @@
 package com.kamikazejam.kamicommon.util;
 
-import com.kamikazejam.kamicommon.nms.NmsAPI;
 import com.kamikazejam.kamicommon.util.collections.KamiList;
 import com.kamikazejam.kamicommon.util.collections.KamiMap;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
@@ -8,8 +7,6 @@ import com.kamikazejam.kamicommon.util.collections.KamiTreeSet;
 import com.kamikazejam.kamicommon.util.comparator.ComparatorCaseInsensitive;
 import com.kamikazejam.kamicommon.util.predicate.Predicate;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -24,7 +21,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,37 +112,6 @@ public class KUtil {
     }
 
     // -------------------------------------------- //
-    // COLOR CODE FROM HEX
-    // -------------------------------------------- //
-
-    public static ChatColor getNearestChatColor(String hex) {
-
-        Color color = new Color(Integer.decode(hex));
-
-        ChatColor nearest = null;
-        Double distance = null;
-
-        for (ChatColor chatColor : ChatColor.values()) {
-
-            if (!chatColor.isColor()) continue;
-
-            @Nullable Color checkColor = NmsAPI.getJavaColor(chatColor);
-            if (checkColor == null) continue;
-            int deltaR = color.getRed() - checkColor.getRed();
-            int deltaG = color.getGreen() - checkColor.getGreen();
-            int deltaB = color.getBlue() - checkColor.getBlue();
-
-            double delta = Math.sqrt((deltaR * deltaR) + (deltaG * deltaG) + (deltaB * deltaB));
-            if (distance == null || delta < distance) {
-                nearest = chatColor;
-                distance = delta;
-            }
-        }
-
-        return nearest;
-    }
-
-    // -------------------------------------------- //
     // GET ONLINE SENDERS
     // -------------------------------------------- //
     // Used for retrieving the full set of senders currently present on this server.
@@ -187,7 +152,8 @@ public class KUtil {
         // Now return the playersObject.
         if (playersObject instanceof Collection<?>) {
             return (Collection<Player>) playersObject;
-        } else if (playersObject instanceof Player[] playersArray) {
+        } else if (playersObject instanceof Player[]) {
+            Player[] playersArray = (Player[]) playersObject;
             return Arrays.asList(playersArray);
         } else {
             throw new RuntimeException("Failed retrieving online players.");
@@ -220,14 +186,16 @@ public class KUtil {
         }
 
         // UUID
-        if (senderObject instanceof UUID uuid) {
+        if (senderObject instanceof UUID) {
+            UUID uuid = (UUID) senderObject;
             // Attempt finding player
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) return player;
         }
 
         // String
-        if (senderObject instanceof String string) {
+        if (senderObject instanceof String) {
+            String string = (String) senderObject;
             // Recurse as UUID
             UUID uuid = KUtil.asUuid(string);
             if (uuid != null) return getSender(uuid);
@@ -319,7 +287,8 @@ public class KUtil {
 
     @Contract("null -> false")
     public static boolean isNpc(Object object) {
-        if (!(object instanceof Metadatable metadatable)) return false;
+        if (!(object instanceof Metadatable)) return false;
+        Metadatable metadatable = (Metadatable) object;
         try {
             return metadatable.hasMetadata("NPC");
         } catch (UnsupportedOperationException e) {
@@ -357,46 +326,10 @@ public class KUtil {
     }
 
     @Contract("null -> true")
-    public static boolean isNothing(ItemStack itemStack) {
+    public static boolean isNothing(@Nullable ItemStack itemStack) {
         if (itemStack == null) return true;
         if (itemStack.getAmount() == 0) return true;
         return itemStack.getType() == Material.AIR;
-    }
-
-
-    @Contract(pure = true)
-    public static ChatColor getChatColor(@NotNull DyeColor dyeColor) {
-        if (dyeColor.equals(DyeColor.WHITE)) {
-            return ChatColor.WHITE;
-        } else if (dyeColor.equals(DyeColor.ORANGE)) {
-            return ChatColor.GOLD;
-        } else if (dyeColor.equals(DyeColor.MAGENTA) || dyeColor.equals(DyeColor.PINK)) {
-            return ChatColor.LIGHT_PURPLE;
-        } else if (dyeColor.equals(DyeColor.LIGHT_BLUE)) {
-            return ChatColor.AQUA;
-        } else if (dyeColor.equals(DyeColor.YELLOW)) {
-            return ChatColor.YELLOW;
-        } else if (dyeColor.equals(DyeColor.LIME)) {
-            return ChatColor.GREEN;
-        } else if (dyeColor.equals(DyeColor.GRAY)) {
-            return ChatColor.DARK_GRAY;
-        } else if (dyeColor.name().equalsIgnoreCase("LIGHT_GRAY") || dyeColor.equals(DyeColor.BROWN)) {
-            return ChatColor.GRAY;
-        } else if (dyeColor.equals(DyeColor.CYAN)) {
-            return ChatColor.DARK_AQUA;
-        } else if (dyeColor.equals(DyeColor.PURPLE)) {
-            return ChatColor.DARK_PURPLE;
-        } else if (dyeColor.equals(DyeColor.BLUE)) {
-            return ChatColor.BLUE;
-        } else if (dyeColor.equals(DyeColor.GREEN)) {
-            return ChatColor.DARK_GREEN;
-        } else if (dyeColor.equals(DyeColor.RED)) {
-            return ChatColor.RED;
-        } else if (dyeColor.equals(DyeColor.BLACK)) {
-            return ChatColor.BLACK;
-        } else {
-            throw new RuntimeException("Unknown DyeColor " + dyeColor);
-        }
     }
 
     // -------------------------------------------- //

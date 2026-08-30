@@ -9,7 +9,7 @@
 // Invalid Versions:
 //   - Any version not matching one of the above formats will not be published. Publication will be skipped.
 @Suppress("PropertyName")
-var VERSION = "5.0.0-alpha.23" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
+var VERSION = "5.0.0-alpha.40" // -SNAPSHOT REQUIRED for dev builds to the snapshots repo
 
 plugins { // needed for the allprojects section to work
     id("java")
@@ -19,8 +19,8 @@ plugins { // needed for the allprojects section to work
 }
 
 // Testing server APIs (the earliest supported version, and the latest PaperMC version)
-val oldestServerAPI = "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED-KC"
-val newestServerAPI = "io.papermc.paper:paper-api:1.21.9-R0.1-SNAPSHOT"
+val oldestServerAPI = "net.techcable.tacospigot:server:1.8.8-R0.2-REDUCED"
+val newestServerAPI = "io.papermc.paper:paper-api:26.2.build.120-stable"
 ext {
     // Use ENV variable to switch between oldest and newest API for testing
     val useNewestAPI: String? = System.getenv("MC_SERVER_NEWEST_API")
@@ -80,8 +80,8 @@ allprojects {
         testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
 
         // IntelliJ annotations
-        compileOnly("org.jetbrains:annotations:26.0.2")
-        testImplementation("org.jetbrains:annotations:26.0.2")
+        compileOnly("org.jetbrains:annotations:26.0.2-1")
+        testImplementation("org.jetbrains:annotations:26.0.2-1")
     }
 
     // We want UTF-8 for everything

@@ -7,6 +7,7 @@ import com.kamikazejam.kamicommon.util.interfaces.Identified;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +42,8 @@ public abstract class TypeAbstract<T> implements Type<T> {
 	@Nullable
 	public String getName(@Nullable T value) {
 		if (value == null) return null;
-		if (value instanceof Named named) {
+		if (value instanceof Named) {
+		    Named named = (Named) value;
 			return named.getName();
 		}
 		return this.getId(value);
@@ -58,7 +60,8 @@ public abstract class TypeAbstract<T> implements Type<T> {
 	@Nullable
 	public String getId(@Nullable T value) {
 		if (value == null) return null;
-		if (value instanceof Identified identified) {
+		if (value instanceof Identified) {
+		    Identified identified = (Identified) value;
             return identified.getId();
 		} else if (value instanceof String || value instanceof Number || value instanceof Boolean) {
 			return value.toString();
@@ -94,10 +97,29 @@ public abstract class TypeAbstract<T> implements Type<T> {
 	// TAB LIST
 	// -------------------------------------------- //
 
+    /**
+     * Should this type show all tab completions provided by {@link #getTabList(CommandSender, String)}
+     * even if they don't start with what the user has already typed in?
+     *
+     * @return true to show all tab completions, false to filter them based on starting characters.
+     */
+    @OverrideOnly
+    public boolean shouldShowAllTabCompletions() {
+        return false;
+    }
+
 	@Override
 	public final List<String> getTabListFiltered(CommandSender sender, String arg) {
 		// Get the raw tab list.
 		Collection<String> raw = this.getTabList(sender, arg);
+
+        // Determine if we should show all completions or filter them.
+        if (this.shouldShowAllTabCompletions()) {
+            List<String> ret = new ArrayList<>(raw);
+            cleanSuggestions(ret);
+            ret = prepareForSpaces(ret, arg);
+            return ret;
+        }
 
 		// Handle null case.
 		if (raw == null || raw.isEmpty()) return Collections.emptyList();
@@ -144,7 +166,7 @@ public abstract class TypeAbstract<T> implements Type<T> {
 			// ...then we want the first one to have the prefix.
 			// That prefix is not removed automatically,
 			// due to how tab completion works.
-			final String current = ret.getFirst();
+			final String current = ret.get(0);
 			String result = prefix;
 			if (!current.isEmpty()) {
 				if (result.charAt(result.length() - 1) != ' ') result += ' ';
@@ -188,7 +210,7 @@ public abstract class TypeAbstract<T> implements Type<T> {
 			ret.append(compared.charAt(i));
 		}
 
-		if (ret.isEmpty()) return "";
+		if (ret.length() == 0) return "";
 
 		int lastSpace = ret.lastIndexOf(" ");
 		if (lastSpace == -1) return "";

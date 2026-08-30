@@ -11,6 +11,7 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.reactive.RedisPubSubReactiveCommands;
+import java.util.Arrays;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -162,7 +163,7 @@ class RedisManager implements Service {
             if (reactive == null) {
                 reactive = redisPubSub.reactive();
             }
-            final List<String> channelList = List.of(channels);
+            final List<String> channelList = Arrays.asList(channels);
 
             // Subscribe to the channel
             reactive.subscribe(channels).subscribe();

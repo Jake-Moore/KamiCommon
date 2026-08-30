@@ -2,6 +2,7 @@ package com.kamikazejam.kamicommon.menu;
 
 import com.google.common.collect.Sets;
 import com.kamikazejam.kamicommon.SpigotUtilsSource;
+import com.kamikazejam.kamicommon.menu.api.callbacks.MenuDragCallback;
 import com.kamikazejam.kamicommon.menu.api.clicks.data.MenuClickData;
 import com.kamikazejam.kamicommon.menu.api.clicks.data.PlayerClickData;
 import com.kamikazejam.kamicommon.menu.api.clicks.transform.MenuClickTransform;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -50,8 +52,12 @@ public final class MenuManager implements Listener, Runnable {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @EventHandler
     public void onClickMenu(InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player player)) {return;}
-        if (!(e.getInventory().getHolder() instanceof Menu menu)) {return;}
+        Object playerSource = e.getWhoClicked();
+        if (!(playerSource instanceof Player)) {return;}
+        Player player = (Player) playerSource;
+        Object menuSource = e.getInventory().getHolder();
+        if (!(menuSource instanceof Menu)) {return;}
+        Menu menu = (Menu) menuSource;
 
         // Handle player inventory clicks
         // If this method returns true, it means it has handled the event and we should not do anything else
@@ -71,13 +77,91 @@ public final class MenuManager implements Listener, Runnable {
         }
 
         // Special Handling of OneClickMenu
-        if (menu instanceof OneClickMenu oneClickMenu) {
+        if (menu instanceof OneClickMenu) {
+            OneClickMenu oneClickMenu = (OneClickMenu) menu;
             processOneClick(e, player, oneClickMenu);
             return;
         }
 
         // Process normal menu clicks
         processClick(e, player, menu);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @EventHandler
+    public void onDragMenu(InventoryDragEvent e) {
+        Object playerSource = e.getWhoClicked();
+        if (!(playerSource instanceof Player)) {
+            return;
+        }
+        Player player = (Player) playerSource;
+
+        // Check if any of the dragged slots are in a Menu inventory
+        Inventory topInventory = e.getView().getTopInventory();
+        Object menuSource = topInventory.getHolder();
+        if (!(menuSource instanceof Menu)) {
+            return;
+        }
+        Menu menu = (Menu) menuSource;
+
+        // Check if any slots in the drag affect the menu (top inventory)
+        Set<Integer> rawSlots = e.getRawSlots();
+        int topSize = topInventory.getSize();
+        boolean affectsMenu = rawSlots.stream().anyMatch(slot -> slot < topSize);
+
+        if (!affectsMenu) {
+            // Drag only affects player inventory - handle separately
+            handlePlayerInventoryDrag(e, menu);
+            return;
+        }
+
+        // Drag affects the menu inventory
+        handleMenuDrag(e, menu, player);
+    }
+
+    /**
+     * Handle drag events that affect the menu inventory (top inventory).
+     */
+    private <M extends Menu<M>> void handleMenuDrag(InventoryDragEvent e, M menu, Player player) {
+        // Default behavior: cancel drags that affect menu slots
+        if (menu.getOptions().isCancelDragEvent()) {
+            e.setCancelled(true);
+        }
+
+        // Test drag predicates
+        MenuEvents<M> menuEvents = menu.getEvents();
+        for (Predicate<InventoryDragEvent> predicate : menuEvents.getDragPredicates().values()) {
+            if (!predicate.test(e)) {
+                e.setCancelled(true);
+                return;
+            }
+        }
+
+        // Call drag callbacks if not cancelled
+        if (!e.isCancelled()) {
+            for (MenuDragCallback callback : menuEvents.getDragCallbacks().values()) {
+                callback.onDrag(player, e);
+            }
+        }
+    }
+
+    /**
+     * Handle drag events that only affect the player inventory (bottom inventory).
+     */
+    private <M extends Menu<M>> void handlePlayerInventoryDrag(InventoryDragEvent e, M menu) {
+        // If player drag events should be cancelled
+        if (menu.getOptions().isCancelPlayerDragEvent()) {
+            e.setCancelled(true);
+        }
+
+        // Test player inventory drag predicates
+        MenuEvents<M> menuEvents = menu.getEvents();
+        for (Predicate<InventoryDragEvent> predicate : menuEvents.getPlayerInvDragPredicates().values()) {
+            if (!predicate.test(e)) {
+                e.setCancelled(true);
+                return;
+            }
+        }
     }
 
     private static void processOneClick(InventoryClickEvent e, Player player, OneClickMenu oneClickMenu) {
@@ -184,9 +268,11 @@ public final class MenuManager implements Listener, Runnable {
     @EventHandler
     public void onCloseMenu(InventoryCloseEvent e) {
         final Player p = (Player) e.getPlayer();
-        if (!(e.getInventory().getHolder() instanceof Menu menu)) {
+        Object menuSource = e.getInventory().getHolder();
+        if (!(menuSource instanceof Menu)) {
             return;
         }
+        Menu menu = (Menu) menuSource;
 
         processClose(e, menu, p);
     }
@@ -197,7 +283,9 @@ public final class MenuManager implements Listener, Runnable {
 
         // Remove this menu from the auto update list
         // We do this before consumers, because some consumers may re-open the menu
-        if (e.getInventory().getHolder() instanceof UpdatingMenu updatingMenu) {
+        Object updatingMenuSource = e.getInventory().getHolder();
+        if (updatingMenuSource instanceof UpdatingMenu) {
+            UpdatingMenu updatingMenu = (UpdatingMenu) updatingMenuSource;
             autoUpdateInventories.remove(updatingMenu);
         }
 
@@ -216,7 +304,9 @@ public final class MenuManager implements Listener, Runnable {
         if (e.getPlayer().getOpenInventory() == null || e.getPlayer().getOpenInventory().getTopInventory() == null) {return;}
 
         Inventory topInventory = e.getPlayer().getOpenInventory().getTopInventory();
-        if (!(topInventory.getHolder() instanceof Menu<?> menu)) {return;}
+        Object menuSource = topInventory.getHolder();
+        if (!(menuSource instanceof Menu)) {return;}
+        Menu<?> menu = (Menu<?>) menuSource;
 
         if (!menu.getOptions().isAllowItemPickup()) {
             e.setCancelled(true);
@@ -228,7 +318,9 @@ public final class MenuManager implements Listener, Runnable {
         if (e.getPlayer().getOpenInventory() == null || e.getPlayer().getOpenInventory().getTopInventory() == null) {return;}
 
         Inventory topInventory = e.getPlayer().getOpenInventory().getTopInventory();
-        if (!(topInventory.getHolder() instanceof Menu<?> menu)) {return;}
+        Object menuSource = topInventory.getHolder();
+        if (!(menuSource instanceof Menu)) {return;}
+        Menu<?> menu = (Menu<?>) menuSource;
 
         if (!menu.getOptions().isAllowItemDrop()) {
             e.setCancelled(true);
@@ -257,7 +349,8 @@ public final class MenuManager implements Listener, Runnable {
         // Send updates to all players affected by modified menus
         updated.forEach((inv) -> {
             for (HumanEntity entity : inv.getInventory().getViewers()) {
-                if (!(entity instanceof Player p)) {continue;}
+                if (!(entity instanceof Player)) {continue;}
+                Player p = (Player) entity;
                 p.updateInventory();
             }
         });
@@ -320,7 +413,8 @@ public final class MenuManager implements Listener, Runnable {
      * @return The current page (0-indexed)
      */
     private int getPage(@NotNull Menu<?> menu) {
-        if (!(menu instanceof PaginatedMenu paginatedMenu)) {return 0;}
+        if (!(menu instanceof PaginatedMenu)) {return 0;}
+        PaginatedMenu paginatedMenu = (PaginatedMenu) menu;
         return paginatedMenu.getCurrentPage();
     }
 }

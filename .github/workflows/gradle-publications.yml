@@ -4,6 +4,19 @@ on:
   push:
     # Run on 'main' (for releases) and on 'release/v5' (for pre-releases)
     branches: [ "main", "release/v5" ]
+    # A merge publishes immediately, and the publish OVERWRITES whatever already sits at that
+    # coordinate. A change that cannot affect the artifact must not trigger one.
+    #
+    # Blacklist, not whitelist: a path forgotten here causes an unnecessary publish, which is
+    # visible. A path forgotten in a whitelist means a real release silently never happens.
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+      - '.idea/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'renovate.json'
+      - 'docs/**'
 
 jobs:
   # -------------------------------------------------- #
@@ -19,14 +32,37 @@ jobs:
       is_release: ${{ steps.validate_version.outputs.is_release }}
       is_prerelease: ${{ steps.validate_version.outputs.is_prerelease }}
       is_snapshot: ${{ steps.validate_version.outputs.is_snapshot }}
+      skipPublish: ${{ steps.skip_check.outputs.skip }}
+      alreadyPublished: ${{ steps.published_check.outputs.already }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - name: Set up JDK 21
+      # Label escape hatch. This workflow triggers on push, where there is no PR context, so the
+      # merge commit is mapped back to its pull request and that PR's labels are read.
+      # Put `skip-publish` on a PR to merge it without cutting a release.
+      - name: Check for skip-publish label
+        id: skip_check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          labels=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" \
+                     --jq '.[].labels[].name' 2>/dev/null | tr '\n' ' ')
+          echo "labels on the originating PR: ${labels:-none}"
+          if printf '%s' "$labels" | grep -qw 'skip-publish'; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::skip-publish label present, publishing and docs will be skipped"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up JDKs 17, 21 and 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: |
+            17
+            21
+            25
           distribution: 'temurin'
           server-id: github
           settings-path: ${{ github.workspace }}
@@ -36,20 +72,6 @@ jobs:
         uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5.0.0
         with:
           gradle-version: '9.0.0'
-
-      - name: Build with Gradle (1.8.8)
-        run: gradle build
-        env:
-          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
-          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
-          MC_SERVER_NEWEST_API: "false"
-
-      - name: Build with Gradle (Latest Paper 1.21+)
-        run: gradle build
-        env:
-          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
-          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
-          MC_SERVER_NEWEST_API: "true"
 
       - name: Extract Version from Gradle
         id: extract_version
@@ -93,7 +115,48 @@ jobs:
             echo "❌ Invalid version format, skipping deployment"
           fi
 
+      # Never overwrite a release that already exists.
+      #
+      # A publish to this Nexus REPLACES whatever sits at the coordinate, and merging without a
+      # version bump has silently done that. Skipping rather than failing is deliberate: the change
+      # stays on the branch and ships with the next version bump, so nothing is lost, and a
+      # forgotten bump does not produce an email and a red job for what is a no-op. Renovate PRs
+      # bump VERSION themselves via bumpVersions, so this mostly catches hand-merged changes.
+      #
+      # Only a definite 200 skips. A network error or a 5xx proceeds, because guessing "already
+      # published" from an unreachable Nexus would silently drop a real release.
+      - name: Skip if this version is already published
+        id: published_check
+        run: |
+          VERSION='${{ steps.extract_version.outputs.version }}'
+          URL="https://repo.luxiouslabs.net/repository/maven-releases/com/kamikazejam/kamicommon/spigot-jar/${VERSION}/spigot-jar-${VERSION}.jar"
+          code=$(curl -s -o /dev/null -w '%{http_code}' -I --max-time 30 "$URL" || echo "000")
+          echo "HEAD $URL -> $code"
+          if [ "$code" = "200" ]; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::spigot-jar ${VERSION} is already published. Skipping publish so the existing release is not overwritten. Bump VERSION in build.gradle.kts to release these changes."
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build with Gradle (1.8.8)
+        if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot != 'true'
+        run: gradle build
+        env:
+          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
+          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
+          MC_SERVER_NEWEST_API: "false"
+
+      - name: Build with Gradle (newest Paper API)
+        if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot != 'true'
+        run: gradle build
+        env:
+          LUXIOUS_NEXUS_USER: ${{ secrets.MAVEN_NAME }}
+          LUXIOUS_NEXUS_PASS: ${{ secrets.MAVEN_SECRET }}
+          MC_SERVER_NEWEST_API: "true"
+
       - name: Extract API Versions from Gradle
+        if: steps.validate_version.outputs.is_valid == 'true' && steps.validate_version.outputs.is_snapshot != 'true'
         id: extract_api_versions
         run: |
           gradle clean
@@ -108,19 +171,22 @@ jobs:
   release:
     needs: setup
     # Run only for commits into main, with valid versions that match the release pattern
-    if: github.ref == 'refs/heads/main' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_release == 'true'
+    if: "github.ref == 'refs/heads/main' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_release == 'true' && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
     runs-on: ubuntu-latest
     permissions:
       contents: write # Access to Publish a Release
       packages: write # Access to Publish a Package
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
-    - name: Set up JDK 21
+    - name: Set up JDKs 17, 21 and 25
       uses: actions/setup-java@v5
       with:
-        java-version: '21'
+        java-version: |
+          17
+          21
+          25
         distribution: 'temurin'
         server-id: github
         settings-path: ${{ github.workspace }}
@@ -235,19 +301,22 @@ jobs:
   prerelease:
     needs: setup
     # Run only for commits into dev branch, with valid versions that match the prerelease pattern
-    if: github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_prerelease == 'true'
+    if: "github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_valid == 'true' && needs.setup.outputs.is_prerelease == 'true' && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
     runs-on: ubuntu-latest
     permissions:
       contents: write # Access to Publish a Release
       packages: write # Access to Publish a Package
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - name: Set up JDK 21
+      - name: Set up JDKs 17, 21 and 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: |
+            17
+            21
+            25
           distribution: 'temurin'
           server-id: github
           settings-path: ${{ github.workspace }}
@@ -319,18 +388,21 @@ jobs:
   docs:
     needs: setup
     # Run only for commits with valid versions that match the release OR prerelease pattern on their respective branches
-    if: needs.setup.outputs.is_valid == 'true' && ((github.ref == 'refs/heads/main' && needs.setup.outputs.is_release == 'true') || (github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_prerelease == 'true'))
+    if: "needs.setup.outputs.is_valid == 'true' && ((github.ref == 'refs/heads/main' && needs.setup.outputs.is_release == 'true') || (github.ref == 'refs/heads/release/v5' && needs.setup.outputs.is_prerelease == 'true')) && needs.setup.outputs.skipPublish != 'true' && needs.setup.outputs.alreadyPublished != 'true'"
 
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - uses: actions/checkout@v5
-      - name: Set up JDK 21
+      - uses: actions/checkout@v6
+      - name: Set up JDKs 17, 21 and 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: |
+            17
+            21
+            25
           distribution: 'temurin'
 
       # Configure: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
@@ -346,7 +418,7 @@ jobs:
         run: gradle aggregateJavadoc
 
       - name: Checkout gh-pages
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: gh-pages
           path: gh-pages

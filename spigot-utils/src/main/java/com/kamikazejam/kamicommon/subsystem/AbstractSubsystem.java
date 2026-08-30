@@ -4,17 +4,23 @@ import com.kamikazejam.kamicommon.CoreMethods;
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
+import com.kamikazejam.kamicommon.configuration.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.observe.ObservableConfig;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.log.ComponentLogger;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import com.kamikazejam.kamicommon.text.MiniMessageBuilder;
 import com.kamikazejam.kamicommon.util.MessageBuilder;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
-import com.kamikazejam.kamicommon.util.log.LoggerService;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import lombok.Getter;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -24,12 +30,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 
 @SuppressWarnings("unused")
-public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> extends LoggerService implements CoreMethods, ObservableConfig {
+public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends AbstractSubsystem<C, S>> implements CoreMethods, ObservableConfig<KamiConfig> {
     @Getter private boolean successfullyEnabled = false;
     @Getter private boolean enabled = false;
+    @Getter private ComponentLogger logger;
 
     // CoreMethods Fields
     private final List<Listener> listenerList = new ArrayList<>();
@@ -38,12 +44,12 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     private final List<Disableable> disableableList = new ArrayList<>();
 
     // Hooks
-    private final List<ObservableConfig> configHooks = new ArrayList<>();
+    private final List<ObservableConfig<KamiConfig>> configHooks = new ArrayList<>();
 
     /**
      * @return The KamiPlugin that this subsystem is registered to
      */
-    public abstract KamiPlugin getPlugin();
+    public abstract @NotNull KamiPlugin getPlugin();
 
     /**
      * This method is called at {@link AbstractSubsystem} initialization. <br>
@@ -131,7 +137,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     /**
      * @return The default logging prefix for this subsystem
      */
-    public abstract @NotNull String defaultPrefix();
+    public abstract @NotNull VersionedComponent defaultPrefix();
 
     // -------------------------------------------- //
     // SUBSYSTEM CONFIG
@@ -152,7 +158,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
         C config = Preconditions.checkNotNull(subsystemConfig, "SubsystemConfig is null! Cannot reload config!");
         config.reload(); // Automatically saves
         // Call hook reloads
-        for (ObservableConfig hook : configHooks) {
+        for (ObservableConfig<KamiConfig> hook : configHooks) {
             hook.reloadObservableConfig();
         }
     }
@@ -179,8 +185,9 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
         this.subsystemConfig = config;
     }
 
+    @OverrideOnly
     @NotNull
-    protected abstract C createConfig();
+    public abstract C createConfig();
 
     @Override
     public @NotNull KamiConfigExt getKamiConfig() {
@@ -192,7 +199,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
      * <br>
      * This means that when this subsystem gets reloaded, this config will also be reloaded.
      */
-    public final void registerReloadHook(@NotNull ObservableConfig config) {
+    public final void registerReloadHook(@NotNull ObservableConfig<KamiConfig> config) {
         Preconditions.checkNotNull(config, "Cannot register a null config hook!");
         // caller's responsibility to not register the same hook multiple times
         configHooks.add(config);
@@ -202,8 +209,12 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     // ENABLE/DISABLE HANDLING
     // -------------------------------------------- //
     public final void handleEnable() {
+        // Create this subsystem's logger with an extra prefix of this subsystem's name
+        this.logger = new ComponentLogger(getPlugin()).setMessagePrefix(
+                NmsAPI.getVersionedComponentSerializer().fromPlainText("[" + getName() + "] ")
+        );
         onEnable();
-        info("Successfully enabled!");
+        this.logger.info(NmsAPI.getVersionedComponentSerializer().fromPlainText("Successfully enabled!"));
         successfullyEnabled = true;
         enabled = true;
     }
@@ -211,7 +222,7 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     public final void handleDisable() {
         onDisable();
         onDisableLater();
-        info("Successfully disabled!");
+        this.logger.info(NmsAPI.getVersionedComponentSerializer().fromPlainText("Successfully disabled!"));
         enabled = false;
         // Clear config
         if (subsystemConfig != null) {
@@ -403,59 +414,74 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
         return unregisterDisableables(disableableList.toArray(new Disableable[0]));
     }
 
-    // -------------------------------------------- //
-    // LoggerService
-    // -------------------------------------------- //
-    public String getLoggerName() {
-        return this.getName();
-    }
-    public boolean isDebug() {
-        // Inherit from KamiPlugin
-        return this.getPlugin().getColorLogger().isDebug();
-    }
-    public void logToConsole(String message, Level level) {
-        // Use the plugin's logger, appending this logger name to the start of the message
-        String subsystemPrefix = "[" + this.getName() + "] ";
-        getPlugin().getColorLogger().logToConsole(subsystemPrefix + message, level);
-    }
-
     /**
      * @return The prefix for this subsystem, as defined in the subsystem config
      */
-    public abstract @NotNull String getPrefix();
+    public abstract @NotNull VersionedComponent getPrefix();
 
     /**
      * Builds a {@link MessageBuilder} using this Subsystems' config and the provided key <br>
      * It will also automatically replace any {prefix} placeholders in the message with this subsystem's prefix
      * @param key The key to get the message from the config
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #buildMiniMessage(String)}
      * @return The MessageBuilder (see above)
      */
-    public MessageBuilder buildMessage(String key) {
+    @Deprecated
+    public @NotNull MessageBuilder buildMessage(@NotNull String key) {
+        Preconditions.checkNotNull(key, "Message key cannot be null!");
+        String sectionedPrefix = getPrefix().serializeLegacySection();
         return MessageBuilder.of(getConfig(), key)
+                .replace("{prefix}", sectionedPrefix)
+                .replace("%prefix%", sectionedPrefix);
+    }
+
+    /**
+     * Builds a {@link MessageBuilder} using this Subsystems' config and the provided key <br>
+     * It will also automatically replace any {prefix} placeholders in the message with this subsystem's prefix
+     * @param key The key to get the message from the config
+     * @deprecated As of 5.0.0-alpha.26, replaced by {@link #buildMiniMessage(String)}
+     * @return The MessageBuilder (see above)
+     */
+    @Deprecated
+    public MessageBuilder getMessage(String key) {
+        return buildMessage(key);
+    }
+
+    /**
+     * Builds a {@link MiniMessageBuilder} using this Subsystems' config and the provided key <br>
+     * It will also automatically replace any {prefix} placeholders in the message with this subsystem's prefix
+     * @param key The key to get the message from the config
+     * @return The MiniMessageBuilder (see above)
+     */
+    public @NotNull MiniMessageBuilder buildMiniMessage(@NotNull String key) {
+        Preconditions.checkNotNull(key, "Message key cannot be null!");
+        return MiniMessageBuilder.fromMiniMessage(getConfig(), key)
                 .replace("{prefix}", getPrefix())
                 .replace("%prefix%", getPrefix());
     }
 
     /**
-     * Builds a MessageBuilder using this Subsystems' config and the provided key <br>
+     * Builds a {@link MiniMessageBuilder} using this Subsystems' config and the provided key <br>
      * It will also automatically replace any {prefix} placeholders in the message with this subsystem's prefix
      * @param key The key to get the message from the config
-     * @return The MessageBuilder (see above)
+     * @return The MiniMessageBuilder (see above)
      */
-    public MessageBuilder getMessage(String key) {
-        return buildMessage(key);
+    @Deprecated
+    public MiniMessageBuilder getMiniMessage(String key) {
+        return buildMiniMessage(key);
     }
+
 
     // -------------------------------------------- //
     // ObservableConfig
     // -------------------------------------------- //
     @Override
-    public boolean registerConfigObserver(@NotNull ConfigObserver observer) {
+    public boolean registerConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         return getConfig().registerConfigObserver(observer);
     }
 
     @Override
-    public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
+    public void unregisterConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         getConfig().unregisterConfigObserver(observer);
     }
 
@@ -481,11 +507,23 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
      * Placeholder for your own implementation in order to support supplemental configuration files.<br>
      * This method should return an InputStream to the supplemental config resource.<br><br>
      * By default, this method throws an {@link UnsupportedOperationException}.
-     * @param fileName The YAML file name of the resource to load. Includes ONLY the name, not the path.
+     * @param file The yaml file of the resource to load.
      * @throws UnsupportedOperationException Always, unless overridden with new behavior
      */
     @UnknownNullability
-    public InputStream getSupplementalConfigResource(@NotNull String fileName) throws UnsupportedOperationException {
+    public InputStream getSupplementalConfigResource(@NotNull File file) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Placeholder for your own implementation in order to support supplemental configuration files.<br>
+     * This method should return an InputStream to the supplemental config resource.<br><br>
+     * By default, this method throws an {@link UnsupportedOperationException}.
+     * @param source The config source of the resource to load.
+     * @throws UnsupportedOperationException Always, unless overridden with new behavior
+     */
+    @UnknownNullability
+    public InputStream getSupplementalConfigResource(@NotNull ConfigSource source) throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 }

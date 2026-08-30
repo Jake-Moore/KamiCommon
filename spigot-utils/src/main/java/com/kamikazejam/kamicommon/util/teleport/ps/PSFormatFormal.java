@@ -1,5 +1,7 @@
 package com.kamikazejam.kamicommon.util.teleport.ps;
 
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+
 public class PSFormatFormal extends PSFormatAbstract {
     // -------------------------------------------- //
     // INSTANCE & CONSTRUCT
@@ -13,24 +15,24 @@ public class PSFormatFormal extends PSFormatAbstract {
 
     private PSFormatFormal() {
         super(
-                "PS{NULL}",
-                "PS{",
-                PS.NAME_SERIALIZED_WORLD + ": %s",
-                PS.NAME_SERIALIZED_BLOCKX + ": %d",
-                PS.NAME_SERIALIZED_BLOCKY + ": %d",
-                PS.NAME_SERIALIZED_BLOCKZ + ": %d",
-                PS.NAME_SERIALIZED_LOCATIONX + ": %.2f",
-                PS.NAME_SERIALIZED_LOCATIONY + ": %.2f",
-                PS.NAME_SERIALIZED_LOCATIONZ + ": %.2f",
-                PS.NAME_SERIALIZED_CHUNKX + ": %d",
-                PS.NAME_SERIALIZED_CHUNKZ + ": %d",
-                PS.NAME_SERIALIZED_PITCH + ": %.2f",
-                PS.NAME_SERIALIZED_YAW + ": %.2f",
-                PS.NAME_SERIALIZED_VELOCITYX + ": %.2f",
-                PS.NAME_SERIALIZED_VELOCITYY + ": %.2f",
-                PS.NAME_SERIALIZED_VELOCITYZ + ": %.2f",
-                ", ",
-                "}"
+                NmsAPI.getVersionedComponentSerializer().fromPlainText("PS{NULL}"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText("PS{"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_WORLD + ": %s"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_BLOCKX + ": %d"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_BLOCKY + ": %d"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_BLOCKZ + ": %d"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_LOCATIONX + ": %.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_LOCATIONY + ": %.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_LOCATIONZ + ": %.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_CHUNKX + ": %d"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_CHUNKZ + ": %d"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_PITCH + ": %.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_YAW + ": %.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_VELOCITYX + ": %.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_VELOCITYY + ": %.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(PS.NAME_SERIALIZED_VELOCITYZ + ": %.2f"),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText(", "),
+                NmsAPI.getVersionedComponentSerializer().fromPlainText("}")
         );
     }
 }

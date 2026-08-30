@@ -7,17 +7,31 @@ import com.kamikazejam.kamicommon.menu.api.struct.MenuEvents;
 import com.kamikazejam.kamicommon.menu.api.struct.MenuOptions;
 import com.kamikazejam.kamicommon.menu.api.struct.icons.PrioritizedMenuIconMap;
 import com.kamikazejam.kamicommon.menu.api.struct.size.MenuSize;
+import com.kamikazejam.kamicommon.menu.api.title.ComponentMenuTitleProvider;
 import com.kamikazejam.kamicommon.menu.api.title.MenuTitleCalculator;
 import com.kamikazejam.kamicommon.menu.api.title.MenuTitleProvider;
 import com.kamikazejam.kamicommon.menu.api.title.MenuTitleReplacement;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import com.kamikazejam.kamicommon.util.LegacyColors;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
+/**
+ * <b>Do not implement this outside KamiCommon.</b> This was a {@code sealed} hierarchy until
+ * spigot-utils dropped to Java 8 so that 1.8.x servers could load it; {@code sealed} is Java 17
+ * and has no Java 8 spelling. The closed set is still enforced <i>within</i> the library by the
+ * {@code verifySealedHierarchies} build task, which fails if an implementation appears that is
+ * not on the permitted list (SimpleMenu.Builder, PaginatedMenu.Builder, OneClickMenu.Builder). Nothing can enforce it in your code, hence this annotation.
+ */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public sealed abstract class AbstractMenuBuilder<M extends Menu<M>, T extends AbstractMenuBuilder<M, T>> permits SimpleMenu.Builder, PaginatedMenu.Builder, OneClickMenu.Builder {
+@ApiStatus.NonExtendable
+public abstract class AbstractMenuBuilder<M extends Menu<M>, T extends AbstractMenuBuilder<M, T>> {
     // Menu Details
     protected @NotNull MenuSize size;
     protected final @NotNull MenuTitleCalculator titleCalculator = new MenuTitleCalculator();
@@ -47,14 +61,54 @@ public sealed abstract class AbstractMenuBuilder<M extends Menu<M>, T extends Ab
         return (T) this;
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * @deprecated Use more specific method {@link #titleFromLegacySection(String)}
+     */
+    @Deprecated
     public final @NotNull T title(@Nullable String title) {
-        this.titleCalculator.setProvider((p) -> (title != null) ? title : " ");
+        return titleFromLegacySection(title);
+    }
+
+    @SuppressWarnings("unchecked")
+    public final @NotNull T titleFromLegacySection(@Nullable String title) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        // translate to keep existing behavior (translating alternate ampersand codes to section symbols)
+        VersionedComponent component = (title != null) ? serializer.fromLegacySection(LegacyColors.t(title)) : serializer.fromLegacySection(" ");
+        this.titleCalculator.setProvider((p) -> component);
         return (T) this;
     }
 
     @SuppressWarnings("unchecked")
+    public final @NotNull T titleFromMiniMessage(@Nullable String title) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        // translate to keep existing behavior (translating alternate ampersand codes to section symbols)
+        VersionedComponent component = (title != null) ? serializer.fromMiniMessage(title) : serializer.fromPlainText(" ");
+        this.titleCalculator.setProvider((p) -> component);
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final @NotNull T titleFromComponent(@Nullable VersionedComponent title) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        // translate to keep existing behavior (translating alternate ampersand codes to section symbols)
+        VersionedComponent component = (title != null) ? title : serializer.fromPlainText(" ");
+        this.titleCalculator.setProvider((p) -> component);
+        return (T) this;
+    }
+
+    /**
+     * @deprecated Use {@link #title(ComponentMenuTitleProvider)} instead to modify parts of the title.
+     */
+    @Deprecated
+    @SuppressWarnings("unchecked")
     public final @NotNull T title(@NotNull MenuTitleProvider titleProvider) {
+        Preconditions.checkNotNull(titleProvider, "Title callback must not be null.");
+        this.titleCalculator.setProvider(ComponentMenuTitleProvider.fromLegacy(titleProvider));
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final @NotNull T title(@NotNull ComponentMenuTitleProvider titleProvider) {
         Preconditions.checkNotNull(titleProvider, "Title callback must not be null.");
         this.titleCalculator.setProvider(titleProvider);
         return (T) this;

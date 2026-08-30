@@ -62,6 +62,7 @@ public class StandaloneConfigExt extends StandaloneConfig {
         return list;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     public String applyThisPlaceholders(String val) {
         if (val == null) { return null; }
         if (!this.isConfigurationSection("this.placeholders")) { return val; }

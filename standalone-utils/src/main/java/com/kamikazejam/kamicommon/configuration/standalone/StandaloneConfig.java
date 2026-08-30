@@ -1,7 +1,11 @@
 package com.kamikazejam.kamicommon.configuration.standalone;
 
+import com.kamikazejam.kamicommon.configuration.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.observe.ObservableConfig;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.log.LoggerService;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
+import com.kamikazejam.kamicommon.yaml.source.FileConfigSource;
 import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSectionStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.ConfigurationSequenceStandalone;
 import com.kamikazejam.kamicommon.yaml.standalone.MemorySectionStandalone;
@@ -14,6 +18,7 @@ import org.jetbrains.annotations.UnknownNullability;
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -27,10 +32,12 @@ import java.util.function.Supplier;
  * Then you can use this object just like a YamlConfiguration, it has all the same methods plus {@link StandaloneConfig#save()} and {@link StandaloneConfig#reload()} <br>
  */
 @SuppressWarnings("unused")
-public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone> implements ConfigurationSectionStandalone {
-    private final @NotNull File file;
-    private final YamlHandlerStandalone yamlHandler;
-    private YamlConfigurationStandalone config;
+public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone> implements ConfigurationSectionStandalone, ObservableConfig<StandaloneConfig> {
+    private final @NotNull LoggerService logger;
+    private final @NotNull ConfigSource source;
+    private final @NotNull YamlHandlerStandalone yamlHandler;
+    private @NotNull YamlConfigurationStandalone config;
+    private final @NotNull Set<ConfigObserver<StandaloneConfig>> observers = new HashSet<>();
 
     /**
      * Creates a new config instance with the given logger and destination file.<br><br>
@@ -39,7 +46,7 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
      * - See {@link StandaloneConfig#getDefaultIS(LoggerService, File)}
      */
     public StandaloneConfig(@NotNull LoggerService logger, @NotNull File file) {
-        this(logger, file, () -> getDefaultIS(logger, file));
+        this(logger, new FileConfigSource(file), () -> getDefaultIS(logger, file));
     }
 
     /**
@@ -51,11 +58,16 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
      * @param defaultsStream The optional supplier to load defaults from.
      */
     public StandaloneConfig(@NotNull LoggerService logger, @NotNull File file, @Nullable Supplier<InputStream> defaultsStream) {
-        this.file = file;
+        this(logger, new FileConfigSource(file), defaultsStream);
+    }
 
-        ensureFile();
+    public StandaloneConfig(@NotNull LoggerService logger, @NotNull ConfigSource source, @Nullable Supplier<InputStream> defaultsStream) {
+        this.logger = logger;
+        this.source = source;
 
-        this.yamlHandler = new YamlHandlerStandalone(this, logger, file, defaultsStream);
+        ensureExistsIfWritable();
+
+        this.yamlHandler = new YamlHandlerStandalone(this, logger, source, defaultsStream);
         this.config = yamlHandler.loadConfig();
         save();
     }
@@ -65,6 +77,7 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
         try {
             config = yamlHandler.loadConfig();
             save();
+            observers.forEach(observer -> observer.onConfigLoaded(this));
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,25 +87,48 @@ public class StandaloneConfig extends AbstractConfig<YamlConfigurationStandalone
     protected YamlConfigurationStandalone getYamlConfiguration() { return config; }
 
     @Override
-    protected @NotNull File getFile() {
-        return file;
+    public @NotNull ConfigSource getSource() {
+        return source;
     }
 
-    private void ensureFile() {
-        // Ensure the file exists
+    private void ensureExistsIfWritable() {
         try {
-            if (!file.exists() && !file.getParentFile().mkdirs() && !file.createNewFile()) {
-                throw new Exception("Failed to create file: " + file.getAbsolutePath());
-            }
-        }catch (Exception e) {
+            source.ensureExistsIfWritable();
+        } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("[KamiCommon] Failed to create file: " + file.getAbsolutePath());
+            logger.severe("[KamiCommon] Failed to ensure config source exists: " + source.id());
         }
     }
 
+    @Override
+    public boolean registerConfigObserver(@NotNull ConfigObserver<StandaloneConfig> observer) {
+        if (observers.add(observer)) {
+            // Call the observer immediately, since the config has already been loaded
+            observer.onConfigLoaded(this);
+            return true;
+        }
+        return false;
+    }
 
+    @Override
+    public void unregisterConfigObserver(@NotNull ConfigObserver<StandaloneConfig> observer) {
+        observers.remove(observer);
+    }
 
+    @Override
+    public void unregisterConfigObservers() {
+        observers.clear();
+    }
 
+    /**
+     * Reload the backing config for this observable, notifying all registered observers of the change.<br>
+     * <br>
+     * Equivalent to calling {@link #reload()}
+     */
+    @Override
+    public void reloadObservableConfig() {
+        reload();
+    }
 
 
 

@@ -2,10 +2,14 @@ package com.kamikazejam.kamicommon.subsystem.module;
 
 import com.kamikazejam.kamicommon.KamiPlugin;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.subsystem.AbstractSubsystem;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
+import com.kamikazejam.kamicommon.util.ColoredStringParser;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -29,7 +33,7 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
      * @return The default logging prefix for this subsystem (saved under the KamiPlugin modulesConfig modulePrefix)
      */
     @Override
-    public abstract @NotNull String defaultPrefix();
+    public abstract @NotNull VersionedComponent defaultPrefix();
 
     // -------------------------------------------- //
     // MODULE CONFIG
@@ -56,8 +60,9 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
         }
     }
 
+    @OverrideOnly
     @Override
-    protected @NotNull ModuleConfig createConfig() {
+    public @NotNull ModuleConfig createConfig() {
         @NotNull String configResourcePath = this.getConfigResourcePath();
         // Double check we can obtain the resource stream (may throw)
         SubsystemConfig.getIS(this, configResourcePath);
@@ -70,26 +75,39 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
         // Create a throw-away config so that we don't start any initialization logic
         // if this module does not intend to be enabled
         ModuleConfig config = createConfig();
-        boolean enabled = config.getBoolean("enabled", isEnabledByDefault());
+        boolean enabled = config.isEnabledInConfig();
+
         // If the module is enabled in the config, begin initialization
         if (enabled) {
-            initializeConfig(config);
+            initializeConfig(createConfig());
         }
         return enabled;
     }
 
     @Override
-    public final @NotNull String getPrefix() {
+    public final @NotNull VersionedComponent getPrefix() {
         KamiConfigExt c = getPlugin().getModulesConfig();
-        String prefix = c.getString("modules." + getName() + ".modulePrefix", null);
-        if (prefix != null) { return prefix; }
+        String key = "modules." + getName() + ".modulePrefix";
+        String def = defaultPrefix().serializeMiniMessage();
 
-        String def = defaultPrefix();
-        c.setString("modules." + getName() + ".modulePrefix", def);
-        c.save();
-        return def;
+        // Warn if the module does not have a prefix entry in the config so the plugin author can go add a default in the resource file
+        if (!c.contains(key)) {
+            this.getLogger().warn(NmsAPI.getVersionedComponentSerializer().fromPlainText(
+                    "Module '" + getName() + "' missing string key '" + key + "' in the modules config. Using default: " + def
+            ));
+        }
+
+        return ColoredStringParser.parse(
+                c.getString(key, def)
+        );
     }
 
+    /**
+     * The data folder for this module, located at:<br>
+     * /home/container/plugins/&lt;plugin&gt;/modules/&lt;module&gt;/<br>
+     * <br>
+     * If the folder does not exist, it will be created automatically.
+     */
     @NotNull
     public File getModuleDataFolder() {
         File dataFolder = getPlugin().getDataFolder();
@@ -101,5 +119,18 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
             }
         }
         return moduleFolder;
+    }
+
+    /**
+     * The absolute path to the data folder for this module, i.e.:<br>
+     * /home/container/plugins/&lt;plugin&gt;/modules/&lt;module&gt;/<br>
+     * <br>
+     * This is just the File's absolute path, it does not create the folder if it does not exist.
+     */
+    @NotNull
+    public String getModuleDataPath() {
+        File dataFolder = getPlugin().getDataFolder();
+        File moduleFolder = new File(dataFolder + File.separator + MODULES_FOLDER + File.separator + getName());
+        return moduleFolder.getAbsolutePath();
     }
 }

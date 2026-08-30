@@ -1,9 +1,9 @@
 package com.kamikazejam.kamicommon.menu.api.struct.size;
 
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.collections.KamiSet;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -25,8 +25,8 @@ public final class MenuSizeType implements MenuSize {
     }
 
     @Override
-    public @NotNull Inventory createInventory(@NotNull InventoryHolder holder, @NotNull String title) {
-        return Bukkit.createInventory(holder, type, title);
+    public @NotNull Inventory createInventory(@NotNull InventoryHolder holder, @NotNull VersionedComponent title) {
+        return title.createInventory(holder, type);
     }
 
     @Override
@@ -69,10 +69,17 @@ public final class MenuSizeType implements MenuSize {
         int row = r - 1;
         int col = c - 1;
 
-        return switch (type.name()) {
+        // Was a switch expression. This module targets Java 8 so a 1.8.x server can load it,
+        // and switch expressions are Java 14, so every `yield` is a `return` instead. The
+        // default still throws, so an InventoryType nobody handled fails loudly rather than
+        // returning a plausible slot.
+        switch (type.name()) {
             // Our 9x3 menus
-            case "CHEST", "ENDER_CHEST", "BARREL", "SHULKER_BOX":
-                yield MenuSizeRows.mapPositionToSlot(r, c, 3); // pass original 1-indexed values
+            case "CHEST":
+            case "ENDER_CHEST":
+            case "BARREL":
+            case "SHULKER_BOX":
+                return MenuSizeRows.mapPositionToSlot(r, c, 3); // pass original 1-indexed values
             case "PLAYER":
                 // Player inventory is 4 rows, with weird mapping (hotbar is the first 9 indexes)
                 if (row < 0 || row >= 4 || col < 0 || col >= 9) {
@@ -80,16 +87,18 @@ public final class MenuSizeType implements MenuSize {
                 }
                 // If we're on row 3, we use hotbar slot numbers
                 if (row == 3) {
-                    yield col; // Hotbar slots are 0-8
+                    return col; // Hotbar slots are 0-8
                 }
                 // Otherwise we use the normal 9-slot rows, but where the first one is 9 in bukkit math
-                yield row * 9 + col + 9;
+                return row * 9 + col + 9;
                 // Our 3x3 menus
-            case "DISPENSER", "DROPPER", "CRAFTER":
+            case "DISPENSER":
+            case "DROPPER":
+            case "CRAFTER":
                 if (row < 0 || row >= 3 || col < 0 || col >= 3) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in a 3x3 menu.");
                 }
-                yield row * 3 + col;
+                return row * 3 + col;
             case "WORKBENCH":
                 // We support (1, 3) as an exception to mark the crafting result slot
                 // (0, 3) and (2, 3) are not allowed though, as there is only 1 possible 4th column slot (result slot)
@@ -98,42 +107,54 @@ public final class MenuSizeType implements MenuSize {
                 }
                 // The (1, 3) case is actually slot 0 in bukkit
                 if (row == 1 && col == 3) {
-                    yield 0;
+                    return 0;
                 }
                 // The other slots are shifted by 1 but in a normal 3x3 layout
-                yield row * 3 + col + 1;
+                return row * 3 + col + 1;
             case "ENCHANTING": // 2 slots horizontally
                 if (row != 0 || col < 0 || col >= 2) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in an enchanting table.");
                 }
-                yield col;
+                return col;
             case "ANVIL": // 3 slots horizontally
                 if (row != 0 || col < 0 || col >= 3) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in an anvil.");
                 }
-                yield col;
+                return col;
             case "BEACON": // 1 slot
                 if (row != 0 || col != 0) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in a beacon.");
                 }
-                yield 0;
+                return 0;
             case "HOPPER": // 5 slots horizontally
                 if (row != 0 || col < 0 || col >= 5) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in a hopper.");
                 }
-                yield col;
+                return col;
             case "SMITHING": // 4 slots horizontally
                 if (row != 0 || col < 0 || col >= 4) {
                     throw new IllegalArgumentException("Cannot map position to slot for x=" + row + ", y=" + col + " in a smithing table.");
                 }
-                yield col;
+                return col;
 
                 // Nonsensical Types we can't decide how to support
-            case "FURNACE", "BLAST_FURNACE", "CRAFTING", "BREWING", "LECTERN", "SMOKER", "LOOM",
-                 "STONECUTTER", "CARTOGRAPHY", "GRINDSTONE", "COMPOSTER", "CHISELED_BOOKSHELF", "JUKEBOX", "DECORATED_POT":
+            case "FURNACE":
+            case "BLAST_FURNACE":
+            case "CRAFTING":
+            case "BREWING":
+            case "LECTERN":
+            case "SMOKER":
+            case "LOOM":
+            case "STONECUTTER":
+            case "CARTOGRAPHY":
+            case "GRINDSTONE":
+            case "COMPOSTER":
+            case "CHISELED_BOOKSHELF":
+            case "JUKEBOX":
+            case "DECORATED_POT":
                 throw new IllegalStateException("Cannot map position to slot for InventoryType " + type.name() + ". (not supported)");
             default:
                 throw new IllegalStateException("Cannot map position to slot for InventoryType " + type.name() + ". (unknown)");
-        };
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.kamikazejam.kamicommon.menu.api.struct.size;
 
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
@@ -16,8 +16,8 @@ public final class MenuSizeRows implements MenuSize {
     }
 
     @Override
-    public @NotNull Inventory createInventory(@NotNull InventoryHolder holder, @NotNull String title) {
-        return Bukkit.createInventory(holder, rows * 9, title);
+    public @NotNull Inventory createInventory(@NotNull InventoryHolder owner, @NotNull VersionedComponent title) {
+        return title.createInventory(owner, rows * 9);
     }
 
     @Override

@@ -25,7 +25,8 @@ public class CommandContext {
         this.label = label;
         this.args = args;
         this.sender = sender;
-        if (sender instanceof Player p) {
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
             senderIsConsole = false;
             me = p;
         }else {

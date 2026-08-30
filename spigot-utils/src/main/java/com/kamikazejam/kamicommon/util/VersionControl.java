@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -89,16 +90,26 @@ public class VersionControl {
 
         @Nullable Version version = getVersion(plugin);
         if (version != null && version.isLoaded()) {
-            sender.sendMessage(StringUtil.t("&bName: " + version.getName()));
-            sender.sendMessage(StringUtil.t("&bVersion: " + version.getVersionStr()));
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    "<aqua>Name: " + version.getName()
+            ).sendTo(sender);
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    "<aqua>Version: " + version.getVersionStr()
+            ).sendTo(sender);
 
             Instant buildDate = version.getBuildDate();
             if (buildDate != null) {
-                sender.sendMessage(StringUtil.t("&bBuild ago: " + formatDateDiff(buildDate.getEpochSecond())));
-                sender.sendMessage(StringUtil.t("&bBuild date: " + formatDate(buildDate)));
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                        "<aqua>Build ago: " + formatDateDiff(buildDate.getEpochSecond())
+                ).sendTo(sender);
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                        "<aqua>Build date: " + formatDate(buildDate)
+                ).sendTo(sender);
             }
         }else {
-            sender.sendMessage(StringUtil.t("&cVersion Information not available!"));
+            NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    "<red>Version Information not available!"
+            ).sendTo(sender);
         }
     }
 
@@ -173,7 +184,7 @@ public class VersionControl {
         // Preserve correctness in the original date object by removing the extra buffer time
         to.add(Calendar.MILLISECOND, future ? -50 : 50);
 
-        if (sb.isEmpty()) {
+        if (sb.length() == 0) {
             return "now";
         }
 

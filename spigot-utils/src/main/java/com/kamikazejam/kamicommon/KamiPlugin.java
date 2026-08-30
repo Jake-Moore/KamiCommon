@@ -3,49 +3,61 @@ package com.kamikazejam.kamicommon;
 import com.google.gson.JsonObject;
 import com.kamikazejam.kamicommon.command.KamiCommand;
 import com.kamikazejam.kamicommon.command.KamiCommonCommandRegistration;
+import com.kamikazejam.kamicommon.configuration.observe.ConfigObserver;
+import com.kamikazejam.kamicommon.configuration.observe.ObservableConfig;
+import com.kamikazejam.kamicommon.configuration.spigot.KamiConfig;
 import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ConfigObserver;
-import com.kamikazejam.kamicommon.configuration.spigot.observe.ObservableConfig;
+import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.log.ComponentLogger;
 import com.kamikazejam.kamicommon.subsystem.feature.Feature;
 import com.kamikazejam.kamicommon.subsystem.feature.FeatureManager;
 import com.kamikazejam.kamicommon.subsystem.module.Module;
 import com.kamikazejam.kamicommon.subsystem.module.ModuleManager;
-import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.util.interfaces.Disableable;
 import com.kamikazejam.kamicommon.util.interfaces.Named;
+import com.kamikazejam.kamicommon.util.log.LegacyColorsLogger;
 import com.kamikazejam.kamicommon.util.log.LoggerService;
-import com.kamikazejam.kamicommon.util.log.PluginLogger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "DuplicatedCode"})
-public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, CoreMethods, ObservableConfig {
+public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, CoreMethods, ObservableConfig<KamiConfig> {
     // -------------------------------------------- //
     // FIELDS
     // -------------------------------------------- //
 
     @Getter
     private long enableTime;
-    private String logPrefixColored = null;
+    private String logPrefixMini = null;
     @Getter ModuleManager moduleManager;
     @Getter FeatureManager featureManager;
     private KamiConfigExt modulesConfig = null;
     private KamiConfigExt featuresConfig = null;
     private @Nullable KamiConfigExt config = null;
-    @Getter
+
+    /**
+     * @deprecated Use {@link #getColorComponentLogger()} instead, which supports the same legacy string methods, but also component methods.
+     */
+    @Deprecated @Getter
     private LoggerService colorLogger;
+
+    /**
+     * An improved color-supporting logger, which supports both legacy color codes and component-based messages.
+     */
+    @Getter
+    private ComponentLogger colorComponentLogger;
     // CoreMethods Fields
     private final List<Listener> listenerList = new ArrayList<>();
     private final List<BukkitTask> taskList = new ArrayList<>();
@@ -65,7 +77,11 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     public void onLoadPre() {
         String[] version = this.getDescription().getVersion().split(" ");
-        this.logPrefixColored = StringUtil.t(String.format("&3[&b%s %s&3] &e", this.getDescription().getName(), version[version.length - 1]));
+        this.logPrefixMini = String.format(
+                "<dark_aqua>[<aqua>%s %s<dark_aqua>] <yellow>",
+                this.getDescription().getName(),
+                version[version.length - 1]
+        );
     }
     public void onLoadInner() {}
     public void onLoadPost() {}
@@ -80,8 +96,12 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     public boolean onEnablePre() {
         this.enableTime = System.currentTimeMillis();
-        this.colorLogger = new PluginLogger(this);
-        this.colorLogger.logToConsole(this.logPrefixColored + "=== ENABLE START ===", Level.INFO);
+        this.colorLogger = new LegacyColorsLogger(this);
+        this.colorComponentLogger = new ComponentLogger(this);
+        this.colorComponentLogger.logToConsole(
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(this.logPrefixMini + "=== ENABLE START ==="),
+                Level.INFO
+        );
 
         // Create the Subsystem Managers
         this.moduleManager = new ModuleManager(this);
@@ -109,18 +129,29 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
 
     public void onEnablePost() {
         long ms = System.currentTimeMillis() - this.enableTime;
-        this.colorLogger.logToConsole(this.logPrefixColored + "=== ENABLE &aCOMPLETE &e(Took &d" + ms + "ms&e) ===", Level.INFO);
+        this.colorComponentLogger.logToConsole(
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                        this.logPrefixMini + "=== ENABLE <green>COMPLETE <yellow>(Took <light_purple>" + ms + "ms<yellow>) ==="
+                ),
+                Level.INFO
+        );
     }
 
-    public @NotNull KamiConfigExt getKamiConfig() {
+    @NotNull
+    public final KamiConfigExt getKamiConfig() {
         if (config == null) {
-            // Using the Ext config with defaults enabled. It looks for a 'config.yml' resource file.
-            this.config = new KamiConfigExt(this, new File(getDataFolder(), "config.yml"));
+            this.config = createKamiConfig();
         }
         return config;
     }
     public void reloadKamiConfig() {
         getKamiConfig().reload();
+    }
+
+    @OverrideOnly
+    public @NotNull KamiConfigExt createKamiConfig() {
+        // Using the Ext config with defaults enabled. It looks for a 'config.yml' resource file.
+        return new KamiConfigExt(this, new File(getDataFolder(), "config.yml"));
     }
 
     @Override
@@ -164,7 +195,10 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         }
 
         // Log Shutdown
-        this.colorLogger.logToConsole(this.logPrefixColored + "Disabled", Level.INFO);
+        this.colorComponentLogger.logToConsole(
+                NmsAPI.getVersionedComponentSerializer().fromMiniMessage(this.logPrefixMini + "Disabled"),
+                Level.INFO
+        );
     }
 
     /**
@@ -175,7 +209,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     /**
      * Called after both onDisableInner and listeners, tasks, and disableables are unregistered<br>
      * Also called after modules, features, and commands are unregistered<br>
-     * You can use this method to cleanup databases or anything else that should come after module/features shutdowns
+     * You can use this method to clean up databases or anything else that should come after module/features shutdowns
      */
     public void onDisablePost() {}
 
@@ -403,20 +437,9 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     // -------------------------------------------- //
     // MODULE MANAGEMENT
     // -------------------------------------------- //
-    public <M extends Module> void registerModule(Class<M> clazz) {
-        Constructor<M> s;
-        try {
-            s = clazz.getDeclaredConstructor();
-            s.setAccessible(true);
-            M instance = s.newInstance();
-            registerModule(instance);
-        } catch (Throwable t) {
-            Bukkit.getLogger().severe("Failed to initialize the module: " + clazz.getName());
-            t.printStackTrace();
-        }
-    }
     public void registerModule(Module... modules) {
         for (Module module : modules) {
+            if (module == null) { continue; }
             getModuleManager().registerModule(module);
         }
     }
@@ -424,20 +447,9 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
     // -------------------------------------------- //
     // FEATURE MANAGEMENT
     // -------------------------------------------- //
-    public <F extends Feature> void registerFeature(Class<F> clazz) {
-        Constructor<F> s;
-        try {
-            s = clazz.getDeclaredConstructor();
-            s.setAccessible(true);
-            F instance = s.newInstance();
-            registerFeature(instance);
-        } catch (Throwable t) {
-            Bukkit.getLogger().severe("Failed to initialize the feature: " + clazz.getName());
-            t.printStackTrace();
-        }
-    }
     public void registerFeature(Feature... features) {
         for (Feature feature : features) {
+            if (feature == null) { continue; }
             getFeatureManager().registerFeature(feature);
         }
     }
@@ -502,22 +514,34 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
         return true;
     }
 
-    public @NotNull KamiConfigExt getModulesConfig() {
+    @NotNull
+    public final KamiConfigExt getModulesConfig() {
         // Create on-demand, since creating the KamiConfig will create the file too
         if (modulesConfig == null) {
-            // Create the Modules Config (no defaults loading)
-            this.modulesConfig = new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"), null);
+            this.modulesConfig = createModulesConfig();
         }
         return modulesConfig;
     }
 
-    public @NotNull KamiConfigExt getFeaturesConfig() {
+    @OverrideOnly
+    public @NotNull KamiConfigExt createModulesConfig() {
+        // Create the Modules Config (expects defaults in a 'modules.yml' resource file)
+        return new KamiConfigExt(this, new File(getDataFolder(), "modules.yml"));
+    }
+
+    @NotNull
+    public final KamiConfigExt getFeaturesConfig() {
         // Create on-demand, since creating the KamiConfig will create the file too
         if (featuresConfig == null) {
-            // Create the Modules Config (no defaults loading)
-            this.featuresConfig = new KamiConfigExt(this, new File(getDataFolder(), "features.yml"), null);
+            this.featuresConfig = createFeaturesConfig();
         }
         return featuresConfig;
+    }
+
+    @OverrideOnly
+    public @NotNull KamiConfigExt createFeaturesConfig() {
+        // Create the Features Config (expects defaults in a 'features.yml' resource file)
+        return new KamiConfigExt(this, new File(getDataFolder(), "features.yml"), null);
     }
 
     // -------------------------------------------- //
@@ -529,7 +553,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
      * @return If the observer was successfully registered from this call (false if already registered)
      */
     @Override
-    public boolean registerConfigObserver(@NotNull ConfigObserver observer) {
+    public boolean registerConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         return this.getKamiConfig().registerConfigObserver(observer);
     }
 
@@ -537,7 +561,7 @@ public abstract class KamiPlugin extends JavaPlugin implements Listener, Named, 
      * Unregisters an observer from this plugin's default KamiConfig
      */
     @Override
-    public void unregisterConfigObserver(@NotNull ConfigObserver observer) {
+    public void unregisterConfigObserver(@NotNull ConfigObserver<KamiConfig> observer) {
         this.getKamiConfig().unregisterConfigObserver(observer);
     }
 

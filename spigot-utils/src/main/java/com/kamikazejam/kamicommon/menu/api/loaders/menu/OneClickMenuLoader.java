@@ -6,7 +6,6 @@ import com.kamikazejam.kamicommon.menu.api.icons.slots.IconSlot;
 import com.kamikazejam.kamicommon.menu.api.loaders.IconSlotLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuIconLoader;
 import com.kamikazejam.kamicommon.menu.api.loaders.MenuSizeLoader;
-import com.kamikazejam.kamicommon.util.StringUtil;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +30,10 @@ public class OneClickMenuLoader {
     public static @NotNull OneClickMenu.Builder loadMenu(@NotNull ConfigurationSection section) {
         // Load title from 'title' or 'name', defaulting to " "
         String title = section.getString("title", section.getString("name", " "));
-        OneClickMenu.Builder builder = new OneClickMenu.Builder(MenuSizeLoader.load(section)).title(StringUtil.t(title));
+        OneClickMenu.Builder builder = (OneClickMenu.Builder) SimpleMenuLoader.setTitle(
+                new OneClickMenu.Builder(MenuSizeLoader.load(section)),
+                title
+        );
 
         // Load Filler Icon
         if (section.isConfigurationSection("filler")) {

@@ -1,18 +1,28 @@
 package com.kamikazejam.kamicommon.subsystem.feature;
 
-import com.kamikazejam.kamicommon.configuration.spigot.KamiConfigExt;
 import com.kamikazejam.kamicommon.subsystem.SubsystemConfig;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import com.kamikazejam.kamicommon.yaml.source.ConfigSource;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class FeatureConfig extends SubsystemConfig<Feature> {
 
-    // resourcePath is in form: "featureYmlPath + <feature>.yml"
+    // Constructor for features storing configs in Files on the server filesystem
+    //   resourcePath is in form: "featureYmlPath + <feature>.yml"
     public FeatureConfig(@NotNull Feature feature, @NotNull String resourcePath) {
         super(
                 Preconditions.checkNotNull(feature, "Feature cannot be null"),
                 Preconditions.checkNotNull(resourcePath, "File name cannot be null")
+        );
+    }
+
+    // Constructor for features using ConfigSource (e.g. from a database or other source)
+    public FeatureConfig(@NotNull Feature feature, @NotNull ConfigSource source, @NotNull String resourcePath) {
+        super(
+                Preconditions.checkNotNull(feature, "Feature cannot be null"),
+                Preconditions.checkNotNull(source, "ConfigSource cannot be null"),
+                Preconditions.checkNotNull(resourcePath, "Resource path cannot be null")
         );
     }
 
@@ -21,15 +31,7 @@ public class FeatureConfig extends SubsystemConfig<Feature> {
         return this.getSubsystem();
     }
 
-    @Override
-    public final void addConfigDefaults() {
-        Feature feature = this.getFeature();
-        KamiConfigExt c = feature.getPlugin().getFeaturesConfig();
-        String name = feature.getName().replace(" ", "_");
-        c.addDefault("features." + name + ".featurePrefix", feature.defaultPrefix());
-        c.save();
-
-        this.save();
-        this.reload();
+    private String getFeatureConfigKey() {
+        return "features." + this.getFeature().getName().replace(" ", "_");
     }
 }

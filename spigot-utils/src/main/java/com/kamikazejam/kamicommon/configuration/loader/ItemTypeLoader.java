@@ -1,6 +1,7 @@
 package com.kamikazejam.kamicommon.configuration.loader;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.util.Jdk8;
 import com.kamikazejam.kamicommon.util.Preconditions;
 import com.kamikazejam.kamicommon.util.nms.MaterialFlatteningUtil;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
@@ -38,7 +39,7 @@ public class ItemTypeLoader {
         if (strValue == null) {
             return null;
         }
-        strValue = strValue.toUpperCase().strip();
+        strValue = Jdk8.strip(strValue.toUpperCase());
 
         // Extract an optional data value (for legacy materials)
         @Nullable Integer data = null;

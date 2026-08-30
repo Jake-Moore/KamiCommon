@@ -3,15 +3,23 @@ package com.kamikazejam.kamicommon.item;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
+import com.kamikazejam.kamicommon.configuration.Configurable;
 import com.kamikazejam.kamicommon.item.patch.Patch;
 import com.kamikazejam.kamicommon.item.patch.PatchAdd;
 import com.kamikazejam.kamicommon.item.patch.PatchOp;
 import com.kamikazejam.kamicommon.item.patch.PatchRemove;
 import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.Component;
+import com.kamikazejam.kamicommon.nms.text.kyori.adventure.text.format.TextDecoration;
+import com.kamikazejam.kamicommon.nms.util.VersionedComponentUtil;
 import com.kamikazejam.kamicommon.util.Preconditions;
-import com.kamikazejam.kamicommon.util.StringUtilP;
+import com.kamikazejam.kamicommon.util.SoftPlaceholderAPI;
 import com.kamikazejam.kamicommon.yaml.spigot.ConfigurationSection;
-import org.bukkit.ChatColor;
+import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
@@ -24,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -32,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * A builder class for wrapping {@link ItemStack}s and applying patches to them.<br>
@@ -94,17 +102,19 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
      * PATCH PROPERTY (null = inherits prototype value):<br>
      * <br>
      * A custom display name for the item.<br>
-     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.
+     * Colors are assumed to be already handled in the component.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.
      */
-    private @Nullable String name = null;
+    private @Nullable VersionedComponent name = null;
 
     /**
      * PATCH PROPERTY (null = inherits prototype value):<br>
      * <br>
      * Custom lore for the item.<br>
-     * Color translations using {@link StringUtilP#p(OfflinePlayer, String)} will be applied during {@link #build(Player)} automatically.
+     * Colors are assumed to be already handled in the component.<br>
+     * Placeholders are set automatically via {@link SoftPlaceholderAPI#setPlaceholders(OfflinePlayer, String)}.
      */
-    private @Nullable List<String> lore = null;
+    private @Nullable List<VersionedComponent> lore = null;
 
     /**
      * PATCH PROPERTY (null = inherits prototype value):<br>
@@ -211,10 +221,46 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
         // Name and lore
         if (name != null) {
-            meta.setDisplayName(StringUtilP.p(viewer, name));
+            // Map to MiniMessage, perform placeholder API replacements, then serialize back to components
+            VersionedComponent papiName = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                    SoftPlaceholderAPI.setPlaceholders(viewer, this.name.serializeMiniMessage())
+            );
+            // Minecraft made a change where all names and lore are automatically italicized unless explicitly set to false
+            // We want to mirror backwards compatibility and more specifically always follow the mini message formatting
+            // Thus, we need to set it to false so that our mini message is represented exactly as intended
+            Component component;
+            if (Config.isRemoveAutomaticComponentItalics()) {
+                component = papiName.asInternalComponent().decoration(TextDecoration.ITALIC, false);
+            } else {
+                component = papiName.asInternalComponent();
+            }
+            // Set the name using the updated component
+            VersionedComponentUtil.setDisplayName(
+                    meta,
+                    NmsAPI.getVersionedComponentSerializer().fromInternalComponent(component)
+            );
         }
         if (lore != null) {
-            meta.setLore(StringUtilP.p(viewer, lore));
+            // Map to MiniMessage, perform placeholder API replacements, then serialize back to components
+            List<VersionedComponent> papiLore = this.lore.stream()
+                    .map(s -> NmsAPI.getVersionedComponentSerializer().fromMiniMessage(
+                            SoftPlaceholderAPI.setPlaceholders(viewer, s.serializeMiniMessage())
+                    ))
+                    .collect(Collectors.toList());
+            // Minecraft made a change where all names and lore are automatically italicized unless explicitly set to false
+            // We want to mirror backwards compatibility and more specifically always follow the mini message formatting
+            // Thus, we need to set it to false so that our mini message is represented exactly as intended
+            List<Component> components;
+            if (Config.isRemoveAutomaticComponentItalics()) {
+                components = papiLore.stream().map(c -> c.asInternalComponent().decoration(TextDecoration.ITALIC, false)).collect(Collectors.toList());
+            } else {
+                components = papiLore.stream().map(VersionedComponent::asInternalComponent).collect(Collectors.toList());
+            }
+            // Set the name using the updated component
+            VersionedComponentUtil.setLore(
+                    meta,
+                    components.stream().map(c -> NmsAPI.getVersionedComponentSerializer().fromInternalComponent(c)).collect(Collectors.toList())
+            );
         }
 
         // Unbreakable
@@ -230,8 +276,14 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
                     continue;
                 }
                 switch (entry.getValue()) {
-                    case ADD -> meta.addItemFlags(flag);
-                    case REMOVE -> meta.removeItemFlags(flag);
+                    case ADD:
+                        meta.addItemFlags(flag);
+                        break;
+                    case REMOVE:
+                        meta.removeItemFlags(flag);
+                        break;
+                    default:
+                        throw new IllegalStateException("unhandled flag patch: " + entry.getValue());
                 }
             }
         }
@@ -243,16 +295,21 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
                         entry.getKey().get(),
                         "XEnchantment '" + entry.getKey().name() + "' failed to correspond to a valid Bukkit enchantment!"
                 );
-                switch (entry.getValue()) {
-                    case PatchRemove<Integer> remove -> meta.removeEnchant(enchant);
-                    case PatchAdd<Integer> add -> {
-                        if (add.getValue() <= 0) {
-                            // <= 0 values are treated as removal of the enchantment
-                            meta.removeEnchant(enchant);
-                        } else {
-                            meta.addEnchant(enchant, add.getValue(), true); // true - ignores level restrictions
-                        }
+                Patch<Integer> patchValue = entry.getValue();
+                if (patchValue instanceof PatchRemove) {
+                    meta.removeEnchant(enchant);
+                } else if (patchValue instanceof PatchAdd) {
+                    PatchAdd<Integer> add = (PatchAdd<Integer>) patchValue;
+                    if (add.getValue() <= 0) {
+                        // <= 0 values are treated as removal of the enchantment
+                        meta.removeEnchant(enchant);
+                    } else {
+                        meta.addEnchant(enchant, add.getValue(), true); // true - ignores level restrictions
                     }
+                } else {
+                    throw new IllegalStateException("unhandled Patch implementation: "
+                + patchValue.getClass().getName() + ". Patch is a closed hierarchy enforced by\n"
+                + " the verifySealedHierarchies build task; add a branch here.");
                 }
             }
         }
@@ -270,7 +327,8 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         }
 
         // Skull Meta
-        if (skullOwner != null && meta instanceof SkullMeta skullMeta) {
+        if (skullOwner != null && meta instanceof SkullMeta) {
+            SkullMeta skullMeta = (SkullMeta) meta;
             skullMeta.setOwner(skullOwner);
         }
 
@@ -318,7 +376,7 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
     // ----- NAME ------ //
     @Override
-    public @NotNull ItemBuilder setName(@NotNull String name) {
+    public @NotNull ItemBuilder displayName(@NotNull VersionedComponent name) {
         Preconditions.checkNotNull(name, "Name cannot be null");
         this.name = name;
         return this;
@@ -332,15 +390,9 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
     // ----- LORE ------ //
     @Override
-    public @NotNull ItemBuilder setLore(@NotNull String... loreLines) {
-        Preconditions.checkNotNull(loreLines, "Lore lines cannot be null");
-        return setLore(Arrays.asList(loreLines));
-    }
-
-    @Override
-    public @NotNull ItemBuilder setLore(@NotNull List<String> loreLines) {
-        Preconditions.checkNotNull(loreLines, "Lore lines cannot be null");
-        this.lore = loreLines;
+    public @NotNull ItemBuilder lore(@NotNull List<@NotNull VersionedComponent> lines) {
+        Preconditions.checkNotNull(lines, "Lore lines cannot be null");
+        this.lore = lines;
         return this;
     }
 
@@ -492,19 +544,19 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     }
 
     @Override
-    public @Nullable String getName() {
+    public @Nullable VersionedComponent customName() {
         if (name != null) { return name; }
         @Nullable ItemMeta meta = prototype.getItemMeta();
         if (meta == null || !meta.hasDisplayName()) { return null; }
-        return meta.getDisplayName();
+        return VersionedComponentUtil.getDisplayName(meta);
     }
 
     @Override
-    public @Nullable List<@NotNull String> getLore() {
+    public @Nullable List<@NotNull VersionedComponent> lore() {
         if (lore != null) { return lore; }
         @Nullable ItemMeta meta = prototype.getItemMeta();
         if (meta == null || !meta.hasLore()) { return null; }
-        return meta.getLore();
+        return VersionedComponentUtil.getLore(meta);
     }
 
     @Override
@@ -520,8 +572,12 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         @Nullable PatchOp op = itemFlags.get(flag);
         if (op != null) {
             switch (op) {
-                case ADD -> { return true; }
-                case REMOVE -> { return false; }
+                case ADD:
+                    return true;
+                case REMOVE:
+                    return false;
+                default:
+                    throw new IllegalStateException("unhandled PatchOp: " + op);
             }
         }
 
@@ -547,8 +603,14 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         // Apply patches
         for (Entry<XItemFlag, PatchOp> entry : itemFlags.entrySet()) {
             switch (entry.getValue()) {
-                case ADD -> result.add(entry.getKey());
-                case REMOVE -> result.remove(entry.getKey());
+                case ADD:
+                    result.add(entry.getKey());
+                    break;
+                case REMOVE:
+                    result.remove(entry.getKey());
+                    break;
+                default:
+                    throw new IllegalStateException("unhandled PatchOp: " + entry.getValue());
             }
         }
 
@@ -559,9 +621,15 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     public int getEnchantmentLevel(@NotNull XEnchantment enchant) {
         @Nullable Patch<Integer> patch = enchantments.get(enchant);
         if (patch != null) {
-            switch (patch) {
-                case PatchAdd<Integer> add -> { return Math.max(0, add.getValue()); }
-                case PatchRemove<Integer> remove -> { return 0; }
+            Patch<Integer> patchValue = patch;
+            if (patchValue instanceof PatchAdd) {
+                return Math.max(0, ((PatchAdd<Integer>) patchValue).getValue());
+            } else if (patchValue instanceof PatchRemove) {
+                return 0;
+            } else {
+                throw new IllegalStateException("unhandled Patch implementation: "
+            + patchValue.getClass().getName() + ". Patch is a closed hierarchy enforced by\n"
+            + " the verifySealedHierarchies build task; add a branch here.");
             }
         }
 
@@ -588,16 +656,21 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
 
         // Apply patches
         for (Entry<XEnchantment, Patch<Integer>> entry : enchantments.entrySet()) {
-            switch (entry.getValue()) {
-                case PatchAdd<Integer> add -> {
-                    if (add.getValue() > 0) {
-                        result.put(entry.getKey(), add.getValue());
-                    } else {
-                        // <= 0 values are treated as removal of the enchantment
-                        result.remove(entry.getKey());
-                    }
+            Patch<Integer> patchValue = entry.getValue();
+            if (patchValue instanceof PatchAdd) {
+                PatchAdd<Integer> add = (PatchAdd<Integer>) patchValue;
+                if (add.getValue() > 0) {
+                    result.put(entry.getKey(), add.getValue());
+                } else {
+                    // <= 0 values are treated as removal of the enchantment
+                    result.remove(entry.getKey());
                 }
-                case PatchRemove<Integer> remove -> result.remove(entry.getKey());
+            } else if (patchValue instanceof PatchRemove) {
+                result.remove(entry.getKey());
+            } else {
+                throw new IllegalStateException("unhandled Patch implementation: "
+            + patchValue.getClass().getName() + ". Patch is a closed hierarchy enforced by\n"
+            + " the verifySealedHierarchies build task; add a branch here.");
             }
         }
 
@@ -616,7 +689,8 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         }
         if (skullOwner != null) { return skullOwner; }
         @Nullable ItemMeta meta = prototype.getItemMeta();
-        if (!(meta instanceof SkullMeta skullMeta)) { return null; }
+        if (!(meta instanceof SkullMeta)) { return null; }
+        SkullMeta skullMeta = (SkullMeta) meta;
         return skullMeta.getOwner();
     }
 
@@ -646,62 +720,80 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
     //                    PATCH PROPERTY HELPERS                    //
     // ------------------------------------------------------------ //
     @Override
-    public @NotNull ItemBuilder replaceName(@NotNull String find, @NotNull String replacement) {
+    public @NotNull ItemBuilder replaceName(@NotNull String find, @NotNull VersionedComponent replacement) {
         if (name == null) { return this; }
-        name = name.replace(find, replacement);
+        String miniMessage = name.serializeMiniMessage();
+        // Use MiniMessage as intermediary format for replacement
+        name = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(miniMessage.replace(find, replacement.serializeMiniMessage()));
         return this;
     }
 
     @Override
     public @NotNull ItemBuilder replaceNamePAPI(@Nullable OfflinePlayer player) {
-        if (name == null) { return this; }
-        name = StringUtilP.p(player, name);
+        if (this.name == null) { return this; }
+        // Use MiniMessage as intermediary format for replacement
+        String papiMiniMessage = SoftPlaceholderAPI.setPlaceholders(player, this.name.serializeMiniMessage());
+        this.name = NmsAPI.getVersionedComponentSerializer().fromMiniMessage(papiMiniMessage);
         return this;
     }
 
     @Override
-    @NotNull
-    public ItemBuilder replaceLoreLine(@NotNull String find, @NotNull List<@NotNull String> replacement) {
-        final List<String> newLore = new ArrayList<>();
-        if (lore == null) { return this; }
-        for (String s : lore) {
-            if (ChatColor.stripColor(s).contains(ChatColor.stripColor(find))) {
-                newLore.addAll(replacement);
+    public @NotNull ItemBuilder replaceLoreLineComponent(
+            @NotNull Predicate<@NotNull VersionedComponent> filter,
+            @NotNull List<@NotNull VersionedComponent> replacements
+    ) {
+        final List<VersionedComponent> newLore = new ArrayList<>();
+        if (this.lore == null) { return this;}
+
+        for (VersionedComponent line : this.lore) {
+            if (filter.test(line)) {
+                newLore.addAll(replacements);
             } else {
-                newLore.add(s);
+                newLore.add(line);
             }
         }
-        setLore(newLore);
+
+        this.lore(newLore);
         return this;
     }
 
     @Override
     @NotNull
-    public ItemBuilder replaceLore(@NotNull String find, @NotNull String replacement) {
-        final List<String> newLore = new ArrayList<>();
+    public ItemBuilder replaceLore(@NotNull String find, @NotNull VersionedComponent replacement) {
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+
+        final List<VersionedComponent> newLore = new ArrayList<>();
         if (lore == null) { return this; }
-        for (String s : lore) {
-            if (s.contains(find)) {
-                newLore.add(s.replace(find, replacement));
+        for (VersionedComponent line : lore) {
+            String miniMessage = line.serializeMiniMessage();
+            if (miniMessage.contains(find)) {
+                // Use MiniMessage as intermediary format for replacement
+                newLore.add(serializer.fromMiniMessage(miniMessage.replace(find, replacement.serializeMiniMessage())));
             }else {
-                newLore.add(s);
+                newLore.add(line);
             }
         }
-        setLore(newLore);
+        this.lore(newLore);
         return this;
     }
 
     @Override
     @NotNull
     public ItemBuilder replaceLorePAPI(@Nullable OfflinePlayer player) {
-        if (lore == null) { return this; }
-        lore.replaceAll(s -> StringUtilP.p(player, s));
+        if (this.lore == null) { return this; }
+        VersionedComponentSerializer serializer = NmsAPI.getVersionedComponentSerializer();
+        this.lore.replaceAll(s -> {
+            // Use MiniMessage as intermediary format for replacement
+            String miniMessage = s.serializeMiniMessage();
+            String papiMiniMessage = SoftPlaceholderAPI.setPlaceholders(player, miniMessage);
+            return serializer.fromMiniMessage(papiMiniMessage);
+        });
         return this;
     }
 
     @Override
     @NotNull
-    public ItemBuilder addLoreLines(@NotNull List<@NotNull String> lines) {
+    public ItemBuilder addLoreComponents(@NotNull List<@NotNull VersionedComponent> lines) {
         if (lore == null) { lore = new ArrayList<>(); }
         lore.addAll(lines);
         return this;
@@ -816,5 +908,15 @@ public final class ItemBuilder implements IBuilder<ItemBuilder>, Cloneable {
         Preconditions.checkNotNull(prototype, "ItemStack cannot be null");
         Preconditions.checkNotNull(section, "ConfigurationSection cannot be null");
         return ItemBuilderLoader.loadPatches(prototype, section);
+    }
+
+    @Configurable
+    public static class Config {
+        /**
+         * When enabled, the default italic style applied to item names and lore by Minecraft will be disabled.<br>
+         * This means that the mini message formatting will be displayed 'as intended' without the automatic italicization.
+         */
+        @Getter @Setter
+        private static boolean removeAutomaticComponentItalics = true;
     }
 }

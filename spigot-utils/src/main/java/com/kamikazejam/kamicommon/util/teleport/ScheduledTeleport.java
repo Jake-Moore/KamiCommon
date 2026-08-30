@@ -1,6 +1,6 @@
 package com.kamikazejam.kamicommon.util.teleport;
 
-import com.kamikazejam.kamicommon.nms.NmsAPI;
+import com.kamikazejam.kamicommon.nms.text.VersionedComponent;
 import com.kamikazejam.kamicommon.util.KUtil;
 import com.kamikazejam.kamicommon.util.engine.EngineScheduledTeleport;
 import com.kamikazejam.kamicommon.util.exception.KamiCommonException;
@@ -19,7 +19,7 @@ public class ScheduledTeleport implements Runnable {
     // -------------------------------------------- //
 
     private final String teleporteeId;
-    private final @Nullable String desc;
+    private final @Nullable VersionedComponent desc;
 
     private final @Nullable Destination destination;
     private final @Nullable MixinTeleport.TeleportCallback callback;
@@ -37,7 +37,7 @@ public class ScheduledTeleport implements Runnable {
     // CONSTRUCT
     // -------------------------------------------- //
 
-    public ScheduledTeleport(String teleporteeId, @NotNull Destination destination, @Nullable String desc, int delaySeconds) {
+    public ScheduledTeleport(String teleporteeId, @NotNull Destination destination, @Nullable VersionedComponent desc, int delaySeconds) {
         this.teleporteeId = teleporteeId;
         this.destination = destination;
         this.desc = desc;
@@ -46,7 +46,7 @@ public class ScheduledTeleport implements Runnable {
         this.dueMillis = 0;
     }
 
-    public ScheduledTeleport(String teleporteeId, @NotNull MixinTeleport.TeleportCallback callback, @Nullable String desc, int delaySeconds) {
+    public ScheduledTeleport(String teleporteeId, @NotNull MixinTeleport.TeleportCallback callback, @Nullable VersionedComponent desc, int delaySeconds) {
         this.teleporteeId = teleporteeId;
         this.destination = null;
         this.callback = callback;
@@ -81,8 +81,8 @@ public class ScheduledTeleport implements Runnable {
             MixinTeleport.get().teleportInternal(this.getTeleporteeId(), this.getDestination(), this.getCallback(), this.getDesc(), 0);
         } catch (KamiCommonException e) {
             CommandSender sender = KUtil.getSender(this.getTeleporteeId());
-            if (sender != null && e.getKMessage() != null) {
-                NmsAPI.getMessageManager().processAndSend(sender, e.getKMessage());
+            if (sender != null && e.getComponent() != null) {
+                e.getComponent().sendTo(sender);
             }
         }
     }
