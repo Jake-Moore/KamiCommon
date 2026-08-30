@@ -36,7 +36,11 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
       with:
-        gradle-version: '9.0.0'
+        # Follow the wrapper rather than pinning. These were pinned to 9.0.0 while the wrapper
+        # said something else, so CI and local builds ran different Gradle versions and a
+        # wrapper bump could never affect CI. That is why the shadow 9.6.1 update stayed red
+        # even once the wrapper bump was in the same PR.
+        gradle-version: wrapper
 
     - name: Build with Gradle (1.8.8)
       run: gradle build
