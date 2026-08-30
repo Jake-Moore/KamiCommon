@@ -140,6 +140,39 @@ public abstract class AbstractSubsystem<C extends SubsystemConfig<S>, S extends 
     public abstract @NotNull VersionedComponent defaultPrefix();
 
     // -------------------------------------------- //
+    // PLUGIN-LEVEL CONFIG KEY
+    // -------------------------------------------- //
+    /**
+     * The top-level section of the plugin-level config that holds every subsystem of this kind:
+     * {@code "modules"} for a {@link com.kamikazejam.kamicommon.subsystem.module.Module}, read out
+     * of {@code modules.yml}, and {@code "features"} for a
+     * {@link com.kamikazejam.kamicommon.subsystem.feature.Feature}, read out of {@code features.yml}.<br>
+     * <br>
+     * This is deliberately NOT the on-disk folder name from {@code MODULES_FOLDER} /
+     * {@code FEATURES_FOLDER}, even though the words currently match. Those name a directory and
+     * this names a config key; tying them together would make renaming the directory silently
+     * rename everybody's config keys.
+     *
+     * @return the section name, with no trailing dot
+     */
+    @OverrideOnly
+    protected abstract @NotNull String getSubsystemConfigSection();
+
+    /**
+     * The key this subsystem's entries live under in its plugin-level config, for example
+     * {@code modules.My_Module} or {@code features.Captcha}.<br>
+     * <br>
+     * Spaces in the subsystem name map to underscores. This is the ONLY place a subsystem key is
+     * built, which is the point of it: modules used to normalise spaces for their {@code enabled}
+     * flag and not for their {@code modulePrefix}, and features did not normalise at all, so the
+     * same name produced up to three different spellings depending on which reader asked.
+     */
+    @Internal
+    public final @NotNull String getSubsystemConfigKey() {
+        return getSubsystemConfigSection() + "." + getName().replace(" ", "_");
+    }
+
+    // -------------------------------------------- //
     // SUBSYSTEM CONFIG
     // -------------------------------------------- //
     @NotNull

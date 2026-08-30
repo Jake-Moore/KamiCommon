@@ -98,23 +98,29 @@ public abstract class Module extends AbstractSubsystem<ModuleConfig, Module> {
         return enabled;
     }
 
+    @Override
+    protected @NotNull String getSubsystemConfigSection() {
+        // The 'modules' section of the plugin's modules.yml. Not MODULES_FOLDER: that names the
+        // directory on disk, and the two only look alike.
+        return "modules";
+    }
+
     /**
-     * The key this module's entries live under in the plugin's {@code modules.yml}.<br>
+     * The key this module's entries live under in the plugin's {@code modules.yml}, for example
+     * {@code modules.My_Module}.<br>
      * <br>
-     * Spaces in the module name map to underscores. Both the {@code enabled} flag and the
-     * {@code modulePrefix} string are read through this one method so they cannot disagree: they
-     * used to derive the key separately, and for a module whose name contained a space they
-     * derived two differently-spelled keys off the same name.
+     * An alias of {@link AbstractSubsystem#getSubsystemConfigKey()}, kept under its own name
+     * because it is public. It builds nothing itself, so it cannot drift from the key features use.
      */
     @Internal
     public final @NotNull String getModulesConfigKey() {
-        return "modules." + getName().replace(" ", "_");
+        return getSubsystemConfigKey();
     }
 
     @Override
     public final @NotNull VersionedComponent getPrefix() {
         KamiConfigExt c = getPlugin().getModulesConfig();
-        String key = getModulesConfigKey() + ".modulePrefix";
+        String key = getSubsystemConfigKey() + ".modulePrefix";
         String def = defaultPrefix().serializeMiniMessage();
 
         // Warn if the module does not have a prefix entry in the config so the plugin author can go add a default in the resource file

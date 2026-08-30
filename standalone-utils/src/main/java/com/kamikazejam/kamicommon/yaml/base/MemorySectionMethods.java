@@ -128,39 +128,51 @@ public abstract class MemorySectionMethods<T extends AbstractMemorySection<?>> e
     }
 
     public boolean getBoolean(String key, boolean def) {
-        Object val = get(key, def);
-        if (val == null) {
-            return def;
-        }
+        @Nullable Boolean parsed = parseBoolean(get(key, def));
+        return (parsed != null) ? parsed : def;
+    }
+
+    /**
+     * The boolean spellings this library accepts, or {@code null} for a value that is not one.
+     *
+     * <p>{@link #getBoolean(String, boolean)} and {@link #isBoolean(String)} both go through here,
+     * which is the point of it. They used to answer independently and disagreed on everything that
+     * came out of a yaml file: {@code isBoolean} tested {@code instanceof Boolean} while
+     * {@code AbstractMemorySection} returns every scalar node as a {@link String}.
+     *
+     * <p>Note that {@code 1} and {@code 0} are NOT booleans here, because {@code getBoolean} has
+     * never parsed them and this method exists to describe what {@code getBoolean} does.
+     */
+    private static @Nullable Boolean parseBoolean(@Nullable Object val) {
         if (val instanceof Boolean) {
-            return (boolean) val;
+            return (Boolean) val;
         }
         if (val instanceof String) {
             String s = (String) val;
-            if (s.equalsIgnoreCase("true")) {
-                return true;
+            if (s.equalsIgnoreCase("true") || s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("on")) {
+                return Boolean.TRUE;
             }
-            if (s.equalsIgnoreCase("false")) {
-                return false;
-            }
-            if (s.equalsIgnoreCase("yes")) {
-                return true;
-            }
-            if (s.equalsIgnoreCase("no")) {
-                return false;
-            }
-            if (s.equalsIgnoreCase("on")) {
-                return true;
-            }
-            if (s.equalsIgnoreCase("off")) {
-                return false;
+            if (s.equalsIgnoreCase("false") || s.equalsIgnoreCase("no") || s.equalsIgnoreCase("off")) {
+                return Boolean.FALSE;
             }
         }
-        return def;
+        return null;
     }
 
+    /**
+     * Whether the value at this key is one {@link #getBoolean(String, boolean)} would parse, rather
+     * than fall back to its default for.
+     *
+     * <p>This was {@code get(key) instanceof Boolean}, which could never be true for a value read
+     * from a yaml file, because scalars come back as strings. Every caller gating on it was dead:
+     * {@code unbreakable:} and {@code hide-attributes:} on an item, and {@code hide-attributes:}
+     * on a menu icon, were all parsed and then discarded.
+     *
+     * <p>Uses {@code get(key)}, not {@code get(key, def)}: a missing key must answer false, and the
+     * defaulting overload would hand back the default and make every missing key look set.
+     */
     public boolean isBoolean(String key) {
-        return get(key) instanceof Boolean;
+        return parseBoolean(get(key)) != null;
     }
 
 
