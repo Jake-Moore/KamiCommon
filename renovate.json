@@ -65,14 +65,14 @@
       "automerge": false
     },
     {
-      "description": "Anything that RUNS the build gets its own branch and a human. Anything the build merely compiles against can batch and auto-merge. Every stuck batch here has been the same shape: a build-system component bundled with libraries, where one incompatible member blocks all the rest. gradle-wrapper did it by erroring inside Renovate's container, which killed this repo's grouped batch for nine months while individual majors kept working, so nothing looked wrong. com.gradleup.shadow 9.6.1 then did it by needing a newer Gradle than the wrapper provides, failing with AdhocComponentWithVariants.addVariantsFromConfiguration. That is why #248 is red. The wrapper was fixed as a special case rather than as a class, so shadow arrived unguarded. Measured on the sibling repo: Gradle 9.7.1 with shadow 9.6.1 builds clean, so #249 is the unblocker for #248. Expect a shadow PR to sit red until the wrapper moves. That is the signal, not a fault, and it no longer holds a dozen unrelated library updates hostage.",
-      "matchPackageNames": [
-        "com.gradleup.shadow",
-        "org.gradle.toolchains.foojay-resolver-convention"
-      ],
+      "description": "Anything that RUNS the build gets its own branch and a human. Anything the build merely compiles against can batch and auto-merge. Every stuck batch here has been the same shape: a build-system component bundled with libraries, where one incompatible member blocks all the rest. gradle-wrapper did it by erroring inside Renovate's container, which killed this repo's grouped batch for nine months while individual majors kept working, so nothing looked wrong. com.gradleup.shadow 9.6.1 then did it by needing a newer Gradle than the wrapper provides, failing with AdhocComponentWithVariants.addVariantsFromConfiguration. That is why #248 is red. The wrapper was fixed as a special case rather than as a class, so shadow arrived unguarded. Measured on the sibling repo: Gradle 9.7.1 with shadow 9.6.1 builds clean, so #249 is the unblocker for #248. Expect a shadow PR to sit red until the wrapper moves. That is the signal, not a fault, and it no longer holds a dozen unrelated library updates hostage. Matched by matchDepNames, NOT matchPackageNames: for a Gradle plugin, Renovate's packageName is the marker artifact com.gradleup.shadow:com.gradleup.shadow.gradle.plugin, while depName is the plugin id the dashboard shows. The first version of this rule used matchPackageNames with the plugin id and silently matched nothing, confirmed on the sibling repo where shadow stayed in the auto-merge batch through a fresh Renovate run after the rule merged.",
       "groupName": "build system",
       "groupSlug": "build-system",
-      "automerge": false
+      "automerge": false,
+      "matchDepNames": [
+        "com.gradleup.shadow",
+        "org.gradle.toolchains.foojay-resolver-convention"
+      ]
     }
   ],
   "prConcurrentLimit": 0,
