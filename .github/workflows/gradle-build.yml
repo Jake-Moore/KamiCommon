@@ -3,7 +3,8 @@ name: Gradle Build (on PR)
 on:
   pull_request:
     branches:
-      - main
+      # main is the timeline and carries no CI/CD responsibility. Everything that needs validating
+      # happens on a release line, and the sync from release/v5 to main is a fast-forward.
       - "release/**"
 
 jobs:
