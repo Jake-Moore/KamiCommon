@@ -250,24 +250,72 @@ jobs:
         artifacts: "spigot-jar/build/libs/*.jar"
         allowUpdates: true
         removeArtifacts: true
-        omitBodyDuringUpdate: true
+        # The body is rewritten on every run. A re-run is routine here, because the javadoc task
+        # fetches an external documentation site and fails when it is mid-deploy, so omitting the
+        # body on update meant the template below was usually discarded and whatever GitHub had
+        # auto-generated from the merge commit survived instead.
+        omitBodyDuringUpdate: false
         omitDraftDuringUpdate: true
         omitNameDuringUpdate: true
         omitPrereleaseDuringUpdate: true
+        # No generateReleaseNotes. This branch takes its changes as direct commits rather than pull
+        # requests, so a PR-derived changelog lists dependency bumps and branch syncs and nothing else.
         body: |
-          ## KamiCommon Release ${{ needs.build-core.outputs.core_version }}
-          
-          ### Plugin Download
-          - [KamiCommon Plugin](${{ steps.generate_url.outputs.plugin_jar_url }})
-          
-          ### Published Artifacts
-          - [standalone-utils](${{ steps.generate_url.outputs.standalone_utils_url }})
-          - [standalone-jar](${{ steps.generate_url.outputs.standalone_jar_url }})
-          - [shared-utils](${{ steps.generate_url.outputs.shared_utils_url }})
-          - [shared-jar](${{ steps.generate_url.outputs.shared_jar_url }})
-          - [spigot-utils](${{ steps.generate_url.outputs.spigot_utils_url }})
-          - [spigot-jar](${{ steps.generate_url.outputs.spigot_jar_url }})
+          ## KamiCommon ${{ needs.setup.outputs.version }}
+
+          One artifact for **Minecraft ${{ needs.setup.outputs.oldestServerAPI }} to ${{ needs.setup.outputs.newestServerAPI }}**. Every module targets **Java 8**.
+
+          ### Add it
+
+          ```kotlin
+          repositories {
+              maven("https://repo.luxiouslabs.net/repository/maven-releases/")
+          }
+          dependencies {
+              implementation("com.kamikazejam.kamicommon:spigot-jar:${{ needs.setup.outputs.version }}")
+          }
           ```
+
+          ```xml
+          <repository>
+            <id>luxiouslabs</id>
+            <url>https://repo.luxiouslabs.net/repository/maven-releases/</url>
+          </repository>
+          <dependency>
+            <groupId>com.kamikazejam.kamicommon</groupId>
+            <artifactId>spigot-jar</artifactId>
+            <version>${{ needs.setup.outputs.version }}</version>
+          </dependency>
+          ```
+
+          ### Which module
+
+          | you are | use |
+          |---|---|
+          | a Spigot plugin shading the whole toolkit | `spigot-jar` |
+          | a Spigot plugin on a server already running KamiCommon | `spigot-jar`, and add `KamiCommon` to `depend:` |
+          | shading a smaller set | `spigot-utils` |
+          | not on Spigot at all | `standalone-utils` |
+
+          ### Documentation
+
+          - [Wiki](https://github.com/Jake-Moore/KamiCommon/wiki)
+          - [Migration Guide](https://github.com/Jake-Moore/KamiCommon/wiki/v5-Migration-Guide)
+          - [Javadoc](https://docs.jake-moore.dev/KamiCommon/)
+
+          ### Server owners
+
+          The attached `KamiCommon-${{ needs.setup.outputs.version }}.jar` is the runnable plugin. Install it only if a
+          plugin asks for it in its `depend:`.
+
+          ### Every published artifact
+
+          [standalone-utils](${{ steps.generate_url.outputs.standalone_utils_url }}) ·
+          [standalone-jar](${{ steps.generate_url.outputs.standalone_jar_url }}) ·
+          [shared-utils](${{ steps.generate_url.outputs.shared_utils_url }}) ·
+          [shared-jar](${{ steps.generate_url.outputs.shared_jar_url }}) ·
+          [spigot-utils](${{ steps.generate_url.outputs.spigot_utils_url }}) ·
+          [spigot-jar](${{ steps.generate_url.outputs.spigot_jar_url }})
         tag: "${{ needs.setup.outputs.version }}"
         name: "KamiCommon ${{ needs.setup.outputs.version }}"
 
@@ -356,19 +404,39 @@ jobs:
           artifacts: "spigot-jar/build/libs/*.jar"
           allowUpdates: true
           removeArtifacts: true
-          omitBodyDuringUpdate: true
+          # Rewritten on every run, for the same reason as the release job above.
+          omitBodyDuringUpdate: false
           omitDraftDuringUpdate: true
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           # Mark as a prerelease
           prerelease: true
           body: |
-            ## KamiCommon Pre-Release ${{ needs.build-core.outputs.core_version }}
-            
-            ⚠️ **This is a pre-release version for testing purposes.**
-            
-            Maven Artifacts are available via the [LuxiousLabs Maven Repository](https://repo.luxiouslabs.net/).
-            - Pre-Releases are published in the `maven-releases` repository.
+            ## KamiCommon ${{ needs.setup.outputs.version }}
+
+            ⚠️ **A pre-release, published for testing.** The API may change before the next stable
+            version. Use a stable release unless you are specifically testing this one.
+
+            Serves **Minecraft ${{ needs.setup.outputs.oldestServerAPI }} to ${{ needs.setup.outputs.newestServerAPI }}**. Every module targets **Java 8**.
+
+            ### Add it
+
+            ```kotlin
+            repositories {
+                maven("https://repo.luxiouslabs.net/repository/maven-releases/")
+            }
+            dependencies {
+                implementation("com.kamikazejam.kamicommon:spigot-jar:${{ needs.setup.outputs.version }}")
+            }
+            ```
+
+            Pre-releases go to `maven-releases` alongside stable versions, not to `maven-snapshots`,
+            so the coordinate above is the whole of it.
+
+            ### Documentation
+
+            - [Wiki](https://github.com/Jake-Moore/KamiCommon/wiki)
+            - [Javadoc](https://docs.jake-moore.dev/KamiCommon/)
           tag: "pre-v${{ needs.setup.outputs.version }}"
           name: "KamiCommon ${{ needs.setup.outputs.version }} (Pre-Release)"
 
