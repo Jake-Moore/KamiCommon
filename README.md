@@ -1,32 +1,5 @@
 # 🚀 KamiCommon V5 🚀
 
----
-
-### **Status: Stable** ✅
-
-`release/v5` is the current line, and **5.0.0** is its first official release. The API it ships is the
-one to build against.
-
-**Please Note:**
-*   The API is **stable**. Breaking changes are reserved for a future major version.
-*   New features and fixes land here.
-*   Every server from **1.8.8 to 26.2** is supported from a single artifact, and every module targets
-    **Java 8**.
-*   Full documentation is in the [wiki](https://github.com/Jake-Moore/KamiCommon/wiki).
-
-Coming from `v4`, or from a `v5` prerelease? Start with the
-[Migration Guide](https://github.com/Jake-Moore/KamiCommon/wiki/v5-Migration-Guide).
----
-
-### ⚠️ `release/v4` Branch: End of Life (EOL)
-
-The `release/v4` branch is **end-of-life** and **no longer supported**.  
-No new features, bug fixes, or security patches will be provided.
-
-`v5` covers everything `v4` did and is now the stable line, so there is no longer a reason to stay on
-`v4`. Existing `v4` builds continue to resolve, but nothing further will be published for them.
----
-
 &nbsp;
 > ### Releases
 > <a href="https://github.com/Jake-Moore/KamiCommon/releases/latest"> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/kc-release-latest.json" /></a>
@@ -42,6 +15,31 @@ No new features, bug fixes, or security patches will be provided.
 > (This is okay, as updates are not always required for every Minecraft version.)
 
 **DEVELOPMENT ROADMAP**: https://github.com/users/Jake-Moore/projects/3
+
+---
+
+### Status: Stable ✅
+
+`release/v5` is the current line, and `5.0.0` is its first official release. The API it ships is the one
+to build against.
+
+*   The API is stable. Breaking changes are reserved for a future major version.
+*   New features and fixes land here.
+*   One artifact serves every server from `1.8.8` to `26.2`, and every module targets Java 8.
+*   Full documentation is in the [wiki](https://github.com/Jake-Moore/KamiCommon/wiki).
+*   Coming from `v4` or from a `v5` pre-release? Start with the [Migration Guide](https://github.com/Jake-Moore/KamiCommon/wiki/v5-Migration-Guide).
+
+---
+
+### ⚠️ `release/v4` Branch: End of Life (EOL)
+
+The `release/v4` branch is end-of-life and no longer supported.  
+No new features, bug fixes, or security patches will be provided.
+
+*   `v5` covers everything `v4` did and is now the stable line, so there is no longer a reason to stay.
+*   Existing `v4` builds continue to resolve, but nothing further will be published for them.
+
+---
 
 # KamiCommon
 **SEE [STRUCTURE.md](./STRUCTURE.md) FOR GRADLE MODULE BREAKDOWN**
