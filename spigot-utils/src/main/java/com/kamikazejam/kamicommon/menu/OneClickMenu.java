@@ -41,7 +41,8 @@ public final class OneClickMenu extends AbstractMenu<OneClickMenu> {
 
     public @Nullable InventoryView open() {
         // Ensure the menu resets our click (we reset to permit one click per opening)
-        // reopen calls this, so reopening will also reset the click
+        // reopenMenu() does not reach this method: it calls open(boolean), which this class does
+        // not override, so a reopened menu keeps the click state it already had.
         clicked = false;
         return super.open();
     }
