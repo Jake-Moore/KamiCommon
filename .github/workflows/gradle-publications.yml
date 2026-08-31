@@ -234,8 +234,6 @@ jobs:
         # No generateReleaseNotes. This branch takes its changes as direct commits rather than pull
         # requests, so a PR-derived changelog lists dependency bumps and branch syncs and nothing else.
         body: |
-          ## KamiCommon ${{ needs.setup.outputs.version }}
-
           One artifact for **Minecraft ${{ needs.setup.outputs.oldestServerAPI }} to ${{ needs.setup.outputs.newestServerAPI }}**. Every module targets **Java 8**.
 
           ### 🖥️ Running a server?
@@ -387,8 +385,6 @@ jobs:
           # Mark as a prerelease
           prerelease: true
           body: |
-            ## KamiCommon ${{ needs.setup.outputs.version }}
-
             ⚠️ **A pre-release, published for testing.** The API may change before the next stable
             version. Use a stable release unless you are specifically testing this one.
 
