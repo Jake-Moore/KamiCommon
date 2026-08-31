@@ -153,6 +153,8 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                 // MessageManager Test
                 (player) -> {
                     serializer.fromMiniMessage("<gray>Testing MessageManager...").sendTo(player);
+                    // Sent first, for the rendering check, which is the one question a wire
+                    // assertion cannot answer. It carries no part of the grade.
                     ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
                     ItemMeta meta = item.getItemMeta();
                     if (meta != null) {
@@ -167,7 +169,21 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                     Action combined = new Action("<6>", "&fCombined").setClickSuggestCommand("help").setHoverText(LegacyColors.t("&bThis is hover text"));
                     String message = "Test: <1> <2> <3> <4> <5> <6>";
                     NmsAPI.getMessageManager().processAndSend(player, message, clickCmd, clickSug, clickUrl, hoverText, hoverItem, combined);
-                    return 10; // Delay so user can see chat
+
+                    // The grade, from the same assertions /kc texttest runs. They read the form this
+                    // server sends, which is what the line above cannot be asked about.
+                    @Nullable String unreachable = CmdTextTest.messageManagerUnreachable();
+                    if (unreachable != null) {
+                        throw new ExpectedUnsupported(unreachable);
+                    }
+                    List<String> problems = CmdTextTest.messageManagerProblems();
+                    if (!problems.isEmpty()) {
+                        throw new IllegalStateException(String.join("; ", problems));
+                    }
+                    serializer.fromMiniMessage(
+                            "    <gray>Success: every click and hover kind survived into the form this server sends"
+                    ).sendTo(player);
+                    return 10; // Delay so the rendering above can be looked at
                 },
 
                 // Teleport Provider Test (Same World)
