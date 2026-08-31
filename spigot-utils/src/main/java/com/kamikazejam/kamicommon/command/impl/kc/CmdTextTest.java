@@ -107,7 +107,7 @@ public class CmdTextTest extends KamiCommand {
                     + "; add a Profile entry rather than leaving this version unchecked");
         } else {
             results.pass("tier.known");
-            for (Map.Entry<String, Case> entry : cases(ser, profile).entrySet()) {
+            for (Map.Entry<String, Case> entry : cases(ser, profile, logger).entrySet()) {
                 run(results, entry.getKey(), entry.getValue());
             }
         }
@@ -138,10 +138,12 @@ public class CmdTextTest extends KamiCommand {
      *
      * @param ser     the serializer this server dispatches through
      * @param profile what this server's tier is expected to emit
+     * @param logger  where the italic cases write what they measured
      * @return case name to case
      */
     private static @NotNull Map<String, Case> cases(final @NotNull VersionedComponentSerializer ser,
-                                                    final @NotNull Profile profile) {
+                                                    final @NotNull Profile profile,
+                                                    final @NotNull Logger logger) {
         Map<String, Case> map = new LinkedHashMap<String, Case>();
 
         // Where a component goes when it is sent, and whether the form every case below reads is the
@@ -288,6 +290,59 @@ public class CmdTextTest extends KamiCommand {
             return sameText(LORE_3, read.get(2).serializePlainText());
         });
 
+        // Italics. Minecraft italicises a custom name and every lore line, so a component handed to
+        // the server natively renders italic where the same text written as section-coded text does
+        // not, and the same API call produced two different results either side of that boundary.
+        // Asserted on the state read back out of the meta, and the serialized item is logged beside
+        // it, because a pass line cannot show a rendering attribute.
+        map.put("itemMeta.italicName", () -> {
+            if (profile.hoverItem) {
+                logger.info(PREFIX + "ITALIC item=" + readable(clip(flat(
+                        wireFor(ser.fromPlainText("ITEMANCHOR").hoverItem(testItem(ser)), profile)))));
+            }
+            ItemMeta meta = meta(new ItemStack(Material.DIAMOND_SWORD));
+            VersionedComponentUtil.setDisplayName(meta, ser.fromMiniMessage("<gold>" + ITEM_NAME));
+            @Nullable VersionedComponent read = VersionedComponentUtil.getDisplayName(meta);
+            if (read == null) { return "getDisplayName returned null after setDisplayName"; }
+            evidence(logger, "name", profile.nativeItemName, read);
+            return upright(profile.nativeItemName, read, "the display name");
+        });
+        map.put("itemMeta.italicLore", () -> {
+            ItemMeta meta = meta(new ItemStack(Material.DIAMOND_SWORD));
+            VersionedComponentUtil.setLore(meta, Arrays.asList(
+                    ser.fromMiniMessage("<gray>" + LORE_1), ser.fromMiniMessage("<gray>" + LORE_2)));
+            VersionedComponentUtil.addLoreLine(meta, ser.fromMiniMessage("<gray>" + LORE_3));
+            @Nullable List<VersionedComponent> read = VersionedComponentUtil.getLore(meta);
+            if (read == null) { return "getLore returned null after setLore"; }
+            if (read.size() != 3) { return "expected 3 lore lines, got " + read.size(); }
+            for (int line = 0; line < read.size(); line++) {
+                evidence(logger, "lore" + (line + 1), profile.nativeItemLore, read.get(line));
+                @Nullable String problem = upright(profile.nativeItemLore, read.get(line),
+                        "lore line " + (line + 1));
+                if (problem != null) { return problem; }
+            }
+            return null;
+        });
+        // Suppression, not an override. A caller that asked for italic keeps it, on both the name
+        // and the lore, or the fix above has replaced one wrong answer with another.
+        map.put("itemMeta.italicExplicit", () -> {
+            ItemMeta meta = meta(new ItemStack(Material.DIAMOND_SWORD));
+            VersionedComponentUtil.setDisplayName(meta,
+                    ser.fromMiniMessage("<gold>" + ITEM_NAME).decorate(TextDecoration.ITALIC, true));
+            VersionedComponentUtil.setLore(meta, Arrays.asList(
+                    ser.fromMiniMessage("<gray>" + LORE_1).decorate(TextDecoration.ITALIC, true)));
+            @Nullable VersionedComponent name = VersionedComponentUtil.getDisplayName(meta);
+            if (name == null) { return "getDisplayName returned null after setDisplayName"; }
+            evidence(logger, "name.explicit", profile.nativeItemName, name);
+            @Nullable String problem = stillItalic(profile.nativeItemName, name, "the display name");
+            if (problem != null) { return problem; }
+            @Nullable List<VersionedComponent> lore = VersionedComponentUtil.getLore(meta);
+            if (lore == null) { return "getLore returned null after setLore"; }
+            if (lore.size() != 1) { return "expected 1 lore line, got " + lore.size(); }
+            evidence(logger, "lore.explicit", profile.nativeItemLore, lore.get(0));
+            return stillItalic(profile.nativeItemLore, lore.get(0), "the lore line");
+        });
+
         // createInventory. The title is only readable through the API up to 1.13, so where it can be
         // read it is asserted, and where it cannot the size and type still are.
         map.put("createInventory.size", () -> {
@@ -359,6 +414,58 @@ public class CmdTextTest extends KamiCommand {
             }
             return null;
         }
+    }
+
+    /**
+     * What one component read back out of item meta carries, in both forms a tier can store.
+     * <p>
+     * Written whether the case passes or fails. The attribute being fixed is invisible in a pass
+     * line, and the two sides of the boundary can only be compared by reading both.
+     * </p>
+     */
+    private static void evidence(@NotNull Logger logger, @NotNull String what, boolean nativeHandover,
+                                 @NotNull VersionedComponent read) {
+        logger.info(PREFIX + "ITALIC " + what + " native=" + nativeHandover
+                + " json=" + flat(read.serializeJson())
+                + " legacy=<" + readable(read.serializeLegacySection()) + ">");
+    }
+
+    /**
+     * That a component read back out of item meta renders upright.
+     * <p>
+     * Where the tier hands the component over natively, the component itself has to state italic
+     * false, because Minecraft italicises anything that leaves it unstated. Where the tier writes
+     * section-coded text, the server states it during its own conversion, and what this asserts is
+     * that the library added no italic of its own.
+     * </p>
+     */
+    private static @Nullable String upright(boolean nativeHandover, @NotNull VersionedComponent read,
+                                            @NotNull String what) {
+        String json = flat(read.serializeJson());
+        if (nativeHandover) {
+            return json.contains("\"italic\":false") ? null
+                    : "italic is not stated false on " + what + ", handed over natively: " + clip(json);
+        }
+        String legacy = read.serializeLegacySection();
+        if (legacy.contains("\u00a7o")) {
+            return "the section-coded form of " + what + " carries an italic code: <"
+                    + readable(legacy) + ">";
+        }
+        return json.contains("\"italic\":true")
+                ? "italic is stated true on " + what + ": " + clip(json) : null;
+    }
+
+    /** That an explicitly italic component is still italic after the round trip. */
+    private static @Nullable String stillItalic(boolean nativeHandover, @NotNull VersionedComponent read,
+                                                @NotNull String what) {
+        if (nativeHandover) {
+            String json = flat(read.serializeJson());
+            return json.contains("\"italic\":true") ? null
+                    : "explicit italic was lost from " + what + ": " + clip(json);
+        }
+        String legacy = read.serializeLegacySection();
+        return legacy.contains("\u00a7o") ? null
+                : "explicit italic was lost from " + what + ": <" + readable(legacy) + ">";
     }
 
     /** A sword with a custom name, two lore lines and a non-zero Damage. */
@@ -637,15 +744,22 @@ public class CmdTextTest extends KamiCommand {
         private final boolean hexOnWire;
         private final boolean copyToClipboard;
         private final boolean hoverItem;
+        /** Whether the tier hands the display name to the server as a component rather than as text. */
+        private final boolean nativeItemName;
+        /** The same question for lore, which one tier answers differently from the display name. */
+        private final boolean nativeItemLore;
 
         private Profile(String tier, String transport, String consoleSend,
-                        boolean hexOnWire, boolean copyToClipboard, boolean hoverItem) {
+                        boolean hexOnWire, boolean copyToClipboard, boolean hoverItem,
+                        boolean nativeItemName, boolean nativeItemLore) {
             this.tier = tier;
             this.transport = transport;
             this.consoleSend = consoleSend;
             this.hexOnWire = hexOnWire;
             this.copyToClipboard = copyToClipboard;
             this.hoverItem = hoverItem;
+            this.nativeItemName = nativeItemName;
+            this.nativeItemLore = nativeItemLore;
         }
 
         private boolean bungee() {
@@ -671,18 +785,21 @@ public class CmdTextTest extends KamiCommand {
                 // 1.8 to 1.11.2. No RGB, no copy to clipboard, item hover assembled from item NBT.
                 // Alone among the tiers it serializes only for players and writes legacy text to
                 // anything else, which is why the console send differs here.
-                new Profile("VersionedComponent_1_11_R1", "BUNGEE", "LEGACY_STRING", false, false, true),
+                new Profile("VersionedComponent_1_11_R1", "BUNGEE", "LEGACY_STRING", false, false, true, false, false),
                 // 1.12 to 1.15.2.
-                new Profile("VersionedComponent_1_15_R1", "BUNGEE", "BUNGEE", false, false, true),
+                new Profile("VersionedComponent_1_15_R1", "BUNGEE", "BUNGEE", false, false, true, false, false),
                 // 1.16.x. RGB and copy to clipboard arrive here.
-                new Profile("VersionedComponent_1_16_R3", "BUNGEE", "BUNGEE", true, true, true),
+                new Profile("VersionedComponent_1_16_R3", "BUNGEE", "BUNGEE", true, true, true, false, false),
                 // 1.17 to 1.18.1. Sends through bungee-chat like the tiers below it, and builds
                 // its item hover from item NBT read by the 1.17 and 1.18.1 modules.
-                new Profile("VersionedComponent_1_17_R1", "BUNGEE", "BUNGEE", true, true, true),
+                new Profile("VersionedComponent_1_17_R1", "BUNGEE", "BUNGEE", true, true, true, false, false),
                 // 1.18.2 upward. The server's own Adventure receives the component directly.
-                new Profile("VersionedComponent_1_18_R2", "NATIVE", "NATIVE", true, true, true),
-                new Profile("VersionedComponent_1_21_4", "NATIVE", "NATIVE", true, true, true),
-                new Profile("VersionedComponent_LATEST", "NATIVE", "NATIVE", true, true, true)
+                // This tier alone splits the two item paths: the display name is written as
+                // section-coded text because customName() only arrived in Paper 1.21.4, while lore
+                // is already handed over as components.
+                new Profile("VersionedComponent_1_18_R2", "NATIVE", "NATIVE", true, true, true, false, true),
+                new Profile("VersionedComponent_1_21_4", "NATIVE", "NATIVE", true, true, true, true, true),
+                new Profile("VersionedComponent_LATEST", "NATIVE", "NATIVE", true, true, true, true, true)
         );
     }
 
@@ -799,6 +916,17 @@ public class CmdTextTest extends KamiCommand {
     /** Structural matching ignores whitespace, which no serializer is obliged to place identically. */
     private static @NotNull String flat(@NotNull String json) {
         return json.replace(" ", "");
+    }
+
+    /**
+     * Section codes spelled out, so that logged evidence can be read.
+     * <p>
+     * The console appender strips the section character itself on some versions, which turns a
+     * legacy string carrying colour and italic into one that appears to carry neither.
+     * </p>
+     */
+    private static @NotNull String readable(@NotNull String text) {
+        return text.replace("\u00a7", "\\u00a7");
     }
 
     private static @NotNull String clip(@NotNull String wire) {
