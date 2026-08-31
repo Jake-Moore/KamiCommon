@@ -1,29 +1,30 @@
-# 🚀 V5 Branch: Active Development 🚧
+# 🚀 KamiCommon V5 🚀
 
 ---
 
-### **Status: Mostly Stable, Active Development** 🛠️
+### **Status: Stable** ✅
 
-Welcome to the `release/v5` branch! This is where the **next major version** of the project is currently being built.
+`release/v5` is the current line, and **5.0.0** is its first official release. The API it ships is the
+one to build against.
 
 **Please Note:**
-*   This branch is under **active development**.
-*   It is considered **mostly stable** and safe for production use.
-*   **Breaking changes may still occur**, but only if strictly necessary.
-*   New features and improvements will continue to land here.
-*   Once the API is deemed fully stable, prerelease versions will end and the first official release will be **v5.0.0**.
+*   The API is **stable**. Breaking changes are reserved for a future major version.
+*   New features and fixes land here.
+*   Every server from **1.8.8 to 26.2** is supported from a single artifact, and every module targets
+    **Java 8**.
+*   Full documentation is in the [wiki](https://github.com/Jake-Moore/KamiCommon/wiki).
+
+Coming from `v4`, or from a `v5` prerelease? Start with the
+[Migration Guide](https://github.com/Jake-Moore/KamiCommon/wiki/v5-Migration-Guide).
 ---
 
 ### ⚠️ `release/v4` Branch: End of Life (EOL)
 
-The `release/v4` branch is now **end-of-life** and **no longer supported**.  
+The `release/v4` branch is **end-of-life** and **no longer supported**.  
 No new features, bug fixes, or security patches will be provided.
 
-However:
-*   `v4` offers a **more stable API surface** for users who do not wish to migrate
-    yet or prefer to wait for `v5` stability with version 5.0.0+
-*   If you need long-term stability and do not require new features, you may
-    continue using `v4` at your own discretion.
+`v5` covers everything `v4` did and is now the stable line, so there is no longer a reason to stay on
+`v4`. Existing `v4` builds continue to resolve, but nothing further will be published for them.
 ---
 
 &nbsp;
