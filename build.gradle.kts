@@ -152,8 +152,12 @@ tasks.register("printNewestServerAPI-short") {
         ?: throw GradleException("Invalid newestServerAPI format")
     val semver = version.split("-").firstOrNull()
         ?: throw GradleException("Invalid newestServerAPI version format")
+    // Paper's coordinate carries its own build number, so 26.2 arrives as "26.2.build.121". That is
+    // the Paper build rather than the Minecraft version, and this value is read by humans: it names
+    // the supported range in the release notes and on the API compatibility badge.
+    val mcVersion = semver.substringBefore(".build")
     doLast {
-        println(semver)
+        println(mcVersion)
     }
 }
 
