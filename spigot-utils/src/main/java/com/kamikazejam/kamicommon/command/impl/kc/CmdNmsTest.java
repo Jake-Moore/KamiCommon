@@ -72,7 +72,7 @@ public class CmdNmsTest extends KamiCommand implements Listener {
         addRequirements(RequirementIsPlayer.get());
 
         serializer = new TranscribingSerializer(plugin.getLogger());
-        tests = createTests(serializer);
+        tests = createTests(this, serializer);
 
         // Register as a Listener for debugging or event monitoring during tests
         plugin.registerListeners(this);
@@ -119,7 +119,8 @@ public class CmdNmsTest extends KamiCommand implements Listener {
     // Logic: Asynchronous/Delayed Execution
     // ------------------------------------------------------------------------------------------------
 
-    private static @NotNull List<Test> createTests(@NotNull VersionedComponentSerializer serializer) {
+    private static @NotNull List<Test> createTests(@NotNull KamiCommand self,
+                                                   @NotNull VersionedComponentSerializer serializer) {
         return Arrays.asList(
                 // Chat Color Provider Test
                 (player) -> {
@@ -226,7 +227,11 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                 (player) -> {
                     serializer.fromMiniMessage("<gray>Testing EnchantIDProvider...").sendTo(player);
                     Enchantment enchant = Preconditions.checkNotNull(XEnchantment.SHARPNESS.get(), "Enchantment not found");
-                    serializer.fromMiniMessage("    <gray>Success: " + NmsAPI.getNamespaced(enchant)).sendTo(player);
+                    String namespaced = NmsAPI.getNamespaced(enchant);
+                    if (namespaced.isEmpty()) {
+                        throw new IllegalStateException("getNamespaced returned an empty string");
+                    }
+                    serializer.fromMiniMessage("    <gray>Success: " + namespaced).sendTo(player);
                     return 0;
                 },
 
@@ -250,6 +255,10 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                             final double width = methods.getEntityWidth(entity);
                             serializer.fromMiniMessage("      <gray>H: " + df2.format(height) + " W: " + df2.format(width)).sendTo(player);
                             entity.remove();
+                            if (height <= 0 || width <= 0) {
+                                throw new IllegalStateException(type.name() + " measured H: " + height
+                                        + " W: " + width + ", both must be positive");
+                            }
                             break;
                         }
                     }
@@ -314,10 +323,22 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                     if (known.size() == 0) {
                         throw new IllegalStateException("knownCommands map is empty");
                     }
-                    // This command registered through the same map, so it must be in there.
-                    boolean self = known.containsKey("nmstest") || known.values().stream()
-                            .anyMatch(c -> c.getName().equals("nmstest") || c.getAliases().contains("nmstest"));
-                    serializer.fromMiniMessage("    <gray>Success: " + known.size() + " commands known, nmstest present=" + self).sendTo(player);
+                    // The map holds root commands. This one is a child of KamiCommonCommand, and
+                    // registration puts one entry in the map per alias of that root, so the root's
+                    // aliases are what the map can be asked for.
+                    KamiCommand root = self.getRoot();
+                    List<String> aliases = root.getAliases();
+                    if (aliases.isEmpty()) {
+                        throw new IllegalStateException("the root command declares no aliases, so nothing was registered");
+                    }
+                    for (String alias : aliases) {
+                        if (!isKnown(known, alias)) {
+                            throw new IllegalStateException("root command alias '" + alias
+                                    + "' is absent from the knownCommands map");
+                        }
+                    }
+                    serializer.fromMiniMessage("    <gray>Success: " + known.size()
+                            + " commands known, root " + aliases + " present").sendTo(player);
                     return 0;
                 },
 
@@ -375,6 +396,30 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                     return 0;
                 }
         );
+    }
+
+    /**
+     * Whether the command map holds a command under the given name.
+     * <p>
+     * Read by key and then by the commands themselves, because the map is the server's own: from
+     * 1.20.6 Paper returns a view backed by its Brigadier dispatcher, whose answers do not always
+     * match a plain map's.
+     * </p>
+     *
+     * @param known the server's known commands
+     * @param name  the name to look for
+     * @return true when a command is registered under that name
+     */
+    private static boolean isKnown(@NotNull Map<String, Command> known, @NotNull String name) {
+        if (known.containsKey(name)) {
+            return true;
+        }
+        for (Command command : known.values()) {
+            if (command.getName().equals(name) || command.getAliases().contains(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static @Nullable World getTargetWorld(Player player) {
