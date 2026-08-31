@@ -6,17 +6,19 @@
 
 This `release/v4` branch now serves purely as a **historical and archival snapshot** of the project's version 4 codebase.
 
-With the official release of the first `v5` alpha, **active development and maintenance for `v4` have ceased**.  
-All new development efforts are focused on `v5`.
+**`v5` is now stable, and `5.0.0` is released.** Active development and maintenance for `v4` ceased
+when the first `v5` alpha was published, and all development is on `v5`.
 
 **⚠️ Please be advised: No support, bug fixes, or new features will be provided for this branch.**
 
-For the most up-to-date and supported version, please refer to the `main` branch (which now reflects `v5`).
+`v5` covers everything `v4` did, supports Minecraft `1.8.8` through `26.2` from a single artifact, and
+targets Java 8. Existing `v4` builds continue to resolve from the repository, but nothing further will
+be published for them.
 
 ---
 
-**For active `v5` development, please see the `release/v5` branch.**  
-**For the latest published release (including prereleases), see the [Releases page](https://github.com/Jake-Moore/KamiCommon/releases).**
+**Upgrading?** The [v4 to v5 Migration Guide](https://github.com/Jake-Moore/KamiCommon/wiki/v5-Migration-Guide) lists every rename, removal and replacement.  
+**For the current version, see the `release/v5` branch or the [Releases page](https://github.com/Jake-Moore/KamiCommon/releases/latest).**
 
 &nbsp;
 > <a href="https://github.com/Jake-Moore/KamiCommon/releases/latest"> <img alt="Latest Release" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Jake-Moore/5dfd7c9bb8b81ae5867c81e9a77ee821/raw/test.json" /></a>
