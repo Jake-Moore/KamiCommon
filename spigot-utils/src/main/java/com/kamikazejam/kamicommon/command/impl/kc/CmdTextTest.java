@@ -70,6 +70,8 @@ public class CmdTextTest extends KamiCommand {
     private static final String URL_VALUE = "https://luxiouslabs.net/kctexttest";
     private static final String COPY_VALUE = "kctexttest-copy";
     private static final String HEX = "#ff00aa";
+    /** The id of the item {@code testItem} builds, which the wire must carry exactly once. */
+    private static final String ITEM_ID = "minecraft:diamond_sword";
     private static final String MENU_TITLE = "KCTEXTTESTMENU";
 
     /** Never queried by Bukkit, and required because createInventory takes a non-null holder. */
@@ -232,9 +234,10 @@ public class CmdTextTest extends KamiCommand {
                     .has(LORE_1, "first lore line absent")
                     .has(LORE_2, "second lore line absent")
                     // The whole item NBT passed where the tag belongs. It renders as the bare item
-                    // with no name and no lore, and every payload above is still present.
-                    .hasNot("tag:{id:", "item NBT nested under a second tag key")
-                    .hasNot("\"tag\":\"{id:", "item NBT nested under a second tag key")
+                    // with no name and no lore, and every payload above is still present, so the
+                    // claim has to be structural. Nesting the item inside its own tag writes the id
+                    // a second time, which is true whatever order that version's NBT writer uses.
+                    .hasOnce(ITEM_ID, "item NBT nested under a second tag key")
                     .result();
         });
 
@@ -673,9 +676,9 @@ public class CmdTextTest extends KamiCommand {
                 new Profile("VersionedComponent_1_15_R1", "BUNGEE", "BUNGEE", false, false, true),
                 // 1.16.x. RGB and copy to clipboard arrive here.
                 new Profile("VersionedComponent_1_16_R3", "BUNGEE", "BUNGEE", true, true, true),
-                // 1.17 to 1.18.1. No NBT source above 1.16.5 and no native Adventure until 1.18.2, so
-                // an item hover cannot be built and must refuse rather than show the wrong item.
-                new Profile("VersionedComponent_1_17_R1", "BUNGEE", "BUNGEE", true, true, false),
+                // 1.17 to 1.18.1. Sends through bungee-chat like the tiers below it, and builds
+                // its item hover from item NBT read by the 1.17 and 1.18.1 modules.
+                new Profile("VersionedComponent_1_17_R1", "BUNGEE", "BUNGEE", true, true, true),
                 // 1.18.2 upward. The server's own Adventure receives the component directly.
                 new Profile("VersionedComponent_1_18_R2", "NATIVE", "NATIVE", true, true, true),
                 new Profile("VersionedComponent_1_21_4", "NATIVE", "NATIVE", true, true, true),
@@ -724,8 +727,23 @@ public class CmdTextTest extends KamiCommand {
             return this;
         }
 
-        private @NotNull Expect hasNot(@NotNull String needle, @NotNull String why) {
-            if (this.flat.contains(needle)) { this.problems.add(why + ", found " + needle); }
+        /**
+         * Exactly one occurrence, which is how an item nested inside its own tag compound is caught.
+         * <p>
+         * Absence cannot express it: the id belongs on the wire once, and what is wrong is a second
+         * copy of it inside the tag. Matching the textual shape of the nesting instead would have to
+         * know which member the running version's NBT writer puts first, and the mappings up to
+         * 1.16.5 do not agree with those of 1.17 and 1.18.1.
+         * </p>
+         */
+        private @NotNull Expect hasOnce(@NotNull String needle, @NotNull String why) {
+            int found = 0;
+            for (int at = this.flat.indexOf(needle); at >= 0; at = this.flat.indexOf(needle, at + 1)) {
+                found++;
+            }
+            if (found != 1) {
+                this.problems.add(why + ", " + needle + " appears " + found + " times, expected once");
+            }
             return this;
         }
 
