@@ -613,6 +613,23 @@ public class CmdTextTest extends KamiCommand {
                 .has(MSG_TIP, "tooltip text absent")
                 .hasNot(MSG_PLACEHOLDER, "the placeholder reached the wire unreplaced")
                 .result());
+
+        // The overload that also takes the translate flag. It is a second entry point into the same
+        // implementation, and up to spigot-nms 1.2.36 it built its message without the actions it
+        // was given, so every case above passed while any caller of this one lost every click and
+        // hover. The flag is passed as true, which is the default the other overloads use, so the
+        // only thing that differs between this case and msg.combined is which overload was called.
+        map.put("msg.translateOverload", () -> msgExpect(profile, true,
+                new Action(MSG_PLACEHOLDER, MSG_LABEL).setClickRunCommand(MSG_RUN).setHoverText(MSG_TIP))
+                .hasEvent(profile.bungee(), "clickEvent", "click_event")
+                .has("\"action\":\"run_command\"", "no run_command action")
+                .has(MSG_RUN, "click value absent")
+                .hasEvent(profile.bungee(), "hoverEvent", "hover_event")
+                .has("\"action\":\"show_text\"", "no show_text action")
+                .has(MSG_TIP, "tooltip text absent")
+                .has(MSG_LABEL, "the replacement text is absent from the wire")
+                .hasNot(MSG_PLACEHOLDER, "the placeholder reached the wire unreplaced")
+                .result());
     }
 
     /** The implementation {@link AbstractMessageManager} dispatch selected on this server. */
@@ -728,9 +745,21 @@ public class CmdTextTest extends KamiCommand {
         NmsAPI.getMessageManager().processAndSend(wire.sender, MSG_LINE, action);
     }
 
+    /** The same send through the overload that also carries the translate flag. */
+    private static void send(@NotNull Wire wire, boolean translate, @NotNull Action action) {
+        NmsAPI.getMessageManager().processAndSend(wire.sender, MSG_LINE, translate, action);
+    }
+
     private static @NotNull Expect msgExpect(@NotNull MsgProfile profile, @NotNull Action action) throws Exception {
         Wire wire = Wire.over(profile.face());
         send(wire, action);
+        return expectWire(msgWire(wire, profile));
+    }
+
+    private static @NotNull Expect msgExpect(@NotNull MsgProfile profile, boolean translate,
+                                             @NotNull Action action) throws Exception {
+        Wire wire = Wire.over(profile.face());
+        send(wire, translate, action);
         return expectWire(msgWire(wire, profile));
     }
 
@@ -1205,8 +1234,8 @@ public class CmdTextTest extends KamiCommand {
                 // 1.17 upward, every version of it. The server's own Adventure receives the
                 // component directly, whatever the recipient is.
                 new MsgProfile("MessageManager_1_17_R1", "NATIVE", false),
-                // Declared and never selected. The ladder sends 26.x to the v1_17_R1 copy, and this
-                // entry exists so that adding a branch for it does not also need a change here.
+                // 26.x, which the ladder sends here from spigot-nms 1.2.37. The same source as the
+                // entry above, compiled against the Paper those servers run.
                 new MsgProfile("MessageManager_LATEST", "NATIVE", false)
         );
     }
