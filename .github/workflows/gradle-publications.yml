@@ -217,7 +217,7 @@ jobs:
       id: generate_url
       run: |
         VERSION="${{ needs.setup.outputs.version }}"
-        REPO_URL="https://repo.luxiouslabs.net/repository/maven-releases/com/kamikazejam/kamicommon/"
+        REPO_URL="https://repo.luxiouslabs.net/repository/maven-releases/com/kamikazejam/kamicommon"
   
         STANDALONE_UTILS_URL="$REPO_URL/standalone-utils/$VERSION/standalone-utils-$VERSION.jar"
         echo "standalone_utils_url=$STANDALONE_UTILS_URL" >> $GITHUB_OUTPUT
@@ -265,7 +265,12 @@ jobs:
 
           One artifact for **Minecraft ${{ needs.setup.outputs.oldestServerAPI }} to ${{ needs.setup.outputs.newestServerAPI }}**. Every module targets **Java 8**.
 
-          ### Add it
+          > **Running a server?** The attached `KamiCommon-${{ needs.setup.outputs.version }}.jar` is the runnable plugin.
+          > Drop it in `plugins/`. You only need it if another plugin lists `KamiCommon` in its `depend:`.
+
+          ### Add it, for plugin developers
+
+          Gradle:
 
           ```kotlin
           repositories {
@@ -275,6 +280,8 @@ jobs:
               implementation("com.kamikazejam.kamicommon:spigot-jar:${{ needs.setup.outputs.version }}")
           }
           ```
+
+          Maven:
 
           ```xml
           <repository>
@@ -303,19 +310,16 @@ jobs:
           - [Migration Guide](https://github.com/Jake-Moore/KamiCommon/wiki/v5-Migration-Guide)
           - [Javadoc](https://docs.jake-moore.dev/KamiCommon/)
 
-          ### Server owners
+          ### Direct downloads
 
-          The attached `KamiCommon-${{ needs.setup.outputs.version }}.jar` is the runnable plugin. Install it only if a
-          plugin asks for it in its `depend:`.
+          Only if you are not using a build system. `standalone-jar` is a dependency aggregator with no
+          classes of its own, so it is useful through its POM rather than as a download.
 
-          ### Every published artifact
-
-          [standalone-utils](${{ steps.generate_url.outputs.standalone_utils_url }}) ·
-          [standalone-jar](${{ steps.generate_url.outputs.standalone_jar_url }}) ·
-          [shared-utils](${{ steps.generate_url.outputs.shared_utils_url }}) ·
-          [shared-jar](${{ steps.generate_url.outputs.shared_jar_url }}) ·
+          [spigot-jar](${{ steps.generate_url.outputs.spigot_jar_url }}) ·
           [spigot-utils](${{ steps.generate_url.outputs.spigot_utils_url }}) ·
-          [spigot-jar](${{ steps.generate_url.outputs.spigot_jar_url }})
+          [standalone-utils](${{ steps.generate_url.outputs.standalone_utils_url }}) ·
+          [shared-utils](${{ steps.generate_url.outputs.shared_utils_url }}) ·
+          [shared-jar](${{ steps.generate_url.outputs.shared_jar_url }})
         tag: "${{ needs.setup.outputs.version }}"
         name: "KamiCommon ${{ needs.setup.outputs.version }}"
 
