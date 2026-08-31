@@ -21,9 +21,11 @@ import com.kamikazejam.kamicommon.nms.wrappers.packet.NMSPacketHandler;
 import com.kamikazejam.kamicommon.nms.provider.BlockUtilProvider;
 import com.kamikazejam.kamicommon.nms.provider.ChatColorProvider;
 import com.kamikazejam.kamicommon.nms.serializer.VersionedComponentSerializer;
+import com.kamikazejam.kamicommon.nms.text.ClickAction;
 import com.kamikazejam.kamicommon.nms.util.VersionedComponentUtil;
 import com.kamikazejam.kamicommon.util.LegacyColors;
 import com.kamikazejam.kamicommon.util.Preconditions;
+import com.kamikazejam.kamicommon.util.nms.NmsVersionParser;
 import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
@@ -81,14 +83,35 @@ public class CmdNmsTest extends KamiCommand implements Listener {
         try {
             int tickDelay = test.run(player);
             serializer.logger.info("[nmstest] PASS " + serializer.currentTest());
-            return new TestResult(true, tickDelay);
+            return new TestResult(true, tickDelay, false);
+        } catch (ExpectedUnsupported unsupported) {
+            serializer.logger.info("[nmstest] N/A " + serializer.currentTest()
+                    + ": " + unsupported.getMessage());
+            serializer.fromMiniMessage(
+                    "    <yellow>n/a on this version, by design: <white>" + unsupported.getMessage()
+            ).sendTo(player);
+            return new TestResult(false, 0, true);
         } catch (Throwable e) {
             serializer.logger.log(Level.SEVERE, "[nmstest] FAIL " + serializer.currentTest()
                     + ": " + e.getClass().getSimpleName() + ": " + e.getMessage(), e);
             serializer.fromMiniMessage(
                     "    <red>FAILURE (see console): <white>" + e.getMessage()
             ).sendTo(player);
-            return new TestResult(false, 0);
+            return new TestResult(false, 0, false);
+        }
+    }
+
+    /**
+     * A capability this server version does not support, and whose API documents the refusal.
+     * <p>
+     * Reported apart from both a pass and a failure. Grading a documented refusal as a failure makes
+     * the suite show red on every run of that version, which teaches its reader to ignore it;
+     * grading it as a pass claims something was exercised that was not.
+     * </p>
+     */
+    private static class ExpectedUnsupported extends RuntimeException {
+        private ExpectedUnsupported(@NotNull String reason) {
+            super(reason);
         }
     }
 
@@ -284,13 +307,50 @@ public class CmdNmsTest extends KamiCommand implements Listener {
                     serializer.fromMiniMessage("<gray>Testing CommandMapModifierProvider...").sendTo(player);
                     CommandMapModifier modifier = NmsAPI.getCommandMapModifier();
                     Map<String, Command> known = modifier.getKnownCommands();
-                    if (known.isEmpty()) {
+                    // Emptiness is read from size(), not from isEmpty(). The map is the server's
+                    // own: from 1.20.6 Paper returns a view backed by its Brigadier dispatcher, and
+                    // on Paper 1.21.4 that view's isEmpty() is inverted, answering true while
+                    // size() reports hundreds of commands.
+                    if (known.size() == 0) {
                         throw new IllegalStateException("knownCommands map is empty");
                     }
                     // This command registered through the same map, so it must be in there.
                     boolean self = known.containsKey("nmstest") || known.values().stream()
                             .anyMatch(c -> c.getName().equals("nmstest") || c.getAliases().contains("nmstest"));
                     serializer.fromMiniMessage("    <gray>Success: " + known.size() + " commands known, nmstest present=" + self).sendTo(player);
+                    return 0;
+                },
+
+                // ClickAction Test
+                (player) -> {
+                    serializer.fromMiniMessage("<gray>Testing ClickAction.COPY_TO_CLIPBOARD...").sendTo(player);
+                    VersionedComponentSerializer components = NmsAPI.getVersionedComponentSerializer();
+                    // COPY_TO_CLIPBOARD is documented to be unavailable below 1.16, which is where
+                    // Minecraft added it. Every other version must express it.
+                    boolean documentedUnsupported =
+                            NmsVersion.getFormattedNmsInteger() < NmsVersionParser.getFormattedNmsInteger("1.16");
+                    String value = "kc-nmstest-copy";
+                    String miniMessage;
+                    try {
+                        miniMessage = components.fromPlainText("copy")
+                                .click(ClickAction.COPY_TO_CLIPBOARD, value)
+                                .serializeMiniMessage();
+                    } catch (UnsupportedOperationException refused) {
+                        // Only the versions that document the refusal may take this branch, so a
+                        // tier that started throwing where it should not still fails.
+                        if (!documentedUnsupported) {
+                            throw refused;
+                        }
+                        throw new ExpectedUnsupported("COPY_TO_CLIPBOARD needs 1.16 or newer");
+                    }
+                    if (documentedUnsupported) {
+                        throw new IllegalStateException(
+                                "COPY_TO_CLIPBOARD is documented as unavailable below 1.16 and did not refuse");
+                    }
+                    if (!miniMessage.contains(value)) {
+                        throw new IllegalStateException("copy value absent from the component: " + miniMessage);
+                    }
+                    serializer.fromMiniMessage("    <gray>Success: copy_to_clipboard carries " + value).sendTo(player);
                     return 0;
                 },
 
@@ -361,22 +421,31 @@ public class CmdNmsTest extends KamiCommand implements Listener {
 
         // Run Tests
         AtomicInteger successes = new AtomicInteger(0);
+        AtomicInteger notApplicable = new AtomicInteger(0);
 
         // Start the recursive test chain
-        runTestsRecursive(0, player, serializer, successes, (v) -> {
+        runTestsRecursive(0, player, serializer, successes, notApplicable, (v) -> {
+            // Counted against what this version can actually be asked to do, so a documented refusal
+            // neither fails the suite nor inflates the pass count.
+            int applicable = tests.size() - notApplicable.get();
+            boolean passed = successes.get() >= applicable;
+            String tail = notApplicable.get() > 0
+                    ? " (" + notApplicable.get() + " n/a on this version)" : "";
+
             // A single line an operator can grep for, whichever way it went.
-            serializer.logger.info("[nmstest] RESULT: " + (successes.get() >= tests.size() ? "PASSED" : "FAILED")
-                    + " " + successes.get() + "/" + tests.size()
-                    + " on " + NmsVersion.getMCVersion() + " (" + NmsVersion.getFormattedNmsInteger() + ")");
+            serializer.logger.info("[nmstest] RESULT: " + (passed ? "PASSED" : "FAILED")
+                    + " " + successes.get() + "/" + applicable
+                    + " on " + NmsVersion.getMCVersion() + " (" + NmsVersion.getFormattedNmsInteger() + ")"
+                    + tail);
 
             // Send Results
-            if (successes.get() >= tests.size()) {
+            if (passed) {
                 serializer.fromMiniMessage(
-                        "<green>ALL TESTS PASSED! (" + successes + "/" + tests.size() + ")"
+                        "<green>ALL TESTS PASSED! (" + successes + "/" + applicable + ")" + tail
                 ).sendTo(player);
             } else {
                 serializer.fromMiniMessage(
-                        "<red>TEST SUITE FAILED! (" + successes + "/" + tests.size() + ") <bold>See Console."
+                        "<red>TEST SUITE FAILED! (" + successes + "/" + applicable + ")" + tail + " <bold>See Console."
                 ).sendTo(player);
             }
 
@@ -397,6 +466,7 @@ public class CmdNmsTest extends KamiCommand implements Listener {
             Player player,
             TranscribingSerializer serializer,
             AtomicInteger successes,
+            AtomicInteger notApplicable,
             Consumer<Void> onComplete
     ) {
         // Base Case: All tests finished
@@ -411,10 +481,12 @@ public class CmdNmsTest extends KamiCommand implements Listener {
 
         if (result.success) {
             successes.incrementAndGet();
+        } else if (result.notApplicable) {
+            notApplicable.incrementAndGet();
         }
 
         // Recursive Step: Schedule next test
-        Runnable nextStep = () -> runTestsRecursive(index + 1, player, serializer, successes, onComplete);
+        Runnable nextStep = () -> runTestsRecursive(index + 1, player, serializer, successes, notApplicable, onComplete);
 
         if (result.delayTicks > 0) {
             // Find the plugin instance to schedule the task
@@ -486,5 +558,7 @@ public class CmdNmsTest extends KamiCommand implements Listener {
     public static class TestResult {
         public final boolean success;
         public final int delayTicks;
+        /** The capability is unsupported on this version by design, so it is neither a pass nor a failure. */
+        public final boolean notApplicable;
     }
 }
