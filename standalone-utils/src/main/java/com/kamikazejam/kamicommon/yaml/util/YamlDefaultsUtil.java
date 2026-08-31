@@ -82,9 +82,16 @@ public class YamlDefaultsUtil {
             newConfig.internalPut(key, v);
         }
 
-        // Copy comments the user might have placed in the file
+        // Comments from the BUNDLED default first, then from the USER'S file. The order is what
+        // decides who wins, not the flag name.
+        //
+        // With defaultCommentsOverwrite true both passes overwrite, so the second one lands and the
+        // comment already in the server's file survives. With it false neither pass overwrites, the
+        // first pass fills every slot the default documents, and the user's comment is dropped.
+        //
+        // Read either call on its own and the behaviour looks inverted. A wiki review reached exactly
+        // that conclusion and filed it against a page that was correct.
         copyCommentsFromDefault(newConfig, defaultKeyNodes, handler.abstractConfig.isDefaultCommentsOverwrite());
-        // Copy comments from the default config (they will override for each specific instance)
         copyCommentsFromDefault(newConfig, configKeyNodes, handler.abstractConfig.isDefaultCommentsOverwrite());
 
         return newConfig;
