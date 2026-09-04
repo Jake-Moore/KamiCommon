@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+reviews:
+  auto_review:
+    # Development happens on release/v5, not on the repository's default branch, and CodeRabbit
+    # only reviews the default branch unless told otherwise. Without this it skips every pull
+    # request here and says so in a comment rather than failing, which is easy to stop noticing.
+    base_branches:
+      - "release/v5"
