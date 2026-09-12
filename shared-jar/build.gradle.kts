@@ -15,7 +15,7 @@ apply(plugin = "module-floor-convention")
 
 
 // Dependency Version Configuration
-val slf4jVersion = "2.0.18"
+val slf4jVersion = "2.0.19"
 dependencies {
     api(project(":shared-utils"))
 
