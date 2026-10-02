@@ -23,7 +23,7 @@ dependencies {
     implementation(project(":spigot-utils"))
 
     implementation("org.apache.httpcomponents.client5:httpclient5:5.6.4")
-    implementation("org.apache.httpcomponents.core5:httpcore5:5.4.3")
+    implementation("org.apache.httpcomponents.core5:httpcore5:5.4.4")
 
     // Spigot Libraries
     compileOnly(project.property("serverAPI") as String)
