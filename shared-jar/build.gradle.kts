@@ -15,26 +15,26 @@ apply(plugin = "module-floor-convention")
 
 
 // Dependency Version Configuration
-val slf4jVersion = "2.0.19"
+val slf4jVersion = "2.0.20"
 dependencies {
     api(project(":shared-utils"))
 
     // MySQL via HikariCP (2,725 KB)
     api("com.zaxxer:HikariCP:7.1.0")
-    api("com.mysql:mysql-connector-j:26.7.0") { exclude("com.google.protobuf", "protobuf-java") }
+    api("com.mysql:mysql-connector-j:26.10.0") { exclude("com.google.protobuf", "protobuf-java") }
 
     // RabbitMQ amqp-client (732 KB)
-    api("com.rabbitmq:amqp-client:5.35.0")
+    api("com.rabbitmq:amqp-client:5.37.0")
 
     // SLF4J (39 KB) (needed for RabbitMQ)
     api("org.slf4j:slf4j-api:$slf4jVersion")
     api("org.slf4j:slf4j-simple:$slf4jVersion")
 
     // Lettuce Core (Redis) (6,246 KB)
-    api("io.lettuce:lettuce-core:7.7.0.RELEASE")
+    api("io.lettuce:lettuce-core:7.9.0.RELEASE")
 
     // Testing Dependencies
-    testImplementation("io.lettuce:lettuce-core:7.7.0.RELEASE")
+    testImplementation("io.lettuce:lettuce-core:7.9.0.RELEASE")
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
