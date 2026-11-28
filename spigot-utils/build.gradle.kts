@@ -16,10 +16,10 @@ repositories {
 
 dependencies {
     // Add NMS library from KamiCommonNMS
-    api("com.kamikazejam.kamicommon:spigot-nms:1.2.38")
+    api("com.kamikazejam.kamicommon:spigot-nms:1.2.39")
     api(project(":standalone-utils")) // Also includes shared-utils
 
-    api("com.google.code.gson:gson:2.14.0")
+    api("com.google.code.gson:gson:2.15.0")
     api("org.apache.commons:commons-text:1.15.0") // primarily for LevenshteinDistance
 
     compileOnly(project.property("serverAPI") as String)
